@@ -1,0 +1,24 @@
+{
+  "name": "candy-shop",
+  "version": "1.0.0",
+  "description": "Javascript SDK for Solana Candy Shop",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LIQNFT/solana-candy-shop-sdk.git"
+  },
+  "keywords": [
+    "Solana",
+    "Candy",
+    "Shop"
+  ],
+  "author": "LIQNFT",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/LIQNFT/solana-candy-shop-sdk/issues"
+  },
+  "homepage": "https://github.com/LIQNFT/solana-candy-shop-sdk#readme"
+}
