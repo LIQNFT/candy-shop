@@ -57,5 +57,11 @@
     "tsdx": "^0.14.1",
     "tslib": "^2.3.1",
     "typescript": "^4.6.2"
+  },
+  "dependencies": {
+    "@project-serum/anchor": "^0.22.1",
+    "@solana/spl-token": "^0.2.0",
+    "@solana/web3.js": "^1.36.0",
+    "solana-candy-shop-schema" : "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#f7be6196d257fd6aa26bde2b5eb92d6cfbcc4edc"
   }
 }

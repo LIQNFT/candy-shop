@@ -1,25 +1,25 @@
 import * as anchor from "@project-serum/anchor";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID
+  TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import {
-  Keypair, PublicKey,
+  Keypair,
+  PublicKey,
   sendAndConfirmTransaction,
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
-  Transaction
+  Transaction,
 } from "@solana/web3.js";
 import { AUCTION_HOUSE_PROGRAM_ID, WRAPPED_SOL_MINT } from "../constants";
 import {
   getAtaForMint,
-  getAuctionHouseEscrow
+  getAuctionHouseEscrow,
+  getAuctionHouseTradeState,
 } from "../utils";
-import { IBuyOrder } from "./buy";
 import { ISellOrder } from "./sell";
 
-
-export async function executeSale(
+export async function buyAndExecuteSale(
   walletKeyPair: Keypair,
   counterParty: PublicKey,
   tokenAccount: PublicKey,
@@ -35,25 +35,60 @@ export async function executeSale(
   price: anchor.BN,
   amount: anchor.BN,
   sellerOrder: ISellOrder,
-  buyerOrder: IBuyOrder,
   program: anchor.Program
 ) {
-
-
-  const [escrow, escrowBump] = await getAuctionHouseEscrow(
+  const [buyerEscrow, buyerEscrowBump] = await getAuctionHouseEscrow(
     auctionHouse,
     walletKeyPair.publicKey
   );
 
+  const [tradeState, tradeStateBump] = await getAuctionHouseTradeState(
+    auctionHouse,
+    walletKeyPair.publicKey,
+    tokenAccount,
+    treasuryMint,
+    tokenAccountMint,
+    amount,
+    price
+  );
+
+  const isNative = treasuryMint.equals(WRAPPED_SOL_MINT);
+  const ata = (await getAtaForMint(treasuryMint, walletKeyPair.publicKey))[0];
 
   const transaction = new Transaction();
 
-  const isNative = treasuryMint.equals(WRAPPED_SOL_MINT);
-
-  const ix = await program.instruction.executeSaleWithProxy(
+  const ix = await program.instruction.buyWithProxy(
     price,
     amount,
-    escrowBump,
+    tradeStateBump,
+    buyerEscrowBump,
+    authorityBump,
+    {
+      accounts: {
+        wallet: walletKeyPair.publicKey,
+        paymentAccount: isNative ? walletKeyPair.publicKey : ata,
+        transferAuthority: walletKeyPair.publicKey,
+        treasuryMint,
+        tokenAccount,
+        metadata,
+        escrowPaymentAccount: buyerEscrow,
+        authority,
+        auctionHouse,
+        auctionHouseFeeAccount: feeAccount,
+        buyerTradeState: tradeState,
+        candyShop,
+        ahProgram: AUCTION_HOUSE_PROGRAM_ID,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
+        rent: SYSVAR_RENT_PUBKEY,
+      },
+    }
+  );
+
+  const ix2 = await program.instruction.executeSaleWithProxy(
+    price,
+    amount,
+    buyerEscrowBump,
     sellerOrder.ahFreeTradeStateBump,
     sellerOrder.ahProgramAsSignerBump,
     authorityBump,
@@ -66,7 +101,7 @@ export async function executeSale(
         tokenMint: tokenAccountMint,
         metadata,
         treasuryMint,
-        escrowPaymentAccount: escrow,
+        escrowPaymentAccount: buyerEscrow,
         sellerPaymentReceiptAccount: isNative
           ? counterParty
           : (
@@ -79,7 +114,7 @@ export async function executeSale(
         auctionHouse,
         auctionHouseFeeAccount: feeAccount,
         auctionHouseTreasury,
-        buyerTradeState: buyerOrder.ahBuyerTradeState,
+        buyerTradeState: tradeState,
         sellerTradeState: sellerOrder.ahSellerTradeState,
         freeTradeState: sellerOrder.ahFreeTradeState,
         candyShop,
@@ -94,10 +129,11 @@ export async function executeSale(
   );
 
   transaction.add(ix);
+  transaction.add(ix2);
   const txId = await sendAndConfirmTransaction(
     program.provider.connection,
     transaction,
     [walletKeyPair]
   );
-  console.log("sale executed");
+  console.log("buy and sale executed");
 }
