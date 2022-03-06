@@ -20,5 +20,11 @@
   "bugs": {
     "url": "https://github.com/LIQNFT/solana-candy-shop-sdk/issues"
   },
-  "homepage": "https://github.com/LIQNFT/solana-candy-shop-sdk#readme"
+  "homepage": "https://github.com/LIQNFT/solana-candy-shop-sdk#readme",
+  "dependencies": {
+    "solana-candy-shop-schema" : "git+https://github.com/LIQNFT/solana-candy-shop-schema.git"
+  },
+  "devDependencies": {
+    "typescript": "^4.6.2"
+  }
 }
