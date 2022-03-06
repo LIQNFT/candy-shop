@@ -58,7 +58,7 @@ export async function sellNft(
     amount,
     new anchor.BN(0)
   );
-  const [programAsSigner, programAsSignerBump] =
+  const [programAsSigner, programAsSignerBump] = await
     getAuctionHouseProgramAsSigner();
 
   const transaction = new Transaction();
