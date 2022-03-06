@@ -4,6 +4,7 @@
   "description": "Javascript SDK for Solana Candy Shop",
   "main": "index.js",
   "scripts": {
+    "format": "npx prettier . --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,7 +23,11 @@
   },
   "homepage": "https://github.com/LIQNFT/solana-candy-shop-sdk#readme",
   "dependencies": {
-    "solana-candy-shop-schema" : "git+https://github.com/LIQNFT/solana-candy-shop-schema.git"
+    "@metaplex/js": "^4.12.0",
+    "@project-serum/anchor": "^0.22.1",
+    "@solana/spl-token": "^0.2.0",
+    "@solana/web3.js": "^1.36.0",
+    "solana-candy-shop-schema": "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#129e860a6c771e11c6b89b32fcca2546bde8e601"
   },
   "devDependencies": {
     "typescript": "^4.6.2"
