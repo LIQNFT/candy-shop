@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import './index.less';
+
 /**
  * Core Candy Shop module
  */
@@ -16,29 +18,19 @@ export class CandyShop {
   }
 
   // TODO
-  async buy() {
-
-  }
+  async buy() {}
 
   // TODO
-  async sell() {
-
-  }
+  async sell() {}
 
   // TODO
-  async cancel() {
-
-  }
+  async cancel() {}
 
   // TODO
-  async getStats() {
-
-  }
+  async getStats() {}
 
   // TODO
-  async getTransactions() {
-
-  }
+  async getTransactions() {}
 }
 
 /**
@@ -50,7 +42,7 @@ export const Buy = () => {
       <button>Buy</button>
     </div>
   );
-}
+};
 
 /**
  * React component for user to sell an NFT
@@ -61,49 +53,6 @@ export const Sell = () => {
       <button>Sell</button>
     </div>
   );
-}
-
-/**
- * React component that displays a list of orders
- */
-export const OrderList = () => {
-  return (
-    <div style={{ maxWidth: 1600, margin: '0 auto'}}>
-      <div style={{ width: '33%', float: 'left' }}>
-        <div>
-          <img src="https://via.placeholder.com/300" />
-        </div>
-        <div>
-          NFT 1
-        </div>
-        <div>
-          1 SOL
-        </div>
-      </div>
-      <div style={{ width: '33%', float: 'left' }}>
-        <div>
-          <img src="https://via.placeholder.com/300" />
-        </div>
-        <div>
-          NFT 2
-        </div>
-        <div>
-          5 SOL
-        </div>
-      </div>
-      <div style={{ width: '33%', float: 'left' }}>
-        <div>
-          <img src="https://via.placeholder.com/300" />
-        </div>
-        <div>
-          NFT 3
-        </div>
-        <div>
-          10 SOL
-        </div>
-      </div>
-    </div>
-  );
 };
 
 /**
@@ -111,9 +60,12 @@ export const OrderList = () => {
  */
 export const OrderDetail = () => {
   return (
-    <div style={{ maxWidth: 1600, margin: '0 auto'}}>
+    <div style={{ maxWidth: 1600, margin: '0 auto' }}>
       OrderDetail
       <Buy />
     </div>
   );
-}
+};
+
+export { default as OrderList } from './components/OrderList';
+export { default as BuyModal } from './components/BuyModal';
