@@ -33,7 +33,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "candy-shop",
+  "name": "@liqnft/candy-shop",
   "author": "LIQNFT",
   "module": "dist/candy-shop.esm.js",
   "size-limit": [
@@ -47,12 +47,16 @@
     }
   ],
   "devDependencies": {
+    "@rollup/plugin-image": "^2.1.1",
     "@size-limit/preset-small-lib": "^7.0.8",
-    "@types/react": "^17.0.39",
-    "@types/react-dom": "^17.0.13",
+    "@types/react": "^16.9.50",
+    "@types/react-dom": "^16.9.8",
     "husky": "^7.0.4",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "less": "^4.1.2",
+    "postcss": "^8.4.8",
+    "postcss-modules": "^4.3.1",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-svg-import": "^1.6.0",
     "size-limit": "^7.0.8",
     "tsdx": "^0.14.1",
     "tslib": "^2.3.1",
@@ -62,6 +66,12 @@
     "@project-serum/anchor": "^0.22.1",
     "@solana/spl-token": "^0.2.0",
     "@solana/web3.js": "^1.36.0",
-    "solana-candy-shop-schema" : "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#eeee8774f8d4722eea0a0a5f0263d2bfd8e7f143"
+    "antd": "^4.19.1",
+    "api": "^4.2.0",
+    "axios": "^0.26.1",
+    "components": "^0.1.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "solana-candy-shop-schema": "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#eeee8774f8d4722eea0a0a5f0263d2bfd8e7f143"
   }
 }

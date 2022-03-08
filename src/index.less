@@ -1,0 +1,290 @@
+@import 'antd/es/style/themes/default.less';
+@import 'antd/dist/antd.less';
+
+@primary-color: #7522f5;
+@popover-background: #1a2029;
+@primary-color-light: #f4edfe;
+@primary-color-dark: #4c00c0;
+@secondary-color-dark: #e9ae00;
+@lnft-green: #85bb13;
+@lnft-blue: #52acd3;
+@lnft-red: #e75d3e;
+@gray-medium: #757575;
+@gray-medium-alt: #bdbdbd;
+@gray-light: #e5e5e5;
+@gray-lightest: #f7f7f7;
+@layout-body-background: #fff;
+@layout-header-background: #fff;
+@font-size-base: 16px;
+@font-size-sm: 14px;
+
+@mobile: ~'only screen and (max-width: 576px)';
+@widescreen: ~'only screen and (min-width: 1600px)';
+
+.color-purple {
+  color: #7522f5;
+}
+
+.candy-shop-list {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.candy-shop-modal {
+  max-width: 90vw;
+  background: #ffffff;
+  border: 1px solid #000000;
+  box-sizing: border-box;
+  border-radius: 16px;
+  padding: 0;
+
+  .ant-modal-content {
+    border-radius: 16px;
+  }
+
+  .ant-modal-body {
+    padding: 20px;
+    display: flex;
+    border-radius: 16px;
+  }
+}
+
+.candy-container {
+  width: 100%;
+}
+
+.candy-button {
+  background: @primary-color;
+  border-radius: 20px;
+  padding: 6px 16px;
+  color: #ffffff;
+  border: 2px solid transparent;
+  cursor: pointer;
+
+  &:hover {
+    background: #9a4dff;
+  }
+
+  &:disabled {
+    background: #bdbdbd;
+  }
+}
+
+.candy-title {
+  font-weight: bold;
+  font-size: 26px;
+  line-height: 36px;
+  margin-bottom: 42px;
+  text-align: center;
+}
+
+.candy-value {
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.candy-label-input {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.candy-label {
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 20px;
+  color: #757575;
+  margin: 0;
+  margin-bottom: 4px;
+}
+
+.candy-content {
+  font-size: 16px;
+}
+
+.candy-form {
+  .candy-button {
+    width: 100%;
+    margin-top: 40px;
+  }
+
+  .ant-form-item-required {
+    &::before {
+      display: none !important;
+    }
+  }
+
+  .ant-input-affix-wrapper,
+  .ant-picker-range {
+    width: 100%;
+    border: 2px solid #e0e0e0 !important;
+    box-sizing: border-box;
+    border-radius: 4px;
+    padding: 16px;
+    box-shadow: none !important;
+  }
+}
+
+.vault-list-item {
+  border: 2px solid black;
+  border-radius: 16px;
+  height: auto;
+  position: relative;
+  z-index: 3;
+
+  @media @mobile {
+    margin-bottom: 15px;
+  }
+
+  .vault-list-icon {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    top: 16px;
+    right: 16px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .vault-list-info {
+    font-size: 25px;
+    padding-left: 5px;
+    position: absolute;
+  }
+
+  img {
+    border-top-right-radius: 14px;
+    border-top-left-radius: 14px;
+    object-fit: cover;
+  }
+
+  .vault-statistic-title {
+    font-size: 16px;
+    color: @gray-medium;
+    margin-bottom: 4px;
+  }
+
+  .vault-statistic-title-caps {
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: @gray-medium;
+  }
+
+  .vault-list-item-body {
+    position: relative;
+    padding: 15px;
+
+    .vault-video-tag {
+      position: absolute;
+      right: 15px;
+      top: -55px;
+
+      svg {
+        fill: @gray-light;
+        font-size: 40px;
+      }
+    }
+
+    .vault-name {
+      font-size: 20px;
+
+      @media @mobile {
+        font-size: 18px;
+      }
+    }
+
+    .vault-ticker {
+      padding-bottom: 15px;
+    }
+
+    .token-sale-label {
+      color: @gray-medium;
+    }
+
+    .vault-list-item-header {
+      .vault-name {
+        float: left;
+      }
+
+      .mint-price {
+        width: 40%;
+        float: right;
+        text-align: right;
+        padding-top: 6px;
+        white-space: nowrap;
+      }
+
+      .title {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .subtitle {
+        font-size: 15px;
+      }
+
+      &::after {
+        content: '';
+        display: block;
+        clear: both;
+      }
+    }
+  }
+
+  .available-for-sale-block {
+    height: 61px;
+  }
+
+  .vault-list-item-left-right {
+    padding-top: 12px;
+
+    .left {
+      float: left;
+    }
+
+    .right {
+      float: right;
+    }
+
+    &::after {
+      content: '';
+      display: block;
+      clear: both;
+    }
+  }
+
+  .vault-list-item-footer {
+    padding: 15px;
+
+    .left {
+      float: left;
+    }
+
+    .right {
+      float: right;
+    }
+
+    &::after {
+      content: '';
+      display: block;
+      clear: both;
+    }
+
+    .vault-footer-item {
+      padding-bottom: 10px;
+
+      &::after {
+        content: '';
+        display: block;
+        clear: both;
+      }
+    }
+  }
+
+  .ant-card-body {
+    padding: 0px;
+  }
+}
