@@ -7,6 +7,6 @@ export async function fetchTradeById(storeId: string): Promise<any> {
     return data.result;
 
   } catch (error) {
-    throw new Error('Connection Error');
+    throw error;
   }
 }

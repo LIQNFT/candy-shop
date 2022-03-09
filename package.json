@@ -47,6 +47,7 @@
     }
   ],
   "devDependencies": {
+    "@rollup/plugin-image": "^2.1.1",
     "@size-limit/preset-small-lib": "^7.0.8",
     "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.13",
@@ -57,6 +58,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-svg-import": "^1.6.0",
     "size-limit": "^7.0.8",
     "tsdx": "^0.14.1",
     "tslib": "^2.3.1",
@@ -65,10 +67,14 @@
   "dependencies": {
     "@project-serum/anchor": "^0.22.1",
     "@solana/spl-token": "^0.2.0",
+    "@solana/wallet-adapter-ant-design": "^0.7.0",
+    "@solana/wallet-adapter-base": "^0.6.0",
+    "@solana/wallet-adapter-react": "^0.12.5",
+    "@solana/wallet-adapter-wallets": "^0.10.1",
     "@solana/web3.js": "^1.36.0",
     "antd": "^4.19.1",
     "api": "^4.2.0",
     "components": "^0.1.0",
-    "solana-candy-shop-schema": "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#23ef5a81964b52cce1beeb98a97c21ae79bab5b3"
+    "solana-candy-shop-schema": "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#efc151e2bc776c1a17227341d4c4fc2c3b52445a"
   }
 }

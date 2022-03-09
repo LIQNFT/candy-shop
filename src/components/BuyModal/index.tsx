@@ -1,44 +1,55 @@
 import { Modal } from 'antd';
-import React from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import Confirmed from './Confirmed';
 
+import Content from './Content';
+import ProcessingPurchase from './ProcessingPurchase';
 import './style.less';
 
-export interface IBuyModal {
+export interface BuyModal {
   order: any;
   isConnectWallet: boolean;
   onClose: any;
 }
-const BuyModal = ({ onClose, order, isConnectWallet }: IBuyModal) => {
+const BuyModal = ({ onClose, order, isConnectWallet }: BuyModal) => {
+  /** 
+   * Step in here contains
+   * 0: Content
+   * 1: Processing
+   * 2: Confirmed
+   **/ 
+  const [step, setStep] = useState(0);
+
+  // Handle change step
+  const onChangeStep = useCallback((step: number) => {
+    setStep(step);
+  }, []);
+
+  // TEMP
+  // Across when tsdx build with function which declared isn't used
+  useEffect(() => {
+    onChangeStep(0);
+  }, []);
+
+  // Render view component
+  const viewComponent = useMemo(
+    () =>
+      new Map()
+        .set(0, <Content order={order} isConnectWallet={isConnectWallet} />)
+        .set(1, <ProcessingPurchase />)
+        .set(2, <Confirmed order={order}/>),
+    []
+  );
+
   return (
-    <Modal visible onCancel={onClose}>
-      <div className="buy-modal">
-        <div className="buy-modal-thumbnail">
-          <img src={order?.nftImageLink || 'https://via.placeholder.com/300'} />
-        </div>
-        <div className="buy-modal-container">
-          <p>artist_name</p>
-          <div className="buy-modal-title">{order?.ticker}</div>
-          <div className="buy-modal-control">
-            <div>
-              <p>CURRENT PRICE</p>
-              <div className="buy-modal-price">
-                {(+order?.price / 10e9).toFixed(3)} SOL
-              </div>
-            </div>
-            {!isConnectWallet ? (
-              <button>Connect wallet to buy</button>
-            ) : (
-              <button>Buy now</button>
-            )}
-          </div>
-          <div>
-            <p>DESCRIPTION</p>
-            <div className="buy-modal-price">
-              {(+order.price / 10e9).toFixed(3)} SOL
-            </div>
-          </div>
-        </div>
-      </div>
+    <Modal
+      visible
+      onCancel={onClose}
+      className="buy-modal"
+      width={step === 0 ? 1092 : 588}
+      footer={null}
+    >
+      {viewComponent.get(step)}
     </Modal>
   );
 };

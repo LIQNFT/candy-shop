@@ -1,8 +1,10 @@
 .order-list {
-  max-width: 1118px;
+  font-family: 'Work Sans', Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  max-width: 1180px;
   margin: 0 auto;
-  display: flex;
-  flex-wrap: wrap;
 
   .order-item {
     background: #ffffff;
@@ -11,12 +13,10 @@
     border-radius: 16px;
     overflow: hidden;
     padding: 0;
-    max-width: 372px;
-    width: calc(32% - 32px);
-    margin: 0 18px 66px;
+    margin-bottom: 58px;
 
     .ant-card-cover {
-      padding-top: 93.01%;
+      padding-top: 100%;
       position: relative;
 
       .order-thumbnail {
@@ -28,9 +28,8 @@
         overflow: hidden;
 
         img {
-          object-fit: cover;
           width: 100%;
-          height: auto;
+          height: 100%;
         }
       }
     }
@@ -38,7 +37,7 @@
     .ant-card-body {
       display: flex;
       justify-content: space-between;
-      padding: 20px 22px 22px;
+      padding: 22px 22px 30px;
 
       &:before,
       &:after {
@@ -46,26 +45,27 @@
       }
 
       & > div {
+        &:first-of-type {
+          width: 60%;
+        }
+
         &:last-of-type {
           text-align: right;
+          width: 38%;
         }
       }
 
       p {
         margin: 0;
 
-        &:first-of-type {
-          font-weight: 600;
-          font-size: 12px;
-          line-height: 20px;
-          color: #757575;
-          margin-bottom: 4px;
-        }
-
         &:last-of-type {
           color: #000000;
-          font-size: 18px;
+          font-size: 16px;
           line-height: 24px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-weight: bold;
         }
       }
     }

@@ -1,7 +1,7 @@
 /**
  * React component that displays a list of orders
  */
-import { Card } from 'antd';
+import { Card, Col, Row } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { fetchOrderByStoreId } from '../../api/backend/OrderAPI';
 import BuyModal from '../BuyModal';
@@ -24,37 +24,48 @@ const OrderList = () => {
 
   useEffect(() => {
     (async () => {
-      const data = await fetchOrderByStoreId('123');
-
-      setOrderList(data);
+      // Fetch order list
+      fetchOrderByStoreId('BZHgtcQ47QJg7WnAF73sxRtH5vQT2DFUMTowEhqiL4ks')
+        .then((data: any) => {
+          setOrderList(data.result);
+          setOrder(data.result[0]);
+        })
+        .catch(err => {
+          throw err;
+        });
     })();
   }, [fetchOrderByStoreId]);
 
   return (
     <div className="order-list">
-      {orderList.map((item, key) => (
-        <Card
-          className="order-item"
-          onClick={onClick(key)}
-          key={key}
-          cover={
-            <div className="order-thumbnail">
-              <img
-                src={item?.nftImageLink || 'https://via.placeholder.com/300'}
-              />
-            </div>
-          }
-        >
-          <div>
-            <p>ARTIST_NAME</p>
-            <p>{item.ticker}</p>
-          </div>
-          <div>
-            <p>PRICE</p>
-            <p>{(+item.price / 10e9).toFixed(3)} SOL</p>
-          </div>
-        </Card>
-      ))}
+      <Row gutter={50}>
+        {orderList.map((item, key) => (
+          <Col key={key} md={8}>
+            <Card
+              className="order-item"
+              onClick={onClick(key)}
+              cover={
+                <div className="order-thumbnail">
+                  <img
+                    src={
+                      item?.nftImageLink || 'https://via.placeholder.com/300'
+                    }
+                  />
+                </div>
+              }
+            >
+              <div>
+                <p className='label'>ARTIST_NAME</p>
+                <p>{item.name}</p>
+              </div>
+              <div>
+                <p className='label'>PRICE</p>
+                <p>{(+item.price / 10e9).toFixed(3)} SOL</p>
+              </div>
+            </Card>
+          </Col>
+        ))}
+      </Row>
       {order && (
         <BuyModal onClose={onClose} isConnectWallet={false} order={order} />
       )}
