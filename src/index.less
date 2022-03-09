@@ -1,15 +1,6 @@
 @import 'antd/es/style/themes/default.less';
 @import 'antd/dist/antd.less';
 
-.label {
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 20px;
-  color: #757575;
-  margin: 0;
-  font-variant: small-caps;
-}
-
 .color-purple {
   color: #7522f5;
 }
@@ -17,6 +8,24 @@
 img {
   width: 100%;
   height: 100%;
+}
+
+.candy-modal {
+  max-width: 90vw;
+  background: #ffffff;
+  border: 1px solid #000000;
+  box-sizing: border-box;
+  border-radius: 16px;
+  padding: 0;
+
+  .ant-modal-body {
+    padding: 83px 58px 76px;
+    display: flex;
+  }
+}
+
+.candy-container {
+  width: 100%;
 }
 
 .candy-button {
@@ -27,8 +36,73 @@ img {
   cursor: pointer;
 
   &:hover {
-    border-color: #7522f5;
-    background: transparent;
-    color: #7522f5;
+    background: #9a4dff;
+  }
+
+  &:disabled {
+    background: #bdbdbd;
+  }
+}
+
+.candy-title {
+  font-family: 'Gotham', Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 26px;
+  line-height: 36px;
+  margin-bottom: 42px;
+  text-align: center;
+}
+
+.candy-value {
+  font-family: 'Gotham', Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.candy-label-input {
+  font-family: 'Work Sans', Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.candy-label {
+  font-family: 'Work Sans', Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 20px;
+  color: #757575;
+  margin: 0;
+  font-variant: small-caps;
+}
+
+.candy-form {
+  font-family: 'Work Sans', Helvetica, Arial, sans-serif;
+
+  .candy-button {
+    width: 100%;
+    padding: 16px 0;
+    margin-top: 40px;
+  }
+
+  .ant-form-item-label {
+    padding: 0;
+  }
+
+  .ant-form-item-required {
+    &::before {
+      display: none !important;
+    }
+  }
+
+  .ant-input-affix-wrapper,
+  .ant-picker-range {
+    width: 100%;
+    border: 2px solid #e0e0e0 !important;
+    box-sizing: border-box;
+    border-radius: 4px;
+    padding: 16px;
+    box-shadow: none !important;
   }
 }

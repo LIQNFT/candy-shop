@@ -4,20 +4,8 @@
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
-  
-  max-width: 90vw;
-  background: #ffffff;
-  border: 1px solid #000000;
-  box-sizing: border-box;
-  border-radius: 16px;
-  padding: 0;
 
-  .ant-modal-body {
-    padding: 83px 58px 76px;
-    display: flex;
-  }
-
-  .label {
+  .candy-label {
     margin-bottom: 4px;
   }
 
@@ -50,15 +38,10 @@
       margin: 24px 0 32px;
 
       .buy-modal-button {
-        background: #7522f5;
         padding: 19px 43px;
-        border-radius: 32px;
-        font-weight: 500;
-        font-size: 16px;
-        line-height: 24px;
-        color: #ffffff;
-        border: 2px solid transparent;
-        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
     }
 
@@ -72,7 +55,7 @@
       & > div {
         width: max-content;
 
-        .label {
+        .candy-label {
           margin-bottom: 10px;
         }
 
@@ -162,17 +145,13 @@
 
   &-confirmed {
     &-header {
-      font-family: 'Gotham', Helvetica, Arial, sans-serif;
-      font-weight: normal;
-      font-size: 26px;
-      line-height: 36px;
       display: flex;
+      align-items: center;
       justify-content: center;
       margin-bottom: 42px;
 
-      img {
-        width: 40px;
-        height: 40px;
+      div {
+        margin-left: 24px;
       }
     }
 

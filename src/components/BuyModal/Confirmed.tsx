@@ -1,12 +1,14 @@
 import { Col, Row } from 'antd';
 import React from 'react';
+import IconTick from '../../assets/IconTick';
 import { formatDate, formatID } from '../../helps/format';
 
 const Confirmed = ({ order }: { order: any }) => {
   return (
     <div className="buy-modal-confirmed">
-      <div className="buy-modal-confirmed-header">
-        <span>Transaction confirmed</span>
+      <div className="candy-title buy-modal-confirmed-header">
+        <IconTick />
+        <div>Transaction confirmed</div>
       </div>
       <div className="buy-modal-confirmed-container">
         <div className="buy-modal-confirmed-thumbnail">
@@ -27,19 +29,19 @@ const Confirmed = ({ order }: { order: any }) => {
       <hr />
       <Row gutter={[16, 24]}>
         <Col span={12}>
-          <p className="label">FROM</p>
+          <p className="candy-label">FROM</p>
           <div className="color-purple">{formatID(order?.walletAddress)}</div>
         </Col>
         <Col span={12}>
-          <p className="label">TO</p>
+          <p className="candy-label">TO</p>
           <div className="color-purple">0x562F...ebFe</div>
         </Col>
         <Col span={12}>
-          <p className="label">TRANSACTION HASH</p>
+          <p className="candy-label">TRANSACTION HASH</p>
           <div className="color-purple">0x562F...ebFe</div>
         </Col>
         <Col span={12}>
-          <p className="label">TRANSACTION CONFIRMED ON</p>
+          <p className="candy-label">TRANSACTION CONFIRMED ON</p>
           <div>{formatDate(new Date())}</div>
         </Col>
       </Row>

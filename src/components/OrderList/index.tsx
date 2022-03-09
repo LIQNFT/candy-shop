@@ -5,6 +5,7 @@ import { Card, Col, Row } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { fetchOrderByStoreId } from '../../api/backend/OrderAPI';
 import BuyModal from '../BuyModal';
+
 import './style.less';
 
 const OrderList = () => {
@@ -28,7 +29,6 @@ const OrderList = () => {
       fetchOrderByStoreId('BZHgtcQ47QJg7WnAF73sxRtH5vQT2DFUMTowEhqiL4ks')
         .then((data: any) => {
           setOrderList(data.result);
-          setOrder(data.result[0]);
         })
         .catch(err => {
           throw err;
@@ -55,17 +55,18 @@ const OrderList = () => {
               }
             >
               <div>
-                <p className='label'>ARTIST_NAME</p>
+                <p className="candy-label">ARTIST_NAME</p>
                 <p>{item.name}</p>
               </div>
               <div>
-                <p className='label'>PRICE</p>
+                <p className="candy-label">PRICE</p>
                 <p>{(+item.price / 10e9).toFixed(3)} SOL</p>
               </div>
             </Card>
           </Col>
         ))}
       </Row>
+
       {order && (
         <BuyModal onClose={onClose} isConnectWallet={false} order={order} />
       )}
