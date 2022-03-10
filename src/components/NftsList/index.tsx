@@ -1,44 +1,50 @@
 /**
  * React component that displays a list of orders
  */
+import { clusterApiUrl, Connection } from '@solana/web3.js';
 import { Card, Col, Row, Skeleton } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { fetchOrderByStoreId } from '../../api/backend/OrderAPI';
-import BuyModal from '../BuyModal';
 
-import './style.less';
+import '../OrderList/style.less';
+import { singleTokenInfoPromise } from '../../api/fetchMetadata';
+import SellModal from '../SellModal';
 
-const OrderList = () => {
-  const [orderList, setOrderList] = useState<any[]>([]);
-  const [order, setOrder] = useState();
+const NftsList = () => {
+  const [nfts, setNfts] = useState<any[]>([]);
+  const [selection, setSelection] = useState();
   const [loading, setLoading] = useState(false);
 
   const onClick = useCallback(
     (idx: number) => () => {
-      setOrder(orderList[idx]);
+      setSelection(nfts[idx]);
     },
-    [orderList]
+    [nfts]
   );
 
   const onClose = useCallback(() => {
-    setOrder(undefined);
+    setSelection(undefined);
   }, []);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
+      const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+
       // Fetch order list
-      fetchOrderByStoreId('BZHgtcQ47QJg7WnAF73sxRtH5vQT2DFUMTowEhqiL4ks')
+      singleTokenInfoPromise(
+        connection,
+        '5q1yeHbxChPkDNgG893oeNaiST1K6TXTsVCsoSue2eAC'
+      )
         .then((data: any) => {
           setLoading(false);
-          setOrderList(data.result);
+          setNfts([data]);
         })
         .catch(err => {
           setLoading(false);
           throw err;
         });
     })();
-  }, [fetchOrderByStoreId]);
+  }, [singleTokenInfoPromise]);
 
   return (
     <div className="order-list">
@@ -51,7 +57,7 @@ const OrderList = () => {
                   <Skeleton />
                 </Col>
               ))
-          : orderList.map((item, key) => (
+          : nfts.map((item, key) => (
               <Col key={key} md={8}>
                 <Card
                   className="order-item"
@@ -60,8 +66,7 @@ const OrderList = () => {
                     <div className="order-thumbnail">
                       <img
                         src={
-                          item?.nftImageLink ||
-                          'https://via.placeholder.com/300'
+                          item?.nftImage || 'https://via.placeholder.com/300'
                         }
                       />
                     </div>
@@ -69,22 +74,20 @@ const OrderList = () => {
                 >
                   <div>
                     <p className="candy-label">ARTIST_NAME</p>
-                    <p>{item.name}</p>
+                    <p>{item?.metadata.data.name}</p>
                   </div>
                   <div>
                     <p className="candy-label">PRICE</p>
-                    <p>{(+item.price / 10e9).toFixed(3)} SOL</p>
+                    <p>--</p>
                   </div>
                 </Card>
               </Col>
             ))}
       </Row>
 
-      {order && (
-        <BuyModal onClose={onClose} isConnectWallet={false} order={order} />
-      )}
+      {selection && <SellModal onCancel={onClose} nft={selection} />}
     </div>
   );
 };
 
-export default OrderList;
+export default NftsList;

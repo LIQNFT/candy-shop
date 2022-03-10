@@ -7,7 +7,7 @@ import IconTwitter from '../../assets/IconTwitter';
 
 import './style.less';
 
-const SellModal = ({ onCancel }: { onCancel: any }) => {
+const SellModal = ({ onCancel, nft }: { onCancel: any; nft: any }) => {
   /**
    * Step in here contains
    * 0: Content
@@ -45,10 +45,10 @@ const SellModal = ({ onCancel }: { onCancel: any }) => {
           <>
             <div className="candy-title"> Sell</div>
             <div className="sell-modal-content">
-              <img src="https://via.placeholder.com/300" />
+              <img src={nft?.nftImage || 'https://via.placeholder.com/300'} />
               <div>
                 <div>artist_name</div>
-                <div className="candy-value">NFT_name</div>
+                <div className="candy-value">{nft?.metadata.data.name}</div>
               </div>
             </div>
           </>
@@ -60,7 +60,7 @@ const SellModal = ({ onCancel }: { onCancel: any }) => {
               <IconTick />
             </div>
             <div className="sell-modal-content">
-              <img src="https://via.placeholder.com/300" />
+              <img src={nft?.nftImage || 'https://via.placeholder.com/300'} />
               <div className="candy-title">
                 Your item NFT_name is now listed for sale
               </div>
@@ -83,7 +83,7 @@ const SellModal = ({ onCancel }: { onCancel: any }) => {
             layout="vertical"
           >
             <FormItem label="Enter sell price" name="price" required>
-              <Input placeholder="0.0" suffix="SOL" />
+              <Input type="number" placeholder="0.0" suffix="SOL" />
             </FormItem>
             <FormItem label="Duration" name="duration" required>
               <DatePicker.RangePicker />

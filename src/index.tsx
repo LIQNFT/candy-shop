@@ -1,5 +1,5 @@
 import * as React from 'react';
-import SellModal from './components/SellModal';
+import NftsList from './components/NftsList';
 
 import './index.less';
 
@@ -65,12 +65,12 @@ export { default as SellModal } from './components/SellModal';
  * React component for user to sell an NFT
  */
 export const Sell = () => {
-  const [isShow, setIsShow] = React.useState(false);
-
   return (
     <div>
-      {isShow && <SellModal onCancel={() => setIsShow(false)} />}
-      <button onClick={() => setIsShow(true)}>Sell modal</button>
+      NFTs list
+      <NftsList />
+      <hr />
+      <button>Sell modal</button>
     </div>
   );
 };
