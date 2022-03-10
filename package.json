@@ -62,6 +62,6 @@
     "@project-serum/anchor": "^0.22.1",
     "@solana/spl-token": "^0.2.0",
     "@solana/web3.js": "^1.36.0",
-    "solana-candy-shop-schema" : "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#23ef5a81964b52cce1beeb98a97c21ae79bab5b3"
+    "solana-candy-shop-schema" : "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#eeee8774f8d4722eea0a0a5f0263d2bfd8e7f143"
   }
 }
