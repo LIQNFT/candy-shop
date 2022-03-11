@@ -22,7 +22,7 @@ const OrderList = () => {
         })
         .catch(err => {
           setLoading(false);
-          throw err;
+          console.info('fetchOrderByStoreId failed: ', err );
         });
     })();
   }, [fetchOrderByStoreId]);

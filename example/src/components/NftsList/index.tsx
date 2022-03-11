@@ -29,7 +29,7 @@ const NftsList = () => {
         })
         .catch(err => {
           setLoading(false);
-          throw err;
+          console.info('singleTokenInfoPromise failed: ', err );
         });
     })();
   }, [singleTokenInfoPromise]);
