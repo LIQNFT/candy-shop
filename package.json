@@ -47,10 +47,8 @@
     }
   ],
   "devDependencies": {
-    "@project-serum/anchor": "^0.22.1",
     "@rollup/plugin-image": "^2.1.1",
     "@size-limit/preset-small-lib": "^7.0.8",
-    "@solana/spl-token": "^0.2.0",
     "@types/react": "^16.9.50",
     "@types/react-dom": "^16.9.8",
     "husky": "^7.0.4",

@@ -1,29 +1,17 @@
 /**
  * React component that displays a list of orders
  */
+import * as React from 'react';
 import { clusterApiUrl, Connection } from '@solana/web3.js';
-import { Card, Col, Row, Skeleton } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
+import { Col, Row, Skeleton } from 'antd';
+import { useEffect, useState } from 'react';
 
-import '../OrderList/style.less';
 import { singleTokenInfoPromise } from '../../api/fetchMetadata';
-import SellModal from '../SellModal';
+import { NFT } from './../../../../.';
 
 const NftsList = () => {
   const [nfts, setNfts] = useState<any[]>([]);
-  const [selection, setSelection] = useState();
   const [loading, setLoading] = useState(false);
-
-  const onClick = useCallback(
-    (idx: number) => () => {
-      setSelection(nfts[idx]);
-    },
-    [nfts]
-  );
-
-  const onClose = useCallback(() => {
-    setSelection(undefined);
-  }, []);
 
   useEffect(() => {
     (async () => {
@@ -59,33 +47,10 @@ const NftsList = () => {
               ))
           : nfts.map((item, key) => (
               <Col key={key} md={8}>
-                <Card
-                  className="order-item"
-                  onClick={onClick(key)}
-                  cover={
-                    <div className="order-thumbnail">
-                      <img
-                        src={
-                          item?.nftImage || 'https://via.placeholder.com/300'
-                        }
-                      />
-                    </div>
-                  }
-                >
-                  <div>
-                    <p className="candy-label">ARTIST_NAME</p>
-                    <p>{item?.metadata.data.name}</p>
-                  </div>
-                  <div>
-                    <p className="candy-label">PRICE</p>
-                    <p>--</p>
-                  </div>
-                </Card>
+                <NFT nft={item} />
               </Col>
             ))}
       </Row>
-
-      {selection && <SellModal onCancel={onClose} nft={selection} />}
     </div>
   );
 };

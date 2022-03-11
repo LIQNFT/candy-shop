@@ -1,5 +1,4 @@
 import * as React from 'react';
-import NftsList from './components/NftsList';
 
 import './index.less';
 
@@ -57,7 +56,8 @@ export const OrderDetail = () => {
   );
 };
 
-export { default as OrderList } from './components/OrderList';
+export { default as NFT } from './components/Nft';
+export { default as Order } from './components/Order';
 export { default as BuyModal } from './components/BuyModal';
 export { default as SellModal } from './components/SellModal';
 
@@ -67,9 +67,6 @@ export { default as SellModal } from './components/SellModal';
 export const Sell = () => {
   return (
     <div>
-      NFTs list
-      <NftsList />
-      <hr />
       <button>Sell modal</button>
     </div>
   );

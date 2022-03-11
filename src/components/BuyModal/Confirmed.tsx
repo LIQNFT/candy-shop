@@ -14,7 +14,7 @@ const Confirmed = ({ order }: { order: any }) => {
         <div className="buy-modal-confirmed-thumbnail">
           <img src={order?.nftImageLink || 'https://via.placeholder.com/300'} />
         </div>
-        <div>
+        <div className='buy-modal-confirmed-content'>
           <div>
             <p>artist_name</p>
             <div className="buy-modal-price">{order?.name}</div>

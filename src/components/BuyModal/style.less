@@ -38,10 +38,14 @@
       margin: 24px 0 32px;
 
       .buy-modal-button {
-        padding: 19px 43px;
+        padding: 16px 43px;
         display: flex;
         justify-content: center;
         align-items: center;
+
+        svg {
+          margin-right: 10px;
+        }
       }
     }
 
@@ -157,6 +161,7 @@
 
     &-container {
       display: flex;
+      width: 100%;
       align-items: center;
       margin-bottom: 24px;
 
@@ -167,7 +172,14 @@
       & > div {
         display: flex;
         align-items: flex-end;
+        justify-content: space-between;
       }
+    }
+
+    &-content {
+      display: flex;
+      flex: 1;
+      width: 100%;
     }
 
     &-thumbnail {

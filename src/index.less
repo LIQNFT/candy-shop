@@ -106,3 +106,68 @@ img {
     box-shadow: none !important;
   }
 }
+
+.candy-item {
+  background: #ffffff;
+  border: 2px solid #000000;
+  box-sizing: border-box;
+  border-radius: 16px;
+  overflow: hidden;
+  padding: 0;
+  margin-bottom: 58px;
+
+  .ant-card-cover {
+    padding-top: 100%;
+    position: relative;
+
+    .candy-item-thumbnail {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+
+  .ant-card-body {
+    display: flex;
+    justify-content: space-between;
+    padding: 22px 22px 30px;
+
+    &:before,
+    &:after {
+      display: none;
+    }
+
+    & > div {
+      &:first-of-type {
+        width: 60%;
+      }
+
+      &:last-of-type {
+        text-align: right;
+        width: 38%;
+      }
+    }
+
+    p {
+      margin: 0;
+
+      &:last-of-type {
+        color: #000000;
+        font-size: 16px;
+        line-height: 24px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: bold;
+      }
+    }
+  }
+}
