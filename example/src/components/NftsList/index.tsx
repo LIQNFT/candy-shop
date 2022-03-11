@@ -14,24 +14,22 @@ const NftsList = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+    setLoading(true);
+    const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
-      // Fetch order list
-      singleTokenInfoPromise(
-        connection,
-        '5q1yeHbxChPkDNgG893oeNaiST1K6TXTsVCsoSue2eAC'
-      )
-        .then((data: any) => {
-          setLoading(false);
-          setNfts([data]);
-        })
-        .catch(err => {
-          setLoading(false);
-          console.info('singleTokenInfoPromise failed: ', err );
-        });
-    })();
+    // Fetch order list
+    singleTokenInfoPromise(
+      connection,
+      '5q1yeHbxChPkDNgG893oeNaiST1K6TXTsVCsoSue2eAC'
+    )
+      .then((data: any) => {
+        setLoading(false);
+        setNfts([data]);
+      })
+      .catch(err => {
+        setLoading(false);
+        console.info('singleTokenInfoPromise failed: ', err);
+      });
   }, [singleTokenInfoPromise]);
 
   return (

@@ -12,19 +12,17 @@ const OrderList = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      // Fetch order list
-      fetchOrderByStoreId('5wbadqR2UBmV8AUBKxAE64z5ASBorsUofoHQWhJSVYpZ')
-        .then((data: any) => {
-          setLoading(false);
-          setOrderList(data.result);
-        })
-        .catch(err => {
-          setLoading(false);
-          console.info('fetchOrderByStoreId failed: ', err );
-        });
-    })();
+    setLoading(true);
+    // Fetch order list
+    fetchOrderByStoreId('5wbadqR2UBmV8AUBKxAE64z5ASBorsUofoHQWhJSVYpZ')
+      .then((data: any) => {
+        setLoading(false);
+        setOrderList(data.result);
+      })
+      .catch(err => {
+        setLoading(false);
+        console.info('fetchOrderByStoreId failed: ', err);
+      });
   }, [fetchOrderByStoreId]);
 
   return (
