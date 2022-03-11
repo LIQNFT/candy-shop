@@ -1,69 +1,62 @@
-import * as anchor from "@project-serum/anchor";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import * as anchor from '@project-serum/anchor';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 import {
-  Keypair, PublicKey,
+  Keypair,
+  PublicKey,
   sendAndConfirmTransaction,
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
-  Transaction
-} from "@solana/web3.js";
-import { AUCTION_HOUSE_PROGRAM_ID } from "../constants";
-import {
-  getAuctionHouseProgramAsSigner,
-  getAuctionHouseTradeState
-} from "../utils";
+  Transaction,
+} from '@solana/web3.js';
+import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 
-export interface ISellOrder {
-  ahSellerTradeState: PublicKey,
-  ahSellerTradeStateBump: number,
-  ahFreeTradeState: PublicKey,
-  ahFreeTradeStateBump: number,
-  ahProgramAsSigner: PublicKey,
-  ahProgramAsSignerBump: number,
-  txHash: string,
-}
+
+export type SellNftAccounts = {
+  wallet: anchor.Wallet;
+  tokenAccount: PublicKey;
+  metadata: PublicKey;
+  authority: PublicKey;
+  auctionHouse: PublicKey;
+  tradeState: PublicKey;
+  freeTradeState: PublicKey;
+  feeAccount: PublicKey;
+  candyShop: PublicKey;
+  programAsSigner: PublicKey;
+};
+
+export type SellNftData = {
+  price: anchor.BN;
+  amount: anchor.BN;
+  tradeStateBump: number;
+  freeTradeStateBump: number;
+  programAsSignerBump: number;
+  authorityBump: number;
+};
 
 export async function sellNft(
-  walletKeyPair: Keypair,
-  tokenAccount: PublicKey,
-  tokenAccountMint: PublicKey,
-  treasuryMint: PublicKey,
-  metadata: PublicKey,
-  authority: PublicKey,
-  authorityBump: number,
-  auctionHouse: PublicKey,
-  feeAccount: PublicKey,
-  candyShop: PublicKey,
-  price: anchor.BN,
-  amount: anchor.BN,
-  program: anchor.Program
-): Promise<ISellOrder> {
-
-  const [tradeState, tradeStateBump] = await getAuctionHouseTradeState(
+  accounts: SellNftAccounts,
+  data: SellNftData,
+  program: anchor.Program<anchor.Idl>
+) {
+  const {
+    wallet,
     auctionHouse,
-    walletKeyPair.publicKey,
     tokenAccount,
-    treasuryMint,
-    tokenAccountMint,
-    amount,
-    price
-  );
+    metadata,
+    authority,
+    feeAccount,
+    candyShop,
+    tradeState,
+    freeTradeState,
+    programAsSigner
+  } = accounts;
 
-  const [freeTradeState, freeTradeStateBump] = await getAuctionHouseTradeState(
-    auctionHouse,
-    walletKeyPair.publicKey,
-    tokenAccount,
-    treasuryMint,
-    tokenAccountMint,
-    amount,
-    new anchor.BN(0)
-  );
-  const [programAsSigner, programAsSignerBump] = await
-    getAuctionHouseProgramAsSigner();
+  const { amount, price, authorityBump, tradeStateBump, freeTradeStateBump, programAsSignerBump } = data;
 
   const transaction = new Transaction();
 
-  const ix = await program.instruction.sellWithProxy(
+  const ix = (program.instruction.sellWithProxy as (...args: any) => any)(
     price,
     amount,
     tradeStateBump,
@@ -72,7 +65,7 @@ export async function sellNft(
     authorityBump,
     {
       accounts: {
-        wallet: walletKeyPair.publicKey,
+        wallet: wallet.publicKey,
         tokenAccount,
         metadata,
         authority,
@@ -90,21 +83,9 @@ export async function sellNft(
     }
   );
 
-  transaction.add(ix);
-  const txHash = await sendAndConfirmTransaction(
-    program.provider.connection,
-    transaction,
-    [walletKeyPair]
-  );
-  console.log("sell order placed")
+  const signedTxn = await wallet.signTransaction(transaction)
 
-  return {
-    ahSellerTradeState: tradeState,
-    ahSellerTradeStateBump: tradeStateBump,
-    ahFreeTradeState: freeTradeState,
-    ahFreeTradeStateBump: freeTradeStateBump,
-    ahProgramAsSigner: programAsSigner,
-    ahProgramAsSignerBump: programAsSignerBump,
-    txHash
-  }
+  await sendAndConfirmTransaction(program.provider.connection, signedTxn, []);
+
+  console.log('sell order placed');
 }

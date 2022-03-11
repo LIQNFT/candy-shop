@@ -1608,6 +1608,14 @@
   dependencies:
     eventemitter3 "^4.0.7"
 
+"@solana/wallet-adapter-base@^0.9.3":
+  version "0.9.4"
+  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-base/-/wallet-adapter-base-0.9.4.tgz#4a3341d3808f46c290e3fd580ce43f1181a702fc"
+  integrity sha512-f7AZIs0Si9YJ779KJhII+wzNMPDZBzOJI3mP4cB2Vmjnoa3m8OsLjf9i/ZBsDmW6yyJxDhhjOp3xcAuqDxL1Aw==
+  dependencies:
+    "@solana/web3.js" "^1.20.0"
+    eventemitter3 "^4.0.0"
+
 "@solana/wallet-adapter-bitpie@^0.2.1":
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-bitpie/-/wallet-adapter-bitpie-0.2.1.tgz#4784002467c01bdf1d3c4ab4bf4d8f6cf10d8008"
@@ -1652,10 +1660,14 @@
   resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-phantom/-/wallet-adapter-phantom-0.6.1.tgz#1715543998acaefa97dffcfed095ba6995e575a3"
   integrity sha512-BVi/jT4ndwSKBcE70nVSelnm5nfCwQqlD+SXrX7/iLvjpy7ShTtE6ouBadEy1AbGsNBBQZqapq78M8x0YjJi9g==
 
-"@solana/wallet-adapter-react@^0.12.5":
-  version "0.12.6"
-  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-react/-/wallet-adapter-react-0.12.6.tgz#9d8d31d162a1683203b605a2dfe757ead0575959"
-  integrity sha512-aMR/UQLPDZO+3g1zPUZMC5Wrx3emmi+xw09yRNteoGz/4yyYXd3sb0BD6+QbHygVahbM58ejtlExH4Di4M0d0w==
+"@solana/wallet-adapter-react@^0.15.3":
+  version "0.15.3"
+  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-react/-/wallet-adapter-react-0.15.3.tgz#f3122a691427769d37d0c291b7f0b0f712aa805c"
+  integrity sha512-Nfd8R2WQ8kf/I4x5MzmEVth4sd5tM2sroOdvk9YzHhCo2nBg2edbQCE9rMHzMBEH6+egTA7dgQrlf0FTMHPUzw==
+  dependencies:
+    "@solana/wallet-adapter-base" "^0.9.3"
+    "@solana/web3.js" "^1.20.0"
+    react "^17.0.0"
 
 "@solana/wallet-adapter-safepal@^0.2.1":
   version "0.2.1"
@@ -1721,7 +1733,7 @@
     "@solana/wallet-adapter-tokenpocket" "^0.1.0"
     "@solana/wallet-adapter-torus" "^0.7.1"
 
-"@solana/web3.js@^1.17.0", "@solana/web3.js@^1.30.2", "@solana/web3.js@^1.32.0", "@solana/web3.js@^1.36.0":
+"@solana/web3.js@^1.17.0", "@solana/web3.js@^1.20.0", "@solana/web3.js@^1.30.2", "@solana/web3.js@^1.32.0", "@solana/web3.js@^1.36.0":
   version "1.36.0"
   resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.36.0.tgz#79d7d5217b49b80139f4de68953adc5b9a9a264f"
   integrity sha512-RNT1451iRR7TyW7EJKMCrH/0OXawIe4zVm0DWQASwXlR/u1jmW6FrmH0lujIh7cGTlfOVbH+2ZU9AVUPLBFzwA==
@@ -4279,7 +4291,7 @@ event-stream@=3.3.4:
     stream-combiner "~0.0.4"
     through "~2.3.1"
 
-eventemitter3@^4.0.4, eventemitter3@^4.0.7:
+eventemitter3@^4.0.0, eventemitter3@^4.0.4, eventemitter3@^4.0.7:
   version "4.0.7"
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-4.0.7.tgz#2de9b68f6528d5644ef5c59526a1b4a07306169f"
   integrity sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==
@@ -8024,7 +8036,7 @@ react-is@^16.12.0, react-is@^16.13.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-react@^17.0.2:
+react@^17.0.0, react@^17.0.2:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
   integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==

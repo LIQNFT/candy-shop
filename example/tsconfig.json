@@ -13,6 +13,7 @@
     "strictNullChecks": true,
     "preserveConstEnums": true,
     "sourceMap": true,
+    "resolveJsonModule": true,
     "lib": ["es2015", "es2016", "dom"],
     "types": ["node"]
   }

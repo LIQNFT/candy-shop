@@ -1,8 +1,8 @@
-import * as anchor from "@project-serum/anchor";
+import * as anchor from '@project-serum/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
+} from '@solana/spl-token';
 import {
   Keypair,
   PublicKey,
@@ -10,54 +10,80 @@ import {
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
   Transaction,
-} from "@solana/web3.js";
-import { AUCTION_HOUSE_PROGRAM_ID, WRAPPED_SOL_MINT } from "../constants";
+} from '@solana/web3.js';
+import { AUCTION_HOUSE_PROGRAM_ID, WRAPPED_SOL_MINT } from '../constants';
 import {
   getAtaForMint,
-  getAuctionHouseEscrow,
-  getAuctionHouseTradeState,
-} from "../utils";
-import { ISellOrder } from "./sell";
+} from '../utils';
+
+export type BuyAndExecuteSaleAccounts = {
+  walletKeyPair: Keypair;
+  seller: PublicKey;
+  tokenAccount: PublicKey;
+  tokenAccountMint: PublicKey;
+  treasuryMint: PublicKey;
+  auctionHouseTreasury: PublicKey;
+  metadata: PublicKey;
+  authority: PublicKey;
+  auctionHouse: PublicKey;
+  tradeState: PublicKey;
+  buyerEscrow: PublicKey;
+  sellerTradeState: PublicKey;
+  freeTradeState: PublicKey;
+  programAsSigner: PublicKey;
+  feeAccount: PublicKey;
+  candyShop: PublicKey;
+};
+
+export type BuyAndExecuteSaleData = {
+  price: anchor.BN;
+  amount: anchor.BN;
+  tradeStateBump: number;
+  buyerEscrowBump: number;
+  authorityBump: number;
+  freeTradeStateBump: number;
+  programAsSignerBump: number;
+};
 
 export async function buyAndExecuteSale(
-  walletKeyPair: Keypair,
-  counterParty: PublicKey,
-  tokenAccount: PublicKey,
-  tokenAccountMint: PublicKey,
-  treasuryMint: PublicKey,
-  auctionHouseTreasury: PublicKey,
-  metadata: PublicKey,
-  authority: PublicKey,
-  authorityBump: number,
-  auctionHouse: PublicKey,
-  feeAccount: PublicKey,
-  candyShop: PublicKey,
-  price: anchor.BN,
-  amount: anchor.BN,
-  sellerOrder: ISellOrder,
+  accounts: BuyAndExecuteSaleAccounts,
+  args: BuyAndExecuteSaleData,
   program: anchor.Program
 ) {
-  const [buyerEscrow, buyerEscrowBump] = await getAuctionHouseEscrow(
+  const {
     auctionHouse,
-    walletKeyPair.publicKey
-  );
-
-  const [tradeState, tradeStateBump] = await getAuctionHouseTradeState(
-    auctionHouse,
-    walletKeyPair.publicKey,
+    walletKeyPair,
     tokenAccount,
     treasuryMint,
     tokenAccountMint,
+    metadata,
+    authority,
+    feeAccount,
+    candyShop,
+    tradeState,
+    buyerEscrow,
+    seller,
+    auctionHouseTreasury,
+    sellerTradeState,
+    freeTradeState,
+    programAsSigner
+  } = accounts;
+  const {
     amount,
-    price
-  );
+    price,
+    authorityBump,
+    freeTradeStateBump,
+    programAsSignerBump,
+    tradeStateBump,
+    buyerEscrowBump,
+  } = args;
 
   const isNative = treasuryMint.equals(WRAPPED_SOL_MINT);
   const ata = (await getAtaForMint(treasuryMint, walletKeyPair.publicKey))[0];
 
   const transaction = new Transaction();
 
-  const ix = await program.instruction.buyWithProxy(
+  const ix = (program.instruction.buyWithProxy as (...args: any) => any)(
     price,
     amount,
     tradeStateBump,
@@ -85,28 +111,26 @@ export async function buyAndExecuteSale(
     }
   );
 
-  const ix2 = await program.instruction.executeSaleWithProxy(
+  const ix2 = (program.instruction.executeSaleWithProxy as (...args: any) => any)(
     price,
     amount,
     buyerEscrowBump,
-    sellerOrder.ahFreeTradeStateBump,
-    sellerOrder.ahProgramAsSignerBump,
+    freeTradeStateBump,
+    programAsSignerBump,
     authorityBump,
     true,
     {
       accounts: {
         buyer: walletKeyPair.publicKey,
-        seller: counterParty,
+        seller,
         tokenAccount,
         tokenMint: tokenAccountMint,
         metadata,
         treasuryMint,
         escrowPaymentAccount: buyerEscrow,
         sellerPaymentReceiptAccount: isNative
-          ? counterParty
-          : (
-              await getAtaForMint(treasuryMint, counterParty)
-            )[0],
+          ? seller
+          : (await getAtaForMint(treasuryMint, seller))[0],
         buyerReceiptTokenAccount: (
           await getAtaForMint(tokenAccountMint, walletKeyPair.publicKey)
         )[0],
@@ -115,14 +139,14 @@ export async function buyAndExecuteSale(
         auctionHouseFeeAccount: feeAccount,
         auctionHouseTreasury,
         buyerTradeState: tradeState,
-        sellerTradeState: sellerOrder.ahSellerTradeState,
-        freeTradeState: sellerOrder.ahFreeTradeState,
+        sellerTradeState: sellerTradeState,
+        freeTradeState: freeTradeState,
         candyShop,
         ahProgram: AUCTION_HOUSE_PROGRAM_ID,
         tokenProgram: TOKEN_PROGRAM_ID,
         systemProgram: SystemProgram.programId,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-        programAsSigner: sellerOrder.ahProgramAsSigner,
+        programAsSigner: programAsSigner,
         rent: SYSVAR_RENT_PUBKEY,
       },
     }
@@ -130,10 +154,10 @@ export async function buyAndExecuteSale(
 
   transaction.add(ix);
   transaction.add(ix2);
-  const txId = await sendAndConfirmTransaction(
+  await sendAndConfirmTransaction(
     program.provider.connection,
     transaction,
     [walletKeyPair]
   );
-  console.log("buy and sale executed");
+  console.log('buy and sale executed');
 }

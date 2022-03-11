@@ -2,7 +2,7 @@ import { getAccount } from "@solana/spl-token";
 import { Connection, PublicKey } from "@solana/web3.js";
 import axios from "axios";
 import { Metadata, parseEdition, parseMetadata } from "../utils/parseData";
-import { safeAwait } from "../utils/promiseHelper";
+import { safeAwait } from "../utils/PromiseHelper";
 
 const defaultNftImage =
   "https://www.arweave.net/TpkEyWka_H192dTAvCRFgGEdhK9deaxPJ_9FZe7gxj8?ext=jpeg";
