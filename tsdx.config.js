@@ -11,12 +11,13 @@ module.exports = {
           less: true,
           use: [['less', { javascriptEnabled: true }]],
         }),
-        image(),
         svg({
           stringify: false,
         }),
       ]
     );
+
+    config.plugins.unshift(image());
 
     return config;
   },

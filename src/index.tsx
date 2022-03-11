@@ -1,4 +1,5 @@
 import * as React from 'react';
+// import imgJPEG from './website.jpeg';
 
 import './index.less';
 
@@ -50,7 +51,8 @@ export const Buy = () => {
 export const OrderDetail = () => {
   return (
     <div style={{ maxWidth: 1600, margin: '0 auto' }}>
-      OrderDetail
+      OrderDetail 123
+      {/* <img src={imgJPEG} /> */}
       <Buy />
     </div>
   );
