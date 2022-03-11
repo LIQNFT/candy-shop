@@ -73,6 +73,6 @@
     "antd": "^4.19.1",
     "api": "^4.2.0",
     "components": "^0.1.0",
-    "solana-candy-shop-schema": "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#efc151e2bc776c1a17227341d4c4fc2c3b52445a"
+    "solana-candy-shop-schema" : "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#eeee8774f8d4722eea0a0a5f0263d2bfd8e7f143"
   }
 }
