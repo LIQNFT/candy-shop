@@ -4,8 +4,8 @@
 import { Col, Row, Skeleton } from 'antd';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { fetchOrderByStoreId } from '../../api/backend/OrderAPI';
-import { Order } from './../../../../.';
+import { fetchOrderByStoreId } from '../api/backend/OrderAPI';
+import Order from './Order';
 
 const OrderList = () => {
   const [orderList, setOrderList] = useState<any[]>([]);

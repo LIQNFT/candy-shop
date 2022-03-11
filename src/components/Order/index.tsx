@@ -28,11 +28,11 @@ const Order = ({ order }: { order: any }) => {
       >
         <div>
           <p className="candy-label">ARTIST_NAME</p>
-          <p>{order.name}</p>
+          <p>{order?.name}</p>
         </div>
         <div>
           <p className="candy-label">PRICE</p>
-          <p>{(+order.price / 10e9).toFixed(3)} SOL</p>
+          <p>{order?.price ? (order.price / 10e9).toFixed(3) : 0} SOL</p>
         </div>
       </Card>
       {selection && (

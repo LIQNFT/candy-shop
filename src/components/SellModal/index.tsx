@@ -1,4 +1,4 @@
-import { Form, Input, Modal, Row, DatePicker } from 'antd';
+import { Form, Input, Modal, Row } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';
 import React, { useCallback, useMemo, useState } from 'react';
 import IconLink from '../../assets/IconLink';
@@ -18,22 +18,19 @@ const SellModal = ({ onCancel, nft }: { onCancel: any; nft: any }) => {
   const [isSubmit, setIsSubmit] = useState(false);
 
   // Handle change step
-  const onChangeStep = useCallback((step: number) => {
-    setStep(step);
-  }, []);
+  const onChangeStep = useCallback(
+    (step: number) => () => {
+      setStep(step);
+    },
+    []
+  );
 
   // Handle form
   const [form] = Form.useForm();
 
   // Check active button submit
-  const onValuesChange = useCallback((_, value) => {
-    let isCheck = true;
-
-    value.forEach((item: any) => {
-      if (!item.value) isCheck = false;
-    });
-
-    setIsSubmit(isCheck);
+  const onValuesChange = useCallback((_, values) => {
+    setIsSubmit(values.every((item: any) => item.value));
   }, []);
 
   // Render header
@@ -67,7 +64,7 @@ const SellModal = ({ onCancel, nft }: { onCancel: any; nft: any }) => {
             </div>
           </>
         ),
-    []
+    [nft]
   );
 
   // Render view component
@@ -85,16 +82,16 @@ const SellModal = ({ onCancel, nft }: { onCancel: any; nft: any }) => {
             <FormItem label="Enter sell price" name="price" required>
               <Input type="number" placeholder="0.0" suffix="SOL" />
             </FormItem>
-            <FormItem label="Duration" name="duration" required>
+            {/* <FormItem label="Duration" name="duration" required>
               <DatePicker.RangePicker />
-            </FormItem>
+            </FormItem> */}
             <Row justify="space-between">
               <div className="candy-label-input">Service Fees</div>
               <div>1.5%</div>
             </Row>
             <Form.Item>
               <button
-                onClick={() => onChangeStep(1)}
+                onClick={onChangeStep(1)}
                 disabled={!isSubmit}
                 className="candy-button"
               >
@@ -116,7 +113,7 @@ const SellModal = ({ onCancel, nft }: { onCancel: any; nft: any }) => {
             </button>
           </div>
         ),
-    [onValuesChange, isSubmit]
+    [onValuesChange, isSubmit, onCancel]
   );
 
   return (

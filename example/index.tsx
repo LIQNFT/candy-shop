@@ -1,8 +1,7 @@
 import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import OrderList from './src/components/OrderList';
-import NftsList from './src/components/NftsList';
+import { OrderList, NftsList } from '../.';
 
 const App = () => {
   return (

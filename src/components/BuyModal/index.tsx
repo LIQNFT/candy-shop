@@ -40,7 +40,7 @@ const BuyModal = ({ onClose, order, isConnectWallet }: BuyModal) => {
         )
         .set(1, <ProcessingPurchase onChangeStep={onChangeStep} />)
         .set(2, <Confirmed order={order} />),
-    []
+    [order, isConnectWallet, onChangeStep]
   );
 
   return (

@@ -58,6 +58,8 @@ export const OrderDetail = () => {
 
 export { default as NFT } from './components/Nft';
 export { default as Order } from './components/Order';
+export { default as OrderList } from './components/OrderList';
+export { default as NftsList } from './components/NftsList';
 export { default as BuyModal } from './components/BuyModal';
 export { default as SellModal } from './components/SellModal';
 

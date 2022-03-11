@@ -4,8 +4,7 @@ export function formatID(id: string): string {
 
   if (id.length <= 10) return id;
 
-  const len = id.length;
-  return `${id.slice(0, 6)}...${id.slice(len - 5, len - 1)}`
+  return `${id.slice(0, 6)}...${id.slice(-5)}`
 }
 
 // Format date
