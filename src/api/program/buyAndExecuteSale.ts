@@ -1,4 +1,5 @@
 import * as anchor from '@project-serum/anchor';
+import { Program, Idl } from '@project-serum/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
@@ -35,7 +36,7 @@ export async function buyAndExecuteSale(
   candyShop: PublicKey,
   price: anchor.BN,
   amount: anchor.BN,
-  program: anchor.Program
+  program: Program<Idl>
 ) {
   const [buyerEscrow, buyerEscrowBump] = await getAuctionHouseEscrow(
     auctionHouse,
@@ -81,7 +82,7 @@ export async function buyAndExecuteSale(
 
   const transaction = new Transaction();
 
-  const ix = await program.instruction.buyWithProxy(
+  const ix = await (program.instruction.buyWithProxy as (...args: any) => any)(
     price,
     amount,
     buyTradeStateBump,
@@ -130,7 +131,9 @@ export async function buyAndExecuteSale(
     }
   }
 
-  const ix2 = await program.instruction.executeSaleWithProxy(
+  const ix2 = await (program.instruction.executeSaleWithProxy as (
+    ...args: any
+  ) => any)(
     price,
     amount,
     buyerEscrowBump,

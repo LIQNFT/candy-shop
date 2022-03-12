@@ -1,22 +1,24 @@
-import * as anchor from "@project-serum/anchor";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import * as anchor from '@project-serum/anchor';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import {
-  Keypair, PublicKey,
+  Keypair,
+  PublicKey,
   sendAndConfirmTransaction,
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
-  Transaction
-} from "@solana/web3.js";
-import { AUCTION_HOUSE_PROGRAM_ID, WRAPPED_SOL_MINT } from "../constants";
+  Transaction,
+} from '@solana/web3.js';
+import { AUCTION_HOUSE_PROGRAM_ID, WRAPPED_SOL_MINT } from '../constants';
 import {
   getAtaForMint,
-  getAuctionHouseEscrow, getAuctionHouseTradeState
-} from "../utils";
+  getAuctionHouseEscrow,
+  getAuctionHouseTradeState,
+} from '../utils';
 
 export interface IBuyOrder {
-  ahBuyerTradeState: PublicKey,
-  ahBuyerTradeStateBump: number,
-  txHash:string,
+  ahBuyerTradeState: PublicKey;
+  ahBuyerTradeStateBump: number;
+  txHash: string;
 }
 
 export async function buyNft(
@@ -34,7 +36,6 @@ export async function buyNft(
   amount: anchor.BN,
   program: anchor.Program
 ): Promise<IBuyOrder> {
-
   const [buyerEscrow, buyerEscrowBump] = await getAuctionHouseEscrow(
     auctionHouse,
     walletKeyPair.publicKey
@@ -55,7 +56,7 @@ export async function buyNft(
   const isNative = treasuryMint.equals(WRAPPED_SOL_MINT);
   const ata = (await getAtaForMint(treasuryMint, walletKeyPair.publicKey))[0];
 
-  const ix = await program.instruction.buyWithProxy(
+  const ix = await (program.instruction.buyWithProxy as (...args: any) => any)(
     price,
     amount,
     tradeStateBump,
@@ -89,10 +90,10 @@ export async function buyNft(
     transaction,
     [walletKeyPair]
   );
-  console.log("buy order placed")
+  console.log('buy order placed');
   return {
     ahBuyerTradeState: tradeState,
     ahBuyerTradeStateBump: tradeStateBump,
     txHash,
-  }
+  };
 }
