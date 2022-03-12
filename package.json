@@ -47,7 +47,6 @@
     }
   ],
   "devDependencies": {
-    "@rollup/plugin-image": "^2.1.1",
     "@size-limit/preset-small-lib": "^7.0.8",
     "@types/react": "^16.9.50",
     "@types/react-dom": "^16.9.8",
@@ -55,6 +54,7 @@
     "less": "^4.1.2",
     "postcss": "^8.4.8",
     "postcss-modules": "^4.3.1",
+    "@rollup/plugin-image": "^2.1.1",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-svg-import": "^1.6.0",
     "size-limit": "^7.0.8",

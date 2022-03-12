@@ -19,7 +19,10 @@ export const Nft = ({ nft, candyShop }: { nft: SingleTokenInfo, candyShop: Candy
   return (
     <>
       <Card className="vault-list-item" onClick={onClick}>
-        <LiqImage alt={nft!.metadata!.data.name} src={nft?.nftImage} />
+        {/* TODO: If NFT is listed for sale, show this tag
+        <div className="vault-status-tag">Listed for Sale</div>
+        */}
+        <LiqImage alt={nft?.metadata?.data?.name} src={nft?.nftImage} />
         <div className="vault-list-item-body">
           <div className="vault-list-item-header">
             <div

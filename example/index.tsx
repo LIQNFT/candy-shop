@@ -20,7 +20,6 @@ import { CandyShopContent } from './CandyShopContent';
 const App = () => {
   const network = WalletAdapterNetwork.Devnet;
 
-  // You can also provide a custom RPC endpoint.
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
   const wallets = useMemo(
@@ -29,7 +28,6 @@ const App = () => {
       getSolflareWallet(),
       getTorusWallet({
         options: {
-          // TODO: Get your own tor.us wallet client Id
           clientId: 'BOM5Cl7PXgE9Ylq1Z1tqzhpydY0RVr8k90QQ85N7AKI5QGSrr9iDC-3rvmy0K_hF0JfpLMiXoDhta68JwcxS1LQ'
         }
       }),

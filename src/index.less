@@ -21,13 +21,14 @@
 @mobile: ~'only screen and (max-width: 576px)';
 @widescreen: ~'only screen and (min-width: 1600px)';
 
-.color-purple {
-  color: #7522f5;
-}
-
 .candy-shop-list {
   max-width: 1200px;
   margin: 0 auto;
+
+  @media @mobile {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
 }
 
 .candy-shop-modal {
@@ -78,16 +79,12 @@
   text-align: center;
 }
 
-.candy-value {
-  font-weight: bold;
-  font-size: 18px;
-  line-height: 24px;
+.candy-footnote-label {
+  font-size: 14px;
 }
 
-.candy-label-input {
-  font-weight: 500;
+.candy-footnote-value {
   font-size: 14px;
-  line-height: 20px;
 }
 
 .candy-label {
@@ -99,8 +96,8 @@
   margin-bottom: 4px;
 }
 
-.candy-content {
-  font-size: 16px;
+.candy-value {
+  color: black;
 }
 
 .candy-form {
@@ -223,7 +220,7 @@
       }
 
       .subtitle {
-        font-size: 15px;
+        font-size: 14px;
       }
 
       &::after {
@@ -286,5 +283,31 @@
 
   .ant-card-body {
     padding: 0px;
+  }
+}
+
+.vault-status-tag {
+  background-color: @primary-color;
+  position: absolute;
+  left: -12px;
+  top: 22px;
+  padding: 7px 12px;
+  line-height: 18px;
+  text-transform: uppercase;
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 32px;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-top: 10px solid @primary-color-dark;
+    border-left: 10px solid transparent;
   }
 }
