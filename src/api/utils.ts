@@ -1,20 +1,27 @@
-import * as anchor from "@project-serum/anchor";
+import * as anchor from '@project-serum/anchor';
 import {
-    ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID
-} from "@solana/spl-token";
-import { PublicKey } from "@solana/web3.js";
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  TOKEN_PROGRAM_ID
+} from '@solana/spl-token';
+import { PublicKey } from '@solana/web3.js';
 import {
-    AUCTION_HOUSE, AUCTION_HOUSE_PROGRAM_ID, AUTHORITY, CANDY_STORE, FEE_PAYER,
-    TREASURY
-} from "./constants";
+  AUCTION_HOUSE,
+  AUCTION_HOUSE_PROGRAM_ID,
+  AUTHORITY,
+  CANDY_STORE,
+  FEE_PAYER,
+  TREASURY
+} from './constants';
 
+const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
+const metadataProgramId = new PublicKey(METADATA_PROGRAM_ID);
 
 export const getAuctionHouse = async (
-  creator: PublicKey,
+  authority: PublicKey,
   treasuryMint: PublicKey
 ): Promise<[PublicKey, number]> => {
   return PublicKey.findProgramAddress(
-    [Buffer.from(AUCTION_HOUSE), creator.toBuffer(), treasuryMint.toBuffer()],
+    [Buffer.from(AUCTION_HOUSE), authority.toBuffer(), treasuryMint.toBuffer()],
     AUCTION_HOUSE_PROGRAM_ID
   );
 };
@@ -39,11 +46,12 @@ export const getCandyShop = async (
   );
 };
 
-export const getAuctionHouseProgramAsSigner = (): Promise<
-  [PublicKey, number]
-> => {
+export const getAuctionHouseProgramAsSigner = (): Promise<[
+  PublicKey,
+  number
+]> => {
   return PublicKey.findProgramAddress(
-    [Buffer.from(AUCTION_HOUSE), Buffer.from("signer")],
+    [Buffer.from(AUCTION_HOUSE), Buffer.from('signer')],
     AUCTION_HOUSE_PROGRAM_ID
   );
 };
@@ -65,8 +73,8 @@ export const getAuctionHouseTradeState = async (
       tokenAccount.toBuffer(),
       treasuryMint.toBuffer(),
       tokenMint.toBuffer(),
-      buyPrice.toBuffer("le", 8),
-      tokenSize.toBuffer("le", 8),
+      buyPrice.toBuffer('le', 8),
+      tokenSize.toBuffer('le', 8),
     ],
     AUCTION_HOUSE_PROGRAM_ID
   );
@@ -117,3 +125,14 @@ export const getAtaForMint = async (
     ASSOCIATED_TOKEN_PROGRAM_ID
   );
 };
+
+export async function getMetadataAccount(tokenMint: PublicKey) {
+  return PublicKey.findProgramAddress(
+    [
+      Buffer.from('metadata'),
+      metadataProgramId.toBuffer(),
+      tokenMint.toBuffer(),
+    ],
+    metadataProgramId
+  );
+}

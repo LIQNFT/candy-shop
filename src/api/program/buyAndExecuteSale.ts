@@ -1,26 +1,27 @@
-import * as anchor from "@project-serum/anchor";
+import * as anchor from '@project-serum/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
+} from '@solana/spl-token';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 import {
-  Keypair,
   PublicKey,
-  sendAndConfirmTransaction,
+  sendAndConfirmRawTransaction,
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
   Transaction,
-} from "@solana/web3.js";
-import { AUCTION_HOUSE_PROGRAM_ID, WRAPPED_SOL_MINT } from "../constants";
+} from '@solana/web3.js';
+import { Metadata, parseMetadata } from '../../utils/parseData';
+import { AUCTION_HOUSE_PROGRAM_ID, WRAPPED_SOL_MINT } from '../constants';
 import {
   getAtaForMint,
   getAuctionHouseEscrow,
+  getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
-} from "../utils";
-import { ISellOrder } from "./sell";
+} from '../utils';
 
 export async function buyAndExecuteSale(
-  walletKeyPair: Keypair,
+  wallet: AnchorWallet,
   counterParty: PublicKey,
   tokenAccount: PublicKey,
   tokenAccountMint: PublicKey,
@@ -34,17 +35,16 @@ export async function buyAndExecuteSale(
   candyShop: PublicKey,
   price: anchor.BN,
   amount: anchor.BN,
-  sellerOrder: ISellOrder,
   program: anchor.Program
 ) {
   const [buyerEscrow, buyerEscrowBump] = await getAuctionHouseEscrow(
     auctionHouse,
-    walletKeyPair.publicKey
+    wallet.publicKey
   );
 
-  const [tradeState, tradeStateBump] = await getAuctionHouseTradeState(
+  const [buyTradeState, buyTradeStateBump] = await getAuctionHouseTradeState(
     auctionHouse,
-    walletKeyPair.publicKey,
+    wallet.publicKey,
     tokenAccount,
     treasuryMint,
     tokenAccountMint,
@@ -53,21 +53,45 @@ export async function buyAndExecuteSale(
   );
 
   const isNative = treasuryMint.equals(WRAPPED_SOL_MINT);
-  const ata = (await getAtaForMint(treasuryMint, walletKeyPair.publicKey))[0];
+  const ata = (await getAtaForMint(treasuryMint, wallet.publicKey))[0];
+
+  const [sellTradeState, sellTradeStateBump] = await getAuctionHouseTradeState(
+    auctionHouse,
+    counterParty,
+    tokenAccount,
+    treasuryMint,
+    tokenAccountMint,
+    amount,
+    price
+  );
+
+  const [freeTradeState, freeTradeStateBump] = await getAuctionHouseTradeState(
+    auctionHouse,
+    counterParty,
+    tokenAccount,
+    treasuryMint,
+    tokenAccountMint,
+    amount,
+    new anchor.BN(0)
+  );
+  const [
+    programAsSigner,
+    programAsSignerBump,
+  ] = await getAuctionHouseProgramAsSigner();
 
   const transaction = new Transaction();
 
   const ix = await program.instruction.buyWithProxy(
     price,
     amount,
-    tradeStateBump,
+    buyTradeStateBump,
     buyerEscrowBump,
     authorityBump,
     {
       accounts: {
-        wallet: walletKeyPair.publicKey,
-        paymentAccount: isNative ? walletKeyPair.publicKey : ata,
-        transferAuthority: walletKeyPair.publicKey,
+        wallet: wallet.publicKey,
+        paymentAccount: isNative ? wallet.publicKey : ata,
+        transferAuthority: wallet.publicKey,
         treasuryMint,
         tokenAccount,
         metadata,
@@ -75,7 +99,7 @@ export async function buyAndExecuteSale(
         authority,
         auctionHouse,
         auctionHouseFeeAccount: feeAccount,
-        buyerTradeState: tradeState,
+        buyerTradeState: buyTradeState,
         candyShop,
         ahProgram: AUCTION_HOUSE_PROGRAM_ID,
         tokenProgram: TOKEN_PROGRAM_ID,
@@ -85,17 +109,38 @@ export async function buyAndExecuteSale(
     }
   );
 
+  const metadataObj = await program.provider.connection.getAccountInfo(
+    metadata
+  );
+  const metadataDecoded: Metadata = parseMetadata(
+    Buffer.from(metadataObj!.data)
+  );
+
+  const remainingAccounts = [] as any;
+
+  if (metadataDecoded != null) {
+    for (let i = 0; i < metadataDecoded!.data!.creators!.length; i++) {
+      remainingAccounts.push({
+        pubkey: new anchor.web3.PublicKey(
+          metadataDecoded!.data!.creators![i].address
+        ),
+        isWritable: true,
+        isSigner: false,
+      });
+    }
+  }
+
   const ix2 = await program.instruction.executeSaleWithProxy(
     price,
     amount,
     buyerEscrowBump,
-    sellerOrder.ahFreeTradeStateBump,
-    sellerOrder.ahProgramAsSignerBump,
+    freeTradeStateBump,
+    programAsSignerBump,
     authorityBump,
     true,
     {
       accounts: {
-        buyer: walletKeyPair.publicKey,
+        buyer: wallet.publicKey,
         seller: counterParty,
         tokenAccount,
         tokenMint: tokenAccountMint,
@@ -104,36 +149,39 @@ export async function buyAndExecuteSale(
         escrowPaymentAccount: buyerEscrow,
         sellerPaymentReceiptAccount: isNative
           ? counterParty
-          : (
-              await getAtaForMint(treasuryMint, counterParty)
-            )[0],
+          : (await getAtaForMint(treasuryMint, counterParty))[0],
         buyerReceiptTokenAccount: (
-          await getAtaForMint(tokenAccountMint, walletKeyPair.publicKey)
+          await getAtaForMint(tokenAccountMint, wallet.publicKey)
         )[0],
         authority,
         auctionHouse,
         auctionHouseFeeAccount: feeAccount,
         auctionHouseTreasury,
-        buyerTradeState: tradeState,
-        sellerTradeState: sellerOrder.ahSellerTradeState,
-        freeTradeState: sellerOrder.ahFreeTradeState,
+        buyerTradeState: buyTradeState,
+        sellerTradeState: sellTradeState,
+        freeTradeState: freeTradeState,
         candyShop,
         ahProgram: AUCTION_HOUSE_PROGRAM_ID,
         tokenProgram: TOKEN_PROGRAM_ID,
         systemProgram: SystemProgram.programId,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-        programAsSigner: sellerOrder.ahProgramAsSigner,
+        programAsSigner: programAsSigner,
         rent: SYSVAR_RENT_PUBKEY,
       },
+      remainingAccounts,
     }
   );
 
   transaction.add(ix);
   transaction.add(ix2);
-  const txId = await sendAndConfirmTransaction(
+  const signedTx = await wallet.signTransaction(transaction);
+
+  const txHash = await sendAndConfirmRawTransaction(
     program.provider.connection,
-    transaction,
-    [walletKeyPair]
+    signedTx.serialize()
   );
-  console.log("buy and sale executed");
+
+  console.log('sale executed');
+
+  return txHash;
 }

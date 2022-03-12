@@ -1,14 +1,15 @@
-import * as anchor from "@project-serum/anchor";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import * as anchor from '@project-serum/anchor';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 import {
-  Keypair, PublicKey,
-  sendAndConfirmTransaction, Transaction
-} from "@solana/web3.js";
-import { AUCTION_HOUSE_PROGRAM_ID } from "../constants";
-
+  PublicKey,
+  sendAndConfirmRawTransaction,
+  Transaction
+} from '@solana/web3.js';
+import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 
 export async function cancelOrder(
-  walletKeyPair: Keypair,
+  wallet: AnchorWallet,
   tokenAccount: PublicKey,
   tokenAccountMint: PublicKey,
   authority: PublicKey,
@@ -21,9 +22,7 @@ export async function cancelOrder(
   amount: anchor.BN,
   program: anchor.Program
 ) {
-
   const transaction = new Transaction();
-
 
   const ix = await program.instruction.cancelWithProxy(
     price,
@@ -31,7 +30,7 @@ export async function cancelOrder(
     authorityBump,
     {
       accounts: {
-        wallet: walletKeyPair.publicKey,
+        wallet: wallet.publicKey,
         tokenAccount,
         tokenMint: tokenAccountMint,
         authority,
@@ -46,10 +45,14 @@ export async function cancelOrder(
   );
 
   transaction.add(ix);
-  const txId = await sendAndConfirmTransaction(
+  const signedTx = await wallet.signTransaction(transaction);
+
+  const txHash = await sendAndConfirmRawTransaction(
     program.provider.connection,
-    transaction,
-    [walletKeyPair]
+    signedTx.serialize()
   );
-  console.log("order cancelled")
+
+  console.log('sell order cancelled');
+
+  return txHash;
 }
