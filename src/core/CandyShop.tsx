@@ -4,6 +4,7 @@ import { Cluster, clusterApiUrl, Connection, PublicKey } from '@solana/web3.js';
 import { fetchOrdersByStoreId } from '../api/backend/OrderAPI';
 import { fetchStatsById } from '../api/backend/StatsAPI';
 import { fetchTradeById } from '../api/backend/TradeAPI';
+import { WRAPPED_SOL_MINT } from '../api/constants';
 import { buyAndExecuteSale } from '../api/program/buyAndExecuteSale';
 import { cancelOrder } from '../api/program/cancel';
 import { sellNft } from '../api/program/sell';
@@ -13,8 +14,9 @@ import {
   getAuctionHouseFeeAcct,
   getAuctionHouseTradeState,
   getAuctionHouseTreasuryAcct,
-  getMetadataAccount,
+  getMetadataAccount
 } from '../api/utils';
+
 
 /**
  * Core Candy Shop module
@@ -26,7 +28,6 @@ export class CandyShop {
   private _env: Cluster;
   private _wallet: AnchorWallet;
   private _program: Program | undefined;
-  private inited = false;
 
   constructor(
     candyShopAddress: PublicKey,
@@ -41,20 +42,31 @@ export class CandyShop {
     this._env = env;
     this._wallet = wallet;
   }
-
   /**
    * Initiate the CandyShop object
    */
-  async init() {
-    const options = Provider.defaultOptions();
-    const connection = new Connection(
-      clusterApiUrl(this._env),
-      options.commitment
-    );
-    const provider = new Provider(connection, this._wallet, options);
-    const idl = await Program.fetchIdl(this._programId, provider);
-    this._program = new Program(idl!, this._programId, provider);
-    this.inited = true
+  async initIfNotReady() {
+    if (typeof this._program === 'undefined') {
+      const options = Provider.defaultOptions();
+      const connection = new Connection(
+        clusterApiUrl(this._env),
+        options.commitment
+      );
+      const provider = new Provider(connection, this._wallet, options);
+      console.log("fetching idl for programId", this._programId.toString())
+
+      const idl = await Program.fetchIdl(this._programId, provider);
+      this._program = new Program(idl!, this._programId, provider);
+    }
+  }
+
+  // hardcode to wrappedSol in POC
+  treasuryMint(): PublicKey {
+    return WRAPPED_SOL_MINT;
+  }
+
+  connectedPublicKey(): PublicKey | undefined {
+    return this._program?.provider.wallet.publicKey
   }
 
   candyShopAddress() {
@@ -73,17 +85,15 @@ export class CandyShop {
     return fetchOrdersByStoreId(this._candyShopAddress.toString());
   }
 
-  async buy(
+  public async buy(
     seller: PublicKey,
     tokenAccount: PublicKey,
     tokenMint: PublicKey,
     treasuryMint: PublicKey,
     price: BN
-  ) {
-    const [
-      auctionHouseAuthority,
-      authorityBump,
-    ] = await getAuctionHouseAuthority(
+  ): Promise<string> {
+    await this.initIfNotReady();
+    const [auctionHouseAuthority] = await getAuctionHouseAuthority(
       this._candyShopCreatorAddress,
       this._programId
     );
@@ -115,15 +125,16 @@ export class CandyShop {
       this._program!
     );
 
-    console.log(txHash);
+    return txHash;
   }
 
-  async sell(
+  public async sell(
     tokenAccount: PublicKey,
     tokenMint: PublicKey,
     treasuryMint: PublicKey,
     price: BN
-  ) {
+  ): Promise<string> {
+    await this.initIfNotReady();
     const [auctionHouseAuthority] = await getAuctionHouseAuthority(
       this._candyShopCreatorAddress,
       this._programId
@@ -153,8 +164,7 @@ export class CandyShop {
       new BN(1),
       this._program!
     );
-
-    console.log(txHash);
+    return txHash
   }
 
   async cancel(
@@ -162,7 +172,8 @@ export class CandyShop {
     tokenMint: PublicKey,
     treasuryMint: PublicKey,
     price: BN
-  ) {
+  ): Promise<string> {
+    await this.initIfNotReady();
     const [auctionHouseAuthority] = await getAuctionHouseAuthority(
       this._candyShopCreatorAddress,
       this._programId
@@ -200,7 +211,7 @@ export class CandyShop {
       this._program!
     );
 
-    console.log(txHash);
+    return txHash;
   }
 
   async stats() {

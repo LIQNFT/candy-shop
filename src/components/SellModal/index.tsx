@@ -1,14 +1,22 @@
+import { BN } from '@project-serum/anchor';
+import { PublicKey } from '@solana/web3.js';
 import { Form, Input, Modal, Row } from 'antd';
 import React, { useCallback, useMemo, useState } from 'react';
 import { SingleTokenInfo } from '../../api/fetchMetadata';
-import IconLink from '../../assets/IconLink';
 import IconTick from '../../assets/IconTick';
-import IconTwitter from '../../assets/IconTwitter';
 import { CandyShop } from '../../core/CandyShop';
-
 import './style.less';
 
-export const SellModal = ({ onCancel, nft }: { onCancel: any; nft: SingleTokenInfo, candyShop: CandyShop }) => {
+
+export const SellModal = ({
+  onCancel,
+  nft,
+  candyShop,
+}: {
+  onCancel: any;
+  nft: SingleTokenInfo;
+  candyShop: CandyShop;
+}) => {
   /**
    * Step in here contains
    * 0: Content
@@ -20,7 +28,15 @@ export const SellModal = ({ onCancel, nft }: { onCancel: any; nft: SingleTokenIn
 
   // Handle change step
   const onChangeStep = useCallback(
-    (step: number) => () => {
+    (step: number, price: number) => async () => {
+      const txHash = await candyShop.sell(
+        new PublicKey(nft.tokenAccountAddress),
+        new PublicKey(nft.tokenMintAddress),
+        candyShop.treasuryMint(),
+        new BN(price)
+      );
+      console.log('successfully placed sell order');
+      console.log('txHash', txHash);
       setStep(step);
     },
     []
@@ -45,8 +61,12 @@ export const SellModal = ({ onCancel, nft }: { onCancel: any; nft: SingleTokenIn
             <div className="sell-modal-content">
               <img src={nft?.nftImage || 'https://via.placeholder.com/300'} />
               <div>
-                <div className="sell-modal-collection-name">{nft?.metadata?.data?.symbol}</div>
-                <div className="sell-modal-nft-name">{nft?.metadata?.data?.name}</div>
+                <div className="sell-modal-collection-name">
+                  {nft?.metadata?.data?.symbol}
+                </div>
+                <div className="sell-modal-nft-name">
+                  {nft?.metadata?.data?.name}
+                </div>
               </div>
             </div>
             <Form
@@ -64,7 +84,7 @@ export const SellModal = ({ onCancel, nft }: { onCancel: any; nft: SingleTokenIn
               </Row>
               <Form.Item>
                 <button
-                  onClick={onChangeStep(1)}
+                  onClick={onChangeStep(1, 100000000)}
                   disabled={!isSubmit}
                   className="candy-button"
                 >
@@ -108,10 +128,7 @@ export const SellModal = ({ onCancel, nft }: { onCancel: any; nft: SingleTokenIn
       className="candy-shop-modal sell-modal"
       footer={null}
     >
-      <div className="candy-container">
-        {viewComponent.get(step)}
-      </div>
+      <div className="candy-container">{viewComponent.get(step)}</div>
     </Modal>
   );
 };
-
