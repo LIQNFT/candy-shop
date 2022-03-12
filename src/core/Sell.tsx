@@ -4,11 +4,13 @@ import { Col, Empty, Row, Skeleton } from 'antd';
 import { useEffect, useState } from 'react';
 import { fetchNftsFromWallet } from '../api/fetchNftsFromWallet';
 import { Nft } from '../components/Nft';
+import { CandyShop } from './CandyShop';
+import { SingleTokenInfo } from '../api/fetchMetadata';
 
 interface SellProps {
-  storeId: string,
   connection: Connection;
   walletPublicKey: PublicKey;
+  candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
 }
 
@@ -16,14 +18,14 @@ interface SellProps {
  * React component that allows user to put an NFT for sale
  */
 export const Sell: React.FC<SellProps> = ({
-  storeId,
   walletPublicKey,
   connection,
-  walletConnectComponent
+  candyShop,
+  walletConnectComponent,
 }) => {
-  console.log('Sell initialized for store id', storeId);
+  console.log('Sell initialized for store id', candyShop.candyShopAddress);
 
-  const [nfts, setNfts] = useState<any[]>([]);
+  const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -68,7 +70,7 @@ export const Sell: React.FC<SellProps> = ({
         ) : (
           nfts?.map((item, key) => (
             <Col key={key} md={8} xs={24}>
-              <Nft nft={item} />
+              <Nft nft={item} candyShop={candyShop} />
             </Col>
           ))
         )}

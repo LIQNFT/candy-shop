@@ -1,12 +1,14 @@
 import { Form, Input, Modal, Row } from 'antd';
 import React, { useCallback, useMemo, useState } from 'react';
+import { SingleTokenInfo } from '../../api/fetchMetadata';
 import IconLink from '../../assets/IconLink';
 import IconTick from '../../assets/IconTick';
 import IconTwitter from '../../assets/IconTwitter';
+import { CandyShop } from '../../core/CandyShop';
 
 import './style.less';
 
-export const SellModal = ({ onCancel, nft }: { onCancel: any; nft: any }) => {
+export const SellModal = ({ onCancel, nft }: { onCancel: any; nft: SingleTokenInfo, candyShop: CandyShop }) => {
   /**
    * Step in here contains
    * 0: Content
@@ -112,3 +114,4 @@ export const SellModal = ({ onCancel, nft }: { onCancel: any; nft: any }) => {
     </Modal>
   );
 };
+

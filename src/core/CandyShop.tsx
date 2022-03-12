@@ -26,6 +26,7 @@ export class CandyShop {
   private _env: Cluster;
   private _wallet: AnchorWallet;
   private _program: Program | undefined;
+  private inited = false;
 
   constructor(
     candyShopAddress: PublicKey,
@@ -53,6 +54,7 @@ export class CandyShop {
     const provider = new Provider(connection, this._wallet, options);
     const idl = await Program.fetchIdl(this._programId, provider);
     this._program = new Program(idl!, this._programId, provider);
+    this.inited = true
   }
 
   candyShopAddress() {

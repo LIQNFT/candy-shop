@@ -2,9 +2,11 @@ import React, { useCallback, useState } from 'react';
 import { Card } from 'antd';
 import { SellModal } from '../SellModal';
 import { LiqImage } from '../LiqImage';
+import { SingleTokenInfo } from '../../api/fetchMetadata';
+import { CandyShop } from '../../core/CandyShop';
 
-export const Nft = ({ nft }: { nft: any }) => {
-  const [selection, setSelection] = useState();
+export const Nft = ({ nft, candyShop }: { nft: SingleTokenInfo, candyShop: CandyShop }) => {
+  const [selection, setSelection] = useState<SingleTokenInfo | undefined>();
 
   const onClose = useCallback(() => {
     setSelection(undefined);
@@ -17,7 +19,7 @@ export const Nft = ({ nft }: { nft: any }) => {
   return (
     <>
       <Card className="vault-list-item" onClick={onClick}>
-        <LiqImage alt={nft?.metadata.data.name} src={nft?.nftImage} />
+        <LiqImage alt={nft!.metadata!.data.name} src={nft?.nftImage} />
         <div className="vault-list-item-body">
           <div className="vault-list-item-header">
             <div
@@ -30,7 +32,7 @@ export const Nft = ({ nft }: { nft: any }) => {
           </div>
         </div>
       </Card>
-      {selection && <SellModal onCancel={onClose} nft={selection} />}
+      {selection && <SellModal onCancel={onClose} nft={selection} candyShop={candyShop} />}
     </>
   );
 };
