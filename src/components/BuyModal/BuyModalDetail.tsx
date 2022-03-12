@@ -1,8 +1,8 @@
 import React from 'react';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { Statistic } from 'antd';
-import { formatID } from '../../utils/format';
-import {Order as OrderSchema} from "solana-candy-shop-schema/dist";
+import { ExplorerLink } from '../ExplorerLink';
+import { Order as OrderSchema } from "solana-candy-shop-schema/dist";
 import { CandyShop } from '../../core/CandyShop';
 
 export interface BuyModalDetailProps {
@@ -41,23 +41,23 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
         </div>
         <div className="buy-modal-description">
           <div className="candy-label">DESCRIPTION</div>
-          <div className="candy-content">{order?.nftDescription}</div>
+          <div className="candy-value">{order?.nftDescription}</div>
         </div>
         <div className="buy-modal-info">
           <div>
             <div className="candy-label">MINT ADDRESS</div>
-            <div className="buy-modal-info-value color-purple">
-              {formatID(order?.tokenMint)}
+            <div className="candy-value">
+              <ExplorerLink type="address" address={order?.tokenMint} />
             </div>
           </div>
           <div>
-            <div className="candy-label">TOKEN ID</div>
-            <div className="buy-modal-info-value">{order?.edition}</div>
+            <div className="candy-label">EDITION</div>
+            <div className="candy-value">{order?.edition}</div>
           </div>
           <div>
             <div className="candy-label">OWNER</div>
-            <div className="buy-modal-info-value color-purple">
-              {formatID(order?.walletAddress)}
+            <div className="candy-value">
+              <ExplorerLink type="address" address={order?.walletAddress} />
             </div>
           </div>
         </div>

@@ -76,11 +76,12 @@ export const SellModal = ({
               layout="vertical"
             >
               <Form.Item label="Sell price" name="price" required>
+                {/* TODO: Possible to change this to antd InputNumber, set minimum value as 0 and remove the up/down arrow buttons on the right */}
                 <Input type="number" placeholder="0.0" suffix="SOL" />
               </Form.Item>
               <Row justify="space-between">
-                <div className="candy-label-input">Service Fees</div>
-                <div>1.0%</div>
+                <div className="candy-footnote-label">Service Fees</div>
+                <div className="candy-footnote-value">1.0%</div>
               </Row>
               <Form.Item>
                 <button
@@ -101,9 +102,10 @@ export const SellModal = ({
               <IconTick />
             </div>
             <div className="sell-modal-content">
+              {/* TODO: See if can global switch https://via.placeholder.com/300 to ../../assets/img-placeholder.jpg */}
               <img src={nft?.nftImage || 'https://via.placeholder.com/300'} />
               <div className="candy-title">
-                Your item NFT_name is now listed for sale
+                { nft?.metadata?.data?.name } is now listed for sale
               </div>
             </div>
             <div className="sell-modal-success">

@@ -1,7 +1,8 @@
-import { Col, Row } from 'antd';
+import { Space, Col, Row } from 'antd';
 import React from 'react';
 import IconTick from '../../assets/IconTick';
-import { formatDate, formatID } from '../../utils/format';
+import { formatDate } from '../../utils/format';
+import { ExplorerLink } from '../ExplorerLink';
 
 const BuyModalConfirmed = ({
   order,
@@ -13,8 +14,10 @@ const BuyModalConfirmed = ({
   return (
     <div className="buy-modal-confirmed">
       <div className="candy-title buy-modal-confirmed-header">
-        <IconTick />
-        <div>Transaction confirmed</div>
+        <Space direction="horizontal">
+          <IconTick />
+          Transaction confirmed
+        </Space>
       </div>
       <div className="buy-modal-confirmed-container">
         <div className="buy-modal-confirmed-thumbnail">
@@ -22,7 +25,7 @@ const BuyModalConfirmed = ({
         </div>
         <div className='buy-modal-confirmed-content'>
           <div>
-            <p>artist_name</p>
+            <div>{order?.ticker}</div>
             <div className="buy-modal-price">{order?.name}</div>
           </div>
           <div>
@@ -35,20 +38,38 @@ const BuyModalConfirmed = ({
       <hr />
       <Row gutter={[16, 24]}>
         <Col span={12}>
-          <p className="candy-label">FROM</p>
-          <div className="color-purple">{formatID(order?.walletAddress)}</div>
+          <div className="candy-label">FROM</div>
+          <div className="candy-value">
+            {/* TODO: Hookup to seller address */}
+            <ExplorerLink
+              type="address"
+              address="mDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"
+            />
+          </div>
         </Col>
         <Col span={12}>
-          <p className="candy-label">TO</p>
-          <div className="color-purple">0x562F...ebFe</div>
+          <div className="candy-label">TO</div>
+          <div className="candy-value">
+            {/* TODO: Hookup to buyer address */}
+            <ExplorerLink
+              type="address"
+              address="mDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"
+            />
+          </div>
         </Col>
         <Col span={12}>
-          <p className="candy-label">TRANSACTION HASH</p>
-          <div className="color-purple">0x562F...ebFe</div>
+          <div className="candy-label">TRANSACTION HASH</div>
+          <div className="candy-value">
+            {/* TODO: Hookup to transaction hash */}
+            <ExplorerLink
+              type="address"
+              address="mDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"
+            />
+          </div>
         </Col>
         <Col span={12}>
-          <p className="candy-label">TRANSACTION CONFIRMED ON</p>
-          <div>{formatDate(new Date())}</div>
+          <div className="candy-label">TRANSACTION CONFIRMED ON</div>
+          <div className="candy-value">{formatDate(new Date())}</div>
         </Col>
       </Row>
       <button className="candy-button" onClick={onOk}>Continue Browsing</button>

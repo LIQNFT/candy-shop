@@ -44,7 +44,7 @@ export const Order: React.FC<OrderProps> = ({
             </div>
             <div className="mint-price">
               <span className="vault-statistic-title-caps">Price</span>
-              <Statistic suffix="SOL" value={order?.price} precision={2} valueStyle={{ fontSize: 16, fontWeight: 'bold' }} />
+              <Statistic suffix="SOL" value={order?.price} precision={2} valueStyle={{ fontSize: 14, fontWeight: 'bold' }} />
             </div>
           </div>
         </div>
