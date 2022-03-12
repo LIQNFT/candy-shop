@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@solana/buffer-layout": "^4.0.0",
+    "@solana/web3.js": "^1.36.0",
     "axios": "^0.26.0",
     "react-app-polyfill": "^1.0.0"
   },

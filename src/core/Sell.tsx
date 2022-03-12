@@ -23,7 +23,6 @@ export const Sell: React.FC<SellProps> = ({
   candyShop,
   walletConnectComponent,
 }) => {
-  console.log('Sell initialized for store id', candyShop.candyShopAddress);
 
   const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,8 +37,6 @@ export const Sell: React.FC<SellProps> = ({
       })();
     }
   }, [connection, walletPublicKey]);
-
-  console.log('SELL TEST', walletConnectComponent);
 
   if (!walletPublicKey) {
     return (

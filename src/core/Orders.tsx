@@ -21,7 +21,6 @@ export const Orders: React.FC<OrdersProps> = ({
   walletPublicKey,
   walletConnectComponent,
 }) => {
-  console.log('Orders initialized for store id', storeId, walletConnectComponent);
 
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
