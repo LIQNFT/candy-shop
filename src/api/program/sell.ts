@@ -6,12 +6,12 @@ import {
   sendAndConfirmRawTransaction,
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
-  Transaction
+  Transaction,
 } from '@solana/web3.js';
 import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 import {
   getAuctionHouseProgramAsSigner,
-  getAuctionHouseTradeState
+  getAuctionHouseTradeState,
 } from '../utils';
 
 export async function sellNft(
@@ -55,7 +55,7 @@ export async function sellNft(
 
   const transaction = new Transaction();
 
-  const ix = await program.instruction.sellWithProxy(
+  const ix = await (program.instruction.sellWithProxy as (...args: any) => any)(
     price,
     amount,
     tradeStateBump,
