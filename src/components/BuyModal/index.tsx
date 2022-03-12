@@ -5,20 +5,24 @@ import BuyModalConfirmed from './BuyModalConfirmed';
 import BuyModalDetail from './BuyModalDetail';
 import BuyModalProcessing from './BuyModalProcessing';
 import './style.less';
+import {Order as OrderSchema} from "solana-candy-shop-schema/dist";
+import { CandyShop } from '../../core/CandyShop';
+import { BN } from '@project-serum/anchor';
+
 
 export interface BuyModalProps {
-  order: any;
+  order: OrderSchema;
   onClose: any;
-  connection: Connection;
   walletPublicKey: PublicKey;
+  candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
 }
 
 export const BuyModal: React.FC<BuyModalProps> = ({
   order,
   onClose,
-  connection,
   walletPublicKey,
+  candyShop,
   walletConnectComponent,
 }) => {
   /**
@@ -31,7 +35,16 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   const [step, setStep] = useState(0);
 
   // Handle change step
-  const onChangeStep = useCallback((step: number) => {
+  const onChangeStep = useCallback((step: number) => async() => {
+    const txHash = await candyShop.buy(
+      new PublicKey(order.walletAddress),
+      new PublicKey(order.tokenAccount),
+      new PublicKey(order.tokenMint),
+      candyShop.treasuryMint(),
+      new BN(order.price)
+    );
+    console.log('successfully placed buy order');
+    console.log('txHash', txHash);
     setStep(step);
   }, []);
 
@@ -44,8 +57,8 @@ export const BuyModal: React.FC<BuyModalProps> = ({
           <BuyModalDetail
             onChangeStep={onChangeStep}
             order={order}
-            connection={connection}
             walletPublicKey={walletPublicKey}
+            candyShop={candyShop}
             walletConnectComponent={walletConnectComponent}
           />
         )
@@ -62,7 +75,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             onOk={onClose}
           />
         ),
-    [order, walletPublicKey, onChangeStep]
+    [order, candyShop, onChangeStep]
   );
 
   return (
