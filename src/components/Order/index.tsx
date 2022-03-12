@@ -3,21 +3,23 @@ import { Connection, PublicKey } from '@solana/web3.js';
 import { Card, Statistic } from 'antd';
 import { BuyModal } from '../BuyModal';
 import { LiqImage } from '../LiqImage';
+import {Order as OrderSchema} from "solana-candy-shop-schema/dist";
+import { CandyShop } from '../../core/CandyShop';
 
 export interface OrderProps{
-  order: any;
-  connection: Connection;
-  walletPublicKey: PublicKey;
+  order: OrderSchema
+  walletPublicKey: PublicKey
+  candyShop: CandyShop
   walletConnectComponent: React.ReactElement;
 }
 
 export const Order: React.FC<OrderProps> = ({
   order,
-  connection,
   walletPublicKey,
+  candyShop,
   walletConnectComponent,
 }) => {
-  const [selection, setSelection] = useState(null);
+  const [selection, setSelection] = useState<OrderSchema | null>(null);
 
   const onClose = useCallback(() => {
     setSelection(null);
@@ -30,7 +32,7 @@ export const Order: React.FC<OrderProps> = ({
   return (
     <>
       <Card className="vault-list-item" onClick={onClick}>
-        <LiqImage alt={order?.name} src={order?.nftImageLink} />
+        <LiqImage alt={order?.name} src={order?.nftImageLink!} />
         <div className="vault-list-item-body">
           <div className="vault-list-item-header">
             <div
@@ -51,8 +53,8 @@ export const Order: React.FC<OrderProps> = ({
         <BuyModal
           order={selection}
           onClose={onClose}
-          connection={connection}
           walletPublicKey={walletPublicKey}
+          candyShop={candyShop}
           walletConnectComponent={walletConnectComponent}
         />
       )}

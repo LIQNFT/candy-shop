@@ -1,16 +1,12 @@
-import React, { FC, useMemo } from 'react';
-import { CandyShop, Orders, Sell } from '../.';
-import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
+import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
-import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import React, { FC } from 'react';
+import { CandyShop, Orders, Sell } from '../.';
 
 export const CandyShopContent: FC = () => {
   const { connection } = useConnection();
-  const { publicKey } = useWallet();
 
-  console.log('Connection', connection);
-  console.log('Wallet', publicKey);
   const wallet = useAnchorWallet();
 
 
@@ -24,8 +20,14 @@ export const CandyShopContent: FC = () => {
         <Orders
           storeId={'EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7'}
           connection={connection}
-          walletPublicKey={publicKey}
-          walletConnectComponent={<WalletMultiButton />}
+          walletPublicKey={wallet?.publicKey}
+          candyShop={new CandyShop(
+            new PublicKey("EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7"),
+            new PublicKey("BSPpKnfVMbnDfQKgJzUTQHVa78YY8FYqv8ttMwAG7sZn"),
+            new PublicKey("FmDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"),
+            "devnet",
+            wallet!
+          )}
         />
       </div>
       <div style={{marginBottom: 50}}>
@@ -33,7 +35,7 @@ export const CandyShopContent: FC = () => {
         <Sell
           storeId={'EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7'}
           connection={connection}
-          walletPublicKey={publicKey}
+          walletPublicKey={wallet?.publicKey}
           candyShop={new CandyShop(
             new PublicKey("EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7"),
             new PublicKey("BSPpKnfVMbnDfQKgJzUTQHVa78YY8FYqv8ttMwAG7sZn"),

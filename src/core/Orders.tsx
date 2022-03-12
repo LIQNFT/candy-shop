@@ -4,11 +4,12 @@ import { Connection, PublicKey } from '@solana/web3.js';
 import { useEffect, useState } from 'react';
 import { fetchOrdersByStoreId } from '../api/backend/OrderAPI';
 import { Order } from '../components/Order';
+import { CandyShop } from './CandyShop';
 
 interface OrdersProps {
-  storeId: string;
   connection: Connection;
   walletPublicKey: PublicKey;
+  candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
 }
 
@@ -16,9 +17,9 @@ interface OrdersProps {
  * React component that displays a list of orders
  */
 export const Orders: React.FC<OrdersProps> = ({
-  storeId,
-  connection,
   walletPublicKey,
+  connection,
+  candyShop,
   walletConnectComponent,
 }) => {
 
@@ -27,7 +28,7 @@ export const Orders: React.FC<OrdersProps> = ({
 
   useEffect(() => {
     setLoading(true);
-    fetchOrdersByStoreId(storeId)
+    fetchOrdersByStoreId(candyShop.candyShopAddress().toString())
       .then((data: any) => {
         if (!data.result) return;
 
@@ -65,8 +66,8 @@ export const Orders: React.FC<OrdersProps> = ({
               <Col key={key} md={8} xs={24}>
                 <Order
                   order={item}
-                  connection={connection}
                   walletPublicKey={walletPublicKey}
+                  candyShop={candyShop}
                   walletConnectComponent={walletConnectComponent}
                 />
               </Col>
