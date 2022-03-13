@@ -9,6 +9,13 @@ export const CandyShopContent: FC = () => {
 
   const wallet = useAnchorWallet();
 
+  const candyShop = new CandyShop(
+    new PublicKey("EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7"),
+    new PublicKey("BSPpKnfVMbnDfQKgJzUTQHVa78YY8FYqv8ttMwAG7sZn"),
+    new PublicKey("FmDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"),
+    "devnet",
+    wallet!
+  );
 
   return (
     <div style={{paddingBottom: 30}}>
@@ -21,13 +28,7 @@ export const CandyShopContent: FC = () => {
           storeId={'EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7'}
           connection={connection}
           walletPublicKey={wallet?.publicKey}
-          candyShop={new CandyShop(
-            new PublicKey("EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7"),
-            new PublicKey("BSPpKnfVMbnDfQKgJzUTQHVa78YY8FYqv8ttMwAG7sZn"),
-            new PublicKey("FmDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"),
-            "devnet",
-            wallet!
-          )}
+          candyShop={candyShop}
         />
       </div>
       <div style={{marginBottom: 50}}>
@@ -36,13 +37,7 @@ export const CandyShopContent: FC = () => {
           storeId={'EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7'}
           connection={connection}
           walletPublicKey={wallet?.publicKey}
-          candyShop={new CandyShop(
-            new PublicKey("EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7"),
-            new PublicKey("BSPpKnfVMbnDfQKgJzUTQHVa78YY8FYqv8ttMwAG7sZn"),
-            new PublicKey("FmDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"),
-            "devnet",
-            wallet!
-          )}
+          candyShop={candyShop}
           walletConnectComponent={<WalletMultiButton />}
         />
       </div>
