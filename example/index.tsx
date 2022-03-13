@@ -1,7 +1,6 @@
 import 'react-app-polyfill/ie11';
 import React, { useMemo } from 'react';
 import ReactDOM from 'react-dom';
-import { Buy, Sell } from '../.';
 import { ConnectionProvider, WalletProvider, useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { WalletModalProvider } from '@solana/wallet-adapter-ant-design';
