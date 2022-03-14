@@ -19,19 +19,6 @@
     "size": "size-limit",
     "analyze": "size-limit --why"
   },
-  "peerDependencies": {
-    "@project-serum/anchor": "0.18.0",
-    "@solana/buffer-layout": "^4.0.0",
-    "@solana/spl-token": "^0.2.0",
-    "@solana/wallet-adapter-react": "^0.12.5",
-    "@solana/wallet-adapter-wallets": "^0.10.1",
-    "@solana/web3.js": "^1.36.0",
-    "antd": "^4.19.1",
-    "api": "^4.2.0",
-    "components": "^0.1.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
-  },
   "husky": {
     "hooks": {
       "pre-commit": "tsdx lint"
@@ -64,8 +51,8 @@
     "@size-limit/preset-small-lib": "^7.0.8",
     "@solana/buffer-layout": "^4.0.0",
     "@solana/spl-token": "^0.2.0",
-    "@solana/wallet-adapter-react": "^0.15.3",
-    "@solana/wallet-adapter-wallets": "^0.15.5",
+    "@solana/wallet-adapter-react": "^0.12.5",
+    "@solana/wallet-adapter-wallets": "^0.10.1",
     "@solana/web3.js": "^1.36.0",
     "@types/react": "^16.9.50",
     "@types/react-dom": "^16.9.8",

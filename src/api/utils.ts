@@ -66,8 +66,6 @@ export const getAuctionHouseTradeState = async (
   tokenSize: anchor.BN,
   buyPrice: anchor.BN
 ): Promise<[PublicKey, number]> => {
-  console.log('NEW3', buyPrice);
-
   return anchor.web3.PublicKey.findProgramAddress(
     [
       Buffer.from(AUCTION_HOUSE),
