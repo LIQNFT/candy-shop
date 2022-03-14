@@ -1,5 +1,5 @@
 import React from 'react';
-import { Connection, PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { Statistic } from 'antd';
 import { ExplorerLink } from '../ExplorerLink';
 import { Order as OrderSchema } from "solana-candy-shop-schema/dist";
@@ -7,7 +7,7 @@ import { CandyShop } from '../../core/CandyShop';
 
 export interface BuyModalDetailProps {
   order: OrderSchema;
-  onChangeStep: any;
+  buy: () => {};
   walletPublicKey: PublicKey;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
@@ -15,28 +15,27 @@ export interface BuyModalDetailProps {
 
 const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   order,
-  onChangeStep,
+  buy,
   walletPublicKey,
   candyShop,
   walletConnectComponent,
 }) => {
-
   return (
     <>
       <div className="buy-modal-thumbnail">
-        <img src={order!.nftImageLink!} />
+        <img src={order?.nftImageLink || ''} />
       </div>
       <div className="buy-modal-container">
         <div className="buy-modal-title">{order?.name}</div>
         <div className="buy-modal-control">
           <div>
             <div className="candy-label">PRICE</div>
-            <Statistic suffix="SOL" value={order?.price} precision={2} valueStyle={{ fontSize: 16, fontWeight: 'bold' }} />
+            <Statistic suffix="SOL" value={order?.price as any / LAMPORTS_PER_SOL} precision={2} valueStyle={{ fontSize: 16, fontWeight: 'bold' }} />
           </div>
           {!walletPublicKey ?
             walletConnectComponent
             : (
-            <button className="candy-button buy-modal-button" onClick={() => onChangeStep(1)}>Buy Now</button>
+            <button className="candy-button buy-modal-button" onClick={buy}>Buy Now</button>
           )}
         </div>
         <div className="buy-modal-description">

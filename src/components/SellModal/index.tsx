@@ -1,5 +1,5 @@
 import { BN } from '@project-serum/anchor';
-import { PublicKey } from '@solana/web3.js';
+import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { Form, Input, Modal, Row } from 'antd';
 import React, { useCallback, useMemo, useState } from 'react';
 import { SingleTokenInfo } from '../../api/fetchMetadata';
@@ -26,21 +26,21 @@ export const SellModal = ({
 
   const [isSubmit, setIsSubmit] = useState(false);
 
-  // Handle change step
-  const onChangeStep = useCallback(
-    (step: number, price: number) => async () => {
-      const txHash = await candyShop.sell(
-        new PublicKey(nft.tokenAccountAddress),
-        new PublicKey(nft.tokenMintAddress),
-        candyShop.treasuryMint(),
-        new BN(price)
-      );
-      console.log('successfully placed sell order');
-      console.log('txHash', txHash);
-      setStep(step);
-    },
-    []
-  );
+  // List for sale and move to next step
+  const sell = async () => {
+    let price = Number(form.getFieldValue('price')) * LAMPORTS_PER_SOL;
+
+    const txHash = await candyShop.sell(
+      new PublicKey(nft.tokenAccountAddress),
+      new PublicKey(nft.tokenMintAddress),
+      candyShop.treasuryMint(),
+      new BN(price)
+    );
+
+    console.log('Place sell order with transaction hash', txHash);
+
+    setStep(1);
+  };
 
   // Handle form
   const [form] = Form.useForm();
@@ -76,7 +76,7 @@ export const SellModal = ({
               layout="vertical"
             >
               <Form.Item label="Sell price" name="price" required>
-                {/* TODO: Possible to change this to antd InputNumber, set minimum value as 0 and remove the up/down arrow buttons on the right */}
+                {/* TODO: Possible to change this to antd InputNumber, set minimum value as 0 and remove the up/down arrow buttons on the right. Form can only be submitted with a valid number. */}
                 <Input type="number" placeholder="0.0" suffix="SOL" />
               </Form.Item>
               <Row justify="space-between">
@@ -85,11 +85,11 @@ export const SellModal = ({
               </Row>
               <Form.Item>
                 <button
-                  onClick={onChangeStep(1, 100000000)}
+                  onClick={sell}
                   disabled={!isSubmit}
                   className="candy-button"
                 >
-                  {isSubmit ? 'Confirm' : 'Next'}
+                  List for Sale
                 </button>
               </Form.Item>
             </Form>

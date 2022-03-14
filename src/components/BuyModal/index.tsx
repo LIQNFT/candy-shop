@@ -34,8 +34,8 @@ export const BuyModal: React.FC<BuyModalProps> = ({
 
   const [step, setStep] = useState(0);
 
-  // Handle change step
-  const onChangeStep = useCallback((step: number) => async() => {
+  // Handle buy
+  const buy = async () => {
     const txHash = await candyShop.buy(
       new PublicKey(order.walletAddress),
       new PublicKey(order.tokenAccount),
@@ -43,10 +43,16 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       candyShop.treasuryMint(),
       new BN(order.price)
     );
-    console.log('successfully placed buy order');
-    console.log('txHash', txHash);
+
+    console.log('Buy order made with transaction hash', txHash);
+
+    setStep(2);
+  }
+
+  // Handle change step
+  const onChangeStep = async (step: number) => {
     setStep(step);
-  }, []);
+  };
 
   // Render view component
   const viewComponent = useMemo(
@@ -55,8 +61,8 @@ export const BuyModal: React.FC<BuyModalProps> = ({
         .set(
           0,
           <BuyModalDetail
-            onChangeStep={onChangeStep}
             order={order}
+            buy={buy}
             walletPublicKey={walletPublicKey}
             candyShop={candyShop}
             walletConnectComponent={walletConnectComponent}
