@@ -4,13 +4,7 @@ import IconTick from '../../assets/IconTick';
 import { formatDate } from '../../utils/format';
 import { ExplorerLink } from '../ExplorerLink';
 
-const BuyModalConfirmed = ({
-  order,
-  onOk,
-}: {
-  order: any,
-  onOk: () => {}
-}) => {
+const BuyModalConfirmed = ({ order }: { order: any }) => {
   return (
     <div className="buy-modal-confirmed">
       <div className="candy-title buy-modal-confirmed-header">
@@ -72,7 +66,7 @@ const BuyModalConfirmed = ({
           <div className="candy-value">{formatDate(new Date())}</div>
         </Col>
       </Row>
-      <button className="candy-button" onClick={onOk}>Continue Shopping</button>
+      <button className="candy-button" onClick={() => { window.location.reload(); }}>Continue Shopping</button>
     </div>
   );
 };

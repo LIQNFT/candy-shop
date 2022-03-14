@@ -78,11 +78,12 @@ export const BuyModal: React.FC<BuyModalProps> = ({
           2,
           <BuyModalConfirmed
             order={order}
-            onOk={onClose}
           />
         ),
     [order, candyShop, onChangeStep]
   );
+
+  /* TODO: Implement the BuyModalProcessing step when buy transaction is running. If buy transaction fails, it should display error message. */
 
   return (
     <Modal

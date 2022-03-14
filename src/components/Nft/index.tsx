@@ -22,6 +22,7 @@ export const Nft = ({ nft, candyShop }: { nft: SingleTokenInfo, candyShop: Candy
         {/* TODO: If NFT is listed for sale, show this tag
         <div className="vault-status-tag">Listed for Sale</div>
         */}
+        {/* TODO: Implement the cancel order modal that calls the CandyShop.cancel order method. See Figma https://www.figma.com/file/MbmAKbgf5LvDAGJqLIByBx/Liquid-NFT-homepage?node-id=2669%3A19156 */}
         <LiqImage alt={nft?.metadata?.data?.name} src={nft?.nftImage} />
         <div className="vault-list-item-body">
           <div className="vault-list-item-header">

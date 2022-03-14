@@ -49,10 +49,12 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
               <ExplorerLink type="address" address={order?.tokenMint} />
             </div>
           </div>
-          <div>
-            <div className="candy-label">EDITION</div>
-            <div className="candy-value">{order?.edition}</div>
-          </div>
+          { order?.edition ? (
+            <div>
+              <div className="candy-label">EDITION</div>
+              <div className="candy-value">{order?.edition}</div>
+            </div>
+          ) : null}
           <div>
             <div className="candy-label">OWNER</div>
             <div className="candy-value">

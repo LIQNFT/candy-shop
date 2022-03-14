@@ -84,6 +84,7 @@ export const SellModal = ({
                 <div className="candy-footnote-value">1.0%</div>
               </Row>
               <Form.Item>
+                {/* TODO: Implement the processing step when sell NFT is loading (can use the same screen as for buy saying "Listing your NFT...") If transaction fails, should return to step 0 and give error message. */}
                 <button
                   onClick={sell}
                   disabled={!isSubmit}
