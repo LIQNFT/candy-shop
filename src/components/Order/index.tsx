@@ -8,7 +8,7 @@ import { CandyShop } from '../../core/CandyShop';
 
 export interface OrderProps{
   order: OrderSchema
-  walletPublicKey: PublicKey
+  walletPublicKey: PublicKey | undefined
   candyShop: CandyShop
   walletConnectComponent: React.ReactElement;
 }

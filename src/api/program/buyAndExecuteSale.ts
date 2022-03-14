@@ -179,7 +179,9 @@ export async function buyAndExecuteSale(
   transaction.add(ix2);
 
   // add recent blockhash
-  let recentBlockhash = await program.provider.connection.getRecentBlockhash('finalized');
+  let recentBlockhash = await program.provider.connection.getLatestBlockhash(
+    'finalized'
+  );
   transaction.recentBlockhash = recentBlockhash.blockhash;
 
   // add fee payer

@@ -13,7 +13,7 @@ import { BN } from '@project-serum/anchor';
 export interface BuyModalProps {
   order: OrderSchema;
   onClose: any;
-  walletPublicKey: PublicKey;
+  walletPublicKey: PublicKey | undefined;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
 }
@@ -64,7 +64,6 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             order={order}
             buy={buy}
             walletPublicKey={walletPublicKey}
-            candyShop={candyShop}
             walletConnectComponent={walletConnectComponent}
           />
         )
