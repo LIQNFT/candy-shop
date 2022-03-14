@@ -8,8 +8,7 @@ import { CandyShop } from '../../core/CandyShop';
 export interface BuyModalDetailProps {
   order: OrderSchema;
   buy: () => {};
-  walletPublicKey: PublicKey;
-  candyShop: CandyShop;
+  walletPublicKey: PublicKey | undefined;
   walletConnectComponent: React.ReactElement;
 }
 
@@ -17,7 +16,6 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   order,
   buy,
   walletPublicKey,
-  candyShop,
   walletConnectComponent,
 }) => {
   return (

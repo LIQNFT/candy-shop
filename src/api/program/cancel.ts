@@ -43,6 +43,16 @@ export async function cancelOrder(
   });
 
   transaction.add(ix);
+
+  // add recent blockhash
+  let recentBlockhash = await program.provider.connection.getLatestBlockhash(
+    'finalized'
+  );
+  transaction.recentBlockhash = recentBlockhash.blockhash;
+
+  // add fee payer
+  transaction.feePayer = wallet.publicKey;
+
   const signedTx = await wallet.signTransaction(transaction);
 
   const txHash = await sendAndConfirmRawTransaction(
