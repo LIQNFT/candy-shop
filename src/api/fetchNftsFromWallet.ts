@@ -1,46 +1,63 @@
 import * as anchor from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { singleTokenInfoPromise, SingleTokenInfo } from './fetchMetadata';
+import { Connection } from '@solana/web3.js';
+import { sleepPromise } from '../utils/PromiseHelper';
+import { SingleTokenInfo, singleTokenInfoPromise } from './fetchMetadata';
 
 export const fetchNftsFromWallet = async (
   connection: anchor.web3.Connection,
   walletAddress: anchor.web3.PublicKey
 ) => {
-  const nfts: SingleTokenInfo[] = [];
-  const metadataPromises: Promise<SingleTokenInfo>[] = [];
-
   const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
     walletAddress,
     { programId: TOKEN_PROGRAM_ID }
   );
 
-  for (let i = 0; i < tokenAccounts.value.length; i++) {
-    const tokenAccount = tokenAccounts.value[i];
-    const tokenAmount = tokenAccount.account.data.parsed.info.tokenAmount;
+  return fetchDataArrayInBatches(
+    connection,
+    tokenAccounts.value
+      .filter((acct) => {
+        const tokenAmount = acct.account.data.parsed.info.tokenAmount;
+        const tokenAmountIsOne =
+          tokenAmount.amount === '1' || tokenAmount.amount === 1;
+        const tokenDecimalsIsZero =
+          tokenAmount.decimals === '0' || tokenAmount.decimals === 0;
+        if (tokenAmountIsOne && tokenDecimalsIsZero) return true;
+        return false;
+      })
+      .map((acct) => acct.pubkey.toString()),
+    singleTokenInfoPromise
+  );
+};
 
-    const tokenAmountIsOne =
-      tokenAmount.amount === '1' || tokenAmount.amount === 1;
-    const tokenDecimalsIsZero =
-      tokenAmount.decimals === '0' || tokenAmount.decimals === 0;
+const fetchDataArrayInBatches = async (
+  connection: Connection,
+  array: any[],
+  singleItemAsyncCallback: any
+): Promise<SingleTokenInfo[]> => {
+  const chunkSize = 20;
+  const delayMs = 1000;
+  console.log(
+    `fetchArrayInBatchesPromise: Executing ${array.length} promises in batches with chunkSize ${chunkSize} per ${delayMs} ms.`
+  );
+  let aggregated: SingleTokenInfo[] = [];
+  let batchNum = 1;
+  let count = 0;
+  while (count < array.length) {
+    const batch = array.slice(count, count + chunkSize);
+    const tokenInfoBatch = await Promise.all(
+      batch.map((tokenAccountAddress) =>
+        singleItemAsyncCallback(connection, tokenAccountAddress)
+      )
+    );
+    console.log(
+      `fetchArrayInBatchesPromise: The batch ${batchNum} have been all resolved.`
+    );
+    aggregated = aggregated.concat(tokenInfoBatch);
 
-    // fetch metadata for NFTs
-    if (tokenAmountIsOne && tokenDecimalsIsZero) {
-      const metadataPromise: Promise<SingleTokenInfo> = singleTokenInfoPromise(
-        connection,
-        tokenAccount.pubkey.toString()
-      );
-      metadataPromises.push(metadataPromise);
-    }
+    await sleepPromise(delayMs);
+    batchNum++;
+    count += chunkSize;
   }
-
-  const metadataArray: PromiseSettledResult<SingleTokenInfo>[] =
-    await Promise.allSettled(metadataPromises);
-
-  metadataArray.forEach((nft: PromiseSettledResult<SingleTokenInfo>) => {
-    if (nft.status === 'fulfilled') {
-      nfts.push(nft.value);
-    }
-  });
-
-  return nfts;
+  return aggregated;
 };
