@@ -72,7 +72,7 @@ const BuyModalConfirmed = ({
           <div className="candy-value">{formatDate(new Date())}</div>
         </Col>
       </Row>
-      <button className="candy-button" onClick={onOk}>Continue Browsing</button>
+      <button className="candy-button" onClick={onOk}>Continue Shopping</button>
     </div>
   );
 };

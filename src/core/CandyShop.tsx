@@ -92,6 +92,7 @@ export class CandyShop {
     treasuryMint: PublicKey,
     price: BN
   ): Promise<string> {
+    console.log('buy called');
     await this.initIfNotReady();
     const [auctionHouseAuthority] = await getAuctionHouseAuthority(
       this._candyShopCreatorAddress,

@@ -177,6 +177,14 @@ export async function buyAndExecuteSale(
 
   transaction.add(ix);
   transaction.add(ix2);
+
+  // add recent blockhash
+  let recentBlockhash = await program.provider.connection.getRecentBlockhash('finalized');
+  transaction.recentBlockhash = recentBlockhash.blockhash;
+
+  // add fee payer
+  transaction.feePayer = wallet.publicKey;
+
   const signedTx = await wallet.signTransaction(transaction);
 
   const txHash = await sendAndConfirmRawTransaction(

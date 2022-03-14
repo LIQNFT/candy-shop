@@ -1,4 +1,5 @@
 import * as anchor from '@project-serum/anchor';
+import BN from 'bn.js';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID
@@ -65,6 +66,8 @@ export const getAuctionHouseTradeState = async (
   tokenSize: anchor.BN,
   buyPrice: anchor.BN
 ): Promise<[PublicKey, number]> => {
+  console.log('NEW3', buyPrice);
+
   return anchor.web3.PublicKey.findProgramAddress(
     [
       Buffer.from(AUCTION_HOUSE),
@@ -73,8 +76,8 @@ export const getAuctionHouseTradeState = async (
       tokenAccount.toBuffer(),
       treasuryMint.toBuffer(),
       tokenMint.toBuffer(),
-      buyPrice.toBuffer('le', 8),
-      tokenSize.toBuffer('le', 8),
+      buyPrice.toArrayLike(Buffer, 'le', 8),
+      tokenSize.toArrayLike(Buffer, 'le', 8),
     ],
     AUCTION_HOUSE_PROGRAM_ID
   );
