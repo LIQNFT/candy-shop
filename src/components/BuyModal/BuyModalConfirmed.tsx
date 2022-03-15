@@ -1,10 +1,25 @@
+import { PublicKey } from '@solana/web3.js';
 import { Space, Col, Row } from 'antd';
-import React from 'react';
+import React, { useMemo } from 'react';
 import IconTick from '../../assets/IconTick';
 import { formatDate } from '../../utils/format';
 import { ExplorerLink } from '../ExplorerLink';
+import imgDefault from '../../assets/img-default.png';
 
-const BuyModalConfirmed = ({ order }: { order: any }) => {
+const BuyModalConfirmed = ({
+  order,
+  txHash,
+  walletPublicKey,
+}: {
+  order: any;
+  txHash: string;
+  walletPublicKey: PublicKey | undefined;
+}) => {
+  // Get wallet address follow walletPublicKey
+  const walletAddress = useMemo(() => walletPublicKey?.toBase58() || '', [
+    walletPublicKey,
+  ]);
+
   return (
     <div className="buy-modal-confirmed">
       <div className="candy-title buy-modal-confirmed-header">
@@ -15,9 +30,13 @@ const BuyModalConfirmed = ({ order }: { order: any }) => {
       </div>
       <div className="buy-modal-confirmed-container">
         <div className="buy-modal-confirmed-thumbnail">
-          <img src={order?.nftImageLink || 'https://via.placeholder.com/300'} width='100%' height='100%' />
+          <img
+            src={order?.nftImageLink || imgDefault}
+            width="100%"
+            height="100%"
+          />
         </div>
-        <div className='buy-modal-confirmed-content'>
+        <div className="buy-modal-confirmed-content">
           <div>
             <div>{order?.ticker}</div>
             <div className="buy-modal-price">{order?.name}</div>
@@ -34,31 +53,19 @@ const BuyModalConfirmed = ({ order }: { order: any }) => {
         <Col span={12}>
           <div className="candy-label">FROM</div>
           <div className="candy-value">
-            {/* TODO: Hookup to seller address */}
-            <ExplorerLink
-              type="address"
-              address="mDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"
-            />
+            <ExplorerLink type="address" address={order.walletAddress} />
           </div>
         </Col>
         <Col span={12}>
           <div className="candy-label">TO</div>
           <div className="candy-value">
-            {/* TODO: Hookup to buyer address */}
-            <ExplorerLink
-              type="address"
-              address="mDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"
-            />
+            <ExplorerLink type="address" address={walletAddress} />
           </div>
         </Col>
         <Col span={12}>
           <div className="candy-label">TRANSACTION HASH</div>
           <div className="candy-value">
-            {/* TODO: Hookup to transaction hash */}
-            <ExplorerLink
-              type="address"
-              address="mDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"
-            />
+            <ExplorerLink type="tx" address={txHash} />
           </div>
         </Col>
         <Col span={12}>
@@ -66,7 +73,14 @@ const BuyModalConfirmed = ({ order }: { order: any }) => {
           <div className="candy-value">{formatDate(new Date())}</div>
         </Col>
       </Row>
-      <button className="candy-button" onClick={() => { window.location.reload(); }}>Continue Shopping</button>
+      <button
+        className="candy-button"
+        onClick={() => {
+          window.location.reload();
+        }}
+      >
+        Continue Shopping
+      </button>
     </div>
   );
 };
