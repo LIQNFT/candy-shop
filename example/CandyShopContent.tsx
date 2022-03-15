@@ -25,7 +25,6 @@ export const CandyShopContent: FC = () => {
       <div style={{marginBottom: 50}}>
         <h1 style={{textAlign: 'center'}}>Orders</h1>
         <Orders
-          storeId={'EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7'}
           connection={connection}
           walletPublicKey={wallet?.publicKey}
           candyShop={candyShop}
@@ -35,7 +34,6 @@ export const CandyShopContent: FC = () => {
       <div style={{marginBottom: 50}}>
         <h1 style={{textAlign: 'center'}}>Sell</h1>
         <Sell
-          storeId={'EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7'}
           connection={connection}
           walletPublicKey={wallet?.publicKey}
           candyShop={candyShop}
