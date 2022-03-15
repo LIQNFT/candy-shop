@@ -5,7 +5,13 @@ import { LiqImage } from '../LiqImage';
 import { SingleTokenInfo } from '../../api/fetchMetadata';
 import { CandyShop } from '../../core/CandyShop';
 
-export const Nft = ({ nft, candyShop }: { nft: SingleTokenInfo, candyShop: CandyShop }) => {
+export const Nft = ({
+  nft,
+  candyShop,
+}: {
+  nft: SingleTokenInfo;
+  candyShop: CandyShop;
+}) => {
   const [selection, setSelection] = useState<SingleTokenInfo | undefined>();
 
   const onClose = useCallback(() => {
@@ -16,19 +22,26 @@ export const Nft = ({ nft, candyShop }: { nft: SingleTokenInfo, candyShop: Candy
     setSelection(nft);
   }, [nft]);
 
+  // TODO: check NFT label condition
+  const isShowSaleLabel = false;
+
   return (
     <>
       <Card className="vault-list-item" onClick={onClick}>
-        {/* TODO: If NFT is listed for sale, show this tag
-        <div className="vault-status-tag">Listed for Sale</div>
-        */}
+        {isShowSaleLabel && (
+          <div className="vault-status-tag">Listed for Sale</div>
+        )}
         {/* TODO: Implement the cancel order modal that calls the CandyShop.cancel order method. See Figma https://www.figma.com/file/MbmAKbgf5LvDAGJqLIByBx/Liquid-NFT-homepage?node-id=2669%3A19156 */}
         <LiqImage alt={nft?.metadata?.data?.name} src={nft?.nftImage} />
         <div className="vault-list-item-body">
           <div className="vault-list-item-header">
             <div
               className="vault-name"
-              style={{ verticalAlign: 'middle', fontWeight: 'bold', marginBottom: '2px' }}
+              style={{
+                verticalAlign: 'middle',
+                fontWeight: 'bold',
+                marginBottom: '2px',
+              }}
             >
               {nft?.metadata?.data?.name}
               <div className="subtitle">{nft?.metadata?.data?.symbol}</div>
@@ -36,7 +49,9 @@ export const Nft = ({ nft, candyShop }: { nft: SingleTokenInfo, candyShop: Candy
           </div>
         </div>
       </Card>
-      {selection && <SellModal onCancel={onClose} nft={selection} candyShop={candyShop} />}
+      {selection && (
+        <SellModal onCancel={onClose} nft={selection} candyShop={candyShop} />
+      )}
     </>
   );
 };

@@ -20,12 +20,14 @@ module.exports = {
           less: true,
           use: [['less', { javascriptEnabled: true }]],
         }),
-        image(),
         svg({
           stringify: false,
         }),
       ]
     );
+
+    // Make sure image package run in first
+    config.plugins.unshift(image());
 
     return config;
   },

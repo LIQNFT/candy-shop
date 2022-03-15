@@ -1,15 +1,15 @@
 import React, { useCallback, useState } from 'react';
-import { Connection, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { Card, Statistic } from 'antd';
 import { BuyModal } from '../BuyModal';
 import { LiqImage } from '../LiqImage';
-import { Order as OrderSchema } from "solana-candy-shop-schema/dist";
+import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { CandyShop } from '../../core/CandyShop';
 
-export interface OrderProps{
-  order: OrderSchema
-  walletPublicKey: PublicKey | undefined
-  candyShop: CandyShop
+export interface OrderProps {
+  order: OrderSchema;
+  walletPublicKey: PublicKey | undefined;
+  candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
 }
 
@@ -37,14 +37,24 @@ export const Order: React.FC<OrderProps> = ({
           <div className="vault-list-item-header">
             <div
               className="vault-name"
-              style={{ verticalAlign: 'middle', fontWeight: 'bold', marginBottom: '2px', width: '60%' }}
+              style={{
+                verticalAlign: 'middle',
+                fontWeight: 'bold',
+                marginBottom: '2px',
+                width: '60%',
+              }}
             >
               {order?.name}
               <div className="subtitle">{order?.ticker}</div>
             </div>
             <div className="mint-price">
               <span className="vault-statistic-title-caps">Price</span>
-              <Statistic suffix="SOL" value={ order?.price as any / LAMPORTS_PER_SOL } precision={2} valueStyle={{ fontSize: 14, fontWeight: 'bold' }} />
+              <Statistic
+                suffix="SOL"
+                value={(order?.price as any) / LAMPORTS_PER_SOL}
+                precision={2}
+                valueStyle={{ fontSize: 14, fontWeight: 'bold' }}
+              />
             </div>
           </div>
         </div>
@@ -61,4 +71,3 @@ export const Order: React.FC<OrderProps> = ({
     </>
   );
 };
-

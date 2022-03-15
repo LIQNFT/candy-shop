@@ -22,10 +22,10 @@ export const Orders: React.FC<OrdersProps> = ({
   candyShop,
   walletConnectComponent,
 }) => {
-
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // handle fetch data
   useEffect(() => {
     setLoading(true);
     fetchOrdersByStoreId(candyShop.candyShopAddress().toString())
@@ -44,10 +44,12 @@ export const Orders: React.FC<OrdersProps> = ({
 
   return (
     <div className="candy-shop-list">
-      <Row gutter={[
-        { md: 24, xs: 16 },
-        { md: 24, xs: 16 }
-      ]}>
+      <Row
+        gutter={[
+          { md: 24, xs: 16 },
+          { md: 24, xs: 16 },
+        ]}
+      >
         {loading ? (
           Array(3)
             .fill(0)
@@ -58,7 +60,7 @@ export const Orders: React.FC<OrdersProps> = ({
             ))
         ) : !orders.length ? (
           <Col span={24}>
-            <Empty description='No orders found' />
+            <Empty description="No orders found" />
           </Col>
         ) : (
           orders.map((item, key) => {

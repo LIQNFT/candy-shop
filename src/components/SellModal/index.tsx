@@ -1,12 +1,15 @@
 import { BN } from '@project-serum/anchor';
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { Form, Input, Modal, Row } from 'antd';
+import { Form, Input, InputNumber, Modal, Row } from 'antd';
 import React, { useCallback, useMemo, useState } from 'react';
+import { errorNotification } from '../../utils/notification';
 import { SingleTokenInfo } from '../../api/fetchMetadata';
 import IconTick from '../../assets/IconTick';
+import imgDefault from '../../assets/img-default.png';
 import { CandyShop } from '../../core/CandyShop';
-import './style.less';
+import Processing from '../Processing/Processing';
 
+import './style.less';
 
 export const SellModal = ({
   onCancel,
@@ -20,7 +23,8 @@ export const SellModal = ({
   /**
    * Step in here contains
    * 0: Content
-   * 1: Done
+   * 1: Processing
+   * 2: Done
    **/
   const [step, setStep] = useState(0);
 
@@ -28,18 +32,28 @@ export const SellModal = ({
 
   // List for sale and move to next step
   const sell = async () => {
-    let price = Number(form.getFieldValue('price')) * LAMPORTS_PER_SOL;
+    try {
+      // Change to step 1: processing
+      setStep(1);
 
-    const txHash = await candyShop.sell(
-      new PublicKey(nft.tokenAccountAddress),
-      new PublicKey(nft.tokenMintAddress),
-      candyShop.treasuryMint(),
-      new BN(price)
-    );
+      let price = form.getFieldValue('price') * LAMPORTS_PER_SOL;
 
-    console.log('Place sell order with transaction hash', txHash);
+      const txHash = await candyShop.sell(
+        new PublicKey(nft.tokenAccountAddress),
+        new PublicKey(nft.tokenMintAddress),
+        candyShop.treasuryMint(),
+        new BN(price)
+      );
 
-    setStep(1);
+      console.log('Place sell order with transaction hash', txHash);
+      setStep(2);
+    } catch (error) {
+      // Show error and redirect to step 0 again
+      errorNotification(
+        new Error('Transaction failed. Please try again later.')
+      );
+      setStep(0);
+    }
   };
 
   // Handle form
@@ -47,7 +61,7 @@ export const SellModal = ({
 
   // Check active button submit
   const onValuesChange = useCallback((_, values) => {
-    setIsSubmit(values.every((item: any) => item.value));
+    setIsSubmit(values.every((item: any) => item.value || item.value === 0));
   }, []);
 
   // Render view component
@@ -59,7 +73,7 @@ export const SellModal = ({
           <>
             <div className="candy-title">Sell</div>
             <div className="sell-modal-content">
-              <img src={nft?.nftImage || 'https://via.placeholder.com/300'} />
+              <img src={nft?.nftImage || imgDefault} />
               <div>
                 <div className="sell-modal-collection-name">
                   {nft?.metadata?.data?.symbol}
@@ -75,16 +89,34 @@ export const SellModal = ({
               className="candy-form"
               layout="vertical"
             >
-              <Form.Item label="Sell price" name="price" required>
-                {/* TODO: Possible to change this to antd InputNumber, set minimum value as 0 and remove the up/down arrow buttons on the right. Form can only be submitted with a valid number. */}
-                <Input type="number" placeholder="0.0" suffix="SOL" />
+              <Form.Item
+                label="Sell price"
+                name="price"
+                required
+                rules={[
+                  () => ({
+                    validator(_, value) {
+                      if (value >= 0) return Promise.resolve();
+
+                      return Promise.reject(
+                        new Error('Price must be bigger than 0.')
+                      );
+                    },
+                  }),
+                ]}
+              >
+                <InputNumber
+                  placeholder="0.0"
+                  addonAfter="SOL"
+                  min={0}
+                />
               </Form.Item>
               <Row justify="space-between">
                 <div className="candy-footnote-label">Service Fees</div>
                 <div className="candy-footnote-value">1.0%</div>
               </Row>
+
               <Form.Item>
-                {/* TODO: Implement the processing step when sell NFT is loading (can use the same screen as for buy saying "Listing your NFT...") If transaction fails, should return to step 0 and give error message. */}
                 <button
                   onClick={sell}
                   disabled={!isSubmit}
@@ -96,17 +128,17 @@ export const SellModal = ({
             </Form>
           </>
         )
+        .set(1, <Processing text="Listing your NFT" />)
         .set(
-          1,
+          2,
           <>
             <div className="candy-title">
               <IconTick />
             </div>
             <div className="sell-modal-content">
-              {/* TODO: See if can global switch https://via.placeholder.com/300 to ../../assets/img-placeholder.jpg */}
-              <img src={nft?.nftImage || 'https://via.placeholder.com/300'} />
+              <img src={nft?.nftImage || imgDefault} />
               <div className="candy-title">
-                { nft?.metadata?.data?.name } is now listed for sale
+                {nft?.metadata?.data?.name} is now listed for sale
               </div>
             </div>
             <div className="sell-modal-success">

@@ -1,14 +1,15 @@
 import { Modal } from 'antd';
 import { Connection, PublicKey } from '@solana/web3.js';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import BuyModalConfirmed from './BuyModalConfirmed';
 import BuyModalDetail from './BuyModalDetail';
-import BuyModalProcessing from './BuyModalProcessing';
-import './style.less';
-import {Order as OrderSchema} from "solana-candy-shop-schema/dist";
+import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { CandyShop } from '../../core/CandyShop';
 import { BN } from '@project-serum/anchor';
+import Processing from '../Processing/Processing';
+import { errorNotification } from '../../utils/notification';
 
+import './style.less';
 
 export interface BuyModalProps {
   order: OrderSchema;
@@ -31,23 +32,36 @@ export const BuyModal: React.FC<BuyModalProps> = ({
    * 1: Processing
    * 2: Confirmed
    **/
-
   const [step, setStep] = useState(0);
+
+  const [hash, setHash] = useState(''); // txHash
 
   // Handle buy
   const buy = async () => {
-    const txHash = await candyShop.buy(
-      new PublicKey(order.walletAddress),
-      new PublicKey(order.tokenAccount),
-      new PublicKey(order.tokenMint),
-      candyShop.treasuryMint(),
-      new BN(order.price)
-    );
+    try {
+      // Change to step 1: processing
+      setStep(1);
 
-    console.log('Buy order made with transaction hash', txHash);
+      const txHash = await candyShop.buy(
+        new PublicKey(order.walletAddress),
+        new PublicKey(order.tokenAccount),
+        new PublicKey(order.tokenMint),
+        candyShop.treasuryMint(),
+        new BN(order.price)
+      );
 
-    setStep(2);
-  }
+      setHash(txHash);
+      console.log('Buy order made with transaction hash', txHash);
+
+      setStep(2);
+    } catch (error) {
+      // Show error and redirect to step 0 again
+      errorNotification(
+        new Error('Transaction failed. Please try again later.')
+      );
+      setStep(0);
+    }
+  };
 
   // Handle change step
   const onChangeStep = async (step: number) => {
@@ -67,22 +81,17 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             walletConnectComponent={walletConnectComponent}
           />
         )
-        .set(
-          1,
-          <BuyModalProcessing
-            onChangeStep={onChangeStep}
-          />
-        )
+        .set(1, <Processing text="Processing purchase" />)
         .set(
           2,
           <BuyModalConfirmed
+            walletPublicKey={walletPublicKey}
             order={order}
+            txHash={hash}
           />
         ),
-    [order, candyShop, onChangeStep]
+    [order, candyShop, onChangeStep, hash]
   );
-
-  /* TODO: Implement the BuyModalProcessing step when buy transaction is running. If buy transaction fails, it should display error message. */
 
   return (
     <Modal
