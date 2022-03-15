@@ -29,6 +29,7 @@ export const CandyShopContent: FC = () => {
           connection={connection}
           walletPublicKey={wallet?.publicKey}
           candyShop={candyShop}
+          walletConnectComponent={<WalletMultiButton />}
         />
       </div>
       <div style={{marginBottom: 50}}>
