@@ -1,6 +1,8 @@
 # Candy Shop
 
-Candy Shop is JavaScript library that allows DAOs, NFT projects and anyone to create an NFT marketplace on Solana in minutes! Currently it's **Private Beta**, so only on invitation basis.
+** IN PRIVATE BETA **
+
+Candy Shop is JavaScript library that allows DAOs, NFT projects and anyone to create an NFT marketplace on Solana in minutes!
 
 Drawing inspiration from Project Serum’s mission to accelerate Solana’s on-chain trading infrastructure, Candy Shop aspires to do the same for the Solana NFT marketplace ecosystem.
 
