@@ -37,7 +37,7 @@ yarn add @liqnft/candy-shop
 
 ```
 const candyShop = new CandyShop(
-  new PublicKey("EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7"), // Your Candy Shop address
+  new PublicKey("EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7"), // your Candy Shop address
   new PublicKey("BSPpKnfVMbnDfQKgJzUTQHVa78YY8FYqv8ttMwAG7sZn"), // Candy Shop creator address
   new PublicKey("FmDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"), // Candy Shop program id
   "devnet", // mainnet, devnet
@@ -85,9 +85,9 @@ import { CandyShop } from '@liqnft/candy-shop';
 
 // Initialize your store
 const candy = new CandyShop(
-  new PublicKey("EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7"), // candy shop address
-  new PublicKey("BSPpKnfVMbnDfQKgJzUTQHVa78YY8FYqv8ttMwAG7sZn"), // candy shop creator address
-  new PublicKey("FmDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"), // candy shop program id
+  new PublicKey("EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7"), // your Candy Shop address
+  new PublicKey("BSPpKnfVMbnDfQKgJzUTQHVa78YY8FYqv8ttMwAG7sZn"), // Candy Shop creator address
+  new PublicKey("FmDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"), // Candy Shop program id
   "devnet", // mainnet, devnet
   wallet! // user wallet address
 );
