@@ -2,6 +2,10 @@
 
 JavaScript library that allows any NFT project to host their own NFT marketplace easily
 
+[Website](https://liqnft.github.io/solana-candy-shop/)
+[Demo](https://liqnft.github.io/candy-shop/)
+[Whitepaper](https://liqnft.gitbook.io/candy-shop/)
+
 ## Installation
 
 Using npm:
