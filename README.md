@@ -1,5 +1,7 @@
 # Candy Shop
 
+**IN PRIVATE BETA**
+
 Candy Shop is JavaScript library that allows DAOs, NFT projects and anyone to create an NFT marketplace on Solana in minutes!
 
 Drawing inspiration from Project Serum’s mission to accelerate Solana’s on-chain trading infrastructure, Candy Shop aspires to do the same for the Solana NFT marketplace ecosystem.
@@ -85,9 +87,9 @@ import { CandyShop } from '@liqnft/candy-shop';
 
 // Initialize your store
 const candy = new CandyShop(
-  new PublicKey("EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7"), // your Candy Shop address
-  new PublicKey("BSPpKnfVMbnDfQKgJzUTQHVa78YY8FYqv8ttMwAG7sZn"), // Candy Shop creator address
-  new PublicKey("FmDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"), // Candy Shop program id
+  new PublicKey("EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7"), // your Candy Shop address, currently only available for private beta users.
+  new PublicKey("BSPpKnfVMbnDfQKgJzUTQHVa78YY8FYqv8ttMwAG7sZn"), // Candy Shop creator address, this address is used to create the Candy Shop and withdrawal Shop revenue.
+  new PublicKey("FmDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"), // Candy Shop program id.
   "devnet", // mainnet, devnet
   wallet! // user wallet address
 );
