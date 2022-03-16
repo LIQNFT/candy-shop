@@ -1,10 +1,22 @@
-# Solana Candy Shop
+# Candy Shop
 
-JavaScript library that allows any NFT project to host their own NFT marketplace easily
+Candy Shop is JavaScript library that allows DAOs, NFT projects and anyone to create an NFT marketplace on Solana in minutes!
 
-[Website](https://liqnft.github.io/solana-candy-shop/)
-[Demo](https://liqnft.github.io/candy-shop/)
-[Whitepaper](https://liqnft.gitbook.io/candy-shop/)
+Drawing inspiration from Project Serum’s mission to accelerate Solana’s on-chain trading infrastructure, Candy Shop aspires to do the same for the Solana NFT marketplace ecosystem.
+
+Candy Shop provides an easy to integrate marketplace protocol & toolset with a full suite of data endpoints and command APIs to help  users deliver a simplistic, seamless and efficient NFT marketplace experience. 
+
+Key features:
+* **Simple Integration.** Integrate marketplace features into your website easily with Candy Shop SDK - your marketplace could be fully operational within a few minutes. 
+* **Seamless User Experience.** The commands and data endpoints have been designed in a way to simplify user journey and provide a seamless experience for browsing, buying and selling NFTs on your in-house marketplace.
+* **Give More, Earn More.** Users save on transaction fees when they transact on your Candy Shop marketplace, and you will also earn 20% of the 1% transaction fee. 
+* **Candy Shop Network.** Standardized implementation allows you to import other Candy Shop NFT listings directly onto your marketplace or vice versa - creating a network effect of listings for maximum traffic flow
+* **Transparency.** Candy Shop is an open source and on-chain protocol, providing your community with full transparency on what is happening behind the scene for your marketplace. 
+
+Links:
+* [Website](https://liqnft.github.io/solana-candy-shop/)
+* [Demo](https://liqnft.github.io/candy-shop/)
+* [Whitepaper](https://liqnft.gitbook.io/candy-shop/)
 
 ## Installation
 
@@ -21,40 +33,64 @@ yarn add @liqnft/candy-shop
 
 ## Usage
 
-Show Orders and Buy
+### Init CandyShop
+
+```
+const candyShop = new CandyShop(
+  new PublicKey("EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7"), // Your Candy Shop address
+  new PublicKey("BSPpKnfVMbnDfQKgJzUTQHVa78YY8FYqv8ttMwAG7sZn"), // Candy Shop creator address
+  new PublicKey("FmDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"), // Candy Shop program id
+  "devnet", // mainnet, devnet
+  wallet! // user wallet address
+);
+```
+
+### Show Orders and Buy Interface
+
+Show the NFTs that are for sale and allow users to connect their wallet and buy them.
 
 ```
 import { Orders } from '@liqnft/candy-shop';
 
 <Orders
-  storeId={'5wbadqR2UBmV8AUBKxAE64z5ASBorsUofoHQWhJSVYpZ'}
   connection={connection}
   walletPublicKey={publicKey}
+  candyShop={candyShop}
   walletConnectComponent={<WalletMultiButton />}
 />
 ```
 
-Sell
+### Show Sell Interface
+
+Show sell interface that allows users to connect their wallet and list their NFTs for sale.
 
 ```
 import { Sell } from '@liqnft/candy-shop';
 
 <Sell
-  storeId={'5wbadqR2UBmV8AUBKxAE64z5ASBorsUofoHQWhJSVYpZ'}
   connection={connection}
   walletPublicKey={publicKey}
+  candyShop={candyShop}
   walletConnectComponent={<WalletMultiButton />}
 />
 
 ```
 
-Custom Builds
+### Custom Marketplace Builds
+
+You can also ship your own custom marketplace using the methods below.
 
 ```
 import { CandyShop } from '@liqnft/candy-shop';
 
 // Initialize your store
-let candy = new CandyShop('4kBivZofAPfWFRYwgWrSbinB9XVFYSVYmB65mjmKCkpe');
+const candy = new CandyShop(
+  new PublicKey("EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7"), // candy shop address
+  new PublicKey("BSPpKnfVMbnDfQKgJzUTQHVa78YY8FYqv8ttMwAG7sZn"), // candy shop creator address
+  new PublicKey("FmDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"), // candy shop program id
+  "devnet", // mainnet, devnet
+  wallet! // user wallet address
+);
 
 // Fetch orders
 candy.getOrders();
