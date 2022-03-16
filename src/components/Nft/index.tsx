@@ -1,16 +1,20 @@
 import React, { useCallback, useState } from 'react';
 import { Card } from 'antd';
 import { SellModal } from '../SellModal';
+import { CancelModal } from '../CancelModal';
 import { LiqImage } from '../LiqImage';
 import { SingleTokenInfo } from '../../api/fetchMetadata';
 import { CandyShop } from '../../core/CandyShop';
+import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 
 export const Nft = ({
   nft,
   candyShop,
+  sellDetail,
 }: {
   nft: SingleTokenInfo;
   candyShop: CandyShop;
+  sellDetail?: OrderSchema;
 }) => {
   const [selection, setSelection] = useState<SingleTokenInfo | undefined>();
 
@@ -22,16 +26,12 @@ export const Nft = ({
     setSelection(nft);
   }, [nft]);
 
-  // TODO: check NFT label condition
-  const isShowSaleLabel = false;
-
+  const isSellItem = Boolean(sellDetail);
   return (
     <>
       <Card className="vault-list-item" onClick={onClick}>
-        {isShowSaleLabel && (
-          <div className="vault-status-tag">Listed for Sale</div>
-        )}
-        {/* TODO: Implement the cancel order modal that calls the CandyShop.cancel order method. See Figma https://www.figma.com/file/MbmAKbgf5LvDAGJqLIByBx/Liquid-NFT-homepage?node-id=2669%3A19156 */}
+        {isSellItem && <div className="vault-status-tag">Listed for Sale</div>}
+
         <LiqImage alt={nft?.metadata?.data?.name} src={nft?.nftImage} />
         <div className="vault-list-item-body">
           <div className="vault-list-item-header">
@@ -49,9 +49,16 @@ export const Nft = ({
           </div>
         </div>
       </Card>
-      {selection && (
+      {selection && !isSellItem && (
         <SellModal onCancel={onClose} nft={selection} candyShop={candyShop} />
       )}
+      {selection && sellDetail ? (
+        <CancelModal
+          onClose={onClose}
+          candyShop={candyShop}
+          order={sellDetail}
+        />
+      ) : null}
     </>
   );
 };

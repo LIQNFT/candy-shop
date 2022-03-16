@@ -14,9 +14,8 @@ import {
   getAuctionHouseFeeAcct,
   getAuctionHouseTradeState,
   getAuctionHouseTreasuryAcct,
-  getMetadataAccount
+  getMetadataAccount,
 } from '../api/utils';
-
 
 /**
  * Core Candy Shop module
@@ -53,7 +52,7 @@ export class CandyShop {
         options.commitment
       );
       const provider = new Provider(connection, this._wallet, options);
-      console.log("fetching idl for programId", this._programId.toString())
+      console.log('fetching idl for programId', this._programId.toString());
 
       const idl = await Program.fetchIdl(this._programId, provider);
       this._program = new Program(idl!, this._programId, provider);
@@ -66,7 +65,7 @@ export class CandyShop {
   }
 
   connectedPublicKey(): PublicKey | undefined {
-    return this._program?.provider.wallet.publicKey
+    return this._program?.provider.wallet.publicKey;
   }
 
   candyShopAddress() {
@@ -165,7 +164,7 @@ export class CandyShop {
       new BN(1),
       this._program!
     );
-    return txHash
+    return txHash;
   }
 
   async cancel(
