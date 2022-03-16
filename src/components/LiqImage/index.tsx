@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import imgDefault from '../../assets/img-default.png';
 
 interface LiqImageProps {
   src: string | undefined;
@@ -11,23 +12,29 @@ export const LiqImage: React.FC<LiqImageProps> = ({ src, alt, style = {} }) => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [width, setWidth] = useState<number>();
 
-  let loaderDivStyles = loaded ? { display: 'none' } : { height: 0, paddingBottom: '100%', width: '100%' };
+  let loaderDivStyles = loaded
+    ? { display: 'none' }
+    : { height: 0, paddingBottom: '100%', width: '100%' };
 
   let baseStyle = {
     backgroundColor: '#E5E5E5',
     borderTopLeftRadius: '14px',
     borderTopRightRadius: '14px',
     height: width,
-    overflow: 'hidden'
+    overflow: 'hidden',
   };
   let combinedStyle = { ...baseStyle, ...style };
 
   useEffect(() => {
-    setWidth(ref.current ? (ref.current as unknown as HTMLElement).offsetWidth : 0);
+    setWidth(
+      ref.current ? ((ref.current as unknown) as HTMLElement).offsetWidth : 0
+    );
   }, []);
 
   window.addEventListener('resize', () => {
-    setWidth(ref.current ? (ref.current as unknown as HTMLElement).offsetWidth : 0);
+    setWidth(
+      ref.current ? ((ref.current as unknown) as HTMLElement).offsetWidth : 0
+    );
   });
 
   return (
@@ -44,7 +51,7 @@ export const LiqImage: React.FC<LiqImageProps> = ({ src, alt, style = {} }) => {
         />
       ) : (
         <img
-          src="/img-placeholder.jpg"
+          src={imgDefault}
           alt="No metadata found"
           width="100%"
           style={loaded ? { display: 'block' } : { display: 'none' }}
