@@ -12,7 +12,7 @@ import Processing from '../Processing/Processing';
 import './style.less';
 
 export const SellModal = ({
-  onCancel,
+  onCancel: onUnSelectItem,
   nft,
   candyShop,
 }: {
@@ -20,12 +20,6 @@ export const SellModal = ({
   nft: SingleTokenInfo;
   candyShop: CandyShop;
 }) => {
-  /**
-   * Step in here contains
-   * 0: Content
-   * 1: Processing
-   * 2: Done
-   **/
   const [step, setStep] = useState(0);
 
   const [isSubmit, setIsSubmit] = useState(false);
@@ -35,9 +29,7 @@ export const SellModal = ({
     try {
       // Change to step 1: processing
       setStep(1);
-
       let price = form.getFieldValue('price') * LAMPORTS_PER_SOL;
-
       const txHash = await candyShop.sell(
         new PublicKey(nft.tokenAccountAddress),
         new PublicKey(nft.tokenMintAddress),
@@ -63,6 +55,13 @@ export const SellModal = ({
   const onValuesChange = useCallback((_, values) => {
     setIsSubmit(values.every((item: any) => item.value || item.value === 0));
   }, []);
+
+  const onCancel = useCallback(() => {
+    onUnSelectItem();
+    if (step === 2) {
+      setTimeout(() => location.reload(), 3_000);
+    }
+  }, [step]);
 
   // Render view component
   const viewComponent = useMemo(
@@ -105,11 +104,7 @@ export const SellModal = ({
                   }),
                 ]}
               >
-                <InputNumber
-                  placeholder="0.0"
-                  addonAfter="SOL"
-                  min={0}
-                />
+                <InputNumber placeholder="0.0" addonAfter="SOL" min={0} />
               </Form.Item>
               <Row justify="space-between">
                 <div className="candy-footnote-label">Service Fees</div>

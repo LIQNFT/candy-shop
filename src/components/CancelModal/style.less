@@ -1,0 +1,92 @@
+.cancel-modal {
+  // Set font
+  font-family: 'Work Sans', Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+
+  &-title {
+    font-size: 32px;
+    font-weight: 600;
+  }
+
+  &-container {
+    width: 100%;
+    padding-top: 40px;
+  }
+
+  &-thumbnail {
+    img {
+      max-width: 340px;
+      max-height: 340px;
+      margin-right: 48px;
+    }
+  }
+
+  &-control {
+    display: flex;
+    justify-content: space-between;
+    margin: 24px 0;
+  }
+
+  &-info {
+    margin-top: 24px;
+    display: flex;
+    gap: 32px;
+
+    &-line {
+      width: 2px;
+      background-color: #bdbdbd;
+      align-self: stretch;
+    }
+  }
+
+  &-button {
+    padding: 5px 100px;
+    border-radius: 100px;
+    height: unset;
+  }
+  &-confirm {
+    &-content {
+      display: flex;
+      align-items: center;
+      padding-bottom: 40px;
+      border-bottom: 1px solid #e0e0e0;
+      margin-bottom: 40px;
+
+      img {
+        max-width: 100px;
+        max-height: 100px;
+        margin-right: 15px;
+      }
+
+      .candy-title {
+        margin-bottom: 0;
+        text-align: left;
+      }
+    }
+
+    &-success {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .candy-label-input {
+        margin-bottom: 12px;
+      }
+
+      .candy-button {
+        width: 100%;
+        padding: 16px 0;
+        margin-top: 44px;
+      }
+
+      &-icon {
+        svg {
+          margin: 14px 15px;
+        }
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { Col, Empty, Row, Skeleton } from 'antd';
 import { useEffect, useState } from 'react';
@@ -6,6 +6,8 @@ import { fetchNftsFromWallet } from '../api/fetchNftsFromWallet';
 import { Nft } from '../components/Nft';
 import { CandyShop } from './CandyShop';
 import { SingleTokenInfo } from '../api/fetchMetadata';
+import { fetchOrdersByStoreIdAndWalletAddress } from '../api/backend/OrderAPI';
+import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 
 interface SellProps {
   connection: Connection;
@@ -23,35 +25,54 @@ export const Sell: React.FC<SellProps> = ({
   candyShop,
   walletConnectComponent,
 }) => {
-
   const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
+  const [sellOrders, setSellOrders] = useState<OrderSchema[]>();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!isLoading && connection && walletPublicKey) {
       (async () => {
         setIsLoading(true);
-        let userNfts = await fetchNftsFromWallet(connection, walletPublicKey);
+        let [userNfts, sellOrders] = await Promise.all([
+          fetchNftsFromWallet(connection, walletPublicKey),
+          fetchOrdersByStoreIdAndWalletAddress(
+            candyShop.candyShopAddress().toString(),
+            walletPublicKey.toString()
+          ),
+        ]);
         setNfts(userNfts);
+        setSellOrders(sellOrders);
+
         setIsLoading(false);
       })();
     }
   }, [connection, walletPublicKey]);
 
+  const hashSellOrders = useMemo(() => {
+    return (
+      sellOrders?.reduce((acc: any, item: OrderSchema) => {
+        acc[item.tokenMint] = item;
+        return acc;
+      }, {}) || {}
+    );
+  }, [sellOrders]);
+
   if (!walletPublicKey) {
     return (
-      <div className="candy-shop-list" style={{textAlign: 'center'}}>
+      <div className="candy-shop-list" style={{ textAlign: 'center' }}>
         {walletConnectComponent}
       </div>
-    )
+    );
   }
 
   return (
     <div className="candy-shop-list">
-      <Row gutter={[
-        { md: 24, xs: 16 },
-        { md: 24, xs: 16 }
-      ]}>
+      <Row
+        gutter={[
+          { md: 24, xs: 16 },
+          { md: 24, xs: 16 },
+        ]}
+      >
         {isLoading ? (
           Array(3)
             .fill(0)
@@ -62,12 +83,16 @@ export const Sell: React.FC<SellProps> = ({
             ))
         ) : !nfts.length ? (
           <Col span={24}>
-            <Empty description='No NFTs found' />
+            <Empty description="No NFTs found" />
           </Col>
         ) : (
           nfts?.map((item, key) => (
             <Col key={key} md={8} xs={24}>
-              <Nft nft={item} candyShop={candyShop} />
+              <Nft
+                nft={item}
+                candyShop={candyShop}
+                sellDetail={hashSellOrders[item.tokenMintAddress]}
+              />
             </Col>
           ))
         )}

@@ -11,8 +11,8 @@ module.exports = {
         commonjs(),
         nodeResolve({
           browser: true,
-          extensions: [".js", ".ts"],
-          dedupe: ["bn.js", "buffer"],
+          extensions: ['.js', '.ts'],
+          dedupe: ['bn.js', 'buffer'],
           preferBuiltins: false,
         }),
         postcss({
