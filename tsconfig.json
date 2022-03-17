@@ -1,39 +1,28 @@
 {
-  // see https://www.typescriptlang.org/tsconfig to better understand tsconfigs
-  "include": ["src", "types", ".d.ts"],
   "compilerOptions": {
+    "target": "es2019",
     "module": "esnext",
-    "lib": ["dom", "esnext"],
-    "importHelpers": true,
-    // output .d.ts declaration files for consumers
-    "declaration": true,
-    // output .js.map sourcemap files for consumers
-    "sourceMap": true,
-    // match output dir to input dir. e.g. dist/index instead of dist/src/index
-    "rootDir": "./src",
-    // stricter type-checking for stronger correctness. Recommended by TS
     "strict": true,
-    // linter checks for common issues
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    // noUnused* overlap with @typescript-eslint/no-unused-vars, can disable if duplicative
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    // use Node's module resolution algorithm, instead of the legacy TS one
-    "moduleResolution": "node",
-    // transpile JSX to React.createElement
-    "jsx": "react",
-    // interop between ESM and CJS modules. Recommended by TS
     "esModuleInterop": true,
-    // significant perf increase by skipping checking .d.ts files, particularly those in node_modules. Recommended by TS
+    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    // error out if import and file system have a casing mismatch. Recommended by TS
     "forceConsistentCasingInFileNames": true,
-    // `tsdx build` ignores this option, but it is commonly used when type-checking separately with `tsc`
-    "noEmit": true,
-    "baseUrl": "./",
-    "paths": {
-      "@solana/web3.js": ["./node_modules/@solana/web3.js/lib"]
-    }
-  }
+    "jsx": "react",
+    "lib": ["dom", "esnext"],
+    "allowJs": true,
+    "moduleResolution": "Node",
+
+    // used to emit index.d.ts
+    "declaration": true,
+    "outDir": "dist",
+    "declarationMap": true,
+    "declarationDir": ".",
+
+    // for resolve
+    "rootDir": "src"
+  },
+  "include": ["src/**/*", "src/.d.ts"],
+
+  // used to emit index.d.ts in the right directory
+  "exclude": ["dist"]
 }

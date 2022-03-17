@@ -1,9 +1,9 @@
-import React from 'react';
-import { Connection, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { Statistic } from 'antd';
-import { ExplorerLink } from '../ExplorerLink';
+import React from "react";
+import { Connection, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { Statistic } from "antd";
+import { ExplorerLink } from "../ExplorerLink";
 import { Order as OrderSchema } from "solana-candy-shop-schema/dist";
-import { CandyShop } from '../../core/CandyShop';
+import { CandyShop } from "../../core/CandyShop";
 
 export interface BuyModalDetailProps {
   order: OrderSchema;
@@ -21,19 +21,26 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   return (
     <>
       <div className="buy-modal-thumbnail">
-        <img src={order?.nftImageLink || ''} />
+        <img src={order?.nftImageLink || ""} />
       </div>
       <div className="buy-modal-container">
         <div className="buy-modal-title">{order?.name}</div>
         <div className="buy-modal-control">
           <div>
             <div className="candy-label">PRICE</div>
-            <Statistic suffix="SOL" value={order?.price as any / LAMPORTS_PER_SOL} precision={2} valueStyle={{ fontSize: 16, fontWeight: 'bold' }} />
+            <Statistic
+              suffix="SOL"
+              value={(order?.price as any) / LAMPORTS_PER_SOL}
+              precision={2}
+              valueStyle={{ fontSize: 16, fontWeight: "bold" }}
+            />
           </div>
-          {!walletPublicKey ?
+          {!walletPublicKey ? (
             walletConnectComponent
-            : (
-            <button className="candy-button buy-modal-button" onClick={buy}>Buy Now</button>
+          ) : (
+            <button className="candy-button buy-modal-button" onClick={buy}>
+              Buy Now
+            </button>
           )}
         </div>
         <div className="buy-modal-description">
@@ -47,7 +54,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
               <ExplorerLink type="address" address={order?.tokenMint} />
             </div>
           </div>
-          { order?.edition ? (
+          {order?.edition ? (
             <div>
               <div className="candy-label">EDITION</div>
               <div className="candy-value">{order?.edition}</div>

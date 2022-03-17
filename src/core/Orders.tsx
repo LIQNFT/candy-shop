@@ -1,14 +1,13 @@
-import React from 'react';
-import { Col, Empty, Row, Skeleton } from 'antd';
-import { Connection, PublicKey } from '@solana/web3.js';
-import { useEffect, useState } from 'react';
-import { fetchOrdersByStoreId } from '../api/backend/OrderAPI';
-import { Order } from '../components/Order';
-import { CandyShop } from './CandyShop';
+import React, { useEffect, useState } from "react";
+import { Col, Empty, Row, Skeleton } from "antd";
+import { Connection, PublicKey } from "@solana/web3.js";
+import { fetchOrdersByStoreId } from "../api/backend/OrderAPI";
+import { Order } from "../components/Order";
+import { CandyShop } from "./CandyShop";
 
 interface OrdersProps {
   connection: Connection;
-  walletPublicKey: PublicKey;
+  walletPublicKey: PublicKey | undefined;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
 }
@@ -34,8 +33,8 @@ export const Orders: React.FC<OrdersProps> = ({
 
         setOrders(data.result);
       })
-      .catch(err => {
-        console.info('fetchOrdersByStoreId failed: ', err);
+      .catch((err) => {
+        console.info("fetchOrdersByStoreId failed: ", err);
       })
       .finally(() => {
         setLoading(false);

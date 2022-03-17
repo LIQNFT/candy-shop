@@ -1,15 +1,15 @@
-import React from 'react';
-import { Connection, PublicKey } from '@solana/web3.js';
-import { Col, Empty, Row, Skeleton } from 'antd';
-import { useEffect, useState } from 'react';
-import { fetchNftsFromWallet } from '../api/fetchNftsFromWallet';
-import { Nft } from '../components/Nft';
-import { CandyShop } from './CandyShop';
-import { SingleTokenInfo } from '../api/fetchMetadata';
+import React from "react";
+import { Connection, PublicKey } from "@solana/web3.js";
+import { Col, Empty, Row, Skeleton } from "antd";
+import { useEffect, useState } from "react";
+import { fetchNftsFromWallet } from "../api/fetchNftsFromWallet";
+import { Nft } from "../components/Nft";
+import { CandyShop } from "./CandyShop";
+import { SingleTokenInfo } from "../api/fetchMetadata";
 
 interface SellProps {
   connection: Connection;
-  walletPublicKey: PublicKey;
+  walletPublicKey: PublicKey | undefined;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
 }
@@ -23,7 +23,6 @@ export const Sell: React.FC<SellProps> = ({
   candyShop,
   walletConnectComponent,
 }) => {
-
   const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -40,18 +39,20 @@ export const Sell: React.FC<SellProps> = ({
 
   if (!walletPublicKey) {
     return (
-      <div className="candy-shop-list" style={{textAlign: 'center'}}>
+      <div className="candy-shop-list" style={{ textAlign: "center" }}>
         {walletConnectComponent}
       </div>
-    )
+    );
   }
 
   return (
     <div className="candy-shop-list">
-      <Row gutter={[
-        { md: 24, xs: 16 },
-        { md: 24, xs: 16 }
-      ]}>
+      <Row
+        gutter={[
+          { md: 24, xs: 16 },
+          { md: 24, xs: 16 },
+        ]}
+      >
         {isLoading ? (
           Array(3)
             .fill(0)
@@ -62,7 +63,7 @@ export const Sell: React.FC<SellProps> = ({
             ))
         ) : !nfts.length ? (
           <Col span={24}>
-            <Empty description='No NFTs found' />
+            <Empty description="No NFTs found" />
           </Col>
         ) : (
           nfts?.map((item, key) => (
