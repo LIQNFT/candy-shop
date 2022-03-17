@@ -2,7 +2,7 @@ import * as anchor from '@project-serum/anchor';
 import BN from 'bn.js';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID
+  TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
 import { PublicKey } from '@solana/web3.js';
 import {
@@ -11,7 +11,7 @@ import {
   AUTHORITY,
   CANDY_STORE,
   FEE_PAYER,
-  TREASURY
+  TREASURY,
 } from './constants';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';

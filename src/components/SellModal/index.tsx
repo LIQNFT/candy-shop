@@ -1,6 +1,6 @@
 import { BN } from '@project-serum/anchor';
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { Form, Input, InputNumber, Modal, Row } from 'antd';
+import { Form, InputNumber, Modal, Row } from 'antd';
 import React, { useCallback, useMemo, useState } from 'react';
 import { errorNotification } from '../../utils/notification';
 import { SingleTokenInfo } from '../../api/fetchMetadata';
@@ -21,35 +21,40 @@ export const SellModal = ({
   candyShop: CandyShop;
 }) => {
   const [step, setStep] = useState(0);
+  // Handle form
+  const [form] = Form.useForm();
 
   const [isSubmit, setIsSubmit] = useState(false);
 
   // List for sale and move to next step
-  const sell = async () => {
+  const sell = useCallback(async () => {
     try {
       // Change to step 1: processing
       setStep(1);
       let price = form.getFieldValue('price') * LAMPORTS_PER_SOL;
+      console.log([
+        new PublicKey(nft.tokenAccountAddress),
+        new PublicKey(nft.tokenMintAddress),
+        candyShop.treasuryMint(),
+        new BN(price),
+      ]);
       const txHash = await candyShop.sell(
         new PublicKey(nft.tokenAccountAddress),
         new PublicKey(nft.tokenMintAddress),
         candyShop.treasuryMint(),
         new BN(price)
       );
-
       console.log('Place sell order with transaction hash', txHash);
       setStep(2);
     } catch (error) {
       // Show error and redirect to step 0 again
+      console.log({ error });
       errorNotification(
         new Error('Transaction failed. Please try again later.')
       );
       setStep(0);
     }
-  };
-
-  // Handle form
-  const [form] = Form.useForm();
+  }, [candyShop, form, nft]);
 
   // Check active button submit
   const onValuesChange = useCallback((_, values) => {
@@ -58,10 +63,8 @@ export const SellModal = ({
 
   const onCancel = useCallback(() => {
     onUnSelectItem();
-    if (step === 2) {
-      setTimeout(() => location.reload(), 3_000);
-    }
-  }, [step]);
+    if (step === 2) setTimeout(() => window.location.reload(), 3_000);
+  }, [step, onUnSelectItem]);
 
   // Render view component
   const viewComponent = useMemo(
@@ -72,7 +75,7 @@ export const SellModal = ({
           <>
             <div className="candy-title">Sell</div>
             <div className="sell-modal-content">
-              <img src={nft?.nftImage || imgDefault} />
+              <img src={nft?.nftImage || imgDefault} alt="" />
               <div>
                 <div className="sell-modal-collection-name">
                   {nft?.metadata?.data?.symbol}
@@ -131,7 +134,7 @@ export const SellModal = ({
               <IconTick />
             </div>
             <div className="sell-modal-content">
-              <img src={nft?.nftImage || imgDefault} />
+              <img src={nft?.nftImage || imgDefault} alt="" />
               <div className="candy-title">
                 {nft?.metadata?.data?.name} is now listed for sale
               </div>
@@ -148,7 +151,7 @@ export const SellModal = ({
             </div>
           </>
         ),
-    [onValuesChange, isSubmit, onCancel]
+    [onValuesChange, isSubmit, onCancel, sell, form, nft]
   );
 
   return (

@@ -56,7 +56,7 @@ export async function buyAndExecuteSale(
   const isNative = treasuryMint.equals(WRAPPED_SOL_MINT);
   const ata = (await getAtaForMint(treasuryMint, wallet.publicKey))[0];
 
-  const [sellTradeState, sellTradeStateBump] = await getAuctionHouseTradeState(
+  const [sellTradeState] = await getAuctionHouseTradeState(
     auctionHouse,
     counterParty,
     tokenAccount,

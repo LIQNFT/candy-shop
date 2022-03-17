@@ -18,7 +18,7 @@ export const CancelModalConfirm = ({
         <IconTick />
       </div>
       <div className="cancel-modal-confirm-content">
-        <img src={order.nftImageLink || imgDefault} />
+        <img src={order.nftImageLink || imgDefault} alt="" />
         <div className="candy-title">
           {order.name} is no longer listed for sale
         </div>

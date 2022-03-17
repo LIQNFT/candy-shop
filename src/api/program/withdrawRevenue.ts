@@ -1,14 +1,14 @@
-import * as anchor from "@project-serum/anchor";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import * as anchor from '@project-serum/anchor';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
-import { Keypair, PublicKey, SystemProgram } from "@solana/web3.js";
-import { AUCTION_HOUSE_PROGRAM_ID } from "../constants";
+import { Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
+import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 import {
   getAuctionHouse,
   getAuctionHouseAuthority,
   getAuctionHouseTreasuryAcct,
   getCandyShop,
-} from "../utils";
+} from '../utils';
 
 export async function candyStoreWithdrawFromTreasury(
   walletKeyPair: Keypair,
@@ -26,18 +26,16 @@ export async function candyStoreWithdrawFromTreasury(
     program.programId
   );
 
-  const [auctionHouse, auctionHouseBump] = await getAuctionHouse(
+  const [auctionHouse] = await getAuctionHouse(
     auctionHouseAuthority,
     treasuryMint
   );
 
-  const [treasuryAccount, treasuryBump] = await getAuctionHouseTreasuryAcct(
-    auctionHouse
-  );
+  const [treasuryAccount] = await getAuctionHouseTreasuryAcct(auctionHouse);
 
-  console.log("auctionHouse ", auctionHouse.toString());
-  console.log("auctionHouseAuthority ", auctionHouseAuthority.toString());
-  console.log("treasuryAccount ", treasuryAccount.toString())
+  // console.log('auctionHouse ', auctionHouse.toString());
+  // console.log('auctionHouseAuthority ', auctionHouseAuthority.toString());
+  // console.log('treasuryAccount ', treasuryAccount.toString());
 
   await program.rpc.candyShopWithdrawFromTreasury(
     amount,
@@ -60,5 +58,5 @@ export async function candyStoreWithdrawFromTreasury(
     }
   );
 
-  console.log("Withdrew from treasury!");
+  console.log('Withdrew from treasury!');
 }
