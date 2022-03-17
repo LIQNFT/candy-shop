@@ -32,8 +32,8 @@ export const Orders: React.FC<OrdersProps> = ({
 
         setOrders(data.result);
       })
-      .catch(err => {
-        console.info('fetchOrdersByStoreId failed: ', err);
+      .catch((err) => {
+        console.info("fetchOrdersByStoreId failed: ", err);
       })
       .finally(() => {
         setLoading(false);

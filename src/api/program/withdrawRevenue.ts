@@ -18,11 +18,13 @@ export async function candyStoreWithdrawFromTreasury(
 ) {
   const [auctionHouseAuthority, authorityBump] = await getAuctionHouseAuthority(
     walletKeyPair.publicKey,
+    treasuryMint,
     program.programId
   );
 
   const [candyShop, candyShopBump] = await getCandyShop(
     walletKeyPair.publicKey,
+    treasuryMint,
     program.programId
   );
 
