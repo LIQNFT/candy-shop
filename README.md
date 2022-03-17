@@ -39,9 +39,9 @@ yarn add @liqnft/candy-shop
 
 ```
 const candyShop = new CandyShop(
-  new PublicKey("EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7"), // your Candy Shop address
-  new PublicKey("BSPpKnfVMbnDfQKgJzUTQHVa78YY8FYqv8ttMwAG7sZn"), // Candy Shop creator address
-  new PublicKey("FmDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq"), // Candy Shop program id
+  new PublicKey("Fo2cXie4UwreZi7LHMpnsyVPvzuo4FMwAVbSUYQsmbsh"), // creator address (i.e. your wallet address)
+  new PublicKey("So11111111111111111111111111111111111111112"), // treasury mint (i.e. currency to buy and sell with)
+  new PublicKey("8yRJB65ZT6pKFBWQkkN4WBdGzFtKmdvJNJcByMa6faBr"), // Candy Shop program id
   "devnet", // mainnet, devnet
   wallet! // user wallet address
 );
