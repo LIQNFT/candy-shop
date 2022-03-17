@@ -1,6 +1,6 @@
 import { Modal } from 'antd';
-import { Connection, PublicKey } from '@solana/web3.js';
-import React, { useMemo, useState } from 'react';
+import { PublicKey } from '@solana/web3.js';
+import React, { useMemo, useState, useCallback } from 'react';
 import BuyModalConfirmed from './BuyModalConfirmed';
 import BuyModalDetail from './BuyModalDetail';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
@@ -37,7 +37,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   const [hash, setHash] = useState(''); // txHash
 
   // Handle buy
-  const buy = async () => {
+  const buy = useCallback(async () => {
     try {
       // Change to step 1: processing
       setStep(1);
@@ -61,12 +61,13 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       );
       setStep(0);
     }
-  };
-
-  // Handle change step
-  const onChangeStep = async (step: number) => {
-    setStep(step);
-  };
+  }, [
+    candyShop,
+    order.price,
+    order.tokenAccount,
+    order.tokenMint,
+    order.walletAddress,
+  ]);
 
   // Render view component
   const viewComponent = useMemo(
@@ -90,7 +91,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             txHash={hash}
           />
         ),
-    [order, candyShop, onChangeStep, hash]
+    [order, hash, buy, walletConnectComponent, walletPublicKey]
   );
 
   return (

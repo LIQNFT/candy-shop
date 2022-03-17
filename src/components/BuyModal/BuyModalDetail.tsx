@@ -1,9 +1,8 @@
 import React from 'react';
-import { Connection, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { Statistic } from 'antd';
 import { ExplorerLink } from '../ExplorerLink';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import { CandyShop } from '../../core/CandyShop';
 
 export interface BuyModalDetailProps {
   order: OrderSchema;
@@ -21,7 +20,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   return (
     <>
       <div className="buy-modal-thumbnail">
-        <img src={order?.nftImageLink || ''} />
+        <img src={order?.nftImageLink || ''} alt="" />
       </div>
       <div className="buy-modal-container">
         <div className="buy-modal-title">{order?.name}</div>

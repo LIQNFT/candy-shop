@@ -1,14 +1,13 @@
 import React from 'react';
 import { Col, Empty, Row, Skeleton } from 'antd';
-import { Connection, PublicKey } from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 import { useEffect, useState } from 'react';
 import { fetchOrdersByStoreId } from '../api/backend/OrderAPI';
 import { Order } from '../components/Order';
 import { CandyShop } from './CandyShop';
 
 interface OrdersProps {
-  connection: Connection;
-  walletPublicKey: PublicKey;
+  walletPublicKey?: PublicKey;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
 }
@@ -18,7 +17,6 @@ interface OrdersProps {
  */
 export const Orders: React.FC<OrdersProps> = ({
   walletPublicKey,
-  connection,
   candyShop,
   walletConnectComponent,
 }) => {
@@ -40,7 +38,7 @@ export const Orders: React.FC<OrdersProps> = ({
       .finally(() => {
         setLoading(false);
       });
-  }, [fetchOrdersByStoreId]);
+  }, [candyShop]);
 
   return (
     <div className="candy-shop-list">

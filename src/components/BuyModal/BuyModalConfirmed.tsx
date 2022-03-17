@@ -34,6 +34,7 @@ const BuyModalConfirmed = ({
             src={order?.nftImageLink || imgDefault}
             width="100%"
             height="100%"
+            alt=""
           />
         </div>
         <div className="buy-modal-confirmed-content">

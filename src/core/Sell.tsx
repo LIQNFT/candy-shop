@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { Col, Empty, Row, Skeleton } from 'antd';
 import { useEffect, useState } from 'react';
@@ -11,7 +11,7 @@ import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 
 interface SellProps {
   connection: Connection;
-  walletPublicKey: PublicKey;
+  walletPublicKey?: PublicKey;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
 }
@@ -28,25 +28,29 @@ export const Sell: React.FC<SellProps> = ({
   const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
   const [sellOrders, setSellOrders] = useState<OrderSchema[]>();
   const [isLoading, setIsLoading] = useState(false);
+  const [shopId, setShopId] = useState<string>();
 
   useEffect(() => {
-    if (!isLoading && connection && walletPublicKey) {
+    candyShop && setShopId(candyShop.candyShopAddress.toString());
+  }, [candyShop]);
+
+  useEffect(() => {
+    if (connection && walletPublicKey && shopId) {
       (async () => {
         setIsLoading(true);
         let [userNfts, sellOrders] = await Promise.all([
           fetchNftsFromWallet(connection, walletPublicKey),
           fetchOrdersByStoreIdAndWalletAddress(
-            candyShop.candyShopAddress().toString(),
+            shopId,
             walletPublicKey.toString()
           ),
         ]);
         setNfts(userNfts);
         setSellOrders(sellOrders);
-
         setIsLoading(false);
       })();
     }
-  }, [connection, walletPublicKey]);
+  }, [connection, walletPublicKey, shopId]);
 
   const hashSellOrders = useMemo(() => {
     return (
@@ -56,6 +60,8 @@ export const Sell: React.FC<SellProps> = ({
       }, {}) || {}
     );
   }, [sellOrders]);
+
+  console.log({ hashSellOrders, sellOrders, nfts });
 
   if (!walletPublicKey) {
     return (

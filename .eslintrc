@@ -1,0 +1,9 @@
+{
+  "extends": ["prettier"],
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": 0,
+    "no-control-regex": "off",
+    "no-unused-vars": "warn"
+  }
+}

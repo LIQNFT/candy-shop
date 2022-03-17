@@ -26,12 +26,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
   const onChangeStep = useCallback((step: number) => setStep(step), []);
   const onCloseModal = useCallback(() => {
     onUnSelectItem();
-
-    if (step === 2) {
-      setTimeout(() => {
-        location.reload();
-      }, 3_000);
-    }
+    if (step === 2) setTimeout(() => window.location.reload(), 3_000);
   }, [step, onUnSelectItem]);
 
   const viewComponent = useMemo(() => {
@@ -47,7 +42,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
       )
       .set(1, <Processing text="Processing Cancel" />)
       .set(2, <CancelModalConfirm order={order} onCancel={onCloseModal} />);
-  }, [order, candyShop, onCloseModal]);
+  }, [order, candyShop, onCloseModal, onChangeStep]);
 
   return (
     <Modal

@@ -48,7 +48,7 @@ export const CancelModalDetail = ({
   return (
     <>
       <div className="cancel-modal-thumbnail">
-        <img src={order.nftImageLink || imgDefault} />
+        <img src={order.nftImageLink || imgDefault} alt="" />
       </div>
 
       <div className="cancel-modal-container">
