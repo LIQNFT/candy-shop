@@ -2,7 +2,7 @@ import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import React, { FC, useMemo } from 'react';
-import { CandyShop, Orders, Sell } from '../.';
+import { CandyShop, Orders, Sell, Stat } from '../.';
 
 export const CandyShopContent: FC = () => {
   const { connection } = useConnection();
@@ -24,14 +24,22 @@ export const CandyShopContent: FC = () => {
       <div style={{ textAlign: 'center', paddingBottom: 30 }}>
         <WalletMultiButton />
       </div>
+
+      <Stat
+        candyShop={candyShop}
+        title={'Marketplace'}
+        description={'Candy Shop is an open source on-chain protocol that empowers DAOs, NFT projects and anyone interested in creating an NFT marketplace to do so within minutes!'}
+        style={{ paddingBottom: 50 }}
+      />
+
       <div style={{ marginBottom: 50 }}>
-        <h1 style={{ textAlign: 'center' }}>Candy Shop</h1>
         <Orders
           walletPublicKey={wallet?.publicKey}
           candyShop={candyShop}
           walletConnectComponent={<WalletMultiButton />}
         />
       </div>
+
       <div style={{ marginBottom: 50 }}>
         <h1 style={{ textAlign: 'center' }}>Sell Your NFTs</h1>
         <Sell
