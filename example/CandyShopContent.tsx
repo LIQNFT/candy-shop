@@ -23,7 +23,7 @@ export const CandyShopContent: FC = () => {
         <WalletMultiButton />
       </div>
       <div style={{marginBottom: 50}}>
-        <h1 style={{textAlign: 'center'}}>Orders</h1>
+        <h1 style={{textAlign: 'center'}}>Candy Shop</h1>
         <Orders
           connection={connection}
           walletPublicKey={wallet?.publicKey}
@@ -32,7 +32,7 @@ export const CandyShopContent: FC = () => {
         />
       </div>
       <div style={{marginBottom: 50}}>
-        <h1 style={{textAlign: 'center'}}>Sell</h1>
+        <h1 style={{textAlign: 'center'}}>Sell Your NFTs</h1>
         <Sell
           connection={connection}
           walletPublicKey={wallet?.publicKey}
