@@ -3029,7 +3029,7 @@ dayjs@1.x:
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.0.tgz#009bf7ef2e2ea2d5db2e6583d2d39a4b5061e805"
   integrity sha512-JLC809s6Y948/FuCZPm5IX8rRhQwOiyMb2TfVVQEixG7P8Lm/gt5S7yoQZmC8x1UehI9Pb7sksEt4xx14m+7Ug==
 
-debug@4, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1:
+debug@4, debug@^4.3.1:
   version "4.3.3"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.3.tgz#04266e0b70a98d4462e6e288e38259213332b664"
   integrity sha512-/zxw5+vh1Tfv+4Qn7a5nsbcJKPaSvCDhojn6FEl9vupwK2VCSDtEiEtqr8DFtzYFOdz63LBkxec7DYuc2jon6Q==
@@ -3056,6 +3056,13 @@ debug@^3.2.6:
   integrity sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==
   dependencies:
     ms "^2.1.1"
+
+debug@^4.0.1, debug@^4.1.0, debug@^4.1.1:
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.4.tgz#1319f6579357f2338d3337d2cdd4914bb5dcc865"
+  integrity sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==
+  dependencies:
+    ms "2.1.2"
 
 decamelize@^1.2.0:
   version "1.2.0"
@@ -3217,9 +3224,9 @@ eip1193-provider@^1.0.1:
     "@json-rpc-tools/provider" "^1.5.5"
 
 electron-to-chromium@^1.4.84:
-  version "1.4.86"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.86.tgz#90fe4a9787f48d6522957213408e08a8126b2ebc"
-  integrity sha512-EVTZ+igi8x63pK4bPuA95PXIs2b2Cowi3WQwI9f9qManLiZJOD1Lash1J3W4TvvcUCcIR4o/rgi9o8UicXSO+w==
+  version "1.4.87"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.87.tgz#1aeacfa50b2fbf3ecf50a78fbebd8f259d4fe208"
+  integrity sha512-EXXTtDHFUKdFVkCnhauU7Xp8wmFC1ZG6GK9a1BeI2vvNhy61IwfNPo/CRexhf7mh4ajxAHJPind62BzpzVUeuQ==
 
 elliptic@^6.5.2, elliptic@^6.5.4:
   version "6.5.4"
@@ -6069,9 +6076,9 @@ rc-mentions@~1.6.1:
     rc-util "^5.0.1"
 
 rc-menu@^9.0.0:
-  version "9.5.0"
-  resolved "https://registry.yarnpkg.com/rc-menu/-/rc-menu-9.5.0.tgz#d8922d7b69f7e9973d8a8994f59eb2164eb2991b"
-  integrity sha512-psAuSclyFQCR/o+AOji2ZFnRbELcBJaaxT/oi0IM8+dRQTxAvUrOzBP6a4djmzZvf6A+vYsgRjV8325XfsAmOA==
+  version "9.5.1"
+  resolved "https://registry.yarnpkg.com/rc-menu/-/rc-menu-9.5.1.tgz#c9347a0aa047ce2b653374372ba912691fa7468b"
+  integrity sha512-eiwxqD+a6RdOqmppgcuSWP+d0OnWhD0aMxCjpE9ZR61CoRv9zeLhxPVLvYM/v8pJ/mb52E1Nw150Xb6B9PsOQQ==
   dependencies:
     "@babel/runtime" "^7.10.1"
     classnames "2.x"
@@ -6216,9 +6223,9 @@ rc-switch@~3.2.0:
     rc-util "^5.0.1"
 
 rc-table@~7.23.0:
-  version "7.23.0"
-  resolved "https://registry.yarnpkg.com/rc-table/-/rc-table-7.23.0.tgz#e5f76998ecf3246147d45ed311417c08886e6507"
-  integrity sha512-Q1gneB2+lUa8EzCCfbrq+jO1qNSwQv1RUUXKB84W/Stdp4EvGOt2+QqGyfotMNM4JUw0fgGLwY+WjnhUhnLuQQ==
+  version "7.23.1"
+  resolved "https://registry.yarnpkg.com/rc-table/-/rc-table-7.23.1.tgz#39f101a2ebd20fe4947a83be68e3cd9b4784f9e3"
+  integrity sha512-UJblLeDmv/6290lkjDvaMr85OUV3eCNXyRtBAk2LaZF0lF1+wqOvRKkbE8N5TvlWLwXcrH7ZPRRXrRXxtgfRYA==
   dependencies:
     "@babel/runtime" "^7.10.1"
     classnames "^2.2.5"

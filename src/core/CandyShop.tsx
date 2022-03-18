@@ -227,7 +227,7 @@ export class CandyShop {
     return txHash;
   }
 
-  async stats() {
+  public async stats() {
     return fetchStatsById(this._candyShopAddress.toString());
   }
 
