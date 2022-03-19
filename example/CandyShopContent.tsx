@@ -10,9 +10,9 @@ export const CandyShopContent: FC = () => {
   const candyShop = useMemo(
     () =>
       new CandyShop(
-        new PublicKey('EzDnyZvt7XtB65DBpQELgtWPeDFae2u9JvAQTkWq9pb7'),
-        new PublicKey('BSPpKnfVMbnDfQKgJzUTQHVa78YY8FYqv8ttMwAG7sZn'),
-        new PublicKey('FmDt3mTCWsF4xCGteZNQihqbjEdCqNcGPqg9NRJWkgxq'),
+        new PublicKey('Fo2cXie4UwreZi7LHMpnsyVPvzuo4FMwAVbSUYQsmbsh'),
+        new PublicKey('So11111111111111111111111111111111111111112'),
+        new PublicKey('8yRJB65ZT6pKFBWQkkN4WBdGzFtKmdvJNJcByMa6faBr'),
         'devnet',
         wallet!
       ),

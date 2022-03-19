@@ -30,7 +30,6 @@ export const CancelModalDetail = ({
       .cancel(
         new PublicKey(order.tokenAccount),
         new PublicKey(order.tokenMint),
-        candyShop.treasuryMint(),
         new BN(order.price)
       )
       .then(() => {

@@ -46,7 +46,6 @@ export const BuyModal: React.FC<BuyModalProps> = ({
         new PublicKey(order.walletAddress),
         new PublicKey(order.tokenAccount),
         new PublicKey(order.tokenMint),
-        candyShop.treasuryMint(),
         new BN(order.price)
       );
 
