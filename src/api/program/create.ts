@@ -39,6 +39,7 @@ export async function createAuctionHouse(
     treasuryMint: PublicKey,
     sellerFeeBasisPoint: anchor.BN,
     feeSplit: anchor.BN,
+    shopName: string,
     program: anchor.Program
   ): Promise<CsKeys> {
   
@@ -74,12 +75,12 @@ export async function createAuctionHouse(
       sellerFeeBasisPoint,
       true,
       true,
-      authorityBump,
       auctionHouseBump,
       feeBump,
       treasuryBump,
       candyShopBump,
       feeSplit,
+      shopName,
       {
         accounts: {
           treasuryMint,

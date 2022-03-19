@@ -13,6 +13,7 @@ import {
   FEE_PAYER,
   TREASURY,
 } from './constants';
+import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new PublicKey(METADATA_PROGRAM_ID);
@@ -42,6 +43,16 @@ export const getCandyShop = async (
   marketProgramId: PublicKey
 ): Promise<[PublicKey, number]> => {
   return PublicKey.findProgramAddress(
+    [Buffer.from(CANDY_STORE), creator.toBuffer()],
+    marketProgramId
+  );
+};
+
+export const getCandyShopSync = (
+  creator: PublicKey,
+  marketProgramId: PublicKey
+): [PublicKey, number] => {
+  return findProgramAddressSync(
     [Buffer.from(CANDY_STORE), creator.toBuffer()],
     marketProgramId
   );
