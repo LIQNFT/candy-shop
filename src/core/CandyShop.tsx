@@ -4,7 +4,6 @@ import { Cluster, clusterApiUrl, Connection, PublicKey } from '@solana/web3.js';
 import { fetchOrdersByStoreId } from '../api/backend/OrderAPI';
 import { fetchStatsById } from '../api/backend/StatsAPI';
 import { fetchTradeById } from '../api/backend/TradeAPI';
-import { WRAPPED_SOL_MINT } from '../api/constants';
 import { buyAndExecuteSale } from '../api/program/buyAndExecuteSale';
 import { cancelOrder } from '../api/program/cancel';
 import { sellNft } from '../api/program/sell';
@@ -14,7 +13,8 @@ import {
   getAuctionHouseFeeAcct,
   getAuctionHouseTradeState,
   getAuctionHouseTreasuryAcct,
-  getMetadataAccount,
+  getCandyShopSync,
+  getMetadataAccount
 } from '../api/utils';
 
 /**
@@ -23,20 +23,25 @@ import {
 export class CandyShop {
   private _candyShopAddress: PublicKey;
   private _candyShopCreatorAddress: PublicKey;
+  private _treasuryMint: PublicKey;
   private _programId: PublicKey;
   private _env: Cluster;
   private _wallet: AnchorWallet;
   private _program: Program | undefined;
 
   constructor(
-    candyShopAddress: PublicKey,
     candyShopCreatorAddress: PublicKey,
+    treasuryMint: PublicKey,
     candyShopProgramId: PublicKey,
     env: Cluster,
     wallet: AnchorWallet
   ) {
-    this._candyShopAddress = candyShopAddress;
+    this._candyShopAddress = getCandyShopSync(
+      candyShopCreatorAddress,
+      candyShopProgramId
+    )[0];
     this._candyShopCreatorAddress = candyShopCreatorAddress;
+    this._treasuryMint = treasuryMint;
     this._programId = candyShopProgramId;
     this._env = env;
     this._wallet = wallet;
@@ -59,9 +64,8 @@ export class CandyShop {
     }
   }
 
-  // hardcode to wrappedSol in POC
   treasuryMint(): PublicKey {
-    return WRAPPED_SOL_MINT;
+    return this._treasuryMint;
   }
 
   connectedPublicKey(): PublicKey | undefined {
@@ -93,12 +97,15 @@ export class CandyShop {
   ): Promise<string> {
     console.log('buy called');
     await this.initIfNotReady();
-    const [auctionHouseAuthority] = await getAuctionHouseAuthority(
+    const [
+      auctionHouseAuthority,
+      authorityBump,
+    ] = await getAuctionHouseAuthority(
       this._candyShopCreatorAddress,
       this._programId
     );
 
-    const [auctionHouse, auctionHouseBump] = await getAuctionHouse(
+    const [auctionHouse] = await getAuctionHouse(
       auctionHouseAuthority,
       new PublicKey(treasuryMint)
     );
@@ -116,7 +123,7 @@ export class CandyShop {
       treasuryAccount,
       metadata,
       auctionHouseAuthority,
-      auctionHouseBump,
+      authorityBump,
       auctionHouse,
       feeAccount,
       this._candyShopAddress,
@@ -135,12 +142,15 @@ export class CandyShop {
     price: BN
   ): Promise<string> {
     await this.initIfNotReady();
-    const [auctionHouseAuthority] = await getAuctionHouseAuthority(
+    const [
+      auctionHouseAuthority,
+      authorityBump,
+    ] = await getAuctionHouseAuthority(
       this._candyShopCreatorAddress,
       this._programId
     );
 
-    const [auctionHouse, auctionHouseBump] = await getAuctionHouse(
+    const [auctionHouse] = await getAuctionHouse(
       auctionHouseAuthority,
       treasuryMint
     );
@@ -156,7 +166,7 @@ export class CandyShop {
       treasuryMint,
       metadata,
       auctionHouseAuthority,
-      auctionHouseBump,
+      authorityBump,
       auctionHouse,
       feeAccount,
       this._candyShopAddress,
@@ -174,12 +184,15 @@ export class CandyShop {
     price: BN
   ): Promise<string> {
     await this.initIfNotReady();
-    const [auctionHouseAuthority] = await getAuctionHouseAuthority(
+    const [
+      auctionHouseAuthority,
+      authorityBump,
+    ] = await getAuctionHouseAuthority(
       this._candyShopCreatorAddress,
       this._programId
     );
 
-    const [auctionHouse, auctionHouseBump] = await getAuctionHouse(
+    const [auctionHouse] = await getAuctionHouse(
       auctionHouseAuthority,
       new PublicKey(treasuryMint)
     );
@@ -201,7 +214,7 @@ export class CandyShop {
       tokenAccount,
       tokenMint,
       auctionHouseAuthority,
-      auctionHouseBump,
+      authorityBump,
       auctionHouse,
       feeAccount,
       tradeState,
