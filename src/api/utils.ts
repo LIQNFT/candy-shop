@@ -30,30 +30,38 @@ export const getAuctionHouse = async (
 
 export const getAuctionHouseAuthority = async (
   creator: PublicKey,
+  treasuryMint: PublicKey,
   marketProgramId: PublicKey
 ): Promise<[PublicKey, number]> => {
   return PublicKey.findProgramAddress(
-    [Buffer.from(CANDY_STORE), creator.toBuffer(), Buffer.from(AUTHORITY)],
+    [
+      Buffer.from(CANDY_STORE),
+      creator.toBuffer(),
+      treasuryMint.toBuffer(),
+      Buffer.from(AUTHORITY),
+    ],
     marketProgramId
   );
 };
 
 export const getCandyShop = async (
   creator: PublicKey,
+  treasuryMint: PublicKey,
   marketProgramId: PublicKey
 ): Promise<[PublicKey, number]> => {
   return PublicKey.findProgramAddress(
-    [Buffer.from(CANDY_STORE), creator.toBuffer()],
+    [Buffer.from(CANDY_STORE), creator.toBuffer(), treasuryMint.toBuffer()],
     marketProgramId
   );
 };
 
 export const getCandyShopSync = (
   creator: PublicKey,
+  treasuryMint: PublicKey,
   marketProgramId: PublicKey
 ): [PublicKey, number] => {
   return findProgramAddressSync(
-    [Buffer.from(CANDY_STORE), creator.toBuffer()],
+    [Buffer.from(CANDY_STORE), creator.toBuffer(), treasuryMint.toBuffer()],
     marketProgramId
   );
 };

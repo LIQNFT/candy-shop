@@ -41,7 +41,6 @@ export const SellModal = ({
       const txHash = await candyShop.sell(
         new PublicKey(nft.tokenAccountAddress),
         new PublicKey(nft.tokenMintAddress),
-        candyShop.treasuryMint(),
         new BN(price)
       );
       console.log('Place sell order with transaction hash', txHash);

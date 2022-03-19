@@ -14,9 +14,8 @@ import {
   getAuctionHouseTradeState,
   getAuctionHouseTreasuryAcct,
   getCandyShopSync,
-  getMetadataAccount
+  getMetadataAccount,
 } from '../api/utils';
-
 /**
  * Core Candy Shop module
  */
@@ -38,6 +37,7 @@ export class CandyShop {
   ) {
     this._candyShopAddress = getCandyShopSync(
       candyShopCreatorAddress,
+      treasuryMint,
       candyShopProgramId
     )[0];
     this._candyShopCreatorAddress = candyShopCreatorAddress;
@@ -92,7 +92,6 @@ export class CandyShop {
     seller: PublicKey,
     tokenAccount: PublicKey,
     tokenMint: PublicKey,
-    treasuryMint: PublicKey,
     price: BN
   ): Promise<string> {
     console.log('buy called');
@@ -102,12 +101,13 @@ export class CandyShop {
       authorityBump,
     ] = await getAuctionHouseAuthority(
       this._candyShopCreatorAddress,
+      this._treasuryMint,
       this._programId
     );
 
     const [auctionHouse] = await getAuctionHouse(
       auctionHouseAuthority,
-      new PublicKey(treasuryMint)
+      this._treasuryMint
     );
     const [feeAccount] = await getAuctionHouseFeeAcct(auctionHouse);
     const [treasuryAccount] = await getAuctionHouseTreasuryAcct(auctionHouse);
@@ -119,7 +119,7 @@ export class CandyShop {
       seller,
       tokenAccount,
       tokenMint,
-      treasuryMint,
+      this._treasuryMint,
       treasuryAccount,
       metadata,
       auctionHouseAuthority,
@@ -138,7 +138,6 @@ export class CandyShop {
   public async sell(
     tokenAccount: PublicKey,
     tokenMint: PublicKey,
-    treasuryMint: PublicKey,
     price: BN
   ): Promise<string> {
     await this.initIfNotReady();
@@ -147,12 +146,13 @@ export class CandyShop {
       authorityBump,
     ] = await getAuctionHouseAuthority(
       this._candyShopCreatorAddress,
+      this._treasuryMint,
       this._programId
     );
 
     const [auctionHouse] = await getAuctionHouse(
       auctionHouseAuthority,
-      treasuryMint
+      this._treasuryMint
     );
 
     const [feeAccount] = await getAuctionHouseFeeAcct(auctionHouse);
@@ -163,7 +163,7 @@ export class CandyShop {
       this._wallet,
       tokenAccount,
       tokenMint,
-      treasuryMint,
+      this._treasuryMint,
       metadata,
       auctionHouseAuthority,
       authorityBump,
@@ -180,7 +180,6 @@ export class CandyShop {
   async cancel(
     tokenAccount: PublicKey,
     tokenMint: PublicKey,
-    treasuryMint: PublicKey,
     price: BN
   ): Promise<string> {
     await this.initIfNotReady();
@@ -189,12 +188,13 @@ export class CandyShop {
       authorityBump,
     ] = await getAuctionHouseAuthority(
       this._candyShopCreatorAddress,
+      this._treasuryMint,
       this._programId
     );
 
     const [auctionHouse] = await getAuctionHouse(
       auctionHouseAuthority,
-      new PublicKey(treasuryMint)
+      this._treasuryMint
     );
 
     const [feeAccount] = await getAuctionHouseFeeAcct(auctionHouse);
@@ -203,7 +203,7 @@ export class CandyShop {
       auctionHouse,
       this._wallet.publicKey,
       tokenAccount,
-      treasuryMint,
+      this._treasuryMint,
       tokenMint,
       new BN(1),
       price
