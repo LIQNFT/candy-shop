@@ -1,8 +1,8 @@
-import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
-import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
-import React, { FC } from 'react';
-import { CandyShop, Orders, Sell } from '../.';
+import { WalletMultiButton } from "@solana/wallet-adapter-ant-design";
+import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
+import { PublicKey } from "@solana/web3.js";
+import React, { FC } from "react";
+import { CandyShop, Orders, Sell } from "../.";
 
 export const CandyShopContent: FC = () => {
   const { connection } = useConnection();
@@ -16,14 +16,13 @@ export const CandyShopContent: FC = () => {
     "devnet",
     wallet!
   );
-
   return (
-    <div style={{paddingBottom: 30}}>
-      <div style={{textAlign: 'center', paddingBottom: 30}}>
+    <div style={{ paddingBottom: 30 }}>
+      <div style={{ textAlign: "center", paddingBottom: 30 }}>
         <WalletMultiButton />
       </div>
-      <div style={{marginBottom: 50}}>
-        <h1 style={{textAlign: 'center'}}>Orders</h1>
+      <div style={{ marginBottom: 50 }}>
+        <h1 style={{ textAlign: "center" }}>Orders</h1>
         <Orders
           connection={connection}
           walletPublicKey={wallet?.publicKey}
@@ -31,8 +30,8 @@ export const CandyShopContent: FC = () => {
           walletConnectComponent={<WalletMultiButton />}
         />
       </div>
-      <div style={{marginBottom: 50}}>
-        <h1 style={{textAlign: 'center'}}>Sell</h1>
+      <div style={{ marginBottom: 50 }}>
+        <h1 style={{ textAlign: "center" }}>Sell</h1>
         <Sell
           connection={connection}
           walletPublicKey={wallet?.publicKey}

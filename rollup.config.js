@@ -30,7 +30,7 @@ export default [
     output: [
       {
         file: pkg.module,
-        format: "es",
+        format: "esm",
         sourcemap: "inline",
         banner,
       },
