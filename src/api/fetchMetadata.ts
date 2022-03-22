@@ -27,13 +27,11 @@ export const singleTokenInfoPromise = async (
   connection: Connection,
   tokenAccountAddress: string
 ): Promise<SingleTokenInfo> => {
-
-  // Get account 
+  // Get account
   const token = await getAccount(
     connection,
     new PublicKey(tokenAccountAddress)
   );
-  console.log("singleTokenInfoPromise", token);
 
   const [newEditionMetadata] = await PublicKey.findProgramAddress(
     [
@@ -76,7 +74,6 @@ export const singleTokenInfoPromise = async (
   const tokenEdition = newEditionAccountInfo
     ? parseEdition(newEditionAccountInfo?.data).edition.toString()
     : undefined;
-  console.log("querying uri", tokenInfo!.data.uri);
 
   let nftImage = defaultNftImage;
   let nftAnimation: string | undefined = defaultNftAnimation;

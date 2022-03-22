@@ -6,15 +6,14 @@ export const fetchNftsFromWallet = async (
   connection: anchor.web3.Connection,
   walletAddress: anchor.web3.PublicKey
 ) => {
-  let nfts: SingleTokenInfo[] = [];
-  let metadataPromises: Promise<SingleTokenInfo>[] = [];
+  const nfts: SingleTokenInfo[] = [];
+  const metadataPromises: Promise<SingleTokenInfo>[] = [];
 
   const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
     walletAddress,
     { programId: TOKEN_PROGRAM_ID }
   );
 
-  console.log('fetchNftsFromWallet: token accounts', tokenAccounts);
   for (let i = 0; i < tokenAccounts.value.length; i++) {
     const tokenAccount = tokenAccounts.value[i];
     const tokenAmount = tokenAccount.account.data.parsed.info.tokenAmount;
@@ -26,7 +25,7 @@ export const fetchNftsFromWallet = async (
 
     // fetch metadata for NFTs
     if (tokenAmountIsOne && tokenDecimalsIsZero) {
-      let metadataPromise: Promise<SingleTokenInfo> = singleTokenInfoPromise(
+      const metadataPromise: Promise<SingleTokenInfo> = singleTokenInfoPromise(
         connection,
         tokenAccount.pubkey.toString()
       );
@@ -34,11 +33,8 @@ export const fetchNftsFromWallet = async (
     }
   }
 
-  let metadataArray: PromiseSettledResult<
-    SingleTokenInfo
-  >[] = await Promise.allSettled(metadataPromises);
-
-  console.log('fetchNftsFromWallet: NFTs', metadataArray);
+  const metadataArray: PromiseSettledResult<SingleTokenInfo>[] =
+    await Promise.allSettled(metadataPromises);
 
   metadataArray.forEach((nft: PromiseSettledResult<SingleTokenInfo>) => {
     if (nft.status === 'fulfilled') {

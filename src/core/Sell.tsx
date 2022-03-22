@@ -28,20 +28,15 @@ export const Sell: React.FC<SellProps> = ({
   const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
   const [sellOrders, setSellOrders] = useState<OrderSchema[]>();
   const [isLoading, setIsLoading] = useState(false);
-  const [shopId, setShopId] = useState<string>();
 
   useEffect(() => {
-    candyShop && setShopId(candyShop.candyShopAddress.toString());
-  }, [candyShop]);
-
-  useEffect(() => {
-    if (connection && walletPublicKey && shopId) {
+    if (connection && walletPublicKey) {
       (async () => {
         setIsLoading(true);
-        let [userNfts, sellOrders] = await Promise.all([
+        const [userNfts, sellOrders] = await Promise.all([
           fetchNftsFromWallet(connection, walletPublicKey),
           fetchOrdersByStoreIdAndWalletAddress(
-            shopId,
+            candyShop.candyShopAddress().toString(),
             walletPublicKey.toString()
           ),
         ]);
@@ -50,9 +45,9 @@ export const Sell: React.FC<SellProps> = ({
         setIsLoading(false);
       })();
     }
-  }, [connection, walletPublicKey, shopId]);
+  }, [connection, walletPublicKey, candyShop]);
 
-  const hashSellOrders = useMemo(() => {
+  const hashSellOrders: any = useMemo(() => {
     return (
       sellOrders?.reduce((acc: any, item: OrderSchema) => {
         acc[item.tokenMint] = item;
@@ -60,8 +55,6 @@ export const Sell: React.FC<SellProps> = ({
       }, {}) || {}
     );
   }, [sellOrders]);
-
-  console.log({ hashSellOrders, sellOrders, nfts });
 
   if (!walletPublicKey) {
     return (
