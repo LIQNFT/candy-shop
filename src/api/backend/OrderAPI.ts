@@ -2,7 +2,7 @@ import axiosInstance from '../../config/axiosInstance';
 
 export async function fetchOrdersByStoreId(storeId: string): Promise<any[]> {
   try {
-    let res: any = await axiosInstance.get(`/order/${storeId}`);
+    const res: any = await axiosInstance.get(`/order/${storeId}`);
 
     return res.data;
   } catch (error) {
@@ -15,17 +15,15 @@ export async function fetchOrdersByStoreIdAndWalletAddress(
   walletAddress: string
 ): Promise<any[]> {
   try {
-    const filterArr = JSON.stringify({
-      side: 1,
-      status: 0,
-      walletAddress,
-    });
-
-    let res: any = await axiosInstance.get(
-      `/order/${storeId}?filterArr[]=${filterArr}`
+    const res: any = await axiosInstance.get(
+      `/order/${storeId}?filterArr[]=${JSON.stringify({
+        side: 1,
+        status: 0,
+        walletAddress,
+      })}`
     );
 
-    return res.data.result;
+    return res.data?.result;
   } catch (error) {
     throw error;
   }
