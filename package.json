@@ -1,7 +1,7 @@
 {
   "name": "@liqnft/candy-shop",
-  "version": "0.0.1",
-  "description": "Solana Candy Shop",
+  "version": "0.3.0",
+  "description": "Decentralized and escrowless marketplace in minutes",
   "main": "dist/index.es.js",
   "module": "dist/index.cjs.js",
   "types": "dist/index.d.ts",
@@ -53,7 +53,7 @@
     "solana-candy-shop-schema": "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#eeee8774f8d4722eea0a0a5f0263d2bfd8e7f143"
   },
   "scripts": {
-    "start": "rollup watch",
+    "start": "rollup -c --watch ",
     "build": "rollup -c",
     "lint": "eslint --fix 'src/**/*.ts'",
     "test": "jest",
