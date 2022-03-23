@@ -59,7 +59,7 @@ export const Stat = ({
       <Row align="bottom">
         <Col span={24} md={12}>
           <div className="candy-title">{title}</div>
-          <p>{description}</p>
+          <div className="candy-description">{description}</div>
         </Col>
         <Col span={24} md={12} className="candy-stat-container">
           <Row justify="center" gutter={18}>
