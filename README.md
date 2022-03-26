@@ -1,8 +1,8 @@
 # Candy Shop
 
-**IN PRIVATE BETA**
+**IN BETA**
 
-Candy Shop is JavaScript library that allows DAOs, NFT projects and anyone to create an NFT marketplace on Solana in minutes!
+Candy Shop is a JavaScript library that allows DAOs, NFT projects and anyone to create an NFT marketplace on Solana in minutes!
 
 Drawing inspiration from Project Serum’s mission to accelerate Solana’s on-chain trading infrastructure, Candy Shop aspires to do the same for the Solana NFT marketplace ecosystem.
 
@@ -19,6 +19,9 @@ Links:
 * [Website](https://liqnft.github.io/solana-candy-shop/)
 * [Demo](https://liqnft.github.io/candy-shop/)
 * [Whitepaper](https://liqnft.gitbook.io/candy-shop/)
+* [Candy Machine V2 + Candy Shop Starter Repo](https://github.com/LIQNFT/candy-machine-v2-with-marketplace)
+
+<img width="1200" alt="Candy Shop Marketplace" src="https://user-images.githubusercontent.com/89616076/160229442-30f59d07-cd33-4b7d-8798-424013731f47.png">
 
 ## Installation
 
@@ -36,6 +39,10 @@ yarn add @liqnft/candy-shop
 ## Usage
 
 ### Init CandyShop
+
+Create your Candy Shop [here](https://liqnft.github.io/solana-candy-shop/#/create-candy-shop).
+
+Use code in the /example folder as reference to setup your Candy Shop.
 
 ```
 const candyShop = new CandyShop(
@@ -55,7 +62,6 @@ Show the NFTs that are for sale and allow users to connect their wallet and buy 
 import { Orders } from '@liqnft/candy-shop';
 
 <Orders
-  connection={connection}
   walletPublicKey={publicKey}
   candyShop={candyShop}
   walletConnectComponent={<WalletMultiButton />}
@@ -74,6 +80,21 @@ import { Sell } from '@liqnft/candy-shop';
   walletPublicKey={publicKey}
   candyShop={candyShop}
   walletConnectComponent={<WalletMultiButton />}
+/>
+
+```
+
+### Show Stats
+
+Display key stats about your collection
+
+```
+import { Stats } from '@liqnft/candy-shop';
+
+<Stat
+  candyShop={candyShop}
+  title={'Marketplace'}
+  description={'Candy Shop is an open source on-chain protocol that empowers DAOs, NFT projects and anyone interested in creating an NFT marketplace to do so within minutes!'}
 />
 
 ```
