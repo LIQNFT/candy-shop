@@ -35,10 +35,6 @@ export async function candyStoreWithdrawFromTreasury(
 
   const [treasuryAccount] = await getAuctionHouseTreasuryAcct(auctionHouse);
 
-  // console.log('auctionHouse ', auctionHouse.toString());
-  // console.log('auctionHouseAuthority ', auctionHouseAuthority.toString());
-  // console.log('treasuryAccount ', treasuryAccount.toString());
-
   await program.rpc.candyShopWithdrawFromTreasury(
     amount,
     candyShopBump,

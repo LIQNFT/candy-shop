@@ -1,16 +1,14 @@
 import * as anchor from '@project-serum/anchor';
-import { Program, Idl } from '@project-serum/anchor';
+import { Idl, Program } from '@project-serum/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
+  TOKEN_PROGRAM_ID
 } from '@solana/spl-token';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import {
-  PublicKey,
-  sendAndConfirmRawTransaction,
-  SystemProgram,
+  PublicKey, SystemProgram,
   SYSVAR_RENT_PUBKEY,
-  Transaction,
+  Transaction
 } from '@solana/web3.js';
 import { Metadata, parseMetadata } from '../../utils/parseData';
 import { AUCTION_HOUSE_PROGRAM_ID, WRAPPED_SOL_MINT } from '../constants';
@@ -18,8 +16,9 @@ import {
   getAtaForMint,
   getAuctionHouseEscrow,
   getAuctionHouseProgramAsSigner,
-  getAuctionHouseTradeState,
+  getAuctionHouseTradeState
 } from '../utils';
+import { awaitTransactionSignatureConfirmation } from './submitTx';
 
 export async function buyAndExecuteSale(
   wallet: AnchorWallet,
@@ -189,7 +188,7 @@ export async function buyAndExecuteSale(
 
   const signedTx = await wallet.signTransaction(transaction);
 
-  const txHash = await sendAndConfirmRawTransaction(
+  const txHash = await awaitTransactionSignatureConfirmation(
     program.provider.connection,
     signedTx.serialize()
   );

@@ -1,12 +1,8 @@
 import * as anchor from '@project-serum/anchor';
-import { Program, Idl } from '@project-serum/anchor';
+import { Idl, Program } from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import {
-  PublicKey,
-  sendAndConfirmRawTransaction,
-  Transaction,
-} from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 
 export async function cancelOrder(
@@ -23,41 +19,24 @@ export async function cancelOrder(
   amount: anchor.BN,
   program: Program<Idl>
 ) {
-  const transaction = new Transaction();
-
-  const ix = await (program.instruction.cancelWithProxy as (
-    ...args: any
-  ) => any)(price, amount, authorityBump, {
-    accounts: {
-      wallet: wallet.publicKey,
-      tokenAccount,
-      tokenMint: tokenAccountMint,
-      authority,
-      auctionHouse,
-      auctionHouseFeeAccount: feeAccount,
-      tradeState,
-      candyShop,
-      ahProgram: AUCTION_HOUSE_PROGRAM_ID,
-      tokenProgram: TOKEN_PROGRAM_ID,
-    },
-  });
-
-  transaction.add(ix);
-
-  // add recent blockhash
-  let recentBlockhash = await program.provider.connection.getLatestBlockhash(
-    'finalized'
-  );
-  transaction.recentBlockhash = recentBlockhash.blockhash;
-
-  // add fee payer
-  transaction.feePayer = wallet.publicKey;
-
-  const signedTx = await wallet.signTransaction(transaction);
-
-  const txHash = await sendAndConfirmRawTransaction(
-    program.provider.connection,
-    signedTx.serialize()
+  const txHash = await program.rpc.cancelWithProxy(
+    price,
+    amount,
+    authorityBump,
+    {
+      accounts: {
+        wallet: wallet.publicKey,
+        tokenAccount,
+        tokenMint: tokenAccountMint,
+        authority,
+        auctionHouse,
+        auctionHouseFeeAccount: feeAccount,
+        tradeState,
+        candyShop,
+        ahProgram: AUCTION_HOUSE_PROGRAM_ID,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      },
+    }
   );
 
   console.log('sell order cancelled');
