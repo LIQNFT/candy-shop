@@ -13,6 +13,7 @@ import {
   getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
 } from '../utils';
+import { awaitTransactionSignatureConfirmation } from './submitTx';
 
 export async function sellNft(
   wallet: AnchorWallet,
@@ -48,14 +49,10 @@ export async function sellNft(
     amount,
     new anchor.BN(0)
   );
-  const [
-    programAsSigner,
-    programAsSignerBump,
-  ] = await getAuctionHouseProgramAsSigner();
+  const [programAsSigner, programAsSignerBump] =
+    await getAuctionHouseProgramAsSigner();
 
-  const transaction = new Transaction();
-
-  const ix = await (program.instruction.sellWithProxy as (...args: any) => any)(
+  const txHash = await program.rpc.sellWithProxy(
     price,
     amount,
     tradeStateBump,
@@ -80,24 +77,6 @@ export async function sellNft(
         rent: SYSVAR_RENT_PUBKEY,
       },
     }
-  );
-
-  transaction.add(ix);
-
-  // add recent blockhash
-  let recentBlockhash = await program.provider.connection.getLatestBlockhash(
-    'finalized'
-  );
-  transaction.recentBlockhash = recentBlockhash.blockhash;
-
-  // add fee payer
-  transaction.feePayer = wallet.publicKey;
-
-  const signedTx = await wallet.signTransaction(transaction);
-
-  const txHash = await sendAndConfirmRawTransaction(
-    program.provider.connection,
-    signedTx.serialize()
   );
 
   console.log('sell order placed');
