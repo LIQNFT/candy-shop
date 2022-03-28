@@ -1,5 +1,5 @@
-// @import 'antd/es/style/themes/default.less';
-// @import 'antd/dist/antd.less';
+@import 'antd/es/style/themes/default.less';
+@import 'antd/dist/antd.less';
 
 @primary-color: #7522f5;
 @popover-background: #1a2029;
@@ -21,6 +21,19 @@
 @mobile: ~'only screen and (max-width: 576px)';
 @widescreen: ~'only screen and (min-width: 1600px)';
 
+.candy-shop-container {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media only screen and (max-width: 1232px) {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+// old style
 .candy-shop-list {
   max-width: 1200px;
   margin: 0 auto;
