@@ -3,6 +3,7 @@ import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import React, { FC, useMemo } from 'react';
 import { CandyShop, Orders, Sell, Stat } from '../.';
+import '../dist/candy-shop-antd.css';
 
 export const CandyShopContent: FC = () => {
   const { connection } = useConnection();

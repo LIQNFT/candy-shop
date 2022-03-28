@@ -24,6 +24,21 @@ const banner = `
 `;
 
 export default [
+  // CSS
+  {
+    input: 'src/candy-shop-antd.less',
+    output: [
+      {
+        file: 'dist/candy-shop-antd.css'
+      }
+    ],
+    plugins: [
+      postcss({
+        extract: true,
+        use: [["less"], { javascriptEnabled: true }]
+      })
+    ]
+  },
   // ES
   {
     input: inputFileName,
