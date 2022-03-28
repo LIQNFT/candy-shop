@@ -8,6 +8,7 @@ import { CandyShop } from './CandyShop';
 import { SingleTokenInfo } from '../api/fetchMetadata';
 import { fetchOrdersByStoreIdAndWalletAddress } from '../api/backend/OrderAPI';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import styled from '@emotion/styled'
 
 interface SellProps {
   connection: Connection;
@@ -66,6 +67,9 @@ export const Sell: React.FC<SellProps> = ({
 
   return (
     <div className="candy-shop-list">
+      <Wrap>
+        <div className="test-emotion">test-emotion</div>
+      </Wrap>
       <Row
         gutter={[
           { md: 24, xs: 16 },
@@ -99,3 +103,10 @@ export const Sell: React.FC<SellProps> = ({
     </div>
   );
 };
+
+const Wrap = styled.div`
+  .test-emotion {
+    font-size: 50px;
+    color: red;
+  }
+`
