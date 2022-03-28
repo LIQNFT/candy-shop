@@ -1,56 +1,34 @@
 import styled from '@emotion/styled';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { Col, Row, Statistic } from 'antd';
+import { breakPoints } from 'constant/breakPoints';
+import { CandyShop } from 'core/CandyShop';
 import React, { useEffect, useMemo, useState } from 'react';
-import { CandyShop } from '../CandyShop';
-
-import './style.less';
 
 interface StatProps {
   candyShop: CandyShop;
-  title: string|undefined;
-  description: string|undefined;
+  title: string | undefined;
+  description: string | undefined;
   style?: { [key: string]: string | number } | undefined;
 }
 
-export const Stat = ({
-  candyShop,
-  title,
-  description,
-  style,
-}: StatProps) => {
-  const [stat, setStat] = useState<any>([]);
+export const Stat = ({ candyShop, title, description, style }: StatProps) => {
+  const [stat, setStat] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const [width, setWidth] = useState<number>(window.innerWidth);
 
   const floorPrice = useMemo(() => {
-    if (!stat) return 0
-    return (stat.floorPrice / LAMPORTS_PER_SOL).toFixed(2)
-  }, [stat])
+    if (!stat) return 0;
+    return (Number(stat.floorPrice) / LAMPORTS_PER_SOL).toFixed(2);
+  }, [stat]);
 
   const totalListed = useMemo(() => {
-    if (!stat) return 0
-    return stat.totalListed
-  }, [stat])
+    if (!stat) return 0;
+    return stat.totalListed;
+  }, [stat]);
 
   const totalVolume = useMemo(() => {
-    if (!stat) return 0
-    return (stat.totalVolume / LAMPORTS_PER_SOL).toFixed(2)
-  }, [stat])
-
-  // handle window size change
-  function handleWindowSizeChange() {
-    setWidth(window.innerWidth);
-  }
-
-  useEffect(() => {
-    window.addEventListener('resize', handleWindowSizeChange);
-    return () => {
-      window.removeEventListener('resize', handleWindowSizeChange);
-    };
-  }, []);
-
-  let isMobile: boolean = width <= 600;
+    if (!stat) return 0;
+    return (Number(stat.totalVolume) / LAMPORTS_PER_SOL).toFixed(2);
+  }, [stat]);
 
   // handle fetch data
   useEffect(() => {
@@ -59,10 +37,9 @@ export const Stat = ({
       .stats()
       .then((data: any) => {
         if (!data) return;
-
         setStat(data);
       })
-      .catch(err => {
+      .catch((err) => {
         console.info('fetchOrdersByStoreId failed: ', err);
       })
       .finally(() => {
@@ -71,45 +48,6 @@ export const Stat = ({
   }, [candyShop]);
 
   return (
-    <>
-    {/* <div className="candy-stat" style={style}>
-      <Row align="bottom">
-        <Col span={24} md={12}>
-          <div className="candy-title">{title}</div>
-          <div className="candy-description">{description}</div>
-        </Col>
-        <Col span={24} md={12} className="candy-stat-container">
-          <Row justify="center" gutter={18}>
-            <Col span={8}>
-              <div className="candy-label">FLOOR PRICE</div>
-              <Statistic
-                suffix="SOL"
-                value={(stat?.floorPrice as any) / LAMPORTS_PER_SOL}
-                precision={2}
-                valueStyle={{ fontSize: isMobile ? 16 : 24, fontWeight: 'bold' }}
-              />
-            </Col>
-            <Col span={8}>
-              <div className="candy-label">TOTAL LISTED</div>
-              <Statistic
-                value={stat?.totalListed as any}
-                valueStyle={{ fontSize: isMobile ? 16 : 24, fontWeight: 'bold' }}
-              />
-            </Col>
-            <Col span={8}>
-              <div className="candy-label">VOLUME</div>
-              <Statistic
-                suffix="SOL"
-                value={(stat?.totalVolume as any) / LAMPORTS_PER_SOL}
-                precision={2}
-                valueStyle={{ fontSize: isMobile ? 16 : 24, fontWeight: 'bold' }}
-              />
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-    </div> */}
-
     <Wrap style={style}>
       <div className="candy-shop-container">
         <Flex>
@@ -134,11 +72,10 @@ export const Stat = ({
         </Flex>
       </div>
     </Wrap>
-    </>
   );
 };
 
-const Wrap = styled.div``
+const Wrap = styled.div``;
 
 const Flex = styled.div`
   display: flex;
@@ -146,14 +83,14 @@ const Flex = styled.div`
     width: 50%;
   }
 
-  @media only screen and (max-width: 768px) {
+  @media ${breakPoints.tabletL} {
     flex-direction: column;
     > * {
       width: 100%;
     }
     gap: 12px;
   }
-`
+`;
 
 const Box1 = styled.div`
   .title {
@@ -164,16 +101,17 @@ const Box1 = styled.div`
     text-align: left;
     font-weight: bold;
 
-    @media only screen and (max-width: 576px) {
+    @media ${breakPoints.tabletS} {
       font-size: 40px;
       line-height: 50px;
+      text-align: center;
     }
   }
 
   .description {
     text-align: left;
   }
-`
+`;
 
 const Box2 = styled.div`
   text-align: center;
@@ -184,10 +122,10 @@ const Box2 = styled.div`
     width: calc(100% / 3);
   }
 
-  @media only screen and (max-width: 768px) {
+  @media ${breakPoints.tabletM} {
     align-self: initial;
   }
-`
+`;
 
 const Item = styled.div`
   &:nth-of-type(2) {
@@ -199,8 +137,8 @@ const Item = styled.div`
     font-size: 24px;
     font-weight: bold;
 
-    @media only screen and (max-width: 600px) {
+    @media ${breakPoints.tabletM} {
       font-size: 16px;
     }
   }
-`
+`;
