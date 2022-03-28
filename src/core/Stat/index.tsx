@@ -1,23 +1,26 @@
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { breakPoints } from 'constant/breakPoints';
-import { CandyShop } from 'core/CandyShop';
-import React, { useEffect, useMemo, useState } from 'react';
+import { CandyShop } from '../CandyShop';
 
-interface StatProps {
+export interface StatProps {
   candyShop: CandyShop;
   title: string | undefined;
   description: string | undefined;
   style?: { [key: string]: string | number } | undefined;
 }
 
-export const Stat = ({ candyShop, title, description, style }: StatProps) => {
-  const [stat, setStat] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
+export const Stat = ({
+  candyShop,
+  title,
+  description,
+  style,
+}: StatProps): JSX.Element => {
+  const [stat, setStat] = useState<any>([]);
 
   const floorPrice = useMemo(() => {
     if (!stat) return 0;
-    return (Number(stat.floorPrice) / LAMPORTS_PER_SOL).toFixed(2);
+    return (stat.floorPrice / LAMPORTS_PER_SOL).toFixed(2);
   }, [stat]);
 
   const totalListed = useMemo(() => {
@@ -27,12 +30,11 @@ export const Stat = ({ candyShop, title, description, style }: StatProps) => {
 
   const totalVolume = useMemo(() => {
     if (!stat) return 0;
-    return (Number(stat.totalVolume) / LAMPORTS_PER_SOL).toFixed(2);
+    return (stat.totalVolume / LAMPORTS_PER_SOL).toFixed(2);
   }, [stat]);
 
   // handle fetch data
   useEffect(() => {
-    setLoading(true);
     candyShop
       .stats()
       .then((data: any) => {
@@ -41,9 +43,6 @@ export const Stat = ({ candyShop, title, description, style }: StatProps) => {
       })
       .catch((err) => {
         console.info('fetchOrdersByStoreId failed: ', err);
-      })
-      .finally(() => {
-        setLoading(false);
       });
   }, [candyShop]);
 
@@ -58,15 +57,15 @@ export const Stat = ({ candyShop, title, description, style }: StatProps) => {
           <Box2>
             <Item>
               <div className="candy-label">FLOOR PRICE</div>
-              <div className="statictis">{floorPrice} SOL</div>
+              <div className="statistics">{floorPrice} SOL</div>
             </Item>
             <Item>
               <div className="candy-label">TOTAL LISTED</div>
-              <div className="statictis">{totalListed}</div>
+              <div className="statistics">{totalListed}</div>
             </Item>
             <Item>
               <div className="candy-label">VOLUME</div>
-              <div className="statictis">{totalVolume} SOL</div>
+              <div className="statistics">{totalVolume} SOL</div>
             </Item>
           </Box2>
         </Flex>
@@ -133,7 +132,7 @@ const Item = styled.div`
     border-right: 2px solid #e0e0e0;
   }
 
-  .statictis {
+  .statistics {
     font-size: 24px;
     font-weight: bold;
 

@@ -1,10 +1,11 @@
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import { Card, Statistic } from 'antd';
-import { BuyModal } from 'components/BuyModal';
-import { LiqImage } from 'components/LiqImage';
-import { CandyShop } from 'core/CandyShop';
 import React, { useCallback, useState } from 'react';
+import styled from '@emotion/styled';
+import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+
+import { BuyModal } from '../BuyModal';
+import { LiqImage } from '../LiqImage';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { CandyShop } from 'core/CandyShop';
 
 export interface OrderProps {
   order: OrderSchema;
@@ -71,3 +72,12 @@ export const Order: React.FC<OrderProps> = ({
     </>
   );
 };
+
+const Card = styled.div`
+  border: 2px solid black;
+  border-radius: 16px;
+  height: auto;
+  position: relative;
+  z-index: 3;
+`;
+const Statistic = styled.div``;
