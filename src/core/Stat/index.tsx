@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { CandyShop } from '../CandyShop';
+import { breakPoints } from '../../constant/breakPoints';
 
 export interface StatProps {
   candyShop: CandyShop;
