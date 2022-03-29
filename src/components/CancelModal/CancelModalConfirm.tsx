@@ -3,7 +3,7 @@ import IconTick from '../../assets/IconTick';
 import imgDefault from '../../assets/img-default.png';
 
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import './style.less';
+// import './style.less';
 
 export const CancelModalConfirm = ({
   order,
