@@ -1,8 +1,9 @@
 import styled from '@emotion/styled';
 import { PublicKey } from '@solana/web3.js';
-import { Col, Empty, Row, Skeleton } from 'antd';
 import { fetchOrdersByStoreId } from 'api/backend/OrderAPI';
+import { Empty } from 'components/Empty';
 import { Order } from 'components/Order';
+import { Skeleton } from 'components/Skeleton';
 import { breakPoints } from 'constant/breakPoints';
 import React, { useEffect, useState } from 'react';
 import { CandyShop } from './CandyShop';
@@ -44,56 +45,34 @@ export const Orders: React.FC<OrdersProps> = ({
 
   return (
     <>
-      {/* <div className="candy-shop-list">
-        <Row
-          gutter={[
-            { md: 24, xs: 16 },
-            { md: 24, xs: 16 },
-          ]}
-        >
+      <Wrap>
+        <div className="cds-container">
           {loading ? (
-            Array(3)
-              .fill(0)
-              .map((_, key) => (
-                <Col key={key} md={8} xs={24}>
-                  <Skeleton />
-                </Col>
-              ))
+            <Flex>
+              {Array(3)
+                .fill(0)
+                .map((_, key) => (
+                  <FlexItem key={key}>
+                    <Skeleton />
+                  </FlexItem>
+                ))}
+            </Flex>
           ) : !orders.length ? (
-            <Col span={24}>
-              <Empty description="No orders found" />
-            </Col>
+            <Empty description="No orders found" />
           ) : (
-            orders.map((item, key) => {
-              return (
-                <Col key={key} md={8} xs={24}>
+            <Flex>
+              {orders.map((item, key) => (
+                <FlexItem key={key}>
                   <Order
                     order={item}
                     walletPublicKey={walletPublicKey}
                     candyShop={candyShop}
                     walletConnectComponent={walletConnectComponent}
                   />
-                </Col>
-              );
-            })
+                </FlexItem>
+              ))}
+            </Flex>
           )}
-        </Row>
-      </div> */}
-
-      <Wrap>
-        <div className="cds-container">
-          <Flex>
-            {orders.map((item, key) => (
-              <FlexItem key={key}>
-                <Order
-                  order={item}
-                  walletPublicKey={walletPublicKey}
-                  candyShop={candyShop}
-                  walletConnectComponent={walletConnectComponent}
-                />
-              </FlexItem>
-            ))}
-          </Flex>
         </div>
       </Wrap>
     </>
