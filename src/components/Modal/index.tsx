@@ -1,10 +1,8 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import styled from '@emotion/styled';
 
 import { useClickOutside } from '../../hooks/useClickOutside';
-
-// import './style.less';
 
 export interface ModalProps {
   children: any;
@@ -12,15 +10,30 @@ export interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ children, onCancel }: ModalProps) => {
-  const modalRef = useRef<HTMLDivElement>();
-  useClickOutside(modalRef, onCancel);
+  // const modalRef = useRef<HTMLDivElement>();
+  // useClickOutside(modalRef, onCancel);
+
+  useEffect(() => {
+    window.addEventListener('click', onCancel);
+    return window.removeEventListener('click', onCancel);
+  }, [onCancel]);
 
   return (
-    <Container className="cds-modal-mask">
+    <Container
+      className="cds-modal-mask"
+      onClick={() => {
+        console.log('mask outside');
+        onCancel();
+      }}
+    >
       <div
-        ref={modalRef}
-        id="cds-modal-content"
-        className="candy-container cds-modal-content"
+        // ref={modalRef}
+        // id="cds-modal-content"
+        className="cds-modal-content"
+        onClick={(e) => {
+          e.stopPropagation();
+          console.log('content inside');
+        }}
       >
         <Close onClick={onCancel}>
           <div className="cds-close" />
@@ -35,43 +48,44 @@ export default Modal;
 
 const Container = styled.div`
   padding-bottom: 20px;
+  z-index: 1000;
   position: fixed;
   top: 0;
+  left: 0;
   right: 0;
   bottom: 0;
-  left: 0;
-  z-index: 1000;
-  height: 100%;
   background-color: rgba(0, 0, 0, 0.45);
 
   .cds-modal-content {
-    position: relative;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 0;
-    border-radius: 2px;
-    box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%),
-      0 9px 28px 8px rgb(0 0 0 / 5%);
-    pointer-events: auto;
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 90%;
-    width: 600px;
-    border-radius: 8px;
+
     padding: 20px;
+    width: 1000px;
+    max-width: 90vw;
+    background-color: #fff;
+
+    border-radius: 16px;
+    border: 2px solid #000;
+    box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%),
+      0 9px 28px 8px rgb(0 0 0 / 5%);
   }
 `;
 
 const Close = styled.div`
-  display: flex;
-  width: 100%;
-  flex-direction: row-reverse;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 50px;
+  height: 50px;
 
   .cds-close {
     position: absolute;
-    right: 15px;
-    top: 15px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 32px;
     height: 32px;
     opacity: 0.3;
@@ -84,6 +98,7 @@ const Close = styled.div`
     &:before,
     &:after {
       position: absolute;
+      top: 5px;
       left: 15px;
       content: ' ';
       height: 22px;

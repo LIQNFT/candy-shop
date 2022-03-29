@@ -41,20 +41,20 @@ export default [
   // },
 
   // GLOBAL css for storybook
-  {
-    input: 'src/index.less',
-    output: [
-      {
-        file: 'dist/index.css',
-      },
-    ],
-    plugins: [
-      postcss({
-        extract: true,
-        use: [['less', { javascriptEnabled: true }]],
-      }),
-    ],
-  },
+  // {
+  //   input: 'src/index.less',
+  //   output: [
+  //     {
+  //       file: 'dist/index.css',
+  //     },
+  //   ],
+  //   plugins: [
+  //     postcss({
+  //       extract: true,
+  //       use: [['less', { javascriptEnabled: true }]],
+  //     }),
+  //   ],
+  // },
 
   // ES
   {

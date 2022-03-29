@@ -1,4 +1,4 @@
-import { Modal } from 'antd';
+// import { Modal } from 'antd';
 import { PublicKey } from '@solana/web3.js';
 import React, { useMemo, useState, useCallback } from 'react';
 import BuyModalConfirmed from './BuyModalConfirmed';
@@ -10,6 +10,7 @@ import Processing from '../Processing/Processing';
 import { errorNotification } from '../../utils/notification';
 
 import './style.less';
+import Modal from 'components/Modal';
 
 export interface BuyModalProps {
   order: OrderSchema;
@@ -37,71 +38,99 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   const [hash, setHash] = useState(''); // txHash
 
   // Handle buy
-  const buy = useCallback(async () => {
-    try {
-      // Change to step 1: processing
-      setStep(1);
+  const buy = useCallback(
+    async (e) => {
+      // e.stopPropagation();
 
-      const txHash = await candyShop.buy(
-        new PublicKey(order.walletAddress),
-        new PublicKey(order.tokenAccount),
-        new PublicKey(order.tokenMint),
-        new BN(order.price)
-      );
+      try {
+        // Change to step 1: processing
+        setStep(1);
 
-      setHash(txHash);
-      console.log('Buy order made with transaction hash', txHash);
+        const txHash = await candyShop.buy(
+          new PublicKey(order.walletAddress),
+          new PublicKey(order.tokenAccount),
+          new PublicKey(order.tokenMint),
+          new BN(order.price)
+        );
 
-      setStep(2);
-    } catch (error) {
-      // Show error and redirect to step 0 again
-      errorNotification(
-        new Error('Transaction failed. Please try again later.')
-      );
-      setStep(0);
-    }
-  }, [
-    candyShop,
-    order.price,
-    order.tokenAccount,
-    order.tokenMint,
-    order.walletAddress,
-  ]);
+        setHash(txHash);
+        console.log('Buy order made with transaction hash', txHash);
 
-  // Render view component
-  const viewComponent = useMemo(
-    () =>
-      new Map()
-        .set(
-          0,
-          <BuyModalDetail
-            order={order}
-            buy={buy}
-            walletPublicKey={walletPublicKey}
-            walletConnectComponent={walletConnectComponent}
-          />
-        )
-        .set(1, <Processing text="Processing purchase" />)
-        .set(
-          2,
-          <BuyModalConfirmed
-            walletPublicKey={walletPublicKey}
-            order={order}
-            txHash={hash}
-          />
-        ),
-    [order, hash, buy, walletConnectComponent, walletPublicKey]
+        setStep(2);
+      } catch (error) {
+        // Show error and redirect to step 0 again
+        errorNotification(
+          new Error('Transaction failed. Please try again later.')
+        );
+        setStep(0);
+      }
+    },
+    [
+      candyShop,
+      order.price,
+      order.tokenAccount,
+      order.tokenMint,
+      order.walletAddress,
+    ]
   );
 
+  // Render view component
+  // const viewComponent = useMemo(
+  //   () =>
+  //     new Map()
+  //       .set(
+  //         0,
+  //         <BuyModalDetail
+  //           order={order}
+  //           buy={buy}
+  //           walletPublicKey={walletPublicKey}
+  //           walletConnectComponent={walletConnectComponent}
+  //         />
+  //       )
+  //       .set(1, <Processing text="Processing purchase" />)
+  //       .set(
+  //         2,
+  //         <BuyModalConfirmed
+  //           walletPublicKey={walletPublicKey}
+  //           order={order}
+  //           txHash={hash}
+  //         />
+  //       ),
+  //   [order, hash, buy, walletConnectComponent, walletPublicKey]
+  // );
+
   return (
-    <Modal
-      visible
-      onCancel={onClose}
-      className="candy-shop-modal buy-modal"
-      width={step === 0 ? 1000 : 600}
-      footer={null}
-    >
-      {viewComponent.get(step)}
-    </Modal>
+    <>
+      {/* <Modal
+        visible
+        onCancel={onClose}
+        className="candy-shop-modal buy-modal"
+        width={step === 0 ? 1000 : 600}
+        footer={null}
+      >
+        {viewComponent.get(step)}
+      </Modal> */}
+
+      <Modal onCancel={onClose}>
+        <div className="buy-modal">
+          {step === 0 && (
+            <BuyModalDetail
+              order={order}
+              buy={buy}
+              walletPublicKey={walletPublicKey}
+              walletConnectComponent={walletConnectComponent}
+            />
+          )}
+          {step === 1 && <Processing text="Processing purchase" />}
+          {step === 2 && (
+            <BuyModalConfirmed
+              walletPublicKey={walletPublicKey}
+              order={order}
+              txHash={hash}
+            />
+          )}
+        </div>
+      </Modal>
+    </>
   );
 };

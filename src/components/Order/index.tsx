@@ -1,12 +1,10 @@
 import styled from '@emotion/styled';
-import { Card, Statistic } from 'antd';
-import React, { useCallback, useMemo, useState } from 'react';
-import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
-
-import { BuyModal } from '../BuyModal';
-import { LiqImage } from '../LiqImage';
-import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { BuyModal } from 'components/BuyModal';
+import { LiqImage } from 'components/LiqImage';
 import { CandyShop } from 'core/CandyShop';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 
 export interface OrderProps {
   order: OrderSchema;
@@ -38,35 +36,6 @@ export const Order: React.FC<OrderProps> = ({
 
   return (
     <>
-      {/* <Card className="vault-list-item" onClick={onClick}>
-        <LiqImage alt={order?.name} src={order?.nftImageLink!} />
-        <div className="vault-list-item-body">
-          <div className="vault-list-item-header">
-            <div
-              className="vault-name"
-              style={{
-                verticalAlign: 'middle',
-                fontWeight: 'bold',
-                marginBottom: '2px',
-                width: '60%',
-              }}
-            >
-              {order?.name}
-              <div className="subtitle">{order?.ticker}</div>
-            </div>
-            <div className="mint-price">
-              <span className="vault-statistic-title-caps">Price</span>
-              <Statistic
-                suffix="SOL"
-                value={(order?.price as any) / LAMPORTS_PER_SOL}
-                precision={2}
-                valueStyle={{ fontSize: 14, fontWeight: 'bold' }}
-              />
-            </div>
-          </div>
-        </div>
-      </Card> */}
-
       <Wrap onClick={onClick}>
         <LiqImage alt={order?.name} src={order?.nftImageLink!} />
         <OrderInfo>

@@ -1,18 +1,25 @@
 .buy-modal {
+  display: flex;
+  gap: 24px;
+
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
 
   .buy-modal-thumbnail {
+    width: 340px;
+    height: 340px;
     img {
-      max-width: 340px;
-      max-height: 340px;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+      border-radius: 14px;
     }
   }
 
   .buy-modal-container {
-    margin-left: 48px;
-    flex: 1 1 588px;
+    flex: 1;
+    padding-top: 30px;
 
     .buy-modal-title {
       font-weight: bold;
