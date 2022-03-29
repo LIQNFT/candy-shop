@@ -49,7 +49,7 @@ export const Stat = ({ candyShop, title, description, style }: StatProps) => {
 
   return (
     <Wrap style={style}>
-      <div className="candy-shop-container">
+      <div className="cds-container">
         <Flex>
           <Box1>
             <div className="title">{title}</div>

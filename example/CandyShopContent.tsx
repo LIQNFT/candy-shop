@@ -21,16 +21,18 @@ export const CandyShopContent: FC = () => {
   );
 
   return (
-    <div style={{ paddingBottom: 30 }}>
+    <div>
       <div style={{ textAlign: 'center', paddingBottom: 30 }}>
         <WalletMultiButton />
       </div>
 
       <Stat
+        style={{ marginBottom: 50 }}
         candyShop={candyShop}
         title={'Marketplace'}
-        description={'Candy Shop is an open source on-chain protocol that empowers DAOs, NFT projects and anyone interested in creating an NFT marketplace to do so within minutes!'}
-        style={{ paddingBottom: 50 }}
+        description={
+          'Candy Shop is an open source on-chain protocol that empowers DAOs, NFT projects and anyone interested in creating an NFT marketplace to do so within minutes!'
+        }
       />
 
       <div style={{ marginBottom: 50 }}>
