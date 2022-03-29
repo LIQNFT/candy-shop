@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { Card, Statistic } from 'antd';
 import { BuyModal } from 'components/BuyModal';
@@ -31,7 +32,7 @@ export const Order: React.FC<OrderProps> = ({
 
   return (
     <>
-      <Card className="vault-list-item" onClick={onClick}>
+      {/* <Card className="vault-list-item" onClick={onClick}>
         <LiqImage alt={order?.name} src={order?.nftImageLink!} />
         <div className="vault-list-item-body">
           <div className="vault-list-item-header">
@@ -58,7 +59,7 @@ export const Order: React.FC<OrderProps> = ({
             </div>
           </div>
         </div>
-      </Card>
+      </Card> */}
       {selection && (
         <BuyModal
           order={selection}
@@ -68,6 +69,42 @@ export const Order: React.FC<OrderProps> = ({
           walletConnectComponent={walletConnectComponent}
         />
       )}
+
+      <Wrap onClick={onClick}>
+        <LiqImage alt={order?.name} src={order?.nftImageLink!} />
+        <div className="vault-list-item-body">
+          <div className="vault-list-item-header">
+            <div
+              className="vault-name"
+              style={{
+                verticalAlign: 'middle',
+                fontWeight: 'bold',
+                marginBottom: '2px',
+                width: '60%',
+              }}
+            >
+              {order?.name}
+              <div className="subtitle">{order?.ticker}</div>
+            </div>
+            <div className="mint-price">
+              <span className="vault-statistic-title-caps">Price</span>
+              <Statistic
+                suffix="SOL"
+                value={(order?.price as any) / LAMPORTS_PER_SOL}
+                precision={2}
+                valueStyle={{ fontSize: 14, fontWeight: 'bold' }}
+              />
+            </div>
+          </div>
+        </div>
+      </Wrap>
     </>
   );
 };
+
+const Wrap = styled.div`
+  height: 100%;
+  border-radius: 16px;
+  border: 2px solid black;
+  background-color: white;
+`;
