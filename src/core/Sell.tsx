@@ -1,14 +1,16 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
+import styled from '@emotion/styled';
 import { Connection, PublicKey } from '@solana/web3.js';
-import { Col, Empty, Row, Skeleton } from 'antd';
-import { useEffect, useState } from 'react';
-import { fetchNftsFromWallet } from '../api/fetchNftsFromWallet';
-import { Nft } from '../components/Nft';
 import { CandyShop } from './CandyShop';
 import { SingleTokenInfo } from '../api/fetchMetadata';
-import { fetchOrdersByStoreIdAndWalletAddress } from '../api/backend/OrderAPI';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import styled from '@emotion/styled'
+import { Nft } from '../components/Nft';
+
+import { fetchOrdersByStoreIdAndWalletAddress } from '../api/backend/OrderAPI';
+import { fetchNftsFromWallet } from '../api/fetchNftsFromWallet';
+
+import { breakPoints } from '../constant/breakPoints';
+import { Skeleton } from 'antd';
 
 interface SellProps {
   connection: Connection;
@@ -59,38 +61,28 @@ export const Sell: React.FC<SellProps> = ({
 
   if (!walletPublicKey) {
     return (
-      <div className="candy-shop-list" style={{ textAlign: 'center' }}>
+      <Container style={{ textAlign: 'center' }}>
         {walletConnectComponent}
-      </div>
+      </Container>
     );
   }
 
   return (
-    <div className="candy-shop-list">
-      <Wrap>
-        <div className="test-emotion">test-emotion</div>
-      </Wrap>
-      <Row
-        gutter={[
-          { md: 24, xs: 16 },
-          { md: 24, xs: 16 },
-        ]}
-      >
+    <Container>
+      <Row>
         {isLoading ? (
           Array(3)
             .fill(0)
             .map((_, key) => (
-              <Col key={key} md={8} xs={24}>
+              <Col key={key}>
                 <Skeleton />
               </Col>
             ))
         ) : !nfts.length ? (
-          <Col span={24}>
-            <Empty description="No NFTs found" />
-          </Col>
+          <Empty>No NFTs found</Empty>
         ) : (
           nfts?.map((item, key) => (
-            <Col key={key} md={8} xs={24}>
+            <Col key={key}>
               <Nft
                 nft={item}
                 candyShop={candyShop}
@@ -100,13 +92,31 @@ export const Sell: React.FC<SellProps> = ({
           ))
         )}
       </Row>
-    </div>
+    </Container>
   );
 };
 
-const Wrap = styled.div`
-  .test-emotion {
-    font-size: 50px;
-    color: red;
+const Container = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @media ${breakPoints.mobile} {
+    padding-left: 15px;
+    padding-right: 15px;
   }
-`
+`;
+
+const Empty = styled.div`
+  text-align: center;
+  width: 100%;
+  padding: 30px;
+`;
+
+const Row = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const Col = styled.div`
+  width: calc(100% / 3 - 12px);
+`;
