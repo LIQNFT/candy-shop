@@ -1,6 +1,8 @@
 import React from 'react';
-
-const Processing = ({ text = '' }: { text: string }) => {
+export interface ProcessingProps {
+  text: string;
+}
+const Processing = ({ text = '' }: ProcessingProps): JSX.Element => {
   return (
     <div className="candy-processing">
       <div className="candy-loading" />

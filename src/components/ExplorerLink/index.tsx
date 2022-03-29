@@ -1,6 +1,6 @@
 import React from 'react';
-import { Typography } from 'antd';
 import { PublicKey } from '@solana/web3.js';
+import { Typography } from 'antd';
 
 // shorten the checksummed version of the input address to have 4 characters at start and end
 function shortenAddress(address: string, chars = 4): string {
@@ -16,7 +16,10 @@ export const ExplorerLink = (props: {
 }) => {
   const { type, code } = props;
 
-  const address = typeof props.address === 'string' ? props.address : props.address?.toBase58();
+  const address =
+    typeof props.address === 'string'
+      ? props.address
+      : props.address?.toBase58();
 
   if (!address) {
     return null;

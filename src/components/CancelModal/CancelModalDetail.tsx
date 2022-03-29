@@ -16,6 +16,7 @@ export interface CancelModalDetailProps {
   onCancel: any;
   candyShop: CandyShop;
   order: OrderSchema;
+  // eslint-disable-next-line no-unused-vars
   onChangeStep: (...args: any) => void;
 }
 
@@ -24,7 +25,9 @@ export const CancelModalDetail = ({
   order,
   onChangeStep,
 }: CancelModalDetailProps): JSX.Element => {
-  const cancel = async () => {
+  const cancel = async (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+
     onChangeStep(1);
     candyShop
       .cancel(
@@ -80,7 +83,7 @@ export const CancelModalDetail = ({
           <div className="cds-cancel-modal-info-line" />
           <div>
             <div className="candy-label">TOKEN ID</div>
-            <div className="candy-value">{order.edition || 0}</div>
+            <div className="candy-value">{order.edition || 'N/A'}</div>
           </div>
           <div className="cds-cancel-modal-info-line" />
           <div>
