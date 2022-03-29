@@ -1,16 +1,15 @@
-import React, { useMemo, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { Connection, PublicKey } from '@solana/web3.js';
-import { CandyShop } from './CandyShop';
-import { SingleTokenInfo } from '../api/fetchMetadata';
+import { fetchNftsFromWallet } from 'api/fetchNftsFromWallet';
+import { Empty } from 'components/Empty';
+import { Nft } from 'components/Nft';
+import { Skeleton } from 'components/Skeleton';
+import { breakPoints } from 'constant/breakPoints';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import { Nft } from '../components/Nft';
-
 import { fetchOrdersByStoreIdAndWalletAddress } from '../api/backend/OrderAPI';
-import { fetchNftsFromWallet } from '../api/fetchNftsFromWallet';
-
-import { breakPoints } from '../constant/breakPoints';
-import { Skeleton } from 'antd';
+import { SingleTokenInfo } from '../api/fetchMetadata';
+import { CandyShop } from './CandyShop';
 
 interface SellProps {
   connection: Connection;
@@ -61,62 +60,65 @@ export const Sell: React.FC<SellProps> = ({
 
   if (!walletPublicKey) {
     return (
-      <Container style={{ textAlign: 'center' }}>
+      <div className="cds-container" style={{ textAlign: 'center' }}>
         {walletConnectComponent}
-      </Container>
+      </div>
     );
   }
 
   return (
-    <Container>
-      <Row>
-        {isLoading ? (
-          Array(3)
-            .fill(0)
-            .map((_, key) => (
-              <Col key={key}>
-                <Skeleton />
-              </Col>
-            ))
-        ) : !nfts.length ? (
-          <Empty>No NFTs found</Empty>
-        ) : (
-          nfts?.map((item, key) => (
-            <Col key={key}>
-              <Nft
-                nft={item}
-                candyShop={candyShop}
-                sellDetail={hashSellOrders[item.tokenMintAddress]}
-              />
-            </Col>
-          ))
-        )}
-      </Row>
-    </Container>
+    <>
+      <Wrap>
+        <div className="cds-container">
+          {isLoading ? (
+            <Flex>
+              {Array(3)
+                .fill(0)
+                .map((_, key) => (
+                  <FlexItem key={key}>
+                    <Skeleton />
+                  </FlexItem>
+                ))}
+            </Flex>
+          ) : !nfts.length ? (
+            <Empty description="No NFTs found" />
+          ) : (
+            <Flex>
+              {nfts.map((item, key) => (
+                <FlexItem key={key}>
+                  <Nft
+                    nft={item}
+                    candyShop={candyShop}
+                    sellDetail={hashSellOrders[item.tokenMintAddress]}
+                  />
+                </FlexItem>
+              ))}
+            </Flex>
+          )}
+        </div>
+      </Wrap>
+    </>
   );
 };
 
-const Container = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
+const Wrap = styled.div``;
 
-  @media ${breakPoints.mobile} {
-    padding-left: 15px;
-    padding-right: 15px;
+const Flex = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  row-gap: 24px;
+  column-gap: 24px;
+  > * {
+    width: calc((100% - 24px * 2) / 3);
+  }
+
+  @media ${breakPoints.tabletM} {
+    row-gap: 16px;
+    column-gap: 16px;
+    > * {
+      width: 100%;
+    }
   }
 `;
 
-const Empty = styled.div`
-  text-align: center;
-  width: 100%;
-  padding: 30px;
-`;
-
-const Row = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const Col = styled.div`
-  width: calc(100% / 3 - 12px);
-`;
+const FlexItem = styled.div``;

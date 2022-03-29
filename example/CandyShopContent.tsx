@@ -21,7 +21,7 @@ export const CandyShopContent: FC = () => {
   );
 
   return (
-    <div>
+    <div style={{ paddingBlock: 50 }}>
       <div style={{ textAlign: 'center', paddingBottom: 30 }}>
         <WalletMultiButton />
       </div>
@@ -43,7 +43,7 @@ export const CandyShopContent: FC = () => {
         />
       </div>
 
-      <div style={{ marginBottom: 50 }}>
+      <div>
         <h1 style={{ textAlign: 'center' }}>Sell Your NFTs</h1>
         <Sell
           connection={connection}
