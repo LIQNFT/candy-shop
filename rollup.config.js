@@ -40,7 +40,7 @@ export default [
   //   ]
   // },
 
-  // GLOBAL CSS
+  // GLOBAL css for storybook
   {
     input: 'src/index.less',
     output: [

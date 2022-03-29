@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
@@ -28,7 +28,6 @@ export const SellModal: React.FC<SellModalProps> = ({
     price: undefined,
   });
   const [step, setStep] = useState(0);
-  // const [modalRef, setModalRef] = useState<any>();
 
   // List for sale and move to next step
   const sell = async (e: any) => {
@@ -56,7 +55,7 @@ export const SellModal: React.FC<SellModalProps> = ({
   };
 
   // Check active button submit
-  const onChangeInput = (e: React.FormEvent<HTMLInputElement>) => {
+  const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormState((f) => ({ ...f, price: +e.target.value }));
   };
 
