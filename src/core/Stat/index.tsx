@@ -21,7 +21,7 @@ export const Stat = ({
 
   const floorPrice = useMemo(() => {
     if (!stat) return 0;
-    return (stat.floorPrice / LAMPORTS_PER_SOL).toFixed(2);
+    return (Number(stat.floorPrice) / LAMPORTS_PER_SOL).toFixed(2);
   }, [stat]);
 
   const totalListed = useMemo(() => {
@@ -31,7 +31,7 @@ export const Stat = ({
 
   const totalVolume = useMemo(() => {
     if (!stat) return 0;
-    return (stat.totalVolume / LAMPORTS_PER_SOL).toFixed(2);
+    return (Number(stat.totalVolume) / LAMPORTS_PER_SOL).toFixed(2);
   }, [stat]);
 
   // handle fetch data

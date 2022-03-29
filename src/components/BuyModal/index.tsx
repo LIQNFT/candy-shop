@@ -9,7 +9,7 @@ import { BN } from '@project-serum/anchor';
 import Processing from '../Processing/Processing';
 import { errorNotification } from '../../utils/notification';
 
-// import './style.less';
+import './style.less';
 
 export interface BuyModalProps {
   order: OrderSchema;
