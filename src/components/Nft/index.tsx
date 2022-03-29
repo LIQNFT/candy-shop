@@ -1,12 +1,13 @@
 import React, { useCallback, useState } from 'react';
-// import { Card } from 'antd';
+import styled from '@emotion/styled';
+
 import { SellModal } from '../SellModal';
 import { CancelModal } from '../CancelModal';
 import { LiqImage } from '../LiqImage';
+
 import { SingleTokenInfo } from '../../api/fetchMetadata';
 import { CandyShop } from '../../core/CandyShop';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import styled from '@emotion/styled';
 
 export interface NftProps {
   nft: SingleTokenInfo;

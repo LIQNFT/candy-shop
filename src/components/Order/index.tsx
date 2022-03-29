@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { Card, Statistic } from 'antd';
-import { BuyModal } from 'components/BuyModal';
-import { LiqImage } from 'components/LiqImage';
-import { CandyShop } from 'core/CandyShop';
 import React, { useCallback, useState } from 'react';
+import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+
+import { BuyModal } from '../BuyModal';
+import { LiqImage } from '../LiqImage';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { CandyShop } from 'core/CandyShop';
 
 export interface OrderProps {
   order: OrderSchema;
