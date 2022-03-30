@@ -48,7 +48,7 @@ Use code in the /example folder as reference to setup your Candy Shop.
 const candyShop = new CandyShop(
   new PublicKey("Fo2cXie4UwreZi7LHMpnsyVPvzuo4FMwAVbSUYQsmbsh"), // creator address (i.e. your wallet address)
   new PublicKey("So11111111111111111111111111111111111111112"), // treasury mint (i.e. currency to buy and sell with)
-  new PublicKey("8yRJB65ZT6pKFBWQkkN4WBdGzFtKmdvJNJcByMa6faBr"), // Candy Shop program id
+  new PublicKey("csa8JpYfKSZajP7JzxnJipUL3qagub1z29hLvp578iN"), // Candy Shop program id
   "devnet", // mainnet, devnet
   wallet! // user wallet address
 );
@@ -110,7 +110,7 @@ import { CandyShop } from '@liqnft/candy-shop';
 const candy = new CandyShop(
   new PublicKey("Fo2cXie4UwreZi7LHMpnsyVPvzuo4FMwAVbSUYQsmbsh"), // creator address (i.e. your wallet address)
   new PublicKey("So11111111111111111111111111111111111111112"), // treasury mint (i.e. currency to buy and sell with)
-  new PublicKey("8yRJB65ZT6pKFBWQkkN4WBdGzFtKmdvJNJcByMa6faBr"), // Candy Shop program id
+  new PublicKey("csa8JpYfKSZajP7JzxnJipUL3qagub1z29hLvp578iN"), // Candy Shop program id
   "devnet", // mainnet, devnet
   wallet! // user wallet address
 );
