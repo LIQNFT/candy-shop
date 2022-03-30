@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { ExplorerLink } from 'components/ExplorerLink';
+import Portal from 'components/Portal';
 import React, { useMemo } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 
@@ -24,6 +25,9 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
 
   return (
     <>
+      <Portal id="modal">
+        <p>Thinking with portals</p>
+      </Portal>
       <div className="buy-modal-thumbnail">
         <img src={order?.nftImageLink || ''} alt="" />
       </div>
