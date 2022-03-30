@@ -1,15 +1,18 @@
 import React, { useEffect, useRef } from 'react';
-
 import styled from '@emotion/styled';
-
-import { useClickOutside } from '../../hooks/useClickOutside';
+// import { useClickOutside } from '../../hooks/useClickOutside';
 
 export interface ModalProps {
   children: any;
   onCancel: (...args: any) => void;
+  width?: number;
 }
 
-const Modal: React.FC<ModalProps> = ({ children, onCancel }: ModalProps) => {
+const Modal: React.FC<ModalProps> = ({
+  children,
+  onCancel,
+  width = 1000,
+}: ModalProps) => {
   // const modalRef = useRef<HTMLDivElement>();
   // useClickOutside(modalRef, onCancel);
 
@@ -20,6 +23,7 @@ const Modal: React.FC<ModalProps> = ({ children, onCancel }: ModalProps) => {
 
   return (
     <Container
+      width={width}
       className="cds-modal-mask"
       onClick={() => {
         console.log('mask outside');
@@ -46,7 +50,9 @@ const Modal: React.FC<ModalProps> = ({ children, onCancel }: ModalProps) => {
 
 export default Modal;
 
-const Container = styled.div`
+const Container = styled.div<{
+  width: number;
+}>`
   padding-bottom: 20px;
   z-index: 1000;
   position: fixed;
@@ -63,12 +69,14 @@ const Container = styled.div`
     transform: translate(-50%, -50%);
 
     padding: 20px;
-    width: 1000px;
     max-width: 90vw;
-    background-color: #fff;
+    width: ${({ width }) => width || 1000}px;
+    max-height: 80vh;
+    overflow-y: auto;
 
     border-radius: 16px;
     border: 2px solid #000;
+    background-color: #fff;
     box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%),
       0 9px 28px 8px rgb(0 0 0 / 5%);
   }

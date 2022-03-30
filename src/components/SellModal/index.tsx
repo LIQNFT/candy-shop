@@ -1,17 +1,16 @@
-import React, { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
-
-import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { BN } from '@project-serum/anchor';
-
-import { errorNotification } from '../../utils/notification';
-import { SingleTokenInfo } from '../../api/fetchMetadata';
-import { CandyShop } from '../../core/CandyShop';
-
-import IconTick from '../../assets/IconTick';
-import Processing from '../Processing/Processing';
-import Modal from '../Modal';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { SingleTokenInfo } from 'api/fetchMetadata';
+import IconTick from 'assets/IconTick';
+import Modal from 'components/Modal';
+import Processing from 'components/Processing';
+import { CandyShop } from 'core/CandyShop';
+import React, { useCallback, useState } from 'react';
+import { errorNotification } from 'utils/notification';
 import imgDefault from '../../assets/img-default.png';
+
+import './style.less';
 
 export interface SellModalProps {
   onCancel: any;
@@ -30,8 +29,7 @@ export const SellModal: React.FC<SellModalProps> = ({
   const [step, setStep] = useState(0);
 
   // List for sale and move to next step
-  const sell = async (e: any) => {
-    e.stopPropagation();
+  const sell = async () => {
     try {
       // Change to step 1: processing
       setStep(1);
@@ -56,6 +54,10 @@ export const SellModal: React.FC<SellModalProps> = ({
 
   // Check active button submit
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value === '') {
+      setFormState((f) => ({ ...f, price: undefined }));
+      return;
+    }
     setFormState((f) => ({ ...f, price: +e.target.value }));
   };
 
@@ -67,76 +69,85 @@ export const SellModal: React.FC<SellModalProps> = ({
   const isSubmit = formState.price !== undefined;
 
   return (
-    <Modal onCancel={onCancel}>
-      {step === 0 && (
-        <Content>
-          <div className="candy-title">Sell</div>
-          <div className="sell-modal-content">
-            <img src={nft?.nftImage || imgDefault} alt="" />
-            <div>
-              <div className="sell-modal-collection-name">
-                {nft?.metadata?.data?.symbol}
+    <Modal onCancel={onCancel} width={600}>
+      <div className="sell-modal">
+        {step === 0 && (
+          <Content>
+            <div className="sell-modal-title">Sell</div>
+            <div className="sell-modal-content">
+              <div className="sell-modal-img">
+                <img src={nft?.nftImage || imgDefault} alt="" />
               </div>
-              <div className="sell-modal-nft-name">
-                {nft?.metadata?.data?.name}
+              <div>
+                <div className="sell-modal-collection-name">
+                  {nft?.metadata?.data?.symbol}
+                </div>
+                <div className="sell-modal-nft-name">
+                  {nft?.metadata?.data?.name}
+                </div>
               </div>
             </div>
-          </div>
-          <form>
-            <InputNumber>
-              <input
-                placeholder="0.0"
-                min={0}
-                onChange={onChangeInput}
-                type="number"
-              />
-              <span>SOL</span>
-            </InputNumber>
-            <Row>
-              <div className="candy-footnote-label">Service Fees</div>
-              <div className="candy-footnote-value">1.0%</div>
-            </Row>
+            <div className="sell-modal-hr"></div>
+            <form>
+              <InputNumber>
+                <input
+                  placeholder="0.0"
+                  min={0}
+                  onChange={onChangeInput}
+                  type="number"
+                />
+                <span>SOL</span>
+              </InputNumber>
 
-            <button
-              className="candy-button"
-              onClick={sell}
-              disabled={!isSubmit}
-            >
-              List for Sale
-            </button>
-          </form>
-        </Content>
-      )}
-      {step === 1 && <Processing text="Listing your NFT" />}
-      {step === 2 && (
-        <>
-          <div className="candy-title">
-            <IconTick />
-          </div>
-          <div className="sell-modal-content sell-modal-success">
-            <img src={nft?.nftImage || imgDefault} alt="" />
-            <div className="candy-title">
-              {nft?.metadata?.data?.name} is now listed for sale
+              <Row>
+                <div>Service Fees</div>
+                <div>1.0%</div>
+              </Row>
+
+              <button
+                className="candy-button"
+                onClick={sell}
+                disabled={!isSubmit}
+              >
+                List for Sale
+              </button>
+            </form>
+          </Content>
+        )}
+        {step === 1 && <Processing text="Listing your NFT" />}
+        {step === 2 && (
+          <>
+            <div className="sell-modal-title">
+              <IconTick />
             </div>
-          </div>
-          <div className="sell-modal-success">
+            <div className="sell-modal-content">
+              <div className="sell-modal-img">
+                <img src={nft?.nftImage || imgDefault} alt="" />
+              </div>
+              <div className="sell-modal-listed">
+                {nft?.metadata?.data?.name} is now listed for sale
+              </div>
+            </div>
+            <div className="sell-modal-hr"></div>
             <button className="candy-button" onClick={onCancel}>
               View listing
             </button>
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </div>
     </Modal>
   );
 };
 
 const InputNumber = styled.div`
-  border: 2px solid gray;
+  width: 100%;
   height: 40px;
   padding: 4px 8px;
-  width: 100%;
   display: flex;
+  align-items: center;
+
   border-radius: 4px;
+  border: 2px solid gray;
 
   input {
     border: none;
@@ -157,45 +168,12 @@ const InputNumber = styled.div`
 `;
 
 const Row = styled.div`
+  font-size: 14px;
+
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
   margin-bottom: 20px;
 `;
 
-const Content = styled.div`
-  .sell-modal {
-    img {
-      margin: 0 20px;
-      width: 100px;
-    }
-    &-success {
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-    }
-
-    &-content {
-      display: flex;
-      padding-bottom: 40px;
-      border-bottom: 1px solid #e0e0e0;
-      margin-bottom: 60px;
-    }
-    &-collection-name {
-    }
-    &-nft-name {
-      font-size: 20px;
-      font-weight: 600;
-    }
-
-    &-success {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-  }
-  .candy-button {
-    width: 100%;
-  }
-`;
+const Content = styled.div``;

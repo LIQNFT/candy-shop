@@ -1,15 +1,12 @@
-import React from 'react';
 import styled from '@emotion/styled';
-
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import { CandyShop } from '../../core/CandyShop';
 import { BN } from '@project-serum/anchor';
-
-import { ExplorerLink } from '../ExplorerLink';
-import { errorNotification } from '../../utils/notification';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { ExplorerLink } from 'components/ExplorerLink';
+import { breakPoints } from 'constant/breakPoints';
+import { CandyShop } from 'core/CandyShop';
+import React from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import { breakPoints } from '../../constant/breakPoints';
-
+import { errorNotification } from 'utils/notification';
 import imgDefault from '../../assets/img-default.png';
 
 export interface CancelModalDetailProps {
@@ -112,44 +109,45 @@ const Container = styled.div`
     line-height: 24px;
 
     &-thumbnail {
-      display: flex;
-      align-items: center;
+      width: 340px;
+      height: 340px;
+      margin-right: 24px;
 
       img {
-        max-width: 340px;
-        max-height: 340px;
-        margin-right: 48px;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+        border-radius: 14px;
       }
 
       @media ${breakPoints.desktopS} {
+        width: 240px;
+        height: 240px;
+        margin-right: 12px;
+
         img {
-          max-width: 240px;
-          max-height: 240px;
-          margin-right: 32px;
+          border-radius: 10px;
         }
       }
 
       @media ${breakPoints.tabletS} {
-        img {
-          max-width: 160px;
-          max-height: 160px;
-          margin-right: 24px;
-        }
+        width: 160px;
+        height: 160px;
+      }
+    }
+
+    &-container {
+      flex: 1;
+      padding-top: 30px;
+
+      @media ${breakPoints.desktopS} {
+        padding-top: 0;
       }
     }
 
     &-title {
       font-size: 32px;
       font-weight: 600;
-    }
-
-    &-container {
-      width: 100%;
-      padding-top: 40px;
-
-      @media ${breakPoints.desktopS} {
-        padding-top: 0;
-      }
     }
 
     &-control {

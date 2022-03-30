@@ -1,11 +1,10 @@
+import Modal from 'components/Modal';
+import Processing from 'components/Processing';
+import { CandyShop } from 'core/CandyShop';
 import React, { useCallback, useState } from 'react';
-
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import { CandyShop } from '../../core/CandyShop';
-import Processing from '../Processing/Processing';
-import { CancelModalDetail } from './CancelModalDetail';
 import { CancelModalConfirm } from './CancelModalConfirm';
-import Modal from '../Modal';
+import { CancelModalDetail } from './CancelModalDetail';
 
 // import './style.less';
 
@@ -30,7 +29,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
   }, [step, onUnSelectItem]);
 
   return (
-    <Modal onCancel={onCloseModal}>
+    <Modal onCancel={onCloseModal} width={step !== 0 ? 600 : 1000}>
       {step === 0 && (
         <CancelModalDetail
           onCancel={onCloseModal}
@@ -39,9 +38,8 @@ export const CancelModal: React.FC<CancelModalProps> = ({
           onChangeStep={onChangeStep}
         />
       )}
-
-      {step === 1 && <Processing text="Processing Cancel" />}
-      {step == 2 && (
+      {step === 1 && <Processing text="Processing Cancel..." />}
+      {step === 2 && (
         <CancelModalConfirm order={order} onCancel={onCloseModal} />
       )}
     </Modal>

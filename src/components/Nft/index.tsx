@@ -1,12 +1,10 @@
-import React, { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
-
-import { SellModal } from '../SellModal';
-import { CancelModal } from '../CancelModal';
-import { LiqImage } from '../LiqImage';
-
-import { SingleTokenInfo } from '../../api/fetchMetadata';
-import { CandyShop } from '../../core/CandyShop';
+import { SingleTokenInfo } from 'api/fetchMetadata';
+import { CancelModal } from 'components/CancelModal';
+import { LiqImage } from 'components/LiqImage';
+import { SellModal } from 'components/SellModal';
+import { CandyShop } from 'core/CandyShop';
+import React, { useCallback, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 
 export interface NftProps {
@@ -27,6 +25,7 @@ export const Nft = ({ nft, candyShop, sellDetail }: NftProps): JSX.Element => {
   }, [nft]);
 
   const isSellItem = Boolean(sellDetail);
+
   return (
     <>
       <Card onClick={onClick}>
@@ -42,9 +41,11 @@ export const Nft = ({ nft, candyShop, sellDetail }: NftProps): JSX.Element => {
           </div>
         </div>
       </Card>
+
       {selection && !isSellItem && (
         <SellModal onCancel={onClose} nft={selection} candyShop={candyShop} />
       )}
+
       {selection && sellDetail ? (
         <CancelModal
           onClose={onClose}
