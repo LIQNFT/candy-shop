@@ -25,8 +25,6 @@ export const Orders: React.FC<OrdersProps> = ({
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  console.log(orders);
-
   // handle fetch data
   useEffect(() => {
     setLoading(true);
