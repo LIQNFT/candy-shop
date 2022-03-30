@@ -14,8 +14,9 @@ export const Primary = (): JSX.Element => {
   return (
     <CancelModalDetail
       candyShop={candyShop}
-      onCancel={() => {}}
+      onCancel={() => console.log('CANCEL')}
       order={order}
+      onChangeStep={(v) => console.log('change step', v)}
     />
   );
 };

@@ -6,8 +6,8 @@ import { breakPoints } from 'constant/breakPoints';
 import { CandyShop } from 'core/CandyShop';
 import React from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import { errorNotification } from 'utils/notification';
 import imgDefault from '../../assets/img-default.png';
+import { notification } from 'utils/rc-notification';
 
 export interface CancelModalDetailProps {
   onCancel: any;
@@ -22,9 +22,7 @@ export const CancelModalDetail = ({
   order,
   onChangeStep,
 }: CancelModalDetailProps): JSX.Element => {
-  const cancel = async (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation();
-
+  const cancel = async () => {
     onChangeStep(1);
     candyShop
       .cancel(
@@ -34,11 +32,10 @@ export const CancelModalDetail = ({
       )
       .then(() => {
         onChangeStep(2);
+        notification('Mua successful', 'success');
       })
       .catch(() => {
-        errorNotification(
-          new Error('Transaction failed. Please try again later.')
-        );
+        notification('Mua fail', 'error');
       });
   };
 

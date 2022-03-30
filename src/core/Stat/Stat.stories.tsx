@@ -21,11 +21,13 @@ export const Primary = (): JSX.Element => {
   const candyShop = new CandyShopFake();
 
   return (
-    <Stat
-      candyShop={candyShop}
-      title="Marketplace"
-      description="Candy Shop is an open source on-chain protocol that empowers DAOs, NFT projects and anyone interested in creating an NFT marketplace to do so within minutes!"
-      style={{ paddingBottom: 50 }}
-    />
+    <>
+      <Stat
+        candyShop={candyShop}
+        title="Marketplace"
+        description="Candy Shop is an open source on-chain protocol that empowers DAOs, NFT projects and anyone interested in creating an NFT marketplace to do so within minutes!"
+        style={{ paddingBottom: 50 }}
+      />
+    </>
   );
 };

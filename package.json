@@ -63,6 +63,7 @@
     "@solana/web3.js": "^1.36.0",
     "antd": "^4.19.1",
     "axios": "^0.26.1",
+    "rc-notification": "^4.5.7",
     "solana-candy-shop-schema": "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#eeee8774f8d4722eea0a0a5f0263d2bfd8e7f143"
   },
   "scripts": {

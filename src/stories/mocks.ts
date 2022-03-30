@@ -12,6 +12,14 @@ class CandyShopFake {
       totalVolume: 10_000_000,
     });
   }
+
+  cancel() {
+    return Promise.resolve({
+      floorPrice: 10_000_000,
+      totalListed: 4,
+      totalVolume: 10_000_000,
+    });
+  }
 }
 
 export const candyShop = new CandyShopFake();
@@ -28,8 +36,8 @@ export const order: OrderSchema = {
   tokenMint: '8yRJB65ZT6pKFBWQkkN4WBdGzFtKmdvJNJcByMa6faBr',
   nftDescription: '100 cyber puppies for testing purposes',
   nftUri: 'https://via.placeholder.com/728x90.png',
-  // nftImageLink:
-  //   'https://d3r3rwhgo6ll35acgu4cl4qg5mpm5iykci3dnhkwrjj3gvhe.arweave.net/HuO42OZ3lr3-0AjU4-Jf_IG6x7OowoSNjadVopTs1Tk?ext=png',
+  nftImageLink:
+    'https://d3r3rwhgo6ll35acgu4cl4qg5mpm5iykci3dnhkwrjj3gvhe.arweave.net/HuO42OZ3lr3-0AjU4-Jf_IG6x7OowoSNjadVopTs1Tk?ext=png',
   nftAnimationLink: 'string',
   tradeState: 'string',
   status: Status.OPEN,
