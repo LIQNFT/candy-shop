@@ -1,6 +1,6 @@
 // import { Modal } from 'antd';
 import { PublicKey } from '@solana/web3.js';
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import BuyModalConfirmed from './BuyModalConfirmed';
 import BuyModalDetail from './BuyModalDetail';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
