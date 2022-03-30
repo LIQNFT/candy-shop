@@ -12,7 +12,7 @@ export const CandyShopContent: FC = () => {
       new CandyShop(
         new PublicKey('Fo2cXie4UwreZi7LHMpnsyVPvzuo4FMwAVbSUYQsmbsh'),
         new PublicKey('So11111111111111111111111111111111111111112'),
-        new PublicKey('8yRJB65ZT6pKFBWQkkN4WBdGzFtKmdvJNJcByMa6faBr'),
+        new PublicKey('csa8JpYfKSZajP7JzxnJipUL3qagub1z29hLvp578iN'),
         'devnet',
         wallet!
       ),
