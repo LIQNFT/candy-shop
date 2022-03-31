@@ -28,7 +28,7 @@ export const CancelModalConfirm = ({
       </div>
       <div className="cds-cancel-modal-confirm-success">
         <button className="candy-button" onClick={onCancel}>
-          View listing
+          Continue Browsing
         </button>
       </div>
     </Container>
