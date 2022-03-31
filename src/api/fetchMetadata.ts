@@ -1,17 +1,8 @@
-import { getAccount } from "@solana/spl-token";
-import { Connection, PublicKey } from "@solana/web3.js";
-import axios from "axios";
-import { Metadata, parseEdition, parseMetadata } from "../utils/parseData";
-import { safeAwait } from "../utils/PromiseHelper";
-
-const defaultNftImage =
-  "https://www.arweave.net/TpkEyWka_H192dTAvCRFgGEdhK9deaxPJ_9FZe7gxj8?ext=jpeg";
-const defaultNftAnimation =
-  "https://www.arweave.net/wP_6dWvChZHLGg_lVLv-eGCNj4kRa5lkWNDKG1gamRo?ext=mp4";
-const defaultNftDescription = "SOME NFT";
-
-const METADATA_PROGRAM_ID = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s";
-const metadataProgramId = new PublicKey(METADATA_PROGRAM_ID);
+import { getAccount, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { Connection, PublicKey } from '@solana/web3.js';
+import axios from 'axios';
+import { Metadata, parseEdition, parseMetadata } from '../utils/parseData';
+import { safeAwait } from '../utils/PromiseHelper';
 
 export type SingleTokenInfo = {
   tokenAccountAddress: string;
@@ -26,45 +17,47 @@ export type SingleTokenInfo = {
 export const singleTokenInfoPromise = async (
   connection: Connection,
   tokenAccountAddress: string
-): Promise<SingleTokenInfo> => {
+): Promise<SingleTokenInfo | null> => {
   // Get account
   const token = await getAccount(
     connection,
     new PublicKey(tokenAccountAddress)
   );
-
   const [newEditionMetadata] = await PublicKey.findProgramAddress(
     [
-      Buffer.from("metadata"),
-      metadataProgramId.toBuffer(),
+      Buffer.from('metadata'),
+      TOKEN_PROGRAM_ID.toBuffer(),
       token.mint.toBuffer(),
     ],
-    metadataProgramId
+    TOKEN_PROGRAM_ID
   );
   const [newEditionPublicKey] = await PublicKey.findProgramAddress(
     [
-      Buffer.from("metadata"),
-      metadataProgramId.toBuffer(),
+      Buffer.from('metadata'),
+      TOKEN_PROGRAM_ID.toBuffer(),
       token.mint.toBuffer(),
-      Buffer.from("edition"),
+      Buffer.from('edition'),
     ],
-    metadataProgramId
+    TOKEN_PROGRAM_ID
   );
 
   const newEditionMetadataAccountInfoResult = await safeAwait(
     connection.getAccountInfo(newEditionMetadata)
   );
   if (newEditionMetadataAccountInfoResult.error) {
-    console.log("rate limited");
+    console.log('rate limited');
   }
   const newEditionMetadataAccountInfo =
     newEditionMetadataAccountInfoResult.result;
+
+  // metadata account does not exist, i.e. not NFT
+  if (newEditionMetadataAccountInfo === null) return null;
 
   const newEditionAccountInfoResult = await safeAwait(
     connection.getAccountInfo(newEditionPublicKey)
   );
   if (newEditionAccountInfoResult.error) {
-    console.log("rate limited");
+    console.log('rate limited');
   }
   const newEditionAccountInfo = newEditionAccountInfoResult.result;
 
@@ -75,17 +68,18 @@ export const singleTokenInfoPromise = async (
     ? parseEdition(newEditionAccountInfo?.data).edition.toString()
     : undefined;
 
-  let nftImage = defaultNftImage;
-  let nftAnimation: string | undefined = defaultNftAnimation;
-  let nftDescription = defaultNftDescription;
+  let nftImage;
+  let nftAnimation: string | undefined;
+  let nftDescription;
   try {
-    const res = await axios.get(tokenInfo!.data.uri, { timeout: 5000 });
+    const res = await axios.get(tokenInfo!.data.uri);
     const nftUriData = res.data as any;
     nftImage = nftUriData.image;
     nftAnimation = nftUriData.animation_url;
     nftDescription = nftUriData.description;
   } catch (e) {
-    console.log("failed to get nftUri, using default data");
+    console.log(`failed to get nftUri from tokenInfo: ${tokenInfo}`);
+    console.log(e);
   }
 
   return {
