@@ -2,22 +2,19 @@ import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import React, { FC, useMemo } from 'react';
-// import '../dist/candy-shop-antd.css';
 import { CandyShop, Orders, Sell, Stat } from '../.';
+import 'antd/dist/antd.min.css';
 
 export const CandyShopContent: FC = () => {
   const { connection } = useConnection();
   const wallet = useAnchorWallet();
-  const candyShop = useMemo(
-    () =>
-      new CandyShop(
-        new PublicKey('Fo2cXie4UwreZi7LHMpnsyVPvzuo4FMwAVbSUYQsmbsh'),
-        new PublicKey('So11111111111111111111111111111111111111112'),
-        new PublicKey('csa8JpYfKSZajP7JzxnJipUL3qagub1z29hLvp578iN'),
-        'devnet',
-        wallet!
-      ),
-    [wallet]
+
+  const candyShop = new CandyShop(
+    new PublicKey('Fo2cXie4UwreZi7LHMpnsyVPvzuo4FMwAVbSUYQsmbsh'),
+    new PublicKey('So11111111111111111111111111111111111111112'),
+    new PublicKey('csa8JpYfKSZajP7JzxnJipUL3qagub1z29hLvp578iN'),
+    'devnet',
+    wallet!
   );
 
   return (

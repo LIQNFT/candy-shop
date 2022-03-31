@@ -37,6 +37,7 @@ export const notification = (content: string, type: string): void => {
 };
 
 const NotiContent = styled.div`
+  font-family: 'Work Sans', sans-serif;
   padding: 7px 20px 7px 10px;
   display: flex;
   margin: 10px 0;

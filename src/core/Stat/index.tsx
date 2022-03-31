@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { CandyShop } from '../CandyShop';
-import { breakPoints } from '../../constant/breakPoints';
+import { breakPoints } from 'constant/breakPoints';
+import { CandyShop } from 'core/CandyShop';
+import React, { useEffect, useMemo, useState } from 'react';
 
 export interface StatProps {
   candyShop: CandyShop;
@@ -75,7 +75,9 @@ export const Stat = ({
   );
 };
 
-const Wrap = styled.div``;
+const Wrap = styled.div`
+  font-family: 'Work Sans', sans-serif;
+`;
 
 const Flex = styled.div`
   display: flex;

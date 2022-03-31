@@ -1,6 +1,5 @@
 .sell-modal {
-  // Set font
-  font-family: 'Work Sans', Helvetica, Arial, sans-serif;
+  font-family: 'Work Sans', sans-serif;
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
@@ -63,8 +62,18 @@
     margin-bottom: 50px;
   }
 
-  .candy-button {
+  &-button {
     width: 100%;
     margin-bottom: 30px;
+
+    cursor: pointer;
+    color: #fff;
+    background: #7522f5;
+    border-radius: 32px;
+    padding: 16px 100px;
+
+    &:disabled {
+      background: #bdbdbd;
+    }
   }
 }

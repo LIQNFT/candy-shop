@@ -101,7 +101,9 @@ export const Sell: React.FC<SellProps> = ({
   );
 };
 
-const Wrap = styled.div``;
+const Wrap = styled.div`
+  font-family: 'Work Sans', sans-serif;
+`;
 
 const Flex = styled.div`
   display: flex;

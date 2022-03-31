@@ -103,7 +103,7 @@ export const SellModal: React.FC<SellModalProps> = ({
               </Row>
 
               <button
-                className="candy-button"
+                className="sell-modal-button"
                 onClick={sell}
                 disabled={!isSubmit}
               >
@@ -127,7 +127,7 @@ export const SellModal: React.FC<SellModalProps> = ({
               </div>
             </div>
             <div className="sell-modal-hr"></div>
-            <button className="candy-button" onClick={onCancel}>
+            <button className="sell-modal-button" onClick={onCancel}>
               View listing
             </button>
           </>

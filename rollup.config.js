@@ -24,23 +24,7 @@ const banner = `
 `;
 
 export default [
-  // ANTD
-  // {
-  //   input: 'src/candy-shop-antd.less',
-  //   output: [
-  //     {
-  //       file: 'dist/candy-shop-antd.css'
-  //     }
-  //   ],
-  //   plugins: [
-  //     postcss({
-  //       extract: true,
-  //       use: [["less", { javascriptEnabled: true }]]
-  //     })
-  //   ]
-  // },
-
-  // GLOBAL css for storybook
+  // GLOBAL css for Storybook
   // {
   //   input: 'src/index.less',
   //   output: [
@@ -72,14 +56,14 @@ export default [
       pluginCommonjs({
         extensions: ['.js', '.ts'],
       }),
-      // nodePolyfills(),
+      nodePolyfills(),
       pluginNodeResolve({
         browser: true,
       }),
-      // babel({
-      //   babelHelpers: 'bundled',
-      //   configFile: path.resolve(__dirname, '.babelrc.js'),
-      // }),
+      babel({
+        babelHelpers: 'bundled',
+        configFile: path.resolve(__dirname, '.babelrc.js'),
+      }),
       pluginTypescript({
         tsconfig: './tsconfig.json',
       }),
@@ -97,42 +81,42 @@ export default [
   },
 
   // CommonJS
-  // {
-  //   input: inputFileName,
-  //   output: [
-  //     {
-  //       file: pkg.main,
-  //       format: "cjs",
-  //       sourcemap: true,
-  //       banner,
-  //     },
-  //   ],
-  //   plugins: [
-  //     peerDepsExternal(),
-  //     pluginCommonjs({
-  //       extensions: [".js", ".ts"],
-  //     }),
-  //     nodePolyfills(),
-  //     pluginNodeResolve({
-  //       browser: true,
-  //     }),
-  //     babel({
-  //       babelHelpers: "bundled",
-  //       configFile: path.resolve(__dirname, ".babelrc.js"),
-  //     }),
-  //     pluginTypescript({
-  //       tsconfig: "./tsconfig.json",
-  //     }),
-  //     postcss({
-  //       inject: true,
-  //       less: true,
-  //       use: [["less", { javascriptEnabled: true }]],
-  //     }),
-  //     image(),
-  //     svg({
-  //       stringify: false,
-  //     }),
-  //     json(),
-  //   ],
-  // },
+  {
+    input: inputFileName,
+    output: [
+      {
+        file: pkg.main,
+        format: 'cjs',
+        sourcemap: true,
+        banner,
+      },
+    ],
+    plugins: [
+      peerDepsExternal(),
+      pluginCommonjs({
+        extensions: ['.js', '.ts'],
+      }),
+      nodePolyfills(),
+      pluginNodeResolve({
+        browser: true,
+      }),
+      babel({
+        babelHelpers: 'bundled',
+        configFile: path.resolve(__dirname, '.babelrc.js'),
+      }),
+      pluginTypescript({
+        tsconfig: './tsconfig.json',
+      }),
+      postcss({
+        inject: true,
+        less: true,
+        use: [['less', { javascriptEnabled: true }]],
+      }),
+      image(),
+      svg({
+        stringify: false,
+      }),
+      json(),
+    ],
+  },
 ];

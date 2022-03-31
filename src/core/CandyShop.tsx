@@ -1,6 +1,7 @@
 import { BN, Program, Provider } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Cluster, clusterApiUrl, Connection, PublicKey } from '@solana/web3.js';
+import { configBaseUrl } from 'config/axiosInstance';
 import { fetchOrdersByStoreId } from '../api/backend/OrderAPI';
 import { fetchStatsById } from '../api/backend/StatsAPI';
 import { fetchTradeById } from '../api/backend/TradeAPI';
@@ -45,6 +46,7 @@ export class CandyShop {
     this._programId = candyShopProgramId;
     this._env = env;
     this._wallet = wallet;
+    configBaseUrl(env);
   }
   /**
    * Initiate the CandyShop object
@@ -96,14 +98,12 @@ export class CandyShop {
   ): Promise<string> {
     console.log('buy called');
     await this.initIfNotReady();
-    const [
-      auctionHouseAuthority,
-      authorityBump,
-    ] = await getAuctionHouseAuthority(
-      this._candyShopCreatorAddress,
-      this._treasuryMint,
-      this._programId
-    );
+    const [auctionHouseAuthority, authorityBump] =
+      await getAuctionHouseAuthority(
+        this._candyShopCreatorAddress,
+        this._treasuryMint,
+        this._programId
+      );
 
     const [auctionHouse] = await getAuctionHouse(
       auctionHouseAuthority,
@@ -141,14 +141,12 @@ export class CandyShop {
     price: BN
   ): Promise<string> {
     await this.initIfNotReady();
-    const [
-      auctionHouseAuthority,
-      authorityBump,
-    ] = await getAuctionHouseAuthority(
-      this._candyShopCreatorAddress,
-      this._treasuryMint,
-      this._programId
-    );
+    const [auctionHouseAuthority, authorityBump] =
+      await getAuctionHouseAuthority(
+        this._candyShopCreatorAddress,
+        this._treasuryMint,
+        this._programId
+      );
 
     const [auctionHouse] = await getAuctionHouse(
       auctionHouseAuthority,
@@ -183,14 +181,12 @@ export class CandyShop {
     price: BN
   ): Promise<string> {
     await this.initIfNotReady();
-    const [
-      auctionHouseAuthority,
-      authorityBump,
-    ] = await getAuctionHouseAuthority(
-      this._candyShopCreatorAddress,
-      this._treasuryMint,
-      this._programId
-    );
+    const [auctionHouseAuthority, authorityBump] =
+      await getAuctionHouseAuthority(
+        this._candyShopCreatorAddress,
+        this._treasuryMint,
+        this._programId
+      );
 
     const [auctionHouse] = await getAuctionHouse(
       auctionHouseAuthority,

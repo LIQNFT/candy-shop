@@ -32,10 +32,9 @@ export const CancelModalDetail = ({
       )
       .then(() => {
         onChangeStep(2);
-        notification('Mua successful', 'success');
       })
       .catch(() => {
-        notification('Mua fail', 'error');
+        notification('Transaction failed. Please try again later.', 'error');
       });
   };
 
@@ -100,7 +99,7 @@ const Container = styled.div`
   display: flex;
 
   .cds-cancel-modal {
-    font-family: 'Work Sans', Helvetica, Arial, sans-serif;
+    font-family: 'Work Sans', sans-serif;
     font-weight: 500;
     font-size: 16px;
     line-height: 24px;
