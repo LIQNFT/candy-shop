@@ -18,7 +18,7 @@ export const CandyShopContent: FC = () => {
   );
 
   return (
-    <div style={{ paddingBlock: 50 }}>
+    <div style={{ paddingBottom: 50 }}>
       <div style={{ textAlign: 'center', paddingBottom: 30 }}>
         <WalletMultiButton />
       </div>
