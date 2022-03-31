@@ -1,12 +1,8 @@
-import axiosInstance from "../../config/axiosInstance";
+import { ListBase, Trade } from 'solana-candy-shop-schema/dist';
+import axiosInstance from '../../config/axiosInstance';
 
-export async function fetchTradeById(storeId: string): Promise<any> {
-  try {
-    const { data } = await axiosInstance.get(`/trade/${storeId}`);
-
-    return data.result;
-
-  } catch (error) {
-    throw error;
-  }
+export async function fetchTradeById(storeId: string): Promise<Trade[]> {
+  return axiosInstance
+    .get<ListBase<Trade>>(`/trade/${storeId}`)
+    .then((response) => response.data.result);
 }
