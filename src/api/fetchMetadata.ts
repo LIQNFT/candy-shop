@@ -4,6 +4,9 @@ import axios from 'axios';
 import { Metadata, parseEdition, parseMetadata } from '../utils/parseData';
 import { safeAwait } from '../utils/PromiseHelper';
 
+const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
+const metadataProgramId = new PublicKey(METADATA_PROGRAM_ID);
+
 export type SingleTokenInfo = {
   tokenAccountAddress: string;
   metadata: Metadata | undefined;
@@ -26,19 +29,19 @@ export const singleTokenInfoPromise = async (
   const [newEditionMetadata] = await PublicKey.findProgramAddress(
     [
       Buffer.from('metadata'),
-      TOKEN_PROGRAM_ID.toBuffer(),
+      metadataProgramId.toBuffer(),
       token.mint.toBuffer(),
     ],
-    TOKEN_PROGRAM_ID
+    metadataProgramId
   );
   const [newEditionPublicKey] = await PublicKey.findProgramAddress(
     [
       Buffer.from('metadata'),
-      TOKEN_PROGRAM_ID.toBuffer(),
+      metadataProgramId.toBuffer(),
       token.mint.toBuffer(),
       Buffer.from('edition'),
     ],
-    TOKEN_PROGRAM_ID
+    metadataProgramId
   );
 
   const newEditionMetadataAccountInfoResult = await safeAwait(
@@ -49,9 +52,6 @@ export const singleTokenInfoPromise = async (
   }
   const newEditionMetadataAccountInfo =
     newEditionMetadataAccountInfoResult.result;
-
-  // metadata account does not exist, i.e. not NFT
-  if (newEditionMetadataAccountInfo === null) return null;
 
   const newEditionAccountInfoResult = await safeAwait(
     connection.getAccountInfo(newEditionPublicKey)
@@ -68,27 +68,32 @@ export const singleTokenInfoPromise = async (
     ? parseEdition(newEditionAccountInfo?.data).edition.toString()
     : undefined;
 
-  let nftImage;
-  let nftAnimation: string | undefined;
-  let nftDescription;
-  try {
-    const res = await axios.get(tokenInfo!.data.uri);
-    const nftUriData = res.data as any;
-    nftImage = nftUriData.image;
-    nftAnimation = nftUriData.animation_url;
-    nftDescription = nftUriData.description;
-  } catch (e) {
-    console.log(`failed to get nftUri from tokenInfo: ${tokenInfo}`);
-    console.log(e);
-  }
+  if (tokenInfo) {
+    return axios
+      .get(tokenInfo.data.uri)
+      .then((res) => {
+        const nftUriData = res.data as any;
+        const nftImage = nftUriData.image;
+        const nftAnimation: string | undefined = nftUriData.animation_url;
+        const nftDescription = nftUriData.description;
 
-  return {
-    tokenAccountAddress: tokenAccountAddress,
-    metadata: tokenInfo,
-    edition: tokenEdition,
-    tokenMintAddress: token.mint.toString(),
-    nftImage,
-    nftAnimation,
-    nftDescription,
-  };
+        return {
+          tokenAccountAddress: tokenAccountAddress,
+          metadata: tokenInfo,
+          edition: tokenEdition,
+          tokenMintAddress: token.mint.toString(),
+          nftImage,
+          nftAnimation,
+          nftDescription,
+        };
+      })
+      .catch((err) => {
+        console.log('failed to fetch uri data');
+        console.log(err);
+        return null;
+      });
+  } else {
+    console.log(`tokenAccount ${tokenAccountAddress} does not have metadata`);
+    return null;
+  }
 };
