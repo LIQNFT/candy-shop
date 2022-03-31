@@ -7,7 +7,7 @@ import Modal from 'components/Modal';
 import Processing from 'components/Processing';
 import { CandyShop } from 'core/CandyShop';
 import React, { useCallback, useState } from 'react';
-import { errorNotification } from 'utils/notification';
+import { notification } from 'utils/rc-notification';
 import imgDefault from '../../assets/img-default.png';
 
 import './style.less';
@@ -45,9 +45,7 @@ export const SellModal: React.FC<SellModalProps> = ({
     } catch (error) {
       // Show error and redirect to step 0 again
       console.log({ error });
-      errorNotification(
-        new Error('Transaction failed. Please try again later.')
-      );
+      notification('Transaction failed. Please try again later.', 'error');
       setStep(0);
     }
   };

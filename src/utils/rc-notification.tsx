@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import Notification from 'rc-notification';
 
 import IconSuccess from 'assets/IconSuccess';
+import IconError from 'assets/IconError';
 
 let notificationIns: any = null;
 Notification.newInstance(
@@ -19,9 +20,15 @@ export const notification = (content: string, type: string): void => {
   notificationIns.notice({
     content: (
       <NotiContent>
-        {type === 'success' && <IconSuccess />}
-        {type === 'error' && <IconSuccess />}
-        {content}
+        <div className="cds-left">
+          {type === 'success' && <IconSuccess />}
+          {type === 'error' && <IconError />}
+        </div>
+        <div className="cds-right">
+          {type === 'success' && <div className="title">Success</div>}
+          {type === 'error' && <div className="title">Error</div>}
+          <div className="desc">{content}</div>
+        </div>
       </NotiContent>
     ),
     duration: 3,
@@ -31,18 +38,32 @@ export const notification = (content: string, type: string): void => {
 
 const NotiContent = styled.div`
   padding: 7px 20px 7px 10px;
-  border-radius: 3px 3px;
-  border: 1px solid #999;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  border: 0px solid rgba(0, 0, 0, 0);
-  background: #fff;
   display: flex;
-  align-items: center;
   margin: 10px 0;
 
-  svg {
+  border-radius: 10px;
+  background-color: #fff;
+  border: 1px solid #000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+
+  .cds-right {
+    .title {
+      font-size: 20px;
+      line-height: 1;
+    }
+    .desc {
+      font-size: 14px;
+    }
+  }
+
+  .cds-left {
+    display: flex;
+    align-items: flex-start;
     margin-right: 10px;
-    width: 20px;
-    height: 20px;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
   }
 `;

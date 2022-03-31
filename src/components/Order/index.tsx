@@ -73,10 +73,10 @@ const Wrap = styled.div`
 const OrderInfo = styled.div`
   padding: 15px;
   display: flex;
-  > *:nth-child(1) {
+  > *:nth-of-type(1) {
     width: 60%;
   }
-  > *:nth-child(2) {
+  > *:nth-of-type(2) {
     width: 40%;
   }
 `;

@@ -5,7 +5,7 @@ import Processing from 'components/Processing';
 import { CandyShop } from 'core/CandyShop';
 import React, { useCallback, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import { errorNotification } from 'utils/notification';
+import { notification } from 'utils/rc-notification';
 import BuyModalConfirmed from './BuyModalConfirmed';
 import BuyModalDetail from './BuyModalDetail';
 import './style.less';
@@ -54,9 +54,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       setStep(2);
     } catch (error) {
       // Show error and redirect to step 0 again
-      errorNotification(
-        new Error('Transaction failed. Please try again later.')
-      );
+      notification('Transaction failed. Please try again later.', 'error');
       setStep(0);
     }
   }, [
