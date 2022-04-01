@@ -3,9 +3,10 @@ import { PublicKey } from '@solana/web3.js';
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
 import { CandyShop } from 'core/CandyShop';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { notification } from 'utils/rc-notification';
+import { TransactionState } from '../../model';
 import BuyModalConfirmed from './BuyModalConfirmed';
 import BuyModalDetail from './BuyModalDetail';
 import './style.less';
@@ -25,45 +26,31 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   candyShop,
   walletConnectComponent,
 }) => {
-  /**
-   * Step in here contains
-   * 0: Content
-   * 1: Processing
-   * 2: Confirmed
-   **/
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(TransactionState.DISPLAY);
 
   const [hash, setHash] = useState(''); // txHash
 
-  // Handle buy
-  const buy = useCallback(async () => {
-    try {
-      // Change to step 1: processing
-      setStep(1);
-
-      const txHash = await candyShop.buy(
+  const buy = async () => {
+    setStep(TransactionState.PROCESSING);
+    return candyShop
+      .buy(
         new PublicKey(order.walletAddress),
         new PublicKey(order.tokenAccount),
         new PublicKey(order.tokenMint),
         new BN(order.price)
-      );
+      )
+      .then((txHash) => {
+        setHash(txHash);
+        console.log('Buy order made with transaction hash', txHash);
 
-      setHash(txHash);
-      console.log('Buy order made with transaction hash', txHash);
-
-      setStep(2);
-    } catch (error) {
-      // Show error and redirect to step 0 again
-      notification('Transaction failed. Please try again later.', 'error');
-      setStep(0);
-    }
-  }, [
-    candyShop,
-    order.price,
-    order.tokenAccount,
-    order.tokenMint,
-    order.walletAddress,
-  ]);
+        setStep(TransactionState.CONFIRMED);
+      })
+      .catch((err) => {
+        console.log({ err });
+        notification('Transaction failed. Please try again later.', 'error');
+        setStep(TransactionState.DISPLAY);
+      });
+  };
 
   return (
     <>

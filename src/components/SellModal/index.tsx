@@ -9,6 +9,7 @@ import { CandyShop } from 'core/CandyShop';
 import React, { useCallback, useState } from 'react';
 import { notification } from 'utils/rc-notification';
 import imgDefault from '../../assets/img-default.png';
+import { TransactionState } from '../../model';
 
 import './style.less';
 
@@ -26,28 +27,35 @@ export const SellModal: React.FC<SellModalProps> = ({
   const [formState, setFormState] = useState<{ price: number | undefined }>({
     price: undefined,
   });
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(TransactionState.DISPLAY);
 
   // List for sale and move to next step
   const sell = async () => {
-    try {
-      // Change to step 1: processing
-      setStep(1);
-      const price = (formState.price || 0) * LAMPORTS_PER_SOL;
+    setStep(TransactionState.PROCESSING);
 
-      const txHash = await candyShop.sell(
+    if (!formState.price) {
+      notification('Please input sell price', 'error');
+      setStep(TransactionState.DISPLAY);
+    }
+
+    const price = (formState.price!) * LAMPORTS_PER_SOL;
+
+    return candyShop
+      .sell(
         new PublicKey(nft.tokenAccountAddress),
         new PublicKey(nft.tokenMintAddress),
         new BN(price)
-      );
-      console.log('Place sell order with transaction hash', txHash);
-      setStep(2);
-    } catch (error) {
-      // Show error and redirect to step 0 again
-      console.log({ error });
-      notification('Transaction failed. Please try again later.', 'error');
-      setStep(0);
-    }
+      )
+      .then((txHash) => {
+        console.log('Place sell order with transaction hash', txHash);
+        setStep(TransactionState.CONFIRMED);
+      })
+      .catch((err) => {
+        // Show error and redirect to step 0 again
+        console.log({ err });
+        notification('Transaction failed. Please try again later.', 'error');
+        setStep(TransactionState.DISPLAY);
+      });
   };
 
   // Check active button submit
@@ -69,7 +77,7 @@ export const SellModal: React.FC<SellModalProps> = ({
   return (
     <Modal onCancel={onCancel} width={600}>
       <div className="sell-modal">
-        {step === 0 && (
+        {step === TransactionState.DISPLAY && (
           <Content>
             <div className="sell-modal-title">Sell</div>
             <div className="sell-modal-content">
@@ -112,8 +120,8 @@ export const SellModal: React.FC<SellModalProps> = ({
             </form>
           </Content>
         )}
-        {step === 1 && <Processing text="Listing your NFT" />}
-        {step === 2 && (
+        {step === TransactionState.PROCESSING && <Processing text="Listing your NFT" />}
+        {step === TransactionState.CONFIRMED && (
           <>
             <div className="sell-modal-title">
               <IconTick />

@@ -18,7 +18,6 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   walletConnectComponent,
 }) => {
   const orderPrice = useMemo(() => {
-    if (!order) return 0;
     return (Number(order?.price) / LAMPORTS_PER_SOL).toFixed(2);
   }, [order]);
 
