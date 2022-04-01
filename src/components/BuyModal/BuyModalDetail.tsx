@@ -1,7 +1,7 @@
-import React from 'react';
-import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { Statistic } from 'antd';
-import { ExplorerLink } from '../ExplorerLink';
+import styled from '@emotion/styled';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { ExplorerLink } from 'components/ExplorerLink';
+import React, { useMemo } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 
 export interface BuyModalDetailProps {
@@ -17,6 +17,10 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   walletPublicKey,
   walletConnectComponent,
 }) => {
+  const orderPrice = useMemo(() => {
+    return (Number(order?.price) / LAMPORTS_PER_SOL).toFixed(2);
+  }, [order]);
+
   return (
     <>
       <div className="buy-modal-thumbnail">
@@ -27,12 +31,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
         <div className="buy-modal-control">
           <div>
             <div className="candy-label">PRICE</div>
-            <Statistic
-              suffix="SOL"
-              value={(order?.price as any) / LAMPORTS_PER_SOL}
-              precision={2}
-              valueStyle={{ fontSize: 16, fontWeight: 'bold' }}
-            />
+            <Price>{orderPrice} SOL</Price>
           </div>
           {!walletPublicKey ? (
             walletConnectComponent
@@ -76,3 +75,8 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
 };
 
 export default BuyModalDetail;
+
+const Price = styled.div`
+  font-size: 16px;
+  font-weight: bold;
+`;

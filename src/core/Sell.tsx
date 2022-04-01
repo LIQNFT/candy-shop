@@ -1,13 +1,15 @@
-import React, { useMemo } from 'react';
+import styled from '@emotion/styled';
 import { Connection, PublicKey } from '@solana/web3.js';
-import { Col, Empty, Row, Skeleton } from 'antd';
-import { useEffect, useState } from 'react';
-import { fetchNftsFromWallet } from '../api/fetchNftsFromWallet';
-import { Nft } from '../components/Nft';
-import { CandyShop } from './CandyShop';
-import { SingleTokenInfo } from '../api/fetchMetadata';
-import { fetchOrdersByStoreIdAndWalletAddress } from '../api/backend/OrderAPI';
+import { fetchOrdersByStoreIdAndWalletAddress } from 'api/backend/OrderAPI';
+import { SingleTokenInfo } from 'api/fetchMetadata';
+import { fetchNftsFromWallet } from 'api/fetchNftsFromWallet';
+import { Empty } from 'components/Empty';
+import { Nft } from 'components/Nft';
+import { Skeleton } from 'components/Skeleton';
+import { breakPoints } from 'constant/breakPoints';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { CandyShop } from './CandyShop';
 
 interface SellProps {
   connection: Connection;
@@ -58,44 +60,67 @@ export const Sell: React.FC<SellProps> = ({
 
   if (!walletPublicKey) {
     return (
-      <div className="candy-shop-list" style={{ textAlign: 'center' }}>
+      <div className="cds-container" style={{ textAlign: 'center' }}>
         {walletConnectComponent}
       </div>
     );
   }
 
   return (
-    <div className="candy-shop-list">
-      <Row
-        gutter={[
-          { md: 24, xs: 16 },
-          { md: 24, xs: 16 },
-        ]}
-      >
-        {isLoading ? (
-          Array(3)
-            .fill(0)
-            .map((_, key) => (
-              <Col key={key} md={8} xs={24}>
-                <Skeleton />
-              </Col>
-            ))
-        ) : !nfts.length ? (
-          <Col span={24}>
+    <>
+      <Wrap>
+        <div className="cds-container">
+          {isLoading ? (
+            <Flex>
+              {Array(3)
+                .fill(0)
+                .map((_, key) => (
+                  <FlexItem key={key}>
+                    <Skeleton />
+                  </FlexItem>
+                ))}
+            </Flex>
+          ) : !nfts.length ? (
             <Empty description="No NFTs found" />
-          </Col>
-        ) : (
-          nfts?.map((item, key) => (
-            <Col key={key} md={8} xs={24}>
-              <Nft
-                nft={item}
-                candyShop={candyShop}
-                sellDetail={hashSellOrders[item.tokenMintAddress]}
-              />
-            </Col>
-          ))
-        )}
-      </Row>
-    </div>
+          ) : (
+            <Flex>
+              {nfts.map((item, key) => (
+                <FlexItem key={key}>
+                  <Nft
+                    nft={item}
+                    candyShop={candyShop}
+                    sellDetail={hashSellOrders[item.tokenMintAddress]}
+                  />
+                </FlexItem>
+              ))}
+            </Flex>
+          )}
+        </div>
+      </Wrap>
+    </>
   );
 };
+
+const Wrap = styled.div`
+  font-family: 'Work Sans', sans-serif;
+`;
+
+const Flex = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  row-gap: 24px;
+  column-gap: 24px;
+  > * {
+    width: calc((100% - 24px * 2) / 3);
+  }
+
+  @media ${breakPoints.tabletM} {
+    row-gap: 16px;
+    column-gap: 16px;
+    > * {
+      width: 100%;
+    }
+  }
+`;
+
+const FlexItem = styled.div``;

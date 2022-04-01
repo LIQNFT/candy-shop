@@ -1,58 +1,80 @@
 .sell-modal {
-  // Set font
-  font-family: 'Work Sans', Helvetica, Arial, sans-serif;
+  font-family: 'Work Sans', sans-serif;
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
 
+  &-title {
+    padding-top: 50px;
+    padding-bottom: 40px;
+
+    font-size: 26px;
+    line-height: 36px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   &-content {
     display: flex;
     align-items: center;
-    padding-bottom: 40px;
-    border-bottom: 1px solid #e0e0e0;
-    margin-bottom: 40px;
+  }
+
+  &-img {
+    width: 100px;
+    height: 100px;
+    margin-right: 40px;
 
     img {
-      max-width: 100px;
-      max-height: 100px;
-      margin-right: 15px;
-    }
-
-    .candy-title {
-      margin-bottom: 0;
-      text-align: left;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
     }
   }
 
-  .sell-modal-collection-name {
+  &-collection-name {
     font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    margin-bottom: 4px;
   }
 
-  .sell-modal-nft-name {
-    font-size: 16px;
+  &-nft-name {
+    font-size: 18px;
+    line-height: 24px;
     font-weight: bold;
   }
 
-  &-success {
+  &-listed {
+    align-self: flex-start;
+    font-size: 26px;
+    line-height: 36px;
+    font-weight: bold;
+  }
+
+  &-hr {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    height: 1px;
+    background-color: #e0e0e0;
 
-    .candy-label-input {
-      margin-bottom: 12px;
-    }
+    margin-top: 40px;
+    margin-bottom: 50px;
+  }
 
-    .candy-button {
-      width: 100%;
-      padding: 16px 0;
-      margin-top: 44px;
-    }
+  &-button {
+    width: 100%;
+    margin-bottom: 30px;
 
-    &-icon {
-      svg {
-        margin: 14px 15px;
-      }
+    cursor: pointer;
+    color: #fff;
+    background: #7522f5;
+    border-radius: 32px;
+    padding: 16px 100px;
+
+    &:disabled {
+      background: #bdbdbd;
     }
   }
 }

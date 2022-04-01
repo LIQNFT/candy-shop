@@ -1,5 +1,4 @@
-@import 'antd/es/style/themes/default.less';
-@import 'antd/dist/antd.less';
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 @primary-color: #7522f5;
 @popover-background: #1a2029;
@@ -21,6 +20,36 @@
 @mobile: ~'only screen and (max-width: 576px)';
 @widescreen: ~'only screen and (min-width: 1600px)';
 
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.cds-container {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media only screen and (max-width: 1232px) {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+.cds-line-limit-1 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+}
+
+// old style
 .candy-shop-list {
   max-width: 1200px;
   margin: 0 auto;
@@ -77,14 +106,6 @@
   line-height: 36px;
   margin-bottom: 42px;
   text-align: center;
-}
-
-.candy-footnote-label {
-  font-size: 14px;
-}
-
-.candy-footnote-value {
-  font-size: 14px;
 }
 
 .candy-label {
@@ -336,6 +357,7 @@
 }
 
 .vault-status-tag {
+  z-index: 1;
   background-color: @primary-color;
   position: absolute;
   left: -12px;
@@ -348,6 +370,7 @@
   font-size: 12px;
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
+  z-index: 1;
 
   &::after {
     content: '';
@@ -424,4 +447,108 @@
 
 .candy-error {
   color: #ff0000;
+}
+
+.rc-notification {
+  right: 20px;
+  left: unset !important;
+}
+
+// NOTIFICATION
+@notificationPrefixCls: cds-rc-notification;
+
+.@{notificationPrefixCls} {
+  position: fixed;
+  z-index: 1010;
+
+  &-notice {
+    padding: 7px 20px 7px 10px;
+    border-radius: 3px 3px;
+    border: 1px solid #999;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    border: 0px solid rgba(0, 0, 0, 0);
+    background: #fff;
+    display: block;
+    width: auto;
+    line-height: 1.5;
+    position: relative;
+    margin: 10px 0;
+
+    &-closable {
+      padding-right: 20px;
+    }
+
+    &-close {
+      position: absolute;
+      right: 5px;
+      top: 3px;
+      color: #000;
+      cursor: pointer;
+      outline: none;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1;
+      text-shadow: 0 1px 0 #fff;
+      filter: alpha(opacity=20);
+      opacity: 0.2;
+      text-decoration: none;
+
+      &-x:after {
+        content: '×';
+      }
+
+      &:hover {
+        opacity: 1;
+        filter: alpha(opacity=100);
+        text-decoration: none;
+      }
+    }
+  }
+
+  .fade-effect() {
+    animation-duration: 0.3s;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.55, 0, 0.55, 0.2);
+  }
+
+  &-fade-appear,
+  &-fade-enter {
+    opacity: 0;
+    .fade-effect();
+    animation-play-state: paused;
+  }
+
+  &-fade-leave {
+    .fade-effect();
+    animation-play-state: paused;
+  }
+
+  &-fade-appear&-fade-appear-active,
+  &-fade-enter&-fade-enter-active {
+    animation-name: rcNotificationFadeIn;
+    animation-play-state: running;
+  }
+
+  &-fade-leave&-fade-leave-active {
+    animation-name: rcDialogFadeOut;
+    animation-play-state: running;
+  }
+
+  @keyframes rcNotificationFadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes rcDialogFadeOut {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
 }

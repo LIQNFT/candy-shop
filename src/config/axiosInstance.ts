@@ -1,5 +1,5 @@
-import axios from 'axios';
-
+import axios, { AxiosRequestConfig } from 'axios';
+import { Cluster } from '@solana/web3.js';
 
 const axiosInstance = axios.create({
   headers: {
@@ -9,3 +9,22 @@ const axiosInstance = axios.create({
 });
 
 export default axiosInstance;
+
+export const configBaseUrl = (env: Cluster) => {
+  axiosInstance.interceptors.request.use(
+    (config: AxiosRequestConfig<any>) => {
+      // Do something before request is sent
+      if (env === 'devnet') {
+        config.baseURL = 'https://ckaho.liqnft.com/api/';
+      }
+      if (env === 'mainnet-beta') {
+        config.baseURL = 'https://candy-shop.liqnft.com/api/';
+      }
+      return config;
+    },
+    (error: any) => {
+      // Do something with request error
+      return Promise.reject(error);
+    }
+  );
+};

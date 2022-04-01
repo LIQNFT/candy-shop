@@ -1,18 +1,25 @@
 .buy-modal {
+  display: flex;
+  gap: 24px;
+
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
 
-  .buy-modal-thumbnail {
+  &-thumbnail {
+    width: 340px;
+    height: 340px;
     img {
-      max-width: 340px;
-      max-height: 340px;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+      border-radius: 14px;
     }
   }
 
-  .buy-modal-container {
-    margin-left: 48px;
-    flex: 1 1 588px;
+  &-container {
+    flex: 1;
+    padding-top: 30px;
 
     .buy-modal-title {
       font-weight: bold;
@@ -26,7 +33,9 @@
       margin: 24px 0 32px;
 
       .buy-modal-button {
-        padding: 6px 12px;
+        padding: 16px 100px;
+        border-radius: 32px;
+
         display: flex;
         justify-content: center;
         align-items: center;
@@ -66,20 +75,24 @@
   }
 
   &-confirmed {
+    width: 100%;
+
     &-header {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding-bottom: 30px;
+      gap: 8px;
 
-      svg {
-        vertical-align: middle;
-      }
+      padding-top: 50px;
+      padding-bottom: 30px;
+      font-weight: bold;
+      font-size: 26px;
+      line-height: 36px;
     }
 
     &-container {
-      display: flex;
       width: 100%;
+      display: flex;
       align-items: center;
       margin-bottom: 24px;
 
@@ -95,15 +108,21 @@
     }
 
     &-content {
-      display: flex;
-      flex: 1;
       width: 100%;
+      flex: 1;
+      display: flex;
     }
 
     &-thumbnail {
       max-width: 100px;
       max-height: 100px;
       margin-right: 20px;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+      }
     }
 
     hr {

@@ -1,14 +1,14 @@
-import { Modal } from 'antd';
+import { BN } from '@project-serum/anchor';
 import { PublicKey } from '@solana/web3.js';
-import React, { useMemo, useState, useCallback } from 'react';
+import Modal from 'components/Modal';
+import Processing from 'components/Processing';
+import { CandyShop } from 'core/CandyShop';
+import React, { useState } from 'react';
+import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { notification } from 'utils/rc-notification';
+import { TransactionState } from '../../model';
 import BuyModalConfirmed from './BuyModalConfirmed';
 import BuyModalDetail from './BuyModalDetail';
-import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import { CandyShop } from '../../core/CandyShop';
-import { BN } from '@project-serum/anchor';
-import Processing from '../Processing/Processing';
-import { errorNotification } from '../../utils/notification';
-
 import './style.less';
 
 export interface BuyModalProps {
@@ -26,82 +26,54 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   candyShop,
   walletConnectComponent,
 }) => {
-  /**
-   * Step in here contains
-   * 0: Content
-   * 1: Processing
-   * 2: Confirmed
-   **/
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(TransactionState.DISPLAY);
 
   const [hash, setHash] = useState(''); // txHash
 
-  // Handle buy
-  const buy = useCallback(async () => {
-    try {
-      // Change to step 1: processing
-      setStep(1);
-
-      const txHash = await candyShop.buy(
+  const buy = async () => {
+    setStep(TransactionState.PROCESSING);
+    return candyShop
+      .buy(
         new PublicKey(order.walletAddress),
         new PublicKey(order.tokenAccount),
         new PublicKey(order.tokenMint),
         new BN(order.price)
-      );
+      )
+      .then((txHash) => {
+        setHash(txHash);
+        console.log('Buy order made with transaction hash', txHash);
 
-      setHash(txHash);
-      console.log('Buy order made with transaction hash', txHash);
-
-      setStep(2);
-    } catch (error) {
-      // Show error and redirect to step 0 again
-      errorNotification(
-        new Error('Transaction failed. Please try again later.')
-      );
-      setStep(0);
-    }
-  }, [
-    candyShop,
-    order.price,
-    order.tokenAccount,
-    order.tokenMint,
-    order.walletAddress,
-  ]);
-
-  // Render view component
-  const viewComponent = useMemo(
-    () =>
-      new Map()
-        .set(
-          0,
-          <BuyModalDetail
-            order={order}
-            buy={buy}
-            walletPublicKey={walletPublicKey}
-            walletConnectComponent={walletConnectComponent}
-          />
-        )
-        .set(1, <Processing text="Processing purchase" />)
-        .set(
-          2,
-          <BuyModalConfirmed
-            walletPublicKey={walletPublicKey}
-            order={order}
-            txHash={hash}
-          />
-        ),
-    [order, hash, buy, walletConnectComponent, walletPublicKey]
-  );
+        setStep(TransactionState.CONFIRMED);
+      })
+      .catch((err) => {
+        console.log({ err });
+        notification('Transaction failed. Please try again later.', 'error');
+        setStep(TransactionState.DISPLAY);
+      });
+  };
 
   return (
-    <Modal
-      visible
-      onCancel={onClose}
-      className="candy-shop-modal buy-modal"
-      width={step === 0 ? 1000 : 600}
-      footer={null}
-    >
-      {viewComponent.get(step)}
-    </Modal>
+    <>
+      <Modal onCancel={onClose} width={step !== 0 ? 600 : 1000}>
+        <div className="buy-modal">
+          {step === 0 && (
+            <BuyModalDetail
+              order={order}
+              buy={buy}
+              walletPublicKey={walletPublicKey}
+              walletConnectComponent={walletConnectComponent}
+            />
+          )}
+          {step === 1 && <Processing text="Processing purchase" />}
+          {step === 2 && (
+            <BuyModalConfirmed
+              walletPublicKey={walletPublicKey}
+              order={order}
+              txHash={hash}
+            />
+          )}
+        </div>
+      </Modal>
+    </>
   );
 };
