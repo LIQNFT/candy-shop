@@ -22,10 +22,16 @@ export const safeAwait = (promise: Promise<any>, finallyCallback?: any) => {
     });
 };
 
-export const fetchDataArrayInBatches = async (array: any[], returnResult: any, singleItemAsyncCallback: any) => {
+export const fetchDataArrayInBatches = async (
+  array: any[],
+  returnResult: any,
+  singleItemAsyncCallback: any
+) => {
   if (!array || !singleItemAsyncCallback) return;
   if (!returnResult) {
-    console.debug('fetchArrayInBatchesPromise: returnResult should not be undefined.');
+    console.debug(
+      'fetchArrayInBatchesPromise: returnResult should not be undefined.'
+    );
     return;
   }
   const chunkSize = 20;
@@ -37,10 +43,14 @@ export const fetchDataArrayInBatches = async (array: any[], returnResult: any, s
   let count = 0;
   while (count < array.length) {
     const batch = array.slice(count, count + chunkSize);
-    const tokenInfoBatch = await Promise.all(batch.map((token) => singleItemAsyncCallback(token)));
+    const tokenInfoBatch = await Promise.all(
+      batch.map((token) => singleItemAsyncCallback(token))
+    );
     returnResult = returnResult.concat(tokenInfoBatch);
     await sleepPromise(delayMs);
-    console.log(`fetchArrayInBatchesPromise: The batch ${batchNum} have been all resolved.`);
+    console.log(
+      `fetchArrayInBatchesPromise: The batch ${batchNum} have been all resolved.`
+    );
     batchNum++;
     count += chunkSize;
   }

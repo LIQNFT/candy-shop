@@ -66,10 +66,9 @@ export const getCandyShopSync = (
   );
 };
 
-export const getAuctionHouseProgramAsSigner = (): Promise<[
-  PublicKey,
-  number
-]> => {
+export const getAuctionHouseProgramAsSigner = (): Promise<
+  [PublicKey, number]
+> => {
   return PublicKey.findProgramAddress(
     [Buffer.from(AUCTION_HOUSE), Buffer.from('signer')],
     AUCTION_HOUSE_PROGRAM_ID

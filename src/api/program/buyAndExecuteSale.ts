@@ -2,13 +2,14 @@ import * as anchor from '@project-serum/anchor';
 import { Idl, Program } from '@project-serum/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID
+  TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import {
-  PublicKey, SystemProgram,
+  PublicKey,
+  SystemProgram,
   SYSVAR_RENT_PUBKEY,
-  Transaction
+  Transaction,
 } from '@solana/web3.js';
 import { Metadata, parseMetadata } from '../../utils/parseData';
 import { AUCTION_HOUSE_PROGRAM_ID, WRAPPED_SOL_MINT } from '../constants';
@@ -16,7 +17,7 @@ import {
   getAtaForMint,
   getAuctionHouseEscrow,
   getAuctionHouseProgramAsSigner,
-  getAuctionHouseTradeState
+  getAuctionHouseTradeState,
 } from '../utils';
 import { awaitTransactionSignatureConfirmation } from './submitTx';
 
@@ -74,10 +75,8 @@ export async function buyAndExecuteSale(
     amount,
     new anchor.BN(0)
   );
-  const [
-    programAsSigner,
-    programAsSignerBump,
-  ] = await getAuctionHouseProgramAsSigner();
+  const [programAsSigner, programAsSignerBump] =
+    await getAuctionHouseProgramAsSigner();
 
   const transaction = new Transaction();
 
@@ -130,9 +129,9 @@ export async function buyAndExecuteSale(
     }
   }
 
-  const ix2 = await (program.instruction.executeSaleWithProxy as (
-    ...args: any
-  ) => any)(
+  const ix2 = await (
+    program.instruction.executeSaleWithProxy as (...args: any) => any
+  )(
     price,
     amount,
     buyerEscrowBump,
@@ -151,7 +150,9 @@ export async function buyAndExecuteSale(
         escrowPaymentAccount: buyerEscrow,
         sellerPaymentReceiptAccount: isNative
           ? counterParty
-          : (await getAtaForMint(treasuryMint, counterParty))[0],
+          : (
+              await getAtaForMint(treasuryMint, counterParty)
+            )[0],
         buyerReceiptTokenAccount: (
           await getAtaForMint(tokenAccountMint, wallet.publicKey)
         )[0],
