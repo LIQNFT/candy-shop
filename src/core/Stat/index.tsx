@@ -53,7 +53,9 @@ export const Stat = ({
           <Box2>
             <Item>
               <div className="candy-label">FLOOR PRICE</div>
-              <div className="statistics">{floorPrice === null ? "N/A" : `${floorPrice} SOL`}</div>
+              <div className="statistics">
+                {floorPrice === null ? 'N/A' : `${floorPrice} SOL`}
+              </div>
             </Item>
             <Item>
               <div className="candy-label">TOTAL LISTED</div>

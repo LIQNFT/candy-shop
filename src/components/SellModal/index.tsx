@@ -38,7 +38,7 @@ export const SellModal: React.FC<SellModalProps> = ({
       setStep(TransactionState.DISPLAY);
     }
 
-    const price = (formState.price!) * LAMPORTS_PER_SOL;
+    const price = formState.price! * LAMPORTS_PER_SOL;
 
     return candyShop
       .sell(
@@ -120,7 +120,9 @@ export const SellModal: React.FC<SellModalProps> = ({
             </form>
           </Content>
         )}
-        {step === TransactionState.PROCESSING && <Processing text="Listing your NFT" />}
+        {step === TransactionState.PROCESSING && (
+          <Processing text="Listing your NFT" />
+        )}
         {step === TransactionState.CONFIRMED && (
           <>
             <div className="sell-modal-title">

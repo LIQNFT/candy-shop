@@ -45,11 +45,13 @@ const fetchDataArrayInBatches = async (
   let count = 0;
   while (count < array.length) {
     const batch = array.slice(count, count + chunkSize);
-    const tokenInfoBatch = (await Promise.all(
-      batch.map((tokenAccountAddress) =>
-        singleItemAsyncCallback(connection, tokenAccountAddress)
+    const tokenInfoBatch = (
+      await Promise.all(
+        batch.map((tokenAccountAddress) =>
+          singleItemAsyncCallback(connection, tokenAccountAddress)
+        )
       )
-    )).filter(res => res != null);
+    ).filter((res) => res != null);
     console.log(
       `fetchArrayInBatchesPromise: The batch ${batchNum} have been all resolved.`
     );
