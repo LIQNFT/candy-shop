@@ -16,6 +16,7 @@ interface SellProps {
   walletPublicKey?: PublicKey;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
+  style?: { [key: string]: string | number } | undefined;
 }
 
 /**
@@ -26,6 +27,7 @@ export const Sell: React.FC<SellProps> = ({
   connection,
   candyShop,
   walletConnectComponent,
+  style,
 }) => {
   const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
   const [sellOrders, setSellOrders] = useState<OrderSchema[]>();
@@ -68,7 +70,7 @@ export const Sell: React.FC<SellProps> = ({
 
   return (
     <>
-      <Wrap>
+      <Wrap style={style}>
         <div className="cds-container">
           {isLoading ? (
             <Flex>
@@ -102,7 +104,7 @@ export const Sell: React.FC<SellProps> = ({
 };
 
 const Wrap = styled.div`
-  font-family: 'Work Sans', sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
 `;
 
 const Flex = styled.div`

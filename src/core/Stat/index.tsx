@@ -73,7 +73,7 @@ export const Stat = ({
 };
 
 const Wrap = styled.div`
-  font-family: 'Work Sans', sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
 `;
 
 const Flex = styled.div`

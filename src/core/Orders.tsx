@@ -12,6 +12,7 @@ interface OrdersProps {
   walletPublicKey?: PublicKey;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
+  style?: { [key: string]: string | number } | undefined;
 }
 
 /**
@@ -21,6 +22,7 @@ export const Orders: React.FC<OrdersProps> = ({
   walletPublicKey,
   candyShop,
   walletConnectComponent,
+  style,
 }) => {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -43,7 +45,7 @@ export const Orders: React.FC<OrdersProps> = ({
 
   return (
     <>
-      <Wrap>
+      <Wrap style={style}>
         <div className="cds-container">
           {loading ? (
             <Flex>
@@ -78,7 +80,7 @@ export const Orders: React.FC<OrdersProps> = ({
 };
 
 const Wrap = styled.div`
-  font-family: 'Work Sans', sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
 `;
 
 const Flex = styled.div`
