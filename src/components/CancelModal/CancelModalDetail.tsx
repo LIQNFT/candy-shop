@@ -99,7 +99,7 @@ const Container = styled.div`
   display: flex;
 
   .cds-cancel-modal {
-    font-family: 'Work Sans', sans-serif;
+    font-family: Helvetica, Arial, sans-serif;
     font-weight: 500;
     font-size: 16px;
     line-height: 24px;

@@ -17,6 +17,7 @@ import {
   getCandyShopSync,
   getMetadataAccount,
 } from '../api/utils';
+
 /**
  * Core Candy Shop module
  */
@@ -55,7 +56,9 @@ export class CandyShop {
     if (typeof this._program === 'undefined') {
       const options = Provider.defaultOptions();
       const connection = new Connection(
-        clusterApiUrl(this._env),
+        this._env === 'mainnet-beta'
+          ? 'https://ssc-dao.genesysgo.net/'
+          : clusterApiUrl('devnet'),
         options.commitment
       );
       const provider = new Provider(connection, this._wallet, options);
