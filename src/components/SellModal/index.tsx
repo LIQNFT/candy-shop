@@ -138,7 +138,7 @@ export const SellModal: React.FC<SellModalProps> = ({
             </div>
             <div className="sell-modal-hr"></div>
             <button className="sell-modal-button" onClick={onCancel}>
-              View listing
+              Continue Browsing
             </button>
           </>
         )}
