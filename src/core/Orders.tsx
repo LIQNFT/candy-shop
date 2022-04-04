@@ -81,6 +81,7 @@ export const Orders: React.FC<OrdersProps> = ({
 
 const Wrap = styled.div`
   font-family: Helvetica, Arial, sans-serif;
+  width: 100%;
 `;
 
 const Flex = styled.div`

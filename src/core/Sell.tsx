@@ -105,6 +105,7 @@ export const Sell: React.FC<SellProps> = ({
 
 const Wrap = styled.div`
   font-family: Helvetica, Arial, sans-serif;
+  width: 100%;
 `;
 
 const Flex = styled.div`
