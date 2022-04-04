@@ -19,7 +19,7 @@ import {
   getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
 } from '../utils';
-import { awaitTransactionSignatureConfirmation } from './submitTx';
+import { awaitTransactionSignatureConfirmation } from '../submitTx';
 
 export async function buyAndExecuteSale(
   wallet: AnchorWallet,
