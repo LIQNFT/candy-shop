@@ -1,6 +1,7 @@
 import { BN, Program, Provider } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Cluster, clusterApiUrl, Connection, PublicKey } from '@solana/web3.js';
+import { fetchNftByMint } from 'api/backend/NftAPI';
 import { configBaseUrl } from 'config/axiosInstance';
 import { fetchOrdersByStoreId } from '../api/backend/OrderAPI';
 import { fetchStatsById } from '../api/backend/StatsAPI';
@@ -230,7 +231,11 @@ export class CandyShop {
     return fetchStatsById(this._candyShopAddress.toString());
   }
 
-  async transactions() {
+  public async transactions() {
     return fetchTradeById(this._candyShopAddress.toString());
+  }
+
+  public async nftInfo(mint: string) {
+    return fetchNftByMint(mint);
   }
 }

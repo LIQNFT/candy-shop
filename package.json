@@ -65,7 +65,7 @@
     "@solana/web3.js": "^1.36.0",
     "axios": "^0.26.1",
     "rc-notification": "^4.5.7",
-    "solana-candy-shop-schema": "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#d91a08c1221a6d4fab7c3526abe18af54cd48e49"
+    "solana-candy-shop-schema": "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#d8cc8ebe62d9b532fe120cf2f5a95ab6e7ced82b"
   },
   "scripts": {
     "start": "rollup -c --watch",
