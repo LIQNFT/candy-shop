@@ -36,20 +36,22 @@ export const Sell: React.FC<SellProps> = ({
   useEffect(() => {
     if (connection && walletPublicKey) {
       (async () => {
-        setIsLoading(true);
-        const [userNfts, sellOrders] = await Promise.all([
-          fetchNftsFromWallet(connection, walletPublicKey),
-          fetchOrdersByStoreIdAndWalletAddress(
-            candyShop.candyShopAddress().toString(),
-            walletPublicKey.toString()
-          ),
-        ]);
-        setNfts(userNfts);
-        setSellOrders(sellOrders);
-        setIsLoading(false);
+        if (!isLoading && nfts.length === 0) {
+          setIsLoading(true);
+          const [userNfts, sellOrders] = await Promise.all([
+            fetchNftsFromWallet(connection, walletPublicKey),
+            fetchOrdersByStoreIdAndWalletAddress(
+              candyShop.candyShopAddress().toString(),
+              walletPublicKey.toString()
+            ),
+          ]);
+          setNfts(userNfts);
+          setSellOrders(sellOrders);
+          setIsLoading(false);
+        }
       })();
     }
-  }, [connection, walletPublicKey, candyShop]);
+  }, [connection, walletPublicKey, candyShop, isLoading, nfts]);
 
   const hashSellOrders: any = useMemo(() => {
     return (
@@ -111,10 +113,10 @@ const Wrap = styled.div`
 const Flex = styled.div`
   display: flex;
   flex-flow: row wrap;
-  row-gap: 24px;
-  column-gap: 24px;
+  row-gap: 16px;
+  column-gap: 16px;
   > * {
-    width: calc((100% - 24px * 2) / 3);
+    width: calc((100% - 16px * 2) / 3);
   }
 
   @media ${breakPoints.tabletM} {

@@ -93,6 +93,7 @@ const Flex = styled.div`
 
 const Box1 = styled.div`
   .title {
+    text-align: left;
     margin-bottom: 12px;
 
     font-size: 48px;

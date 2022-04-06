@@ -87,10 +87,10 @@ const Wrap = styled.div`
 const Flex = styled.div`
   display: flex;
   flex-flow: row wrap;
-  row-gap: 24px;
-  column-gap: 24px;
+  row-gap: 16px;
+  column-gap: 16px;
   > * {
-    width: calc((100% - 24px * 2) / 3);
+    width: calc((100% - 16px * 2) / 3);
   }
 
   @media ${breakPoints.tabletM} {

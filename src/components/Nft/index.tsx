@@ -35,8 +35,8 @@ export const Nft = ({ nft, candyShop, sellDetail }: NftProps): JSX.Element => {
         <div className="vault-list-item-body">
           <div className="vault-list-item-header">
             <CardName>
-              {nft?.metadata?.data?.name}
-              <div className="subtitle">{nft?.metadata?.data?.symbol}</div>
+              <div className="name">{nft?.metadata?.data?.name}</div>
+              <div className="ticker">{nft?.metadata?.data?.symbol}</div>
             </CardName>
           </div>
         </div>
@@ -67,6 +67,16 @@ const Card = styled.div`
 
 const CardName = styled.div`
   vertical-align: middle;
-  font-weight: bold;
   padding: 12px;
+  .name {
+    font-weight: bold;
+    font-size: 16px;
+    text-align: left;
+  }
+  .ticker {
+    font-size: 14px;
+    text-align: left;
+    font-weight: 400;
+    height: 22px;
+  }
 `;

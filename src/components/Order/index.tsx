@@ -82,12 +82,14 @@ const OrderInfo = styled.div`
 `;
 
 const Name = styled.div`
-  font-weight: bold;
   .name {
-    font-size: 20px;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: left;
   }
   .ticker {
     font-size: 14px;
+    text-align: left;
   }
 `;
 
@@ -96,9 +98,9 @@ const Price = styled.div`
   text-align: right;
   .text {
     color: #757575;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 12px;
     text-transform: uppercase;
+    font-weight: bold;
   }
   .price {
     font-size: 14px;
