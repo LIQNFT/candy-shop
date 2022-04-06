@@ -76,7 +76,7 @@ export const Sell: React.FC<SellProps> = ({
         <div className="cds-container">
           {isLoading ? (
             <Flex>
-              {Array(3)
+              {Array(4)
                 .fill(0)
                 .map((_, key) => (
                   <FlexItem key={key}>
@@ -113,10 +113,10 @@ const Wrap = styled.div`
 const Flex = styled.div`
   display: flex;
   flex-flow: row wrap;
-  row-gap: 16px;
-  column-gap: 16px;
+  row-gap: 12px;
+  column-gap: 12px;
   > * {
-    width: calc((100% - 16px * 2) / 3);
+    width: calc((100% - 12px * 3) / 4);
   }
 
   @media ${breakPoints.tabletM} {
