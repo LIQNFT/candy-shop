@@ -2,6 +2,7 @@ import { BN, Program, Provider } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Cluster, clusterApiUrl, Connection, PublicKey } from '@solana/web3.js';
 import { fetchNftByMint } from 'api/backend/NftAPI';
+import { fetchShopWhitelistNftByShopId } from 'api/backend/ShopAPI';
 import { configBaseUrl } from 'config/axiosInstance';
 import {
   fetchOrdersByStoreId,
@@ -247,5 +248,9 @@ export class CandyShop {
       this._candyShopAddress.toString(),
       walletAddress
     );
+  }
+
+  public async shopWlNfts() {
+    return fetchShopWhitelistNftByShopId(this._candyShopAddress.toString());
   }
 }
