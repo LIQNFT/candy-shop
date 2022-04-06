@@ -3,7 +3,10 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Cluster, clusterApiUrl, Connection, PublicKey } from '@solana/web3.js';
 import { fetchNftByMint } from 'api/backend/NftAPI';
 import { configBaseUrl } from 'config/axiosInstance';
-import { fetchOrdersByStoreId } from '../api/backend/OrderAPI';
+import {
+  fetchOrdersByStoreId,
+  fetchOrdersByStoreIdAndWalletAddress,
+} from '../api/backend/OrderAPI';
 import { fetchStatsById } from '../api/backend/StatsAPI';
 import { fetchTradeById } from '../api/backend/TradeAPI';
 import { buyAndExecuteSale } from '../api/program/buyAndExecuteSale';
@@ -237,5 +240,12 @@ export class CandyShop {
 
   public async nftInfo(mint: string) {
     return fetchNftByMint(mint);
+  }
+
+  public async activeOrdersByWalletAddress(walletAddress: string) {
+    return fetchOrdersByStoreIdAndWalletAddress(
+      this._candyShopAddress.toString(),
+      walletAddress
+    );
   }
 }
