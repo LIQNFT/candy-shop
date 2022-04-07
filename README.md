@@ -16,10 +16,10 @@ Key features:
 * **Transparency.** Candy Shop is an open source and on-chain protocol, providing your community with full transparency on what is happening behind the scene for your marketplace. 
 
 Links:
-* [Website](https://liqnft.github.io/solana-candy-shop/)
-* [Demo](https://liqnft.github.io/candy-shop/)
+* [Website + Demo](https://candy.liqnft.com)
 * [Whitepaper](https://liqnft.gitbook.io/candy-shop/)
 * [Candy Machine V2 + Candy Shop Starter Repo](https://github.com/LIQNFT/candy-machine-v2-with-marketplace)
+* [Support](https://discord.com/invite/PYZWRHgVwM)
 
 <img width="1200" alt="Candy Shop Marketplace" src="https://user-images.githubusercontent.com/89616076/160229442-30f59d07-cd33-4b7d-8798-424013731f47.png">
 
@@ -40,7 +40,7 @@ yarn add @liqnft/candy-shop
 
 ### Init CandyShop
 
-Create your Candy Shop [here](https://liqnft.github.io/solana-candy-shop/#/create-candy-shop).
+Create your Candy Shop [here](https://candy.liqnft.com/create-candy-shop).
 
 Use code in the /example folder as reference to setup your Candy Shop.
 
