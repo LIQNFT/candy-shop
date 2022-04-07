@@ -1,11 +1,25 @@
 import { ListBase, Order, SingleBase } from 'solana-candy-shop-schema/dist';
 import axiosInstance from '../../config/axiosInstance';
+import qs from 'qs';
+
+export type SortBy = {
+  column: string;
+  order: 'asc' | 'desc';
+};
 
 export async function fetchOrdersByStoreId(
-  storeId: string
+  storeId: string,
+  sortBy?: SortBy
 ): Promise<ListBase<Order>> {
+  const queryObject = {} as any;
+  if (sortBy) {
+    queryObject['orderByArr'] = JSON.stringify(sortBy);
+  }
+
+  const queryString = qs.stringify(queryObject);
+
   return axiosInstance
-    .get<ListBase<Order>>(`/order/${storeId}`)
+    .get<ListBase<Order>>(`/order/${storeId}?${queryString}`)
     .then((response) => response.data);
 }
 
