@@ -92,7 +92,7 @@ const Flex = styled.div`
 
 const Label = styled.p<{ isMenuOpen?: boolean }>`
   margin: 0;
-  color: ${props => props.isMenuOpen ? "#7522F5" : "black"}
+  color: ${(props) => (props.isMenuOpen ? '#7522F5' : 'black')};
 `;
 
 const IconWrapper = styled.div`
