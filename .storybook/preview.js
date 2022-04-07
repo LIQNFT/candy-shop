@@ -1,5 +1,5 @@
-import '../dist/index.css';
-
+// import '../dist/index.css';
+import '../src/index.less';
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
   controls: {

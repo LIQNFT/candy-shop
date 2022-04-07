@@ -1,3 +1,4 @@
+const useLessLoader = require('storybook-less-loader');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = {
@@ -20,6 +21,8 @@ module.exports = {
         extensions: config.resolve.extensions,
       }),
     ];
-    return config;
+    const includeLessConfig = useLessLoader(config);
+    return includeLessConfig;
+    // return config;
   },
 };
