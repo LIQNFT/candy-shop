@@ -1,4 +1,4 @@
-import { ListBase, Order } from 'solana-candy-shop-schema/dist';
+import { ListBase, Order, SingleBase } from 'solana-candy-shop-schema/dist';
 import axiosInstance from '../../config/axiosInstance';
 
 export async function fetchOrdersByStoreId(
@@ -9,15 +9,23 @@ export async function fetchOrdersByStoreId(
     .then((response) => response.data);
 }
 
+export async function fetchOrderByTokenMint(
+  mintAddress: string
+): Promise<SingleBase<Order>> {
+  return axiosInstance
+    .get<SingleBase<Order>>(`/order/mint/${mintAddress}`)
+    .then((response) => response.data);
+}
+
 export async function fetchOrdersByStoreIdAndWalletAddress(
   storeId: string,
   walletAddress: string
 ): Promise<Order[]> {
   // handles pagination internally
-  let limit = 10,
-    offset = 0,
+  const limit = 10;
+  let offset = 0,
     resCount = null;
-  let orders: Order[] = [];
+  const orders: Order[] = [];
   while (resCount === null || resCount == limit) {
     const page: Order[] = await axiosInstance
       .get<ListBase<Order>>(

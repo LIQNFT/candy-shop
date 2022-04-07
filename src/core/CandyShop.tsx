@@ -5,6 +5,16 @@ import { fetchNftByMint } from 'api/backend/NftAPI';
 import { fetchShopWhitelistNftByShopId } from 'api/backend/ShopAPI';
 import { configBaseUrl } from 'config/axiosInstance';
 import {
+  ListBase,
+  Nft,
+  Order,
+  ShopStats,
+  SingleBase,
+  Trade,
+  WhitelistNft,
+} from 'solana-candy-shop-schema/dist';
+import {
+  fetchOrderByTokenMint,
   fetchOrdersByStoreId,
   fetchOrdersByStoreIdAndWalletAddress,
 } from '../api/backend/OrderAPI';
@@ -231,26 +241,34 @@ export class CandyShop {
     return txHash;
   }
 
-  public async stats() {
+  public async stats(): Promise<ShopStats> {
     return fetchStatsById(this._candyShopAddress.toString());
   }
 
-  public async transactions() {
+  public async transactions(): Promise<Trade[]> {
     return fetchTradeById(this._candyShopAddress.toString());
   }
 
-  public async nftInfo(mint: string) {
+  public async nftInfo(mint: string): Promise<Nft> {
     return fetchNftByMint(mint);
   }
 
-  public async activeOrdersByWalletAddress(walletAddress: string) {
+  public async activeOrdersByWalletAddress(
+    walletAddress: string
+  ): Promise<Order[]> {
     return fetchOrdersByStoreIdAndWalletAddress(
       this._candyShopAddress.toString(),
       walletAddress
     );
   }
 
-  public async shopWlNfts() {
+  public async shopWlNfts(): Promise<ListBase<WhitelistNft>> {
     return fetchShopWhitelistNftByShopId(this._candyShopAddress.toString());
+  }
+
+  public async activeOrderByMintAddress(
+    mintAddress: string
+  ): Promise<SingleBase<Order>> {
+    return fetchOrderByTokenMint(mintAddress);
   }
 }
