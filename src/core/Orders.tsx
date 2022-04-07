@@ -129,7 +129,7 @@ const Wrap = styled.div`
 
 const FilterContainer = styled.div`
   display: flex;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 `;
 
 const Flex = styled.div`
