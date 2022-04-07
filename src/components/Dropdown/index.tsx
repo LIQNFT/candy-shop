@@ -37,7 +37,7 @@ export const Dropdown: React.FunctionComponent<DropdownProps> = ({
       onClick={() => setIsMenuOpen((isOpen) => !isOpen)}
     >
       <Flex>
-        <Label>{currentlySelectedItem?.label}</Label>
+        <Label isMenuOpen={isMenuOpen}>{currentlySelectedItem?.label}</Label>
         {isMenuOpen ? (
           <IconWrapper>
             <IconChevronUp />
@@ -90,8 +90,9 @@ const Flex = styled.div`
   justify-content: space-between;
 `;
 
-const Label = styled.p`
+const Label = styled.p<{ isMenuOpen?: boolean }>`
   margin: 0;
+  color: ${props => props.isMenuOpen ? "#7522F5" : "black"}
 `;
 
 const IconWrapper = styled.div`
