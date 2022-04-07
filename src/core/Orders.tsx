@@ -60,8 +60,6 @@ export const Orders: React.FC<OrdersProps> = ({
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  console.log("rendering");
-
   // handle fetch data
   useEffect(() => {
     setLoading(true);
