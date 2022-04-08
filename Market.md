@@ -10,6 +10,3 @@ CandyShop allows integrator to host their own market for variety of target audie
 
 - **Marketplace that DOES NOT restrict collection:**
   Anyone can sell anything in the market. With the candyShop API, one can still display specific collection on sale with `identifier` filter.
-
-
-

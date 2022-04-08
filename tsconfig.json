@@ -1,29 +1,24 @@
 {
   "compilerOptions": {
-    "target": "es2019",
-    "module": "esnext",
-    "strict": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": false,
     "skipLibCheck": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "jsx": "react",
-    "lib": ["dom", "esnext"],
-    "allowJs": true,
-    "baseUrl": "src",
+    "module": "ESNext",
     "moduleResolution": "Node",
-
-    // used to emit index.d.ts
-    "declaration": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "baseUrl": "lib",
     "outDir": "dist",
-    "declarationMap": true,
-    "declarationDir": ".",
-
-    // for resolve
-    "rootDir": "src"
+    "declaration": true,
+    "declarationMap": true
   },
-  "include": ["src/**/*", "src/.d.ts"],
-
-  // used to emit index.d.ts in the right directory
-  "exclude": ["dist"]
+  "exclude": ["node_modules", "dist", "example-dist", "**/*.stories.tsx", "example-vite.config.ts"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

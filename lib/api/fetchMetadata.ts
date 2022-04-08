@@ -3,6 +3,7 @@ import { Connection, PublicKey } from '@solana/web3.js';
 import axios from 'axios';
 import { Metadata, parseEdition, parseMetadata } from '../utils/parseData';
 import { safeAwait } from '../utils/PromiseHelper';
+import { Buffer } from 'buffer';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new PublicKey(METADATA_PROGRAM_ID);
