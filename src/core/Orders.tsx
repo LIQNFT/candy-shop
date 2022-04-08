@@ -63,8 +63,7 @@ export const Orders: React.FC<OrdersProps> = ({
   // handle fetch data
   useEffect(() => {
     setLoading(true);
-    fetchOrdersByStoreId(
-      candyShop.candyShopAddress().toString(),
+    candyShop.orders(
       sortedByOption.value
     )
       .then((data: any) => {

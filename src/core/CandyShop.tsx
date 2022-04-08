@@ -17,6 +17,7 @@ import {
   fetchOrderByTokenMint,
   fetchOrdersByStoreId,
   fetchOrdersByStoreIdAndWalletAddress,
+  SortBy,
 } from '../api/backend/OrderAPI';
 import { fetchStatsById } from '../api/backend/StatsAPI';
 import { fetchTradeById } from '../api/backend/TradeAPI';
@@ -104,8 +105,8 @@ export class CandyShop {
     return this._programId;
   }
 
-  async orders() {
-    return fetchOrdersByStoreId(this._candyShopAddress.toString());
+  async orders(sortBy?: SortBy) {
+    return fetchOrdersByStoreId(this._candyShopAddress.toString(), sortBy);
   }
 
   public async buy(
