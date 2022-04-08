@@ -41,7 +41,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
           setLoadingNftInfo(false);
         });
     }
-  }, [order]);
+  }, [order, candyShop]);
 
   return (
     <>
