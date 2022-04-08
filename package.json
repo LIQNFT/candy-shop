@@ -13,7 +13,7 @@
   },
   "scripts": {
     "dev": "parcel example/index.html",
-    "build": "parcel build index.html --public-url ./",
+    "build": "parcel build example/index.html --public-url ./",
     "gh-pages": "push-dir --dir=dist --branch=gh-pages --cleanup --verbose",
     "deploy": "yarn build && yarn gh-pages",
     "format:check": "prettier --check lib/src",
