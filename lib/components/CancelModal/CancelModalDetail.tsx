@@ -6,8 +6,10 @@ import { breakPoints } from 'constant/breakPoints';
 import { CandyShop } from 'core/CandyShop';
 import React from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import imgDefault from '../../assets/img-default.png';
 import { notification } from 'utils/rc-notification';
+
+const imgDefault = new URL('../../assets/img-default.png', import.meta.url)
+  .href;
 
 export interface CancelModalDetailProps {
   onCancel: any;

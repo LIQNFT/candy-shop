@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import React from 'react';
-import imgDefault from '../../assets/img-default.png';
+
+const imgDefault = new URL('../../assets/img-default.png', import.meta.url)
+  .href;
 
 interface LiqImageProps {
   src: string | undefined;

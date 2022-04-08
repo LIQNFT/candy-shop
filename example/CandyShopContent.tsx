@@ -3,7 +3,7 @@ import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import 'antd/dist/antd.min.css';
 import React from 'react';
-import { CandyShop, Orders, Sell, Stat } from '../.';
+import { CandyShop, Orders, Sell, Stat } from '../lib';
 import {
   CANDY_SHOP_PROGRAM_ID,
   CREATOR_ADDRESS,

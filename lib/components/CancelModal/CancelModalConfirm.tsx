@@ -2,7 +2,9 @@ import styled from '@emotion/styled';
 import IconTick from 'assets/IconTick';
 import React from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import imgDefault from '../../assets/img-default.png';
+
+const imgDefault = new URL('../../assets/img-default.png', import.meta.url)
+  .href;
 
 export interface CancelModalConfirmProps {
   order: OrderSchema;
