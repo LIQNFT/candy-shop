@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "es2019",
+    "module": "esnext",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "lib": ["dom", "esnext"],
+    "allowJs": true,
+    "baseUrl": "src",
+    "moduleResolution": "Node",
+    // used to emit index.d.ts
+    "declaration": true,
+    "outDir": "dist",
+    "declarationMap": true,
+    "declarationDir": ".",
+
+    // for resolve
+    "rootDir": "src"
+  },
+  "include": ["src/**/*", "src/.d.ts"],
+
+  // used to emit index.d.ts in the right directory
+  "exclude": ["dist"]
+}

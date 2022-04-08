@@ -1,6 +1,7 @@
 *.log
 .DS_Store
 node_modules
+.parcel-cache
 .cache
 dist
-yarn.lock
+example-dist

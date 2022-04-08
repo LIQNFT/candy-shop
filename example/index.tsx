@@ -13,7 +13,7 @@ import {
   getSolongWallet,
   getTorusWallet,
 } from '@solana/wallet-adapter-wallets';
-import { clusterApiUrl } from '@solana/web3.js';
+import { web3 } from "@project-serum/anchor";
 import React, { useMemo } from 'react';
 import 'react-app-polyfill/ie11';
 import ReactDOM from 'react-dom';
@@ -23,7 +23,7 @@ import { TORUS_WALLET_CLIENT_ID } from './constant/clientId';
 const App = () => {
   const network = WalletAdapterNetwork.Devnet;
 
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+  const endpoint = useMemo(() => web3.clusterApiUrl(network), [network]);
 
   const wallets = useMemo(
     () => [

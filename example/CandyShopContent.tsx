@@ -1,9 +1,9 @@
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
+import { web3 } from "@project-serum/anchor";
 import 'antd/dist/antd.min.css';
 import React from 'react';
-import { CandyShop, Orders, Sell, Stat } from '../.';
+import { CandyShop, Orders, Sell, Stat } from '../lib/.';
 import {
   CANDY_SHOP_PROGRAM_ID,
   CREATOR_ADDRESS,
@@ -15,9 +15,9 @@ export const CandyShopContent: React.FC = () => {
   const wallet = useAnchorWallet();
 
   const candyShop = new CandyShop(
-    new PublicKey(CREATOR_ADDRESS),
-    new PublicKey(TREASURY_MINT),
-    new PublicKey(CANDY_SHOP_PROGRAM_ID),
+    new web3.PublicKey(CREATOR_ADDRESS),
+    new web3.PublicKey(TREASURY_MINT),
+    new web3.PublicKey(CANDY_SHOP_PROGRAM_ID),
     'devnet',
     wallet!
   );

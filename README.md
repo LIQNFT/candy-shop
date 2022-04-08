@@ -136,26 +136,30 @@ candy.getTransactions();
 
 ## For Contributors
 
-Candy Shop is built with TSDX, which scaffolds the library inside `/src`, and also sets up a [Parcel-based](https://parceljs.org) playground for it inside `/example`.
-
-The recommended workflow is to run TSDX in one terminal:
+In first console, run the NPM module
 
 ```bash
-npm start # or yarn start
+cd lib
+yarn
+yarn start
 ```
 
-This builds to `/dist` and runs the project in watch mode so any edits you save inside `src` causes a rebuild to `/dist`.
+This builds to `/lib/dist` and runs the project in watch mode so any edits you save inside `/lib/src` causes a rebuild to `/lib/dist`.
 
-Then run the example inside another:
+In second console, run example:
 
 ```bash
-cd example
-npm i # or yarn to install dependencies
-npm start # or yarn start
+# in example folder
+yarn
+
+# in root folder
+yarn
+yarn start
 ```
 
-The default example imports and live reloads whatever is in `/dist`, so if you are seeing an out of date component, make sure TSDX is running in watch mode like we recommend above. **No symlinking required**, we use [Parcel's aliasing](https://parceljs.org/module_resolution.html#aliases).
+To publish
 
-To do a one-off build, use `npm run build` or `yarn build`.
-
-To run tests, use `npm test` or `yarn test`.
+```bash
+# in lib folder
+npm publish
+```
