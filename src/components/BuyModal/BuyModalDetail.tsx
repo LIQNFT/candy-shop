@@ -19,7 +19,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   buy,
   walletPublicKey,
   walletConnectComponent,
-  candyShop
+  candyShop,
 }) => {
   const orderPrice = useMemo(() => {
     return (Number(order?.price) / LAMPORTS_PER_SOL).toFixed(2);
@@ -31,7 +31,8 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   useEffect(() => {
     if (order) {
       setLoadingNftInfo(true);
-      candyShop.nftInfo(order.tokenMint)
+      candyShop
+        .nftInfo(order.tokenMint)
         .then((nft) => setNftInfo(nft))
         .catch((err) => {
           console.info('fetchNftByMint failed:', err);
