@@ -1,14 +1,7 @@
 {
   "name": "example",
   "version": "1.0.0",
-  "main": "index.js",
   "license": "MIT",
-  "scripts": {
-    "start": "parcel index.html",
-    "build": "parcel build index.html --public-url ./",
-    "gh-pages": "push-dir --dir=dist --branch=gh-pages --cleanup --verbose",
-    "deploy": "yarn build && yarn gh-pages"
-  },
   "dependencies": {
     "@project-serum/anchor": "0.18.0",
     "@solana/buffer-layout": "^4.0.0",
@@ -17,23 +10,24 @@
     "@solana/wallet-adapter-base": "^0.6.0",
     "@solana/wallet-adapter-react": "^0.12.5",
     "@solana/wallet-adapter-wallets": "^0.10.1",
-    "@solana/web3.js": "^1.36.0",
     "antd": "^4.19.1",
     "api": "^4.2.0",
     "axios": "^0.26.0",
     "components": "^0.1.0",
     "react-app-polyfill": "^1.0.0"
   },
-  "alias": {
-    "react": "../node_modules/react",
-    "react-dom": "../node_modules/react-dom/profiling",
-    "scheduler/tracing": "../node_modules/scheduler/tracing-profiling"
-  },
   "devDependencies": {
     "@babel/core": "^7.17.8",
     "@types/react": "^16.9.50",
     "@types/react-dom": "^16.9.8",
-    "parcel": "1.12.3",
+    "crypto-browserify": "^3.12.0",
+    "process": "^0.11.10",
+    "stream-browserify": "^3.0.0",
     "typescript": "^3.4.5"
+  },
+  "alias": {
+    "react": "../lib/node_modules/react",
+    "react-dom": "../lib/node_modules/react-dom/profiling",
+    "scheduler/tracing": "../lib/node_modules/scheduler/tracing-profiling"
   }
 }
