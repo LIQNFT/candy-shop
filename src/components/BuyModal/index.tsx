@@ -62,6 +62,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
               buy={buy}
               walletPublicKey={walletPublicKey}
               walletConnectComponent={walletConnectComponent}
+              candyShop={candyShop}
             />
           )}
           {step === 1 && <Processing text="Processing purchase" />}
