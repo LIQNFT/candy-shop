@@ -63,9 +63,8 @@ export const Orders: React.FC<OrdersProps> = ({
   // handle fetch data
   useEffect(() => {
     setLoading(true);
-    candyShop.orders(
-      sortedByOption.value
-    )
+    candyShop
+      .orders(sortedByOption.value)
       .then((data: any) => {
         if (!data.result) return;
         setOrders(data.result);
