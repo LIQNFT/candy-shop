@@ -1,12 +1,44 @@
 import styled from '@emotion/styled';
 import { PublicKey } from '@solana/web3.js';
-import { fetchOrdersByStoreId } from 'api/backend/OrderAPI';
+import { fetchOrdersByStoreId, SortBy } from 'api/backend/OrderAPI';
 import { Empty } from 'components/Empty';
 import { Order } from 'components/Order';
 import { Skeleton } from 'components/Skeleton';
+import { Dropdown } from 'components/Dropdown';
 import { breakPoints } from 'constant/breakPoints';
 import React, { useEffect, useState } from 'react';
 import { CandyShop } from './CandyShop';
+
+const SORT_OPTIONS: { value: SortBy; label: string }[] = [
+  {
+    value: {
+      column: 'blockTimeAtCreation',
+      order: 'desc',
+    },
+    label: 'Newest',
+  },
+  {
+    value: {
+      column: 'blockTimeAtCreation',
+      order: 'asc',
+    },
+    label: 'Oldest',
+  },
+  {
+    value: {
+      column: 'price',
+      order: 'asc',
+    },
+    label: 'Price: Low → High',
+  },
+  {
+    value: {
+      column: 'price',
+      order: 'desc',
+    },
+    label: 'Price: High → Low',
+  },
+];
 
 interface OrdersProps {
   walletPublicKey?: PublicKey;
@@ -24,13 +56,15 @@ export const Orders: React.FC<OrdersProps> = ({
   walletConnectComponent,
   style,
 }) => {
+  const [sortedByOption, setSortedByOption] = useState(SORT_OPTIONS[0]);
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   // handle fetch data
   useEffect(() => {
     setLoading(true);
-    fetchOrdersByStoreId(candyShop.candyShopAddress().toString())
+    candyShop
+      .orders(sortedByOption.value)
       .then((data: any) => {
         if (!data.result) return;
         setOrders(data.result);
@@ -41,12 +75,19 @@ export const Orders: React.FC<OrdersProps> = ({
       .finally(() => {
         setLoading(false);
       });
-  }, [candyShop]);
+  }, [candyShop, sortedByOption]);
 
   return (
     <>
       <Wrap style={style}>
         <div className="cds-container">
+          <FilterContainer>
+            <Dropdown
+              items={SORT_OPTIONS}
+              selectedItem={sortedByOption}
+              onSelectItem={(item) => setSortedByOption(item)}
+            />
+          </FilterContainer>
           {loading ? (
             <Flex>
               {Array(4)
@@ -82,6 +123,11 @@ export const Orders: React.FC<OrdersProps> = ({
 const Wrap = styled.div`
   font-family: Helvetica, Arial, sans-serif;
   width: 100%;
+`;
+
+const FilterContainer = styled.div`
+  display: flex;
+  margin-bottom: 16px;
 `;
 
 const Flex = styled.div`
