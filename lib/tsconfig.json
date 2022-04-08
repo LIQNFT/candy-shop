@@ -12,7 +12,6 @@
     "allowJs": true,
     "baseUrl": "src",
     "moduleResolution": "Node",
-
     // used to emit index.d.ts
     "declaration": true,
     "outDir": "dist",
