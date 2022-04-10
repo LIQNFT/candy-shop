@@ -25,7 +25,7 @@
     "build:example": "vite build -c example-vite.config.ts",
     "preview": "vite preview -c example-vite.config.ts",
     "gh-pages": "push-dir --dir=example-dist --branch=gh-pages --cleanup --verbose",
-    "deploy": "yarn build && yarn gh-pages",
+    "deploy": "yarn build:example && yarn gh-pages",
     "format:check": "prettier --check lib",
     "format:fix": "prettier --write lib",
     "prepare": "husky install"
