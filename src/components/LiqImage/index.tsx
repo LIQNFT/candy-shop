@@ -3,7 +3,7 @@ import React from 'react';
 import imgDefault from '../../assets/img-default.png';
 
 interface LiqImageProps {
-  src: string | undefined;
+  src: string | undefined | null;
   alt: string | undefined;
   style?: { [key: string]: string | number } | undefined;
 }

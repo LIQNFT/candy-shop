@@ -1,7 +1,7 @@
 import React from 'react';
 import { ComponentMeta } from '@storybook/react';
 
-import { candyShop, order } from '../../stories/mocks';
+import { order } from '../../stories/mocks';
 
 import { CancelModalConfirm } from './CancelModalConfirm';
 
@@ -11,11 +11,8 @@ export default {
 } as ComponentMeta<typeof CancelModalConfirm>;
 
 export const Primary = (): JSX.Element => {
-  return (
-    <CancelModalConfirm
-      candyShop={candyShop}
-      onCancel={() => {}}
-      order={order}
-    />
-  );
+  const onCancelMock = () => {
+    console.log('Storybook: cancel modal');
+  };
+  return <CancelModalConfirm onCancel={onCancelMock} order={order} />;
 };

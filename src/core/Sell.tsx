@@ -41,7 +41,7 @@ export const Sell: React.FC<SellProps> = ({
           const [userNfts, sellOrders] = await Promise.all([
             fetchNftsFromWallet(connection, walletPublicKey),
             fetchOrdersByStoreIdAndWalletAddress(
-              candyShop.candyShopAddress().toString(),
+              candyShop.candyShopAddress.toString(),
               walletPublicKey.toString()
             ),
           ]);
