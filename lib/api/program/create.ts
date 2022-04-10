@@ -57,10 +57,9 @@ export async function createAuctionHouse(
     treasuryMint
   );
 
-  const treasuryWithdrawalDestination =
-    treasuryMint === WRAPPED_SOL_MINT
-      ? auctionHouseAuthority
-      : (await getAtaForMint(treasuryMint, auctionHouseAuthority))[0];
+  const treasuryWithdrawalDestination = treasuryMint.equals(WRAPPED_SOL_MINT)
+    ? auctionHouseAuthority
+    : (await getAtaForMint(treasuryMint, auctionHouseAuthority))[0];
 
   const [feeAccount, feeBump] = await getAuctionHouseFeeAcct(auctionHouse);
   const [treasuryAccount, treasuryBump] = await getAuctionHouseTreasuryAcct(
