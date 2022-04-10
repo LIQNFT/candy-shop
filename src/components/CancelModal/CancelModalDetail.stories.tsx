@@ -1,9 +1,8 @@
 import React from 'react';
 import { ComponentMeta } from '@storybook/react';
-
-import { candyShop, order } from '../../stories/mocks';
-
+import { CandyShopFake, order } from '../../stories/mocks';
 import { CancelModalDetail } from './CancelModalDetail';
+import { useAnchorWallet } from '@solana/wallet-adapter-react';
 
 export default {
   title: 'CancelModalDetail',
@@ -11,12 +10,19 @@ export default {
 } as ComponentMeta<typeof CancelModalDetail>;
 
 export const Primary = (): JSX.Element => {
-  return (
-    <CancelModalDetail
-      candyShop={candyShop}
-      onCancel={() => console.log('CANCEL')}
-      order={order}
-      onChangeStep={(v) => console.log('change step', v)}
-    />
-  );
+  const wallet = useAnchorWallet();
+  if (wallet) {
+    const candyShop = new CandyShopFake(wallet);
+
+    return (
+      <CancelModalDetail
+        candyShop={candyShop}
+        onCancel={() => console.log('CANCEL')}
+        order={order}
+        onChangeStep={(v) => console.log('change step', v)}
+      />
+    );
+  } else {
+    return <></>;
+  }
 };

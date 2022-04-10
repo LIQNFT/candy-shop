@@ -6,21 +6,13 @@ import {
   Side,
   Status,
 } from 'solana-candy-shop-schema/dist';
+import { CandyShopFake } from 'stories/mocks';
+import { useAnchorWallet } from '@solana/wallet-adapter-react';
 
 export default {
   title: 'Order',
   component: Order,
 } as ComponentMeta<typeof Order>;
-
-class CandyShopFake {
-  stats() {
-    return Promise.resolve({
-      floorPrice: 10_000_000,
-      totalListed: 4,
-      totalVolume: 10_000_000,
-    });
-  }
-}
 
 const order: OrderSchema = {
   side: Side.BUY,
@@ -42,13 +34,19 @@ const order: OrderSchema = {
   txHash: 'string',
 };
 export const Primary = (): JSX.Element => {
-  const candyShop = new CandyShopFake();
+  const wallet = useAnchorWallet();
+  if (wallet) {
+    const candyShop = new CandyShopFake(wallet);
 
-  return (
-    <Order
-      candyShop={candyShop}
-      order={order}
-      walletConnectComponent={<div>Button</div>}
-    />
-  );
+    return (
+      <Order
+        candyShop={candyShop}
+        walletPublicKey={wallet?.publicKey}
+        order={order}
+        walletConnectComponent={<div>Button</div>}
+      />
+    );
+  } else {
+    return <></>;
+  }
 };

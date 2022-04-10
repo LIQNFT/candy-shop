@@ -8,7 +8,7 @@ import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 
 export interface BuyModalDetailProps {
   order: OrderSchema;
-  buy: () => {};
+  buy: () => void;
   walletPublicKey: PublicKey | undefined;
   walletConnectComponent: React.ReactElement;
   candyShop: CandyShop;
