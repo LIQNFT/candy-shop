@@ -8,6 +8,10 @@ export const AUCTION_HOUSE_PROGRAM_ID = new PublicKey(
   'hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk'
 );
 
+export const LIQNFT_TREASURY_ACCOUNT = new PublicKey(
+  '91jjF761KfDyXE6uFRe3zyRESPwQtewo8hxHc3yFQaRF'
+);
+
 export const AUCTION_HOUSE = 'auction_house';
 
 export const FEE_PAYER = 'fee_payer';

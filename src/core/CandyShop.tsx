@@ -81,7 +81,11 @@ export class CandyShop {
       console.log('fetching idl for programId', this._programId.toString());
 
       const idl = await Program.fetchIdl(this._programId, provider);
-      this._program = new Program(idl!, this._programId, provider);
+      if (idl) {
+        this._program = new Program(idl, this._programId, provider);
+      } else {
+        throw new Error('Idl not found');
+      }
     }
   }
 

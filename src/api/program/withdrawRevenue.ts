@@ -1,9 +1,22 @@
 import * as anchor from '@project-serum/anchor';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-
-import { Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
-import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 import {
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
+} from '@solana/spl-token';
+
+import {
+  Keypair,
+  PublicKey,
+  SystemProgram,
+  SYSVAR_RENT_PUBKEY,
+} from '@solana/web3.js';
+import {
+  AUCTION_HOUSE_PROGRAM_ID,
+  LIQNFT_TREASURY_ACCOUNT,
+  WRAPPED_SOL_MINT,
+} from '../constants';
+import {
+  getAtaForMint,
   getAuctionHouse,
   getAuctionHouseAuthority,
   getAuctionHouseTreasuryAcct,
@@ -33,7 +46,21 @@ export async function candyStoreWithdrawFromTreasury(
     treasuryMint
   );
 
+  const isNative = treasuryMint.equals(WRAPPED_SOL_MINT);
+
+  const treasuryWithdrawalDestination = isNative
+    ? auctionHouseAuthority
+    : (await getAtaForMint(treasuryMint, auctionHouseAuthority))[0];
+
+  const candyShopCreatorTokenAccount = isNative
+    ? auctionHouseAuthority
+    : (await getAtaForMint(treasuryMint, walletKeyPair.publicKey))[0];
+
   const [treasuryAccount] = await getAuctionHouseTreasuryAcct(auctionHouse);
+
+  const liqnftTreasuryTokenAccount = isNative
+    ? LIQNFT_TREASURY_ACCOUNT
+    : (await getAtaForMint(treasuryMint, LIQNFT_TREASURY_ACCOUNT))[0];
 
   await program.rpc.candyShopWithdrawFromTreasury(
     amount,
@@ -43,15 +70,19 @@ export async function candyStoreWithdrawFromTreasury(
       accounts: {
         candyShop,
         candyShopCreator: walletKeyPair.publicKey,
-        candyShopCreatorTokenAccount: walletKeyPair.publicKey,
+        candyShopCreatorTokenAccount,
+        liqnftTreasuryAccount: LIQNFT_TREASURY_ACCOUNT,
+        liqnftTreasuryTokenAccount,
         treasuryMint,
         authority: auctionHouseAuthority,
-        treasuryWithdrawalDestination: auctionHouseAuthority,
+        treasuryWithdrawalDestination,
         auctionHouseTreasury: treasuryAccount,
         auctionHouse: auctionHouse,
         ahProgram: AUCTION_HOUSE_PROGRAM_ID,
         tokenProgram: TOKEN_PROGRAM_ID,
         systemProgram: SystemProgram.programId,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        rent: SYSVAR_RENT_PUBKEY,
       },
     }
   );
