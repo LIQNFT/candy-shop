@@ -1,19 +1,12 @@
 import * as anchor from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import {
-  PublicKey,
-  sendAndConfirmRawTransaction,
-  SystemProgram,
-  SYSVAR_RENT_PUBKEY,
-  Transaction,
-} from '@solana/web3.js';
+import { PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from '@solana/web3.js';
 import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 import {
   getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
 } from '../utils';
-import { awaitTransactionSignatureConfirmation } from './submitTx';
 
 export async function sellNft(
   wallet: AnchorWallet,

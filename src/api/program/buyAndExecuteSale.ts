@@ -80,7 +80,7 @@ export async function buyAndExecuteSale(
 
   const transaction = new Transaction();
 
-  const ix = await (program.instruction.buyWithProxy as (...args: any) => any)(
+  const ix = await program.instruction.buyWithProxy(
     price,
     amount,
     buyTradeStateBump,
@@ -126,12 +126,25 @@ export async function buyAndExecuteSale(
         isWritable: true,
         isSigner: false,
       });
+
+      if (!isNative) {
+        remainingAccounts.push({
+          pubkey: (
+            await getAtaForMint(
+              treasuryMint,
+              new anchor.web3.PublicKey(
+                metadataDecoded!.data!.creators![i].address
+              )
+            )
+          )[0],
+          isWritable: true,
+          isSigner: false,
+        });
+      }
     }
   }
 
-  const ix2 = await (
-    program.instruction.executeSaleWithProxy as (...args: any) => any
-  )(
+  const ix2 = await program.instruction.executeSaleWithProxy(
     price,
     amount,
     buyerEscrowBump,
@@ -174,7 +187,6 @@ export async function buyAndExecuteSale(
       remainingAccounts,
     }
   );
-
   transaction.add(ix);
   transaction.add(ix2);
 
