@@ -68,7 +68,7 @@ export class CandyShop {
   /**
    * Initiate the CandyShop object
    */
-  async initIfNotReady() {
+  async initIfNotReady(): Promise<void> {
     if (typeof this._program === 'undefined') {
       const options = Provider.defaultOptions();
       const connection = new Connection(
@@ -89,27 +89,27 @@ export class CandyShop {
     }
   }
 
-  treasuryMint(): PublicKey {
+  get treasuryMint(): PublicKey {
     return this._treasuryMint;
   }
 
-  connectedPublicKey(): PublicKey | undefined {
+  get connectedPublicKey(): PublicKey | undefined {
     return this._program?.provider.wallet.publicKey;
   }
 
-  candyShopAddress() {
+  get candyShopAddress(): PublicKey {
     return this._candyShopAddress;
   }
 
-  candyShopCreatorAddress() {
+  get candyShopCreatorAddress(): PublicKey {
     return this._candyShopCreatorAddress;
   }
 
-  candyShopProgramId() {
+  get programId(): PublicKey {
     return this._programId;
   }
 
-  async orders(sortBy?: SortBy) {
+  async orders(sortBy?: SortBy): Promise<ListBase<Order>> {
     return fetchOrdersByStoreId(this._candyShopAddress.toString(), sortBy);
   }
 

@@ -37,7 +37,7 @@ export const Order: React.FC<OrderProps> = ({
   return (
     <>
       <Wrap onClick={onClick}>
-        <LiqImage alt={order?.name} src={order?.nftImageLink!} />
+        <LiqImage alt={order?.name} src={order?.nftImageLink} />
         <OrderInfo>
           <Name>
             <div className="name">{order?.name}</div>

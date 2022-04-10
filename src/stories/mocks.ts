@@ -1,11 +1,26 @@
+import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { PublicKey } from '@solana/web3.js';
+import { CandyShop } from 'core/CandyShop';
 import {
   Order as OrderSchema,
   Side,
   Status,
 } from 'solana-candy-shop-schema/dist';
 
-class CandyShopFake {
-  stats() {
+const CREATOR_ADDRESS = 'Fo2cXie4UwreZi7LHMpnsyVPvzuo4FMwAVbSUYQsmbsh';
+const TREASURY_MINT = 'So11111111111111111111111111111111111111112';
+const CANDY_SHOP_PROGRAM_ID = 'csa8JpYfKSZajP7JzxnJipUL3qagub1z29hLvp578iN';
+export class CandyShopFake extends CandyShop {
+  constructor(wallet: AnchorWallet) {
+    super(
+      new PublicKey(CREATOR_ADDRESS),
+      new PublicKey(TREASURY_MINT),
+      new PublicKey(CANDY_SHOP_PROGRAM_ID),
+      'devnet',
+      wallet
+    );
+  }
+  stats(): Promise<any> {
     return Promise.resolve({
       floorPrice: 10_000_000,
       totalListed: 4,
@@ -13,7 +28,7 @@ class CandyShopFake {
     });
   }
 
-  cancel() {
+  cancel(): Promise<any> {
     return Promise.resolve({
       floorPrice: 10_000_000,
       totalListed: 4,
@@ -21,8 +36,6 @@ class CandyShopFake {
     });
   }
 }
-
-export const candyShop = new CandyShopFake();
 
 export const order: OrderSchema = {
   side: Side.BUY,
