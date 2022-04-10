@@ -14,7 +14,6 @@ import {
   TREASURY,
 } from './constants';
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
-import { Buffer } from 'buffer';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new PublicKey(METADATA_PROGRAM_ID);

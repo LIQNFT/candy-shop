@@ -136,25 +136,26 @@ candy.getTransactions();
 
 ## For Contributors
 
-Candy Shop is built using [Vite](https://vitejs.dev/). The library source is inside the `lib` folder, and an example project sits inside the `example` folder.
+Candy Shop is built with TSDX, which scaffolds the library inside `/src`, and also sets up a [Parcel-based](https://parceljs.org) playground for it inside `/example`.
 
-### To setup development:
+The recommended workflow is to run TSDX in one terminal:
 
 ```bash
-yarn install
-yarn dev
+npm start # or yarn start
 ```
 
-This starts up a Vite dev server with hot reloading.
+This builds to `/dist` and runs the project in watch mode so any edits you save inside `src` causes a rebuild to `/dist`.
 
-### To build the library:
+Then run the example inside another:
+
 ```bash
-yarn install
-yarn build:lib
+cd example
+npm i # or yarn to install dependencies
+npm start # or yarn start
 ```
 
-### To build the example project:
-```bash
-yarn install
-yarn build:example
-```
+The default example imports and live reloads whatever is in `/dist`, so if you are seeing an out of date component, make sure TSDX is running in watch mode like we recommend above. **No symlinking required**, we use [Parcel's aliasing](https://parceljs.org/module_resolution.html#aliases).
+
+To do a one-off build, use `npm run build` or `yarn build`.
+
+To run tests, use `npm test` or `yarn test`.

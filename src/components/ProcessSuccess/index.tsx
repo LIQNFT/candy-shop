@@ -2,9 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import IconTick from '../../assets/IconTick';
-
-const imgDefault = new URL('../../assets/img-default.png', import.meta.url)
-  .href;
+import imgDefault from '../../assets/img-default.png';
 
 export interface SellModalProps {
   onCancel: any;

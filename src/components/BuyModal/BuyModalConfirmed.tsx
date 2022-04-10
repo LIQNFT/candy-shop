@@ -2,11 +2,9 @@ import styled from '@emotion/styled';
 import { PublicKey } from '@solana/web3.js';
 import React, { useMemo } from 'react';
 import IconTick from '../../assets/IconTick';
+import imgDefault from '../../assets/img-default.png';
 import { formatDate } from '../../utils/format';
 import { ExplorerLink } from '../ExplorerLink';
-
-const imgDefault = new URL('../../assets/img-default.png', import.meta.url)
-  .href;
 
 const BuyModalConfirmed = ({
   order,

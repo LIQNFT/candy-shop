@@ -20,7 +20,6 @@ import {
   getAuctionHouseTradeState,
 } from '../utils';
 import { awaitTransactionSignatureConfirmation } from './submitTx';
-import { Buffer } from 'buffer';
 
 export async function buyAndExecuteSale(
   wallet: AnchorWallet,

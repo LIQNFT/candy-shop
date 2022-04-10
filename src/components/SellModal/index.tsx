@@ -8,10 +8,8 @@ import Processing from 'components/Processing';
 import { CandyShop } from 'core/CandyShop';
 import React, { useCallback, useState } from 'react';
 import { notification } from 'utils/rc-notification';
+import imgDefault from '../../assets/img-default.png';
 import { TransactionState } from '../../model';
-
-const imgDefault = new URL('../../assets/img-default.png', import.meta.url)
-  .href;
 
 import './style.less';
 
