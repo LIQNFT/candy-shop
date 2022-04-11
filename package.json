@@ -6,8 +6,8 @@
   ],
   "scripts": {
     "dev": "parcel example/index.html",
-    "build": "parcel build example/index.html --public-url ./ --dist-dir example-dist --no-scope-hoist",
-    "gh-pages": "push-dir --dir=example-dist --branch=gh-pages --cleanup --verbose",
+    "build": "parcel build example/index.html --public-url ./ --no-scope-hoist",
+    "gh-pages": "push-dir --dir=dist --branch=gh-pages --cleanup --verbose",
     "deploy": "yarn build && yarn gh-pages",
     "format:check": "prettier --check lib/src",
     "format:fix": "prettier --write lib/src",
@@ -20,11 +20,13 @@
     "@parcel/transformer-image": "^2.4.1",
     "@parcel/transformer-posthtml": "^2.4.1",
     "@parcel/transformer-typescript-types": "2.4.1",
+    "assert": "^2.0.0",
     "husky": "^7.0.4",
     "parcel": "^2.4.1",
     "path-browserify": "^1.0.1",
     "prettier": "^2.6.2",
-    "typescript": ">=3.0.0"
+    "typescript": ">=3.0.0",
+    "util": "^0.12.4"
   },
   "alias": {
     "react": "./lib/node_modules/react",

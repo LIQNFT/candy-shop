@@ -10,7 +10,6 @@
     "@solana/wallet-adapter-base": "^0.6.0",
     "@solana/wallet-adapter-react": "^0.12.5",
     "@solana/wallet-adapter-wallets": "^0.10.1",
-    "@solana/web3.js": "^1.36.0",
     "antd": "^4.19.1",
     "api": "^4.2.0",
     "axios": "^0.26.0",
