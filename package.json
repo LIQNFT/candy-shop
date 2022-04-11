@@ -4,16 +4,9 @@
     "@liqnft/candy-shop",
     "example"
   ],
-  "targets": {
-    "main": {
-      "includeNodeModules": [
-        "@liqnft/candy-shop"
-      ]
-    }
-  },
   "scripts": {
     "dev": "parcel example/index.html",
-    "build": "parcel build example/index.html --public-url ./ --dist-dir example-dist",
+    "build": "parcel build example/index.html --public-url ./ --dist-dir example-dist --no-scope-hoist",
     "gh-pages": "push-dir --dir=example-dist --branch=gh-pages --cleanup --verbose",
     "deploy": "yarn build && yarn gh-pages",
     "format:check": "prettier --check lib/src",
@@ -28,9 +21,10 @@
     "@parcel/transformer-posthtml": "^2.4.1",
     "@parcel/transformer-typescript-types": "2.4.1",
     "husky": "^7.0.4",
+    "parcel": "^2.4.1",
+    "path-browserify": "^1.0.1",
     "prettier": "^2.6.2",
-    "typescript": ">=3.0.0",
-    "parcel": "^2.4.1"
+    "typescript": ">=3.0.0"
   },
   "alias": {
     "react": "./lib/node_modules/react",
