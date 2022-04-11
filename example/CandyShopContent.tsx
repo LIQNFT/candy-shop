@@ -3,7 +3,7 @@ import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { web3 } from "@project-serum/anchor";
 import 'antd/dist/antd.min.css';
 import React from 'react';
-import { CandyShop, Orders, Sell, Stat } from '@liqnft/candy-shop';
+import { CandyShop, Orders, Sell, Stat } from '../lib/.';
 import {
   CANDY_SHOP_PROGRAM_ID,
   CREATOR_ADDRESS,
