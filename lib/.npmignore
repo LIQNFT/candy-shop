@@ -5,3 +5,4 @@ src
 rollup.config.js
 tsconfig.json
 *.lock
+*.env
