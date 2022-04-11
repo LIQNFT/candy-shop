@@ -1,6 +1,5 @@
 import * as anchor from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { Connection } from '@solana/web3.js';
 import { sleepPromise } from '../utils/PromiseHelper';
 import { SingleTokenInfo, singleTokenInfoPromise } from './fetchMetadata';
 
@@ -31,7 +30,7 @@ export const fetchNftsFromWallet = async (
 };
 
 const fetchDataArrayInBatches = async (
-  connection: Connection,
+  connection: anchor.web3.Connection,
   array: any[],
   singleItemAsyncCallback: any
 ): Promise<SingleTokenInfo[]> => {

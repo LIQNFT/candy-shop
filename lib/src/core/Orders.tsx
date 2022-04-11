@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { PublicKey } from '@solana/web3.js';
+import { web3 } from "@project-serum/anchor";
 import { fetchOrdersByStoreId, SortBy } from 'api/backend/OrderAPI';
 import { Empty } from 'components/Empty';
 import { Order } from 'components/Order';
@@ -41,7 +41,7 @@ const SORT_OPTIONS: { value: SortBy; label: string }[] = [
 ];
 
 interface OrdersProps {
-  walletPublicKey?: PublicKey;
+  walletPublicKey?: web3.PublicKey;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
   style?: { [key: string]: string | number } | undefined;

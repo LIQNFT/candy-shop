@@ -1,5 +1,5 @@
 import { BN } from '@project-serum/anchor';
-import { PublicKey } from '@solana/web3.js';
+import { web3 } from "@project-serum/anchor";
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
 import { CandyShop } from 'core/CandyShop';
@@ -14,7 +14,7 @@ import './style.less';
 export interface BuyModalProps {
   order: OrderSchema;
   onClose: any;
-  walletPublicKey: PublicKey | undefined;
+  walletPublicKey: web3.PublicKey | undefined;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
 }
@@ -34,9 +34,9 @@ export const BuyModal: React.FC<BuyModalProps> = ({
     setStep(TransactionState.PROCESSING);
     return candyShop
       .buy(
-        new PublicKey(order.walletAddress),
-        new PublicKey(order.tokenAccount),
-        new PublicKey(order.tokenMint),
+        new web3.PublicKey(order.walletAddress),
+        new web3.PublicKey(order.tokenAccount),
+        new web3.PublicKey(order.tokenMint),
         new BN(order.price)
       )
       .then((txHash) => {

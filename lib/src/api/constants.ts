@@ -1,10 +1,10 @@
-import { PublicKey } from '@solana/web3.js';
+import { web3 } from "@project-serum/anchor"
 
-export const WRAPPED_SOL_MINT = new PublicKey(
+export const WRAPPED_SOL_MINT = new web3.PublicKey(
   'So11111111111111111111111111111111111111112'
 );
 
-export const AUCTION_HOUSE_PROGRAM_ID = new PublicKey(
+export const AUCTION_HOUSE_PROGRAM_ID = new web3.PublicKey(
   'hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk'
 );
 

@@ -1,20 +1,19 @@
 import * as anchor from '@project-serum/anchor';
-import { Idl, Program } from '@project-serum/anchor';
+import { Idl, Program, web3 } from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
 import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 
 export async function cancelOrder(
   wallet: AnchorWallet,
-  tokenAccount: PublicKey,
-  tokenAccountMint: PublicKey,
-  authority: PublicKey,
+  tokenAccount: web3.PublicKey,
+  tokenAccountMint: web3.PublicKey,
+  authority: web3.PublicKey,
   authorityBump: number,
-  auctionHouse: PublicKey,
-  feeAccount: PublicKey,
-  tradeState: PublicKey,
-  candyShop: PublicKey,
+  auctionHouse: web3.PublicKey,
+  feeAccount: web3.PublicKey,
+  tradeState: web3.PublicKey,
+  candyShop: web3.PublicKey,
   price: anchor.BN,
   amount: anchor.BN,
   program: Program<Idl>

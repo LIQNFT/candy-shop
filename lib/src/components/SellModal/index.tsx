@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
-import { BN } from '@project-serum/anchor';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { BN, web3 } from '@project-serum/anchor';
 import { SingleTokenInfo } from 'api/fetchMetadata';
 import IconTick from 'assets/IconTick';
 import Modal from 'components/Modal';
@@ -38,12 +37,12 @@ export const SellModal: React.FC<SellModalProps> = ({
       setStep(TransactionState.DISPLAY);
     }
 
-    const price = formState.price! * LAMPORTS_PER_SOL;
+    const price = formState.price! * web3.LAMPORTS_PER_SOL;
 
     return candyShop
       .sell(
-        new PublicKey(nft.tokenAccountAddress),
-        new PublicKey(nft.tokenMintAddress),
+        new web3.PublicKey(nft.tokenAccountAddress),
+        new web3.PublicKey(nft.tokenMintAddress),
         new BN(price)
       )
       .then((txHash) => {

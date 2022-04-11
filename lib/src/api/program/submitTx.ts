@@ -1,8 +1,4 @@
-import {
-  Connection,
-  SignatureStatus,
-  TransactionSignature,
-} from '@solana/web3.js';
+import { web3 } from "@project-serum/anchor";
 
 export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -13,14 +9,14 @@ const getUnixTs = () => {
 };
 
 export async function awaitTransactionSignatureConfirmation(
-  connection: Connection,
+  connection: web3.Connection,
   rawTransaction: Buffer
 ): Promise<string> {
   const timeout = 32000;
   const bufferMs = 2000;
   const startTime = getUnixTs();
   let done = false;
-  let txid: TransactionSignature | null = null;
+  let txid: web3.TransactionSignature | null = null;
   (async () => {
     while (!done && getUnixTs() - startTime < timeout - bufferMs) {
       // log.debug("sending tx in background");
@@ -35,7 +31,7 @@ export async function awaitTransactionSignatureConfirmation(
       await sleep(500);
     }
   })();
-  let status: SignatureStatus | null;
+  let status: web3.SignatureStatus | null;
   status = await new Promise(async (resolve, reject) => {
     while (!done && getUnixTs() - startTime < timeout) {
       if (typeof txid !== 'undefined') {

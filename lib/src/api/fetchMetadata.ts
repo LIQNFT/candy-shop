@@ -1,11 +1,11 @@
 import { getAccount, TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { Connection, PublicKey } from '@solana/web3.js';
+import { web3 } from "@project-serum/anchor";
 import axios from 'axios';
 import { Metadata, parseEdition, parseMetadata } from '../utils/parseData';
 import { safeAwait } from '../utils/PromiseHelper';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
-const metadataProgramId = new PublicKey(METADATA_PROGRAM_ID);
+const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);
 
 export type SingleTokenInfo = {
   tokenAccountAddress: string;
@@ -18,15 +18,15 @@ export type SingleTokenInfo = {
 };
 
 export const singleTokenInfoPromise = async (
-  connection: Connection,
+  connection: web3.Connection,
   tokenAccountAddress: string
 ): Promise<SingleTokenInfo | null> => {
   // Get account
   const token = await getAccount(
     connection,
-    new PublicKey(tokenAccountAddress)
+    new web3.PublicKey(tokenAccountAddress)
   );
-  const [newEditionMetadata] = await PublicKey.findProgramAddress(
+  const [newEditionMetadata] = await web3.PublicKey.findProgramAddress(
     [
       Buffer.from('metadata'),
       metadataProgramId.toBuffer(),
@@ -34,7 +34,7 @@ export const singleTokenInfoPromise = async (
     ],
     metadataProgramId
   );
-  const [newEditionPublicKey] = await PublicKey.findProgramAddress(
+  const [newEditionPublicKey] = await web3.PublicKey.findProgramAddress(
     [
       Buffer.from('metadata'),
       metadataProgramId.toBuffer(),

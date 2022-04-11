@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { PublicKey } from '@solana/web3.js';
 import React, { useMemo } from 'react';
+import { web3 } from "@project-serum/anchor";
 import IconTick from '../../assets/IconTick';
 import imgDefault from '../../assets/img-default.png';
 import { formatDate } from '../../utils/format';
@@ -13,7 +13,7 @@ const BuyModalConfirmed = ({
 }: {
   order: any;
   txHash: string;
-  walletPublicKey: PublicKey | undefined;
+  walletPublicKey: web3.PublicKey | undefined;
 }) => {
   // Get wallet address follow walletPublicKey
   const walletAddress = useMemo(

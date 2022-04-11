@@ -1,16 +1,15 @@
 import { deserializeUnchecked } from 'borsh';
-import { BN } from '@project-serum/anchor';
-import { PublicKey } from '@solana/web3.js';
+import { BN, web3 } from '@project-serum/anchor';
 
 // eslint-disable-next-line
 export const METADATA_REPLACE = new RegExp('\u0000', 'g');
 
 export class Creator {
-  address: PublicKey;
+  address: web3.PublicKey;
   verified: boolean;
   share: number;
 
-  constructor(args: { address: PublicKey; verified: boolean; share: number }) {
+  constructor(args: { address: web3.PublicKey; verified: boolean; share: number }) {
     this.address = args.address;
     this.verified = args.verified;
     this.share = args.share;
@@ -48,9 +47,9 @@ export class EditionMarker {
 
 export class Edition {
   key: MetadataKey;
-  parent: PublicKey;
+  parent: web3.PublicKey;
   edition: BN;
-  constructor(args: { key: MetadataKey; parent: PublicKey; edition: BN }) {
+  constructor(args: { key: MetadataKey; parent: web3.PublicKey; edition: BN }) {
     this.key = MetadataKey.EditionV1;
     this.parent = args.parent;
     this.edition = args.edition;
@@ -80,20 +79,20 @@ export class Data {
 
 export class Metadata {
   key: MetadataKey;
-  updateAuthority: PublicKey;
-  mint: PublicKey;
+  updateAuthority: web3.PublicKey;
+  mint: web3.PublicKey;
   data: Data;
   primarySaleHappened: boolean;
   isMutable: boolean;
-  masterEdition?: PublicKey;
-  edition?: PublicKey;
+  masterEdition?: web3.PublicKey;
+  edition?: web3.PublicKey;
   constructor(args: {
-    updateAuthority: PublicKey;
-    mint: PublicKey;
+    updateAuthority: web3.PublicKey;
+    mint: web3.PublicKey;
     data: Data;
     primarySaleHappened: boolean;
     isMutable: boolean;
-    masterEdition?: PublicKey;
+    masterEdition?: web3.PublicKey;
   }) {
     this.key = MetadataKey.MetadataV1;
     this.updateAuthority = args.updateAuthority;

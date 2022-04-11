@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
-import { BN } from '@project-serum/anchor';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { BN, web3 } from '@project-serum/anchor';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { breakPoints } from 'constant/breakPoints';
 import { CandyShop } from 'core/CandyShop';
@@ -26,8 +25,8 @@ export const CancelModalDetail = ({
     onChangeStep(1);
     candyShop
       .cancel(
-        new PublicKey(order.tokenAccount),
-        new PublicKey(order.tokenMint),
+        new web3.PublicKey(order.tokenAccount),
+        new web3.PublicKey(order.tokenMint),
         new BN(order.price)
       )
       .then(() => {
@@ -52,7 +51,7 @@ export const CancelModalDetail = ({
           <div>
             <div className="candy-label">SELLING PRICE</div>
             <Statistic>
-              {((order.price as any) / LAMPORTS_PER_SOL || 0).toFixed(2)} SOL
+              {((order.price as any) / web3.LAMPORTS_PER_SOL || 0).toFixed(2)} SOL
             </Statistic>
           </div>
           <button

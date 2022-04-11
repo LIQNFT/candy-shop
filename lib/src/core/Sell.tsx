@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Connection, PublicKey } from '@solana/web3.js';
+import { web3 } from "@project-serum/anchor";
 import { fetchOrdersByStoreIdAndWalletAddress } from 'api/backend/OrderAPI';
 import { SingleTokenInfo } from 'api/fetchMetadata';
 import { fetchNftsFromWallet } from 'api/fetchNftsFromWallet';
@@ -12,8 +12,8 @@ import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { CandyShop } from './CandyShop';
 
 interface SellProps {
-  connection: Connection;
-  walletPublicKey?: PublicKey;
+  connection: web3.Connection;
+  walletPublicKey?: web3.PublicKey;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
   style?: { [key: string]: string | number } | undefined;

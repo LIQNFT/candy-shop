@@ -1,4 +1,4 @@
-import { PublicKey } from '@solana/web3.js';
+import { web3 } from "@project-serum/anchor";
 import React from 'react';
 
 // shorten the checksummed version of the input address to have 4 characters at start and end
@@ -7,7 +7,7 @@ function shortenAddress(address: string, chars = 4): string {
 }
 
 export const ExplorerLink = (props: {
-  address: string | PublicKey;
+  address: string | web3.PublicKey;
   type: string;
   style?: React.CSSProperties;
   length?: number;

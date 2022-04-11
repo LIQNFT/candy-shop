@@ -3,12 +3,6 @@ import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  SYSVAR_RENT_PUBKEY,
-} from '@solana/web3.js';
 import { AUCTION_HOUSE_PROGRAM_ID, WRAPPED_SOL_MINT } from '../constants';
 import {
   getAtaForMint,
@@ -20,21 +14,21 @@ import {
 } from '../utils';
 
 export interface CsKeys {
-  auctionHouseAuthority: PublicKey;
+  auctionHouseAuthority: anchor.web3.PublicKey;
   authorityBump: number;
-  auctionHouse: PublicKey;
+  auctionHouse: anchor.web3.PublicKey;
   auctionHouseBump: number;
-  feeAccount: PublicKey;
+  feeAccount: anchor.web3.PublicKey;
   feeBump: number;
-  treasuryAccount: PublicKey;
+  treasuryAccount: anchor.web3.PublicKey;
   treasuryBump: number;
-  candyShop: PublicKey;
+  candyShop: anchor.web3.PublicKey;
   txHash: string;
 }
 
 export async function createAuctionHouse(
-  walletKeyPair: Keypair,
-  treasuryMint: PublicKey,
+  walletKeyPair: anchor.web3.Keypair,
+  treasuryMint: anchor.web3.PublicKey,
   sellerFeeBasisPoint: anchor.BN,
   feeSplit: anchor.BN,
   shopName: string,
@@ -92,8 +86,8 @@ export async function createAuctionHouse(
         ahProgram: AUCTION_HOUSE_PROGRAM_ID,
         tokenProgram: TOKEN_PROGRAM_ID,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-        systemProgram: SystemProgram.programId,
-        rent: SYSVAR_RENT_PUBKEY,
+        systemProgram: anchor.web3.SystemProgram.programId,
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
       },
     }
   );

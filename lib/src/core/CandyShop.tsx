@@ -1,6 +1,5 @@
-import { BN, Program, Provider } from '@project-serum/anchor';
+import { BN, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { Cluster, clusterApiUrl, Connection, PublicKey } from '@solana/web3.js';
 import { fetchNftByMint } from 'api/backend/NftAPI';
 import { fetchShopWhitelistNftByShopId } from 'api/backend/ShopAPI';
 import { configBaseUrl } from 'config/axiosInstance';
@@ -38,19 +37,19 @@ import {
  * Core Candy Shop module
  */
 export class CandyShop {
-  private _candyShopAddress: PublicKey;
-  private _candyShopCreatorAddress: PublicKey;
-  private _treasuryMint: PublicKey;
-  private _programId: PublicKey;
-  private _env: Cluster;
+  private _candyShopAddress: web3.PublicKey;
+  private _candyShopCreatorAddress: web3.PublicKey;
+  private _treasuryMint: web3.PublicKey;
+  private _programId: web3.PublicKey;
+  private _env: web3.Cluster;
   private _wallet: AnchorWallet;
   private _program: Program | undefined;
 
   constructor(
-    candyShopCreatorAddress: PublicKey,
-    treasuryMint: PublicKey,
-    candyShopProgramId: PublicKey,
-    env: Cluster,
+    candyShopCreatorAddress: web3.PublicKey,
+    treasuryMint: web3.PublicKey,
+    candyShopProgramId: web3.PublicKey,
+    env: web3.Cluster,
     wallet: AnchorWallet
   ) {
     this._candyShopAddress = getCandyShopSync(
@@ -71,10 +70,10 @@ export class CandyShop {
   async initIfNotReady() {
     if (typeof this._program === 'undefined') {
       const options = Provider.defaultOptions();
-      const connection = new Connection(
+      const connection = new web3.Connection(
         this._env === 'mainnet-beta'
           ? 'https://ssc-dao.genesysgo.net/'
-          : clusterApiUrl('devnet'),
+          : web3.clusterApiUrl('devnet'),
         options.commitment
       );
       const provider = new Provider(connection, this._wallet, options);
@@ -85,11 +84,11 @@ export class CandyShop {
     }
   }
 
-  treasuryMint(): PublicKey {
+  treasuryMint(): web3.PublicKey {
     return this._treasuryMint;
   }
 
-  connectedPublicKey(): PublicKey | undefined {
+  connectedPublicKey(): web3.PublicKey | undefined {
     return this._program?.provider.wallet.publicKey;
   }
 
@@ -110,9 +109,9 @@ export class CandyShop {
   }
 
   public async buy(
-    seller: PublicKey,
-    tokenAccount: PublicKey,
-    tokenMint: PublicKey,
+    seller: web3.PublicKey,
+    tokenAccount: web3.PublicKey,
+    tokenMint: web3.PublicKey,
     price: BN
   ): Promise<string> {
     console.log('buy called');
@@ -155,8 +154,8 @@ export class CandyShop {
   }
 
   public async sell(
-    tokenAccount: PublicKey,
-    tokenMint: PublicKey,
+    tokenAccount: web3.PublicKey,
+    tokenMint: web3.PublicKey,
     price: BN
   ): Promise<string> {
     await this.initIfNotReady();
@@ -195,8 +194,8 @@ export class CandyShop {
   }
 
   async cancel(
-    tokenAccount: PublicKey,
-    tokenMint: PublicKey,
+    tokenAccount: web3.PublicKey,
+    tokenMint: web3.PublicKey,
     price: BN
   ): Promise<string> {
     await this.initIfNotReady();

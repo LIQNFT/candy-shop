@@ -1,13 +1,6 @@
 import * as anchor from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import {
-  PublicKey,
-  sendAndConfirmRawTransaction,
-  SystemProgram,
-  SYSVAR_RENT_PUBKEY,
-  Transaction,
-} from '@solana/web3.js';
 import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 import {
   getAuctionHouseProgramAsSigner,
@@ -17,15 +10,15 @@ import { awaitTransactionSignatureConfirmation } from './submitTx';
 
 export async function sellNft(
   wallet: AnchorWallet,
-  tokenAccount: PublicKey,
-  tokenAccountMint: PublicKey,
-  treasuryMint: PublicKey,
-  metadata: PublicKey,
-  authority: PublicKey,
+  tokenAccount: anchor.web3.PublicKey,
+  tokenAccountMint: anchor.web3.PublicKey,
+  treasuryMint: anchor.web3.PublicKey,
+  metadata: anchor.web3.PublicKey,
+  authority: anchor.web3.PublicKey,
   authorityBump: number,
-  auctionHouse: PublicKey,
-  feeAccount: PublicKey,
-  candyShop: PublicKey,
+  auctionHouse: anchor.web3.PublicKey,
+  feeAccount: anchor.web3.PublicKey,
+  candyShop: anchor.web3.PublicKey,
   price: anchor.BN,
   amount: anchor.BN,
   program: anchor.Program
@@ -72,9 +65,9 @@ export async function sellNft(
         candyShop,
         ahProgram: AUCTION_HOUSE_PROGRAM_ID,
         tokenProgram: TOKEN_PROGRAM_ID,
-        systemProgram: SystemProgram.programId,
+        systemProgram: anchor.web3.SystemProgram.programId,
         programAsSigner,
-        rent: SYSVAR_RENT_PUBKEY,
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
       },
     }
   );

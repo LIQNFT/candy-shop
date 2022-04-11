@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { web3 } from "@project-serum/anchor";
 import { ExplorerLink } from 'components/ExplorerLink';
 import { Tag } from 'components/Tag';
 import { CandyShop } from 'core/CandyShop';
@@ -9,7 +9,7 @@ import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 export interface BuyModalDetailProps {
   order: OrderSchema;
   buy: () => {};
-  walletPublicKey: PublicKey | undefined;
+  walletPublicKey: web3.PublicKey | undefined;
   walletConnectComponent: React.ReactElement;
   candyShop: CandyShop;
 }
@@ -22,7 +22,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   candyShop,
 }) => {
   const orderPrice = useMemo(() => {
-    return (Number(order?.price) / LAMPORTS_PER_SOL).toFixed(2);
+    return (Number(order?.price) / web3.LAMPORTS_PER_SOL).toFixed(2);
   }, [order]);
 
   const [loadingNftInfo, setLoadingNftInfo] = useState(false);

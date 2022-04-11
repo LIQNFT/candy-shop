@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { web3 } from "@project-serum/anchor";
 import { BuyModal } from 'components/BuyModal';
 import { LiqImage } from 'components/LiqImage';
 import { CandyShop } from 'core/CandyShop';
@@ -8,7 +8,7 @@ import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 
 export interface OrderProps {
   order: OrderSchema;
-  walletPublicKey: PublicKey | undefined;
+  walletPublicKey: web3.PublicKey | undefined;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
 }
@@ -23,7 +23,7 @@ export const Order: React.FC<OrderProps> = ({
 
   const orderPrice = useMemo(() => {
     if (!order) return 0;
-    return (Number(order?.price) / LAMPORTS_PER_SOL).toFixed(2);
+    return (Number(order?.price) / web3.LAMPORTS_PER_SOL).toFixed(2);
   }, [order]);
 
   const onClose = useCallback(() => {

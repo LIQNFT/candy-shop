@@ -1,16 +1,10 @@
 import * as anchor from '@project-serum/anchor';
-import { Idl, Program } from '@project-serum/anchor';
+import { Idl, Program, web3 } from '@project-serum/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import {
-  PublicKey,
-  SystemProgram,
-  SYSVAR_RENT_PUBKEY,
-  Transaction,
-} from '@solana/web3.js';
 import { Metadata, parseMetadata } from '../../utils/parseData';
 import { AUCTION_HOUSE_PROGRAM_ID, WRAPPED_SOL_MINT } from '../constants';
 import {
@@ -23,17 +17,17 @@ import { awaitTransactionSignatureConfirmation } from './submitTx';
 
 export async function buyAndExecuteSale(
   wallet: AnchorWallet,
-  counterParty: PublicKey,
-  tokenAccount: PublicKey,
-  tokenAccountMint: PublicKey,
-  treasuryMint: PublicKey,
-  auctionHouseTreasury: PublicKey,
-  metadata: PublicKey,
-  authority: PublicKey,
+  counterParty: web3.PublicKey,
+  tokenAccount: web3.PublicKey,
+  tokenAccountMint: web3.PublicKey,
+  treasuryMint: web3.PublicKey,
+  auctionHouseTreasury: web3.PublicKey,
+  metadata: web3.PublicKey,
+  authority: web3.PublicKey,
   authorityBump: number,
-  auctionHouse: PublicKey,
-  feeAccount: PublicKey,
-  candyShop: PublicKey,
+  auctionHouse: web3.PublicKey,
+  feeAccount: web3.PublicKey,
+  candyShop: web3.PublicKey,
   price: anchor.BN,
   amount: anchor.BN,
   program: Program<Idl>
@@ -78,7 +72,7 @@ export async function buyAndExecuteSale(
   const [programAsSigner, programAsSignerBump] =
     await getAuctionHouseProgramAsSigner();
 
-  const transaction = new Transaction();
+  const transaction = new web3.Transaction();
 
   const ix = await (program.instruction.buyWithProxy as (...args: any) => any)(
     price,
@@ -102,8 +96,8 @@ export async function buyAndExecuteSale(
         candyShop,
         ahProgram: AUCTION_HOUSE_PROGRAM_ID,
         tokenProgram: TOKEN_PROGRAM_ID,
-        systemProgram: SystemProgram.programId,
-        rent: SYSVAR_RENT_PUBKEY,
+        systemProgram: web3.SystemProgram.programId,
+        rent: web3.SYSVAR_RENT_PUBKEY,
       },
     }
   );
@@ -166,10 +160,10 @@ export async function buyAndExecuteSale(
         candyShop,
         ahProgram: AUCTION_HOUSE_PROGRAM_ID,
         tokenProgram: TOKEN_PROGRAM_ID,
-        systemProgram: SystemProgram.programId,
+        systemProgram: web3.SystemProgram.programId,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
         programAsSigner: programAsSigner,
-        rent: SYSVAR_RENT_PUBKEY,
+        rent: web3.SYSVAR_RENT_PUBKEY,
       },
       remainingAccounts,
     }

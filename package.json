@@ -13,8 +13,8 @@
   },
   "scripts": {
     "dev": "parcel example/index.html",
-    "build": "parcel build example/index.html --public-url ./",
-    "gh-pages": "push-dir --dir=dist --branch=gh-pages --cleanup --verbose",
+    "build": "parcel build example/index.html --public-url ./ --dist-dir example-dist",
+    "gh-pages": "push-dir --dir=example-dist --branch=gh-pages --cleanup --verbose",
     "deploy": "yarn build && yarn gh-pages",
     "format:check": "prettier --check lib/src",
     "format:fix": "prettier --write lib/src",
@@ -29,14 +29,12 @@
     "@parcel/transformer-typescript-types": "2.4.1",
     "husky": "^7.0.4",
     "prettier": "^2.6.2",
-    "typescript": ">=3.0.0"
+    "typescript": ">=3.0.0",
+    "parcel": "^2.4.1"
   },
   "alias": {
     "react": "./lib/node_modules/react",
     "react-dom": "./lib/node_modules/react-dom/profiling",
     "scheduler/tracing": "./lib/node_modules/scheduler/tracing-profiling"
-  },
-  "dependencies": {
-    "parcel": "^2.4.1"
   }
 }

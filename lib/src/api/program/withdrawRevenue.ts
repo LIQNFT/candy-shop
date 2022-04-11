@@ -1,7 +1,6 @@
 import * as anchor from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
-import { Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
 import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 import {
   getAuctionHouse,
@@ -11,8 +10,8 @@ import {
 } from '../utils';
 
 export async function candyStoreWithdrawFromTreasury(
-  walletKeyPair: Keypair,
-  treasuryMint: PublicKey,
+  walletKeyPair: anchor.web3.Keypair,
+  treasuryMint: anchor.web3.PublicKey,
   amount: anchor.BN,
   program: anchor.Program
 ) {
@@ -51,7 +50,7 @@ export async function candyStoreWithdrawFromTreasury(
         auctionHouse: auctionHouse,
         ahProgram: AUCTION_HOUSE_PROGRAM_ID,
         tokenProgram: TOKEN_PROGRAM_ID,
-        systemProgram: SystemProgram.programId,
+        systemProgram: anchor.web3.SystemProgram.programId,
       },
     }
   );
