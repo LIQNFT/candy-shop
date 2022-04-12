@@ -1,4 +1,4 @@
-import { web3 } from "@project-serum/anchor"
+import { web3 } from '@project-serum/anchor';
 
 export const WRAPPED_SOL_MINT = new web3.PublicKey(
   'So11111111111111111111111111111111111111112'

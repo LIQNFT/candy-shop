@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { web3 } from "@project-serum/anchor";
+import { web3 } from '@project-serum/anchor';
 import { BuyModal } from 'components/BuyModal';
 import { LiqImage } from 'components/LiqImage';
 import { CandyShop } from 'core/CandyShop';

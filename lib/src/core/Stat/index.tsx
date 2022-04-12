@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { web3 } from "@project-serum/anchor";
+import { web3 } from '@project-serum/anchor';
 import { breakPoints } from 'constant/breakPoints';
 import { CandyShop } from 'core/CandyShop';
 import React, { useEffect, useMemo, useState } from 'react';
