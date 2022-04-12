@@ -8,7 +8,10 @@ import { Nft } from 'components/Nft';
 import { Skeleton } from 'components/Skeleton';
 import { breakPoints } from 'constant/breakPoints';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import {
+  Order as OrderSchema,
+  WhitelistNft,
+} from 'solana-candy-shop-schema/dist';
 import { CandyShop } from './CandyShop';
 
 interface SellProps {
@@ -41,9 +44,17 @@ export const Sell: React.FC<SellProps> = ({
       const [userNfts, sellOrders] = await Promise.all([
         candyShop
           .shopWlNfts()
-          .then((nfts) => nfts.result.map((item) => item.identifier))
+          .then((nfts) =>
+            nfts.result.reduce(
+              (arr: string[], item: WhitelistNft) =>
+                arr.concat(item.identifier),
+              []
+            )
+          )
           .then((identifiers: string[]) =>
-            fetchNftsFromWallet(connection, walletPublicKey, identifiers)
+            identifiers.length === 0
+              ? fetchNftsFromWallet(connection, walletPublicKey)
+              : fetchNftsFromWallet(connection, walletPublicKey, identifiers)
           ),
         fetchOrdersByStoreIdAndWalletAddress(
           candyShop.candyShopAddress.toString(),
