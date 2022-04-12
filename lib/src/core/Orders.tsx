@@ -9,7 +9,8 @@ import React, { useEffect, useState } from 'react';
 import { CandyShop } from './CandyShop';
 import { InfiniteOrderList } from 'components/InfiniteOrderList';
 
-const ORDER_FETCH_LIMIT = 10;
+const ORDER_FETCH_LIMIT = 12;
+const LOADING_SKELETON_COUNT = 4;
 
 const SORT_OPTIONS: { value: SortBy; label: string }[] = [
   {
@@ -62,13 +63,11 @@ export const Orders: React.FC<OrdersProps> = ({
   const [orders, setOrders] = useState<any[]>([]);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [firstLoadInProgress, setFirstLoadInProgress] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
 
   const loadNextPage = (startIndex: number, limit: number) => {
-    setLoading(true);
     candyShop
-      .orders(sortedByOption.value, startIndex, limit)
+      .orders({ sortBy: sortedByOption.value, offset: startIndex, limit })
       .then((data: any) => {
         if (!data.result) return;
         if (data.offset + data.count >= data.totalCount) {
@@ -81,16 +80,17 @@ export const Orders: React.FC<OrdersProps> = ({
       })
       .catch((err) => {
         console.info('fetchOrdersByStoreId failed: ', err);
-      })
-      .finally(() => {
-        setLoading(false);
       });
   };
 
   useEffect(() => {
     setFirstLoadInProgress(true);
     candyShop
-      .orders(sortedByOption.value, 0, ORDER_FETCH_LIMIT)
+      .orders({
+        sortBy: sortedByOption.value,
+        offset: 0,
+        limit: ORDER_FETCH_LIMIT,
+      })
       .then((data: any) => {
         if (!data.result) return;
         if (data.offset + data.count >= data.totalCount) {
@@ -122,7 +122,7 @@ export const Orders: React.FC<OrdersProps> = ({
           </FilterContainer>
           {firstLoadInProgress ? (
             <Flex>
-              {Array(4)
+              {Array(LOADING_SKELETON_COUNT)
                 .fill(0)
                 .map((_, key) => (
                   <FlexItem key={key}>

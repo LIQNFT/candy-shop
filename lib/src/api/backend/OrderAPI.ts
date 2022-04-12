@@ -7,12 +7,18 @@ export type SortBy = {
   order: 'asc' | 'desc';
 };
 
-export async function fetchOrdersByStoreId(
-  storeId: string,
+export type OrdersFilterQuery = {
   sortBy?: SortBy,
   offset?: number,
   limit?: number
+}
+
+export async function fetchOrdersByStoreId(
+  storeId: string,
+  ordersFilterQuery: OrdersFilterQuery
 ): Promise<ListBase<Order>> {
+  const { sortBy, offset, limit } = ordersFilterQuery;
+
   const queryObject = {} as any;
   if (sortBy) {
     queryObject['orderByArr'] = JSON.stringify(sortBy);

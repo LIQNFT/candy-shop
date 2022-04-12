@@ -16,6 +16,7 @@ import {
   fetchOrderByTokenMint,
   fetchOrdersByStoreId,
   fetchOrdersByStoreIdAndWalletAddress,
+  OrdersFilterQuery,
   SortBy,
 } from '../api/backend/OrderAPI';
 import { fetchStatsById } from '../api/backend/StatsAPI';
@@ -109,16 +110,14 @@ export class CandyShop {
   }
 
   async orders(
-    sortBy?: SortBy,
-    offset?: number,
-    limit?: number
+    ordersFilterQuery: OrdersFilterQuery
   ): Promise<ListBase<Order>> {
-    return fetchOrdersByStoreId(
-      this._candyShopAddress.toString(),
+    const { sortBy, offset, limit } = ordersFilterQuery;
+    return fetchOrdersByStoreId(this._candyShopAddress.toString(), {
       sortBy,
       offset,
-      limit
-    );
+      limit,
+    });
   }
 
   public async buy(
