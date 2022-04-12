@@ -50,7 +50,6 @@ export async function buyAndExecuteSale(
   );
 
   const isNative = treasuryMint.equals(WRAPPED_SOL_MINT);
-  const ata = (await getAtaForMint(treasuryMint, wallet.publicKey))[0];
 
   const [sellTradeState] = await getAuctionHouseTradeState(
     auctionHouse,
@@ -76,6 +75,10 @@ export async function buyAndExecuteSale(
 
   const transaction = new web3.Transaction();
 
+  const paymentAccount = isNative
+    ? wallet.publicKey
+    : (await getAtaForMint(treasuryMint, wallet.publicKey))[0];
+
   const ix = await program.instruction.buyWithProxy(
     price,
     amount,
@@ -85,7 +88,7 @@ export async function buyAndExecuteSale(
     {
       accounts: {
         wallet: wallet.publicKey,
-        paymentAccount: isNative ? wallet.publicKey : ata,
+        paymentAccount,
         transferAuthority: wallet.publicKey,
         treasuryMint,
         tokenAccount,
@@ -107,62 +110,82 @@ export async function buyAndExecuteSale(
   const metadataObj = await program.provider.connection.getAccountInfo(
     metadata
   );
+
+  if (!metadataObj?.data) {
+    throw new Error('failed to get metadata account data');
+  }
+
   const metadataDecoded: Metadata = parseMetadata(
-    Buffer.from(metadataObj!.data)
+    Buffer.from(metadataObj.data)
   );
 
-  const remainingAccounts = [] as Array<any>;
-  const ataAccountCreationTransaction = new web3.Transaction();
-  let ataAccountCreationRequired = false;
+  const remainingAccounts = [] as Array<{
+    pubkey: web3.PublicKey;
+    isWritable: boolean;
+    isSigner: boolean;
+  }>;
+
+  const accountsRequireAta = [] as Array<web3.PublicKey>;
 
   if (metadataDecoded != null) {
-    for (let i = 0; i < metadataDecoded!.data!.creators!.length; i++) {
-      const creatorPublicKey = new anchor.web3.PublicKey(
-        metadataDecoded!.data!.creators![i].address
-      );
-      remainingAccounts.push({
-        pubkey: creatorPublicKey,
-        isWritable: true,
-        isSigner: false,
-      });
-
-      if (!isNative) {
-        const ataAddress = (
-          await getAtaForMint(
-            treasuryMint,
-            new anchor.web3.PublicKey(
-              metadataDecoded!.data!.creators![i].address
-            )
-          )
-        )[0];
+    if (metadataDecoded.data && metadataDecoded.data.creators) {
+      for (let i = 0; i < metadataDecoded.data.creators.length; i++) {
+        const creatorPublicKey = new anchor.web3.PublicKey(
+          metadataDecoded.data.creators[i].address
+        );
         remainingAccounts.push({
-          pubkey: ataAddress,
+          pubkey: creatorPublicKey,
           isWritable: true,
           isSigner: false,
         });
 
-        const ataAccount = await getAccount(
-          program.provider.connection,
-          ataAddress
-        ).catch((err) => {
-          console.log('fetch ata error', err);
-          return null;
-        });
-        if (!ataAccount || !ataAccount.isInitialized) {
-          ataAccountCreationRequired = true;
-          ataAccountCreationTransaction.add(
-            createAssociatedTokenAccountInstruction(
-              wallet.publicKey,
-              ataAddress,
-              creatorPublicKey,
-              treasuryMint,
-              TOKEN_PROGRAM_ID,
-              ASSOCIATED_TOKEN_PROGRAM_ID
-            )
-          );
+        if (!isNative) {
+          const ataAddress = (
+            await getAtaForMint(treasuryMint, creatorPublicKey)
+          )[0];
+          remainingAccounts.push({
+            pubkey: ataAddress,
+            isWritable: true,
+            isSigner: false,
+          });
+          accountsRequireAta.push(creatorPublicKey);
         }
       }
     }
+  }
+
+  const sellerPaymentReceiptAccount = isNative
+    ? counterParty
+    : (await getAtaForMint(treasuryMint, counterParty))[0];
+
+  if (!isNative) {
+    accountsRequireAta.push(counterParty);
+  }
+
+  const allAtaIxs = [];
+
+  const treasuyMintAtaIxs = await compileAtaCreationIxs(
+    wallet.publicKey,
+    accountsRequireAta,
+    treasuryMint,
+    program
+  );
+  if (treasuyMintAtaIxs) {
+    allAtaIxs.push(...treasuyMintAtaIxs);
+  }
+
+  const buyerReceiptTokenAccount = (
+    await getAtaForMint(tokenAccountMint, wallet.publicKey)
+  )[0];
+
+  const tokenMintAtaIxs = await compileAtaCreationIxs(
+    wallet.publicKey,
+    [wallet.publicKey],
+    tokenAccountMint,
+    program
+  );
+  if (tokenMintAtaIxs) {
+    allAtaIxs.push(...tokenMintAtaIxs);
   }
 
   const ix2 = await program.instruction.executeSaleWithProxy(
@@ -182,14 +205,8 @@ export async function buyAndExecuteSale(
         metadata,
         treasuryMint,
         escrowPaymentAccount: buyerEscrow,
-        sellerPaymentReceiptAccount: isNative
-          ? counterParty
-          : (
-              await getAtaForMint(treasuryMint, counterParty)
-            )[0],
-        buyerReceiptTokenAccount: (
-          await getAtaForMint(tokenAccountMint, wallet.publicKey)
-        )[0],
+        sellerPaymentReceiptAccount,
+        buyerReceiptTokenAccount,
         authority,
         auctionHouse,
         auctionHouseFeeAccount: feeAccount,
@@ -211,20 +228,53 @@ export async function buyAndExecuteSale(
   transaction.add(ix);
   transaction.add(ix2);
 
-  if (ataAccountCreationTransaction) {
-    const txHash1 = await sendTx(
-      wallet,
-      ataAccountCreationTransaction,
-      program
-    );
-    console.log('ataAccountCreationTransaction ', txHash1);
+  if (allAtaIxs.length > 0) {
+    const ataCreationTx = new web3.Transaction();
+    ataCreationTx.add(...allAtaIxs);
+    const atasCreationTx = await sendTx(wallet, ataCreationTx, program);
+    console.log('atasCreationTx', atasCreationTx);
   }
 
-  const txHash2 = await sendTx(wallet, transaction, program);
-  console.log('buyAndExecuteTransaction', txHash2);
+  const buyAndExecuteTx = await sendTx(wallet, transaction, program);
+  console.log('buyAndExecuteTx', buyAndExecuteTx);
 
   console.log('sale executed');
-  return txHash2;
+  return buyAndExecuteTx;
+}
+
+async function compileAtaCreationIxs(
+  payer: web3.PublicKey,
+  addresses: web3.PublicKey[],
+  mint: web3.PublicKey,
+  program: Program
+): Promise<web3.TransactionInstruction[] | null> {
+  const ix: web3.TransactionInstruction[] = [];
+  for (const addr of addresses) {
+    const ataAddress = (
+      await getAtaForMint(mint, new anchor.web3.PublicKey(addr))
+    )[0];
+
+    const ataAccount = await getAccount(
+      program.provider.connection,
+      ataAddress
+    ).catch((err) => {
+      console.log('fetch ata error', err);
+      return null;
+    });
+    if (!ataAccount || !ataAccount.isInitialized) {
+      ix.push(
+        createAssociatedTokenAccountInstruction(
+          payer,
+          ataAddress,
+          addr,
+          mint,
+          TOKEN_PROGRAM_ID,
+          ASSOCIATED_TOKEN_PROGRAM_ID
+        )
+      );
+    }
+  }
+  return ix;
 }
 
 async function sendTx(
