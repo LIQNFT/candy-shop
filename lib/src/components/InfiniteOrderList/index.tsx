@@ -20,7 +20,9 @@ interface InfiniteOrderListProps {
   loadNextPage: () => void;
 }
 
-export const InfiniteOrderList: React.FunctionComponent<InfiniteOrderListProps> = ({
+export const InfiniteOrderList: React.FunctionComponent<
+  InfiniteOrderListProps
+> = ({
   orders,
   walletPublicKey,
   walletConnectComponent,

@@ -108,8 +108,17 @@ export class CandyShop {
     return this._programId;
   }
 
-  async orders(sortBy?: SortBy, offset?: number, limit?: number): Promise<ListBase<Order>> {
-    return fetchOrdersByStoreId(this._candyShopAddress.toString(), sortBy, offset, limit);
+  async orders(
+    sortBy?: SortBy,
+    offset?: number,
+    limit?: number
+  ): Promise<ListBase<Order>> {
+    return fetchOrdersByStoreId(
+      this._candyShopAddress.toString(),
+      sortBy,
+      offset,
+      limit
+    );
   }
 
   public async buy(
