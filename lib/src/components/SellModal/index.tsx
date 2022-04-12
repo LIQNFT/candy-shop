@@ -35,9 +35,10 @@ export const SellModal: React.FC<SellModalProps> = ({
     if (!formState.price) {
       notification('Please input sell price', 'error');
       setStep(TransactionState.DISPLAY);
+      return;
     }
 
-    const price = formState.price! * web3.LAMPORTS_PER_SOL;
+    const price = formState.price * web3.LAMPORTS_PER_SOL;
 
     return candyShop
       .sell(
@@ -63,7 +64,10 @@ export const SellModal: React.FC<SellModalProps> = ({
       setFormState((f) => ({ ...f, price: undefined }));
       return;
     }
-    setFormState((f) => ({ ...f, price: +e.target.value }));
+
+    if (regex3Decimals.test(e.target.value)) {
+      setFormState((f) => ({ ...f, price: +e.target.value }));
+    }
   };
 
   const onCancel = useCallback(() => {
@@ -81,7 +85,7 @@ export const SellModal: React.FC<SellModalProps> = ({
             <div className="sell-modal-title">Sell</div>
             <div className="sell-modal-content">
               <div className="sell-modal-img">
-                <img src={nft?.nftImage || imgDefault} alt="" />
+                <img src={nft?.nftImage || imgDefault} alt="nft image" />
               </div>
               <div>
                 <div className="sell-modal-collection-name">
@@ -96,10 +100,11 @@ export const SellModal: React.FC<SellModalProps> = ({
             <form>
               <InputNumber>
                 <input
-                  placeholder="0.0"
+                  placeholder="0,000"
                   min={0}
                   onChange={onChangeInput}
                   type="number"
+                  value={formState.price}
                 />
                 <span>SOL</span>
               </InputNumber>
@@ -145,6 +150,8 @@ export const SellModal: React.FC<SellModalProps> = ({
     </Modal>
   );
 };
+
+const regex3Decimals = new RegExp('^[0-9]{1,11}(?:.[0-9]{1,3})?$');
 
 const InputNumber = styled.div`
   width: 100%;

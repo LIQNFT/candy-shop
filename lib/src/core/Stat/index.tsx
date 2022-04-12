@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { web3 } from '@project-serum/anchor';
 import { breakPoints } from 'constant/breakPoints';
 import { CandyShop } from 'core/CandyShop';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export interface StatProps {
   candyShop: CandyShop;
@@ -20,13 +20,13 @@ export const Stat = ({
   const [stat, setStat] = useState<any>([]);
 
   const floorPrice = stat?.floorPrice
-    ? (Number(stat.floorPrice) / web3.LAMPORTS_PER_SOL).toFixed(2)
+    ? (Number(stat.floorPrice) / web3.LAMPORTS_PER_SOL).toFixed(3)
     : null;
 
   const totalListed = stat?.totalListed ? stat.totalListed : 0;
 
   const totalVolume = stat?.totalVolume
-    ? (Number(stat.totalVolume) / web3.LAMPORTS_PER_SOL).toFixed(2)
+    ? (Number(stat.totalVolume) / web3.LAMPORTS_PER_SOL).toFixed(3)
     : 0;
 
   // handle fetch data
