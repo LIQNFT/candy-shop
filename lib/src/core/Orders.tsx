@@ -3,11 +3,13 @@ import { web3 } from '@project-serum/anchor';
 import { SortBy } from 'api/backend/OrderAPI';
 import { Dropdown } from 'components/Dropdown';
 import { Empty } from 'components/Empty';
-import { Order } from 'components/Order';
 import { Skeleton } from 'components/Skeleton';
 import { breakPoints } from 'constant/breakPoints';
 import React, { useEffect, useState } from 'react';
 import { CandyShop } from './CandyShop';
+import { InfiniteOrderList } from 'components/InfiniteOrderList';
+
+const ORDER_FETCH_LIMIT = 10;
 
 const SORT_OPTIONS: { value: SortBy; label: string }[] = [
   {
@@ -58,22 +60,52 @@ export const Orders: React.FC<OrdersProps> = ({
 }) => {
   const [sortedByOption, setSortedByOption] = useState(SORT_OPTIONS[0]);
   const [orders, setOrders] = useState<any[]>([]);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [firstLoadInProgress, setFirstLoadInProgress] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [startIndex, setStartIndex] = useState(0);
 
-  // handle fetch data
-  useEffect(() => {
+  const loadNextPage = (startIndex: number, limit: number) => {
     setLoading(true);
     candyShop
-      .orders(sortedByOption.value)
+      .orders(sortedByOption.value, startIndex, limit)
       .then((data: any) => {
         if (!data.result) return;
-        setOrders(data.result);
+        if (data.offset + data.count >= data.totalCount) {
+          setHasNextPage(false);
+        } else {
+          setHasNextPage(true);
+        }
+        setStartIndex((startIndex) => startIndex + limit);
+        setOrders((existingOrders) => [...existingOrders, ...data.result]);
       })
       .catch((err) => {
         console.info('fetchOrdersByStoreId failed: ', err);
       })
       .finally(() => {
         setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    setFirstLoadInProgress(true);
+    candyShop
+      .orders(sortedByOption.value, 0, ORDER_FETCH_LIMIT)
+      .then((data: any) => {
+        if (!data.result) return;
+        if (data.offset + data.count >= data.totalCount) {
+          setHasNextPage(false);
+        } else {
+          setHasNextPage(true);
+        }
+        setStartIndex((startIndex) => 0 + ORDER_FETCH_LIMIT);
+        setOrders(data.result);
+      })
+      .catch((err) => {
+        console.info('fetchOrdersByStoreId failed: ', err);
+      })
+      .finally(() => {
+        setFirstLoadInProgress(false);
       });
   }, [candyShop, sortedByOption]);
 
@@ -88,7 +120,7 @@ export const Orders: React.FC<OrdersProps> = ({
               onSelectItem={(item) => setSortedByOption(item)}
             />
           </FilterContainer>
-          {loading ? (
+          {firstLoadInProgress ? (
             <Flex>
               {Array(4)
                 .fill(0)
@@ -98,21 +130,17 @@ export const Orders: React.FC<OrdersProps> = ({
                   </FlexItem>
                 ))}
             </Flex>
-          ) : !orders.length ? (
+          ) : !firstLoadInProgress && !orders.length ? (
             <Empty description="No orders found" />
           ) : (
-            <Flex>
-              {orders.map((item, key) => (
-                <FlexItem key={key}>
-                  <Order
-                    order={item}
-                    walletPublicKey={walletPublicKey}
-                    candyShop={candyShop}
-                    walletConnectComponent={walletConnectComponent}
-                  />
-                </FlexItem>
-              ))}
-            </Flex>
+            <InfiniteOrderList
+              orders={orders}
+              walletConnectComponent={walletConnectComponent}
+              walletPublicKey={walletPublicKey}
+              candyShop={candyShop}
+              hasNextPage={hasNextPage}
+              loadNextPage={() => loadNextPage(startIndex, ORDER_FETCH_LIMIT)}
+            />
           )}
         </div>
       </Wrap>

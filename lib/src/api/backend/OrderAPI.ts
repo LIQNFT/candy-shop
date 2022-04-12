@@ -9,11 +9,19 @@ export type SortBy = {
 
 export async function fetchOrdersByStoreId(
   storeId: string,
-  sortBy?: SortBy
+  sortBy?: SortBy,
+  offset?: number,
+  limit?: number
 ): Promise<ListBase<Order>> {
   const queryObject = {} as any;
   if (sortBy) {
     queryObject['orderByArr'] = JSON.stringify(sortBy);
+  }
+  if (offset) {
+    queryObject['offset'] = offset;
+  }
+  if (limit) {
+    queryObject['limit'] = limit;
   }
 
   const queryString = qs.stringify(queryObject);
