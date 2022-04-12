@@ -22,7 +22,6 @@ const Modal: React.FC<ModalProps> = ({
       width={width}
       className="cds-modal-mask"
       onClick={() => {
-        console.log('mask outside');
         onCancel();
       }}
     >
@@ -30,7 +29,6 @@ const Modal: React.FC<ModalProps> = ({
         className="cds-modal-content"
         onClick={(e) => {
           e.stopPropagation();
-          console.log('content inside');
         }}
       >
         <Close onClick={onCancel}>

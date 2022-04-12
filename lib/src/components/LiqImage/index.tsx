@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import imgDefault from '../../assets/img-default.png';
 
 interface LiqImageProps {
@@ -9,31 +9,61 @@ interface LiqImageProps {
 }
 
 export const LiqImage: React.FC<LiqImageProps> = ({ src, alt, style = {} }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [width, setWidth] = useState<number>();
+
+  let loaderDivStyles = loaded
+    ? { display: 'none' }
+    : {
+        height: 0,
+        paddingBottom: '100%',
+        width: '100%',
+        backgroundColor: '#E5E5E5',
+      };
+
+  let baseStyle = {
+    position: 'relative',
+    borderTopLeftRadius: '14px',
+    borderTopRightRadius: '14px',
+    height: width,
+    overflow: 'hidden',
+  };
+  let combinedStyle = { ...baseStyle, ...style };
+
+  const onElementResize = () =>
+    setWidth(ref.current ? ref.current.offsetWidth : 0);
+
+  useEffect(() => {
+    onElementResize();
+    window.addEventListener('resize', onElementResize);
+    return () => window.removeEventListener('resize', onElementResize);
+  }, []);
+
   return (
-    <>
-      <Wrap style={style}>
+    <div style={combinedStyle} ref={ref}>
+      <div style={loaderDivStyles}></div>
+      {src ? (
         <Image
-          src={src ? src : imgDefault}
-          alt={src ? alt : 'No metadata found'}
+          alt={alt}
+          src={src}
+          width="100%"
+          height="100%"
+          style={loaded ? { display: 'block' } : { display: 'none' }}
+          onLoad={() => setLoaded(true)}
         />
-      </Wrap>
-    </>
+      ) : (
+        <Image
+          src={imgDefault}
+          alt="NFT image"
+          width="100%"
+          style={loaded ? { display: 'block' } : { display: 'none' }}
+          onLoad={() => setLoaded(true)}
+        />
+      )}
+    </div>
   );
 };
-
-const Wrap = styled.div`
-  background-color: #e5e5e5;
-  border-top-left-radius: 14px;
-  border-top-right-radius: 14px;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    display: block;
-    padding-top: 100%;
-  }
-`;
 
 const Image = styled.img`
   position: absolute;

@@ -1,60 +1,55 @@
 .sell-modal {
-  font-family: Helvetica, Arial, sans-serif;
-  font-weight: 500;
   font-size: 16px;
   line-height: 24px;
 
-  &-title {
-    padding-top: 50px;
-    padding-bottom: 40px;
-
-    font-size: 26px;
-    line-height: 36px;
-    font-weight: 700;
+  .sell-modal-title {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  &-content {
+  .sell-modal-content {
     display: flex;
     align-items: center;
+    text-align: left;
   }
 
-  &-img {
+  .sell-modal-img {
     width: 100px;
     height: 100px;
-    margin-right: 40px;
+    margin-right: 20px;
+    text-align: center;
 
     img {
       max-width: 100%;
       max-height: 100%;
-      object-fit: cover;
-      border-radius: 10px;
+      object-fit: contain;
     }
   }
 
-  &-collection-name {
-    font-size: 14px;
+  .sell-modal-symbol {
+    font-size: 12px;
     line-height: 20px;
-    font-weight: 500;
-    margin-bottom: 4px;
   }
 
-  &-nft-name {
+  .sell-modal-nft-name {
     font-size: 18px;
-    line-height: 24px;
+    line-height: 28px;
     font-weight: bold;
   }
 
-  &-listed {
+  .sell-modal-listed {
     align-self: flex-start;
-    font-size: 26px;
-    line-height: 36px;
-    font-weight: bold;
+    font-size: 22px;
+    line-height: 32px;
   }
 
-  &-hr {
+  .sell-modal-hr {
     width: 100%;
     height: 1px;
     background-color: #e0e0e0;
@@ -63,15 +58,15 @@
     margin-bottom: 50px;
   }
 
-  &-button {
+  .sell-modal-button {
     width: 100%;
-    margin-bottom: 30px;
     border: 0px;
     cursor: pointer;
     color: #fff;
     background: #7522f5;
     border-radius: 32px;
-    padding: 16px 100px;
+    padding: 8px 100px;
+    margin-bottom: 20px;
 
     &:disabled {
       background: #bdbdbd;

@@ -5,8 +5,8 @@ import { breakPoints } from 'constant/breakPoints';
 import { CandyShop } from 'core/CandyShop';
 import React from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import imgDefault from '../../assets/img-default.png';
 import { notification } from 'utils/rc-notification';
+import { LiqImage } from '../LiqImage';
 
 export interface CancelModalDetailProps {
   onCancel: any;
@@ -42,14 +42,18 @@ export const CancelModalDetail = ({
   return (
     <Container>
       <div className="cds-cancel-modal-thumbnail">
-        <img src={order.nftImageLink || imgDefault} alt="" />
+        <LiqImage
+          src={order.nftImageLink}
+          alt="NFT Image"
+          style={{ borderTopRightRadius: 0, borderTopLeftRadius: 0 }}
+        />
       </div>
 
       <div className="cds-cancel-modal-container">
         <div className="cds-cancel-modal-title">{order.name}</div>
         <div className="cds-cancel-modal-control">
           <div>
-            <div className="candy-label">SELLING PRICE</div>
+            <div className="candy-label">PRICE</div>
             <Statistic>
               {((order.price as any) / web3.LAMPORTS_PER_SOL || 0).toFixed(2)}{' '}
               SOL
@@ -62,10 +66,12 @@ export const CancelModalDetail = ({
             {buttonContent}
           </button>
         </div>
-        <div className="cds-cancel-modal-description">
-          <div className="candy-label">DESCRIPTION</div>
-          <div className="candy-value">{order.nftDescription}</div>
-        </div>
+        {order?.nftDescription && (
+          <div className="cds-cancel-modal-description">
+            <div className="candy-label">DESCRIPTION</div>
+            <div className="candy-value">{order.nftDescription}</div>
+          </div>
+        )}
         <div className="cds-cancel-modal-info">
           <div>
             <div className="candy-label">MINT ADDRESS</div>
@@ -73,11 +79,15 @@ export const CancelModalDetail = ({
               <ExplorerLink type="address" address={order.tokenMint} />
             </div>
           </div>
-          <div className="cds-cancel-modal-info-line" />
-          <div>
-            <div className="candy-label">TOKEN ID</div>
-            <div className="candy-value">{order.edition || 'N/A'}</div>
-          </div>
+          {order?.edition ? (
+            <>
+              <div className="cds-cancel-modal-info-line" />
+              <div>
+                <div className="candy-label">EDITION</div>
+                <div className="candy-value">{order?.edition}</div>
+              </div>
+            </>
+          ) : null}
           <div className="cds-cancel-modal-info-line" />
           <div>
             <div className="candy-label">CURRENT OWNER</div>
@@ -93,13 +103,13 @@ export const CancelModalDetail = ({
 
 const Statistic = styled.div`
   font-weight: 600;
+  font-size: 16px;
 `;
 
 const Container = styled.div`
   display: flex;
 
   .cds-cancel-modal {
-    font-family: Helvetica, Arial, sans-serif;
     font-weight: 500;
     font-size: 16px;
     line-height: 24px;
@@ -112,8 +122,7 @@ const Container = styled.div`
       img {
         max-width: 100%;
         max-height: 100%;
-        object-fit: cover;
-        border-radius: 14px;
+        object-fit: contain;
       }
 
       @media ${breakPoints.desktopS} {
@@ -142,12 +151,14 @@ const Container = styled.div`
     }
 
     &-title {
-      font-size: 32px;
+      text-align: left;
+      font-size: 24px;
       font-weight: 600;
     }
 
     &-control {
       display: flex;
+      text-align: left;
       justify-content: space-between;
       margin: 24px 0;
 
@@ -160,18 +171,31 @@ const Container = styled.div`
       margin-top: 24px;
       display: flex;
       gap: 32px;
+      text-align: left;
 
       &-line {
-        width: 2px;
+        width: 1px;
         background-color: #bdbdbd;
         align-self: stretch;
       }
+
+      .candy-value {
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+
+    &-description {
+      text-align: left;
+      font-size: 16px;
+      font-weight: 500;
     }
 
     &-button {
-      padding: 5px 100px;
-      border-radius: 100px;
+      padding: 8px 50px;
+      border-radius: 32px;
       height: unset;
+      font-size: 16px;
 
       @media ${breakPoints.tabletL} {
         padding: 4px 50px;

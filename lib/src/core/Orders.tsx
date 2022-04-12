@@ -149,7 +149,6 @@ export const Orders: React.FC<OrdersProps> = ({
 };
 
 const Wrap = styled.div`
-  font-family: Helvetica, Arial, sans-serif;
   width: 100%;
 `;
 
@@ -161,10 +160,10 @@ const FilterContainer = styled.div`
 const Flex = styled.div`
   display: flex;
   flex-flow: row wrap;
-  row-gap: 12px;
-  column-gap: 12px;
+  row-gap: 18px;
+  column-gap: 18px;
   > * {
-    width: calc((100% - 12px * 3) / 4);
+    width: calc((100% - 18px * 3) / 4);
   }
 
   @media ${breakPoints.tabletM} {

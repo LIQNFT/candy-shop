@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import IconTick from 'assets/IconTick';
 import React from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import imgDefault from '../../assets/img-default.png';
+import { LiqImage } from '../LiqImage';
 
 export interface CancelModalConfirmProps {
   order: OrderSchema;
@@ -20,10 +20,15 @@ export const CancelModalConfirm = ({
       </div>
       <div className="cds-cancel-modal-confirm-content">
         <div className="cds-cancel-modal-confirm-content-img">
-          <img src={order.nftImageLink || imgDefault} alt="" />
+          <LiqImage
+            src={order.nftImageLink || imgDefault}
+            alt="NFT Image"
+            style={{ borderTopRightRadius: 0, borderTopLeftRadius: 0 }}
+          />
         </div>
         <div className="cds-cancel-modal-confirm-content-text">
-          {order.name} is no longer listed for sale
+          <span style={{ fontWeight: 'bold' }}>{order.name}</span> is no longer
+          listed for sale
         </div>
       </div>
       <div className="cds-cancel-modal-confirm-success">
@@ -40,7 +45,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   max-width: 600px;
-  padding: 20px 80px;
+  padding: 20px;
 
   .cds-cancel-modal-confirm {
     &-content {
@@ -66,15 +71,17 @@ const Container = styled.div`
       &-text {
         align-self: flex-start;
         flex: 1;
-        font-weight: bold;
-        font-size: 26px;
-        line-height: 36px;
+        font-size: 24px;
+        line-height: 34px;
       }
     }
 
     &-success {
       width: 100%;
+
       .candy-button {
+        padding-top: 8px;
+        padding-bottom: 8px;
         width: 100%;
       }
     }

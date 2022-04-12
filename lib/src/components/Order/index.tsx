@@ -84,8 +84,11 @@ const OrderInfo = styled.div`
 const Name = styled.div`
   .name {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 14px;
     text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .ticker {
     font-size: 14px;
