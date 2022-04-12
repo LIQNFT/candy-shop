@@ -5,7 +5,8 @@ import { SingleTokenInfo, singleTokenInfoPromise } from './fetchMetadata';
 
 export const fetchNftsFromWallet = async (
   connection: anchor.web3.Connection,
-  walletAddress: anchor.web3.PublicKey
+  walletAddress: anchor.web3.PublicKey,
+  identifiers?: string[]
 ): Promise<SingleTokenInfo[]> => {
   const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
     walletAddress,
@@ -25,14 +26,16 @@ export const fetchNftsFromWallet = async (
         return false;
       })
       .map((acct) => acct.pubkey.toString()),
-    singleTokenInfoPromise
+    singleTokenInfoPromise,
+    identifiers
   );
 };
 
 const fetchDataArrayInBatches = async (
   connection: anchor.web3.Connection,
   array: any[],
-  singleItemAsyncCallback: any
+  singleItemAsyncCallback: any,
+  identifiers?: string[]
 ): Promise<SingleTokenInfo[]> => {
   const chunkSize = 20;
   const delayMs = 1000;
@@ -47,7 +50,7 @@ const fetchDataArrayInBatches = async (
     const tokenInfoBatch = (
       await Promise.all(
         batch.map((tokenAccountAddress) =>
-          singleItemAsyncCallback(connection, tokenAccountAddress)
+          singleItemAsyncCallback(connection, tokenAccountAddress, identifiers)
         )
       )
     ).filter((res) => res != null);

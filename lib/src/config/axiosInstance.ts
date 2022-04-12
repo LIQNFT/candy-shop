@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { web3 } from "@project-serum/anchor";
+import { web3 } from '@project-serum/anchor';
 
 const axiosInstance = axios.create({
   headers: {
@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
 
 export default axiosInstance;
 
-export const configBaseUrl = (env: web3.Cluster) => {
+export const configBaseUrl = (env: web3.Cluster): void => {
   axiosInstance.interceptors.request.use(
     (config: AxiosRequestConfig<any>) => {
       // Do something before request is sent

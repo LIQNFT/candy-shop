@@ -51,7 +51,8 @@ export const CancelModalDetail = ({
           <div>
             <div className="candy-label">SELLING PRICE</div>
             <Statistic>
-              {((order.price as any) / web3.LAMPORTS_PER_SOL || 0).toFixed(2)} SOL
+              {((order.price as any) / web3.LAMPORTS_PER_SOL || 0).toFixed(2)}{' '}
+              SOL
             </Statistic>
           </div>
           <button

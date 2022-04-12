@@ -1,5 +1,5 @@
 import { BN } from '@project-serum/anchor';
-import { web3 } from "@project-serum/anchor";
+import { web3 } from '@project-serum/anchor';
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
 import { CandyShop } from 'core/CandyShop';

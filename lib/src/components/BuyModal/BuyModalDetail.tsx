@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { web3 } from "@project-serum/anchor";
+import { web3 } from '@project-serum/anchor';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { Tag } from 'components/Tag';
 import { CandyShop } from 'core/CandyShop';

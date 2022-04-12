@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import React, { useMemo } from 'react';
-import { web3 } from "@project-serum/anchor";
+import { web3 } from '@project-serum/anchor';
 import IconTick from '../../assets/IconTick';
 import imgDefault from '../../assets/img-default.png';
 import { formatDate } from '../../utils/format';

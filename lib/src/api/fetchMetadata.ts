@@ -1,8 +1,9 @@
 import { getAccount, TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { web3 } from "@project-serum/anchor";
+import { web3 } from '@project-serum/anchor';
 import axios from 'axios';
 import { Metadata, parseEdition, parseMetadata } from '../utils/parseData';
 import { safeAwait } from '../utils/PromiseHelper';
+import * as crc32 from 'crc-32';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);
@@ -19,7 +20,8 @@ export type SingleTokenInfo = {
 
 export const singleTokenInfoPromise = async (
   connection: web3.Connection,
-  tokenAccountAddress: string
+  tokenAccountAddress: string,
+  identifiers?: string[]
 ): Promise<SingleTokenInfo | null> => {
   // Get account
   const token = await getAccount(
@@ -69,6 +71,9 @@ export const singleTokenInfoPromise = async (
     : undefined;
 
   if (tokenInfo) {
+    // collection check here
+    if (identifiers && !isValidCollection(identifiers, tokenInfo)) return null;
+
     return axios
       .get(tokenInfo.data.uri)
       .then((res) => {
@@ -97,3 +102,16 @@ export const singleTokenInfoPromise = async (
     return null;
   }
 };
+
+function isValidCollection(identifiers: string[], tokenInfo: Metadata) {
+  const creators = tokenInfo.data.creators?.map((creator) => ({
+    address: new web3.PublicKey(creator.address).toString(),
+    verified: creator.verified,
+    share: creator.share,
+  }));
+  const symbol = tokenInfo.data.symbol;
+
+  const str = symbol + JSON.stringify(creators);
+  const identifier = crc32.str(str).toString();
+  return identifiers.includes(identifier);
+}

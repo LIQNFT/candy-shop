@@ -9,7 +9,11 @@ export class Creator {
   verified: boolean;
   share: number;
 
-  constructor(args: { address: web3.PublicKey; verified: boolean; share: number }) {
+  constructor(args: {
+    address: web3.PublicKey;
+    verified: boolean;
+    share: number;
+  }) {
     this.address = args.address;
     this.verified = args.verified;
     this.share = args.share;

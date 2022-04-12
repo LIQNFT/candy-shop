@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { web3 } from "@project-serum/anchor";
+import { web3 } from '@project-serum/anchor';
 import { BuyModal } from 'components/BuyModal';
 import { LiqImage } from 'components/LiqImage';
 import { CandyShop } from 'core/CandyShop';
@@ -8,7 +8,7 @@ import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 
 export interface OrderProps {
   order: OrderSchema;
-  walletPublicKey: web3.PublicKey | undefined;
+  walletPublicKey?: web3.PublicKey;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
 }
