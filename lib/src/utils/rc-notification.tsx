@@ -12,7 +12,7 @@ export enum NotificationType {
 let notificationIns: any = null;
 Notification.newInstance(
   {
-    style: { top: 20, left: 'unset', right: 10 },
+    style: { top: 10, left: 'unset', right: 10 },
     prefixCls: 'cds-rc-notification',
   },
   (n) => {
@@ -41,20 +41,20 @@ export const notification = (content: string, type: string): void => {
 };
 
 const NotiContent = styled.div`
-  font-family: Helvetica, Arial, sans-serif;
-  padding: 7px 20px 7px 10px;
+  padding: 12px 20px 12px 10px;
   display: flex;
   margin: 10px 0;
 
-  border-radius: 10px;
+  border-radius: 8px;
   background-color: #fff;
+  color: black;
   border: 1px solid #000;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 
   .cds-right {
     .title {
-      font-size: 20px;
-      line-height: 1;
+      font-size: 18px;
+      line-height: 24px;
     }
     .desc {
       font-size: 14px;
@@ -63,7 +63,7 @@ const NotiContent = styled.div`
 
   .cds-left {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     margin-right: 10px;
 
     svg {

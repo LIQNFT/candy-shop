@@ -46,7 +46,7 @@ export const CandyShopContent: React.FC = () => {
       </div>
 
       <div>
-        <h1 style={{ textAlign: 'center' }}>Sell Your NFTs</h1>
+        <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Sell Your NFTs</h1>
         <Sell
           connection={connection}
           walletPublicKey={wallet?.publicKey}

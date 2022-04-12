@@ -7,8 +7,8 @@ import Processing from 'components/Processing';
 import { CandyShop } from 'core/CandyShop';
 import React, { useCallback, useState } from 'react';
 import { notification } from 'utils/rc-notification';
-import imgDefault from '../../assets/img-default.png';
 import { TransactionState } from '../../model';
+import { LiqImage } from '../LiqImage';
 
 import './style.less';
 
@@ -85,14 +85,18 @@ export const SellModal: React.FC<SellModalProps> = ({
             <div className="sell-modal-title">Sell</div>
             <div className="sell-modal-content">
               <div className="sell-modal-img">
-                <img src={nft?.nftImage || imgDefault} alt="nft image" />
+                <LiqImage
+                  src={nft?.nftImage}
+                  alt="NFT image"
+                  style={{ borderTopRightRadius: 0, borderTopLeftRadius: 0 }}
+                />
               </div>
               <div>
-                <div className="sell-modal-collection-name">
-                  {nft?.metadata?.data?.symbol}
-                </div>
                 <div className="sell-modal-nft-name">
                   {nft?.metadata?.data?.name}
+                </div>
+                <div className="sell-modal-symbol">
+                  {nft?.metadata?.data?.symbol}
                 </div>
               </div>
             </div>
@@ -100,7 +104,7 @@ export const SellModal: React.FC<SellModalProps> = ({
             <form>
               <InputNumber>
                 <input
-                  placeholder="0,000"
+                  placeholder="Price"
                   min={0}
                   onChange={onChangeInput}
                   type="number"
@@ -110,7 +114,7 @@ export const SellModal: React.FC<SellModalProps> = ({
               </InputNumber>
 
               <Row>
-                <div>Service Fees</div>
+                <div>Transaction Fees</div>
                 <div>1.0%</div>
               </Row>
 
@@ -134,10 +138,17 @@ export const SellModal: React.FC<SellModalProps> = ({
             </div>
             <div className="sell-modal-content">
               <div className="sell-modal-img">
-                <img src={nft?.nftImage || imgDefault} alt="" />
+                <LiqImage
+                  src={nft?.nftImage}
+                  alt="NFT image"
+                  style={{ borderTopRightRadius: 0, borderTopLeftRadius: 0 }}
+                />
               </div>
               <div className="sell-modal-listed">
-                {nft?.metadata?.data?.name} is now listed for sale
+                <span style={{ fontWeight: 'bold' }}>
+                  {nft?.metadata?.data?.name}
+                </span>{' '}
+                is now listed for sale
               </div>
             </div>
             <div className="sell-modal-hr"></div>
@@ -161,7 +172,7 @@ const InputNumber = styled.div`
   align-items: center;
 
   border-radius: 4px;
-  border: 2px solid gray;
+  border: 2px solid #bdbdbd;
 
   input {
     border: none;

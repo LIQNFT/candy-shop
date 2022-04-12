@@ -5,6 +5,7 @@ import IconTick from '../../assets/IconTick';
 import imgDefault from '../../assets/img-default.png';
 import { formatDate } from '../../utils/format';
 import { ExplorerLink } from '../ExplorerLink';
+import { LiqImage } from '../LiqImage';
 
 const BuyModalConfirmed = ({
   order,
@@ -25,16 +26,20 @@ const BuyModalConfirmed = ({
     <div className="buy-modal-confirmed">
       <div className="buy-modal-confirmed-header">
         <IconTick />
-        <div>Transaction confirmed</div>
+        <div>Transaction Confirmed</div>
       </div>
       <div className="buy-modal-confirmed-container">
         <div className="buy-modal-confirmed-thumbnail">
-          <img src={order?.nftImageLink || imgDefault} alt="" />
+          <LiqImage
+            src={order?.nftImageLink}
+            alt="NFT image"
+            style={{ borderTopRightRadius: 0, borderTopLeftRadius: 0 }}
+          />
         </div>
         <div className="buy-modal-confirmed-content">
           <div>
-            <div>{order?.ticker}</div>
-            <div className="buy-modal-price">{order?.name}</div>
+            <div className="buy-modal-name">{order?.name}</div>
+            <div className="buy-modal-ticker">{order?.ticker}</div>
           </div>
           <div>
             <div className="buy-modal-price">
@@ -64,7 +69,7 @@ const BuyModalConfirmed = ({
           </div>
         </Item>
         <Item>
-          <div className="candy-label">TRANSACTION CONFIRMED ON</div>
+          <div className="candy-label">CONFIRMED ON</div>
           <div className="candy-value">{formatDate(new Date())}</div>
         </Item>
       </Flex>
@@ -92,4 +97,6 @@ const Flex = styled.div`
   }
 `;
 
-const Item = styled.div``;
+const Item = styled.div`
+  text-align: left;
+`;

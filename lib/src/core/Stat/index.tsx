@@ -72,9 +72,7 @@ export const Stat = ({
   );
 };
 
-const Wrap = styled.div`
-  font-family: Helvetica, Arial, sans-serif;
-`;
+const Wrap = styled.div``;
 
 const Flex = styled.div`
   display: flex;
@@ -110,6 +108,7 @@ const Box1 = styled.div`
 
   .description {
     text-align: left;
+    margin-bottom: 15px;
   }
 `;
 
@@ -129,12 +128,12 @@ const Box2 = styled.div`
 
 const Item = styled.div`
   &:nth-of-type(2) {
-    border-left: 2px solid #e0e0e0;
-    border-right: 2px solid #e0e0e0;
+    border-left: 1px solid #bdbdbd;
+    border-right: 1px solid #bdbdbd;
   }
 
   .statistics {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
 
     @media ${breakPoints.tabletM} {

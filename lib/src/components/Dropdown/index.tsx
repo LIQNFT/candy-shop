@@ -112,8 +112,10 @@ const DropdownMenu = styled.div`
   .menu-middle-item {
     padding: 12px;
     border-bottom: 2px solid black;
+    text-align: left;
   }
   .menu-last-item {
     padding: 12px;
+    text-align: left;
   }
 `;

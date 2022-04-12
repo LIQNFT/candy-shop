@@ -31,7 +31,7 @@ export const Nft = ({ nft, candyShop, sellDetail }: NftProps): JSX.Element => {
       <Card onClick={onClick}>
         {isSellItem && <div className="vault-status-tag">Listed for Sale</div>}
 
-        <LiqImage alt={nft?.metadata?.data?.name} src={nft?.nftImage} />
+        <LiqImage src={nft?.nftImage} alt={nft?.metadata?.data?.name} />
         <div className="vault-list-item-body">
           <div className="vault-list-item-header">
             <CardName>
@@ -68,10 +68,16 @@ const Card = styled.div`
 const CardName = styled.div`
   vertical-align: middle;
   padding: 12px;
+  background-color: #fff;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
   .name {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 14px;
     text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .ticker {
     font-size: 14px;

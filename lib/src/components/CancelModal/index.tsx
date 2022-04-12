@@ -6,8 +6,6 @@ import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { CancelModalConfirm } from './CancelModalConfirm';
 import { CancelModalDetail } from './CancelModalDetail';
 
-// import './style.less';
-
 export interface CancelModalProps {
   order: OrderSchema;
   onClose: any;
@@ -38,7 +36,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
           onChangeStep={onChangeStep}
         />
       )}
-      {step === 1 && <Processing text="Processing Cancel..." />}
+      {step === 1 && <Processing text="Canceling your sale" />}
       {step === 2 && (
         <CancelModalConfirm order={order} onCancel={onCloseModal} />
       )}

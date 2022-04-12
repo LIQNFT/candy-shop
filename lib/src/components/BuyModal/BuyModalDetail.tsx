@@ -5,6 +5,7 @@ import { Tag } from 'components/Tag';
 import { CandyShop } from 'core/CandyShop';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { LiqImage } from '../LiqImage';
 
 export interface BuyModalDetailProps {
   order: OrderSchema;
@@ -47,20 +48,23 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
     <>
       <div>
         <div className="buy-modal-thumbnail">
-          <img src={order?.nftImageLink || ''} alt="" />
+          <LiqImage
+            src={order?.nftImageLink || ''}
+            alt="NFT image"
+            style={{ borderTopRightRadius: 0, borderTopLeftRadius: 0 }}
+          />
         </div>
         <div className="buy-modal-attributes">
           <AttributesContainer>
             {loadingNftInfo ? (
               <div className="candy-loading" />
-            ) : nftInfo?.attributes ? (
+            ) : (
+              nftInfo?.attributes &&
               nftInfo.attributes.map((attribute) => (
                 <TagWithMargin>
                   <Tag text={`${attribute.trait_type}: ${attribute.value}`} />
                 </TagWithMargin>
               ))
-            ) : (
-              <p>No attributes found</p>
             )}
           </AttributesContainer>
         </div>
@@ -80,10 +84,12 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
             </button>
           )}
         </div>
-        <div className="buy-modal-description">
-          <div className="candy-label">DESCRIPTION</div>
-          <div className="candy-value">{order?.nftDescription}</div>
-        </div>
+        {order?.nftDescription && (
+          <div className="buy-modal-description">
+            <div className="candy-label">DESCRIPTION</div>
+            <div className="candy-value">{order?.nftDescription}</div>
+          </div>
+        )}
         <div className="buy-modal-info">
           <div>
             <div className="candy-label">MINT ADDRESS</div>
