@@ -6,7 +6,7 @@ import { SingleTokenInfo, singleTokenInfoPromise } from './fetchMetadata';
 export const fetchNftsFromWallet = async (
   connection: anchor.web3.Connection,
   walletAddress: anchor.web3.PublicKey
-) => {
+): Promise<SingleTokenInfo[]> => {
   const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
     walletAddress,
     { programId: TOKEN_PROGRAM_ID }
