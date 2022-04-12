@@ -1,4 +1,4 @@
-import { web3 } from "@project-serum/anchor";
+import { web3 } from '@project-serum/anchor';
 import React from 'react';
 
 // shorten the checksummed version of the input address to have 4 characters at start and end
@@ -11,7 +11,7 @@ export const ExplorerLink = (props: {
   type: string;
   style?: React.CSSProperties;
   length?: number;
-}) => {
+}): JSX.Element | null => {
   const { type } = props;
 
   const address =
