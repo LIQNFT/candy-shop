@@ -2,6 +2,8 @@ import * as anchor from '@project-serum/anchor';
 import { Idl, Program, web3 } from '@project-serum/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
+  createAssociatedTokenAccountInstruction,
+  getAccount,
   TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
@@ -109,31 +111,56 @@ export async function buyAndExecuteSale(
     Buffer.from(metadataObj!.data)
   );
 
-  const remainingAccounts = [] as any;
+  const remainingAccounts = [] as Array<any>;
+  const ataAccountCreationTransaction = new web3.Transaction();
+  let ataAccountCreationRequired = false;
 
   if (metadataDecoded != null) {
     for (let i = 0; i < metadataDecoded!.data!.creators!.length; i++) {
+      const creatorPublicKey = new anchor.web3.PublicKey(
+        metadataDecoded!.data!.creators![i].address
+      );
       remainingAccounts.push({
-        pubkey: new anchor.web3.PublicKey(
-          metadataDecoded!.data!.creators![i].address
-        ),
+        pubkey: creatorPublicKey,
         isWritable: true,
         isSigner: false,
       });
 
       if (!isNative) {
-        remainingAccounts.push({
-          pubkey: (
-            await getAtaForMint(
-              treasuryMint,
-              new anchor.web3.PublicKey(
-                metadataDecoded!.data!.creators![i].address
-              )
+        const ataAddress = (
+          await getAtaForMint(
+            treasuryMint,
+            new anchor.web3.PublicKey(
+              metadataDecoded!.data!.creators![i].address
             )
-          )[0],
+          )
+        )[0];
+        remainingAccounts.push({
+          pubkey: ataAddress,
           isWritable: true,
           isSigner: false,
         });
+
+        const ataAccount = await getAccount(
+          program.provider.connection,
+          ataAddress
+        ).catch((err) => {
+          console.log('fetch ata error', err);
+          return null;
+        });
+        if (!ataAccount || !ataAccount.isInitialized) {
+          ataAccountCreationRequired = true;
+          ataAccountCreationTransaction.add(
+            createAssociatedTokenAccountInstruction(
+              wallet.publicKey,
+              ataAddress,
+              creatorPublicKey,
+              treasuryMint,
+              TOKEN_PROGRAM_ID,
+              ASSOCIATED_TOKEN_PROGRAM_ID
+            )
+          );
+        }
       }
     }
   }
@@ -184,23 +211,36 @@ export async function buyAndExecuteSale(
   transaction.add(ix);
   transaction.add(ix2);
 
-  // add recent blockhash
+  if (ataAccountCreationTransaction) {
+    const txHash1 = await sendTx(
+      wallet,
+      ataAccountCreationTransaction,
+      program
+    );
+    console.log('ataAccountCreationTransaction ', txHash1);
+  }
+
+  const txHash2 = await sendTx(wallet, transaction, program);
+  console.log('buyAndExecuteTransaction', txHash2);
+
+  console.log('sale executed');
+  return txHash2;
+}
+
+async function sendTx(
+  wallet: AnchorWallet,
+  transaction: web3.Transaction,
+  program: Program
+): Promise<string> {
   const recentBlockhash = await program.provider.connection.getLatestBlockhash(
     'finalized'
   );
   transaction.recentBlockhash = recentBlockhash.blockhash;
-
-  // add fee payer
   transaction.feePayer = wallet.publicKey;
-
   const signedTx = await wallet.signTransaction(transaction);
-
   const txHash = await awaitTransactionSignatureConfirmation(
     program.provider.connection,
     signedTx.serialize()
   );
-
-  console.log('sale executed');
-
   return txHash;
 }
