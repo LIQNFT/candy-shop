@@ -8,7 +8,7 @@ import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 
 export interface OrderProps {
   order: OrderSchema;
-  walletPublicKey: web3.PublicKey | undefined;
+  walletPublicKey?: web3.PublicKey;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
 }

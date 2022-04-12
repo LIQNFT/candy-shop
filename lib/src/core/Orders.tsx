@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
-import { web3 } from "@project-serum/anchor";
-import { fetchOrdersByStoreId, SortBy } from 'api/backend/OrderAPI';
+import { web3 } from '@project-serum/anchor';
+import { SortBy } from 'api/backend/OrderAPI';
+import { Dropdown } from 'components/Dropdown';
 import { Empty } from 'components/Empty';
 import { Order } from 'components/Order';
 import { Skeleton } from 'components/Skeleton';
-import { Dropdown } from 'components/Dropdown';
 import { breakPoints } from 'constant/breakPoints';
 import React, { useEffect, useState } from 'react';
 import { CandyShop } from './CandyShop';
@@ -41,9 +41,9 @@ const SORT_OPTIONS: { value: SortBy; label: string }[] = [
 ];
 
 interface OrdersProps {
-  walletPublicKey?: web3.PublicKey;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
+  walletPublicKey?: web3.PublicKey;
   style?: { [key: string]: string | number } | undefined;
 }
 
@@ -51,9 +51,9 @@ interface OrdersProps {
  * React component that displays a list of orders
  */
 export const Orders: React.FC<OrdersProps> = ({
-  walletPublicKey,
   candyShop,
   walletConnectComponent,
+  walletPublicKey,
   style,
 }) => {
   const [sortedByOption, setSortedByOption] = useState(SORT_OPTIONS[0]);
