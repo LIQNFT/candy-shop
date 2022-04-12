@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { web3 } from "@project-serum/anchor";
+import { web3 } from '@project-serum/anchor';
 import { fetchOrdersByStoreIdAndWalletAddress } from 'api/backend/OrderAPI';
 import { SingleTokenInfo } from 'api/fetchMetadata';
 import { fetchNftsFromWallet } from 'api/fetchNftsFromWallet';
@@ -32,26 +32,24 @@ export const Sell: React.FC<SellProps> = ({
   const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
   const [sellOrders, setSellOrders] = useState<OrderSchema[]>();
   const [isLoading, setIsLoading] = useState(false);
+  const candyShopAddress = candyShop.candyShopAddress.toString();
 
   useEffect(() => {
-    if (connection && walletPublicKey) {
-      (async () => {
-        if (!isLoading && nfts.length === 0) {
-          setIsLoading(true);
-          const [userNfts, sellOrders] = await Promise.all([
-            fetchNftsFromWallet(connection, walletPublicKey),
-            fetchOrdersByStoreIdAndWalletAddress(
-              candyShop.candyShopAddress.toString(),
-              walletPublicKey.toString()
-            ),
-          ]);
-          setNfts(userNfts);
-          setSellOrders(sellOrders);
-          setIsLoading(false);
-        }
-      })();
-    }
-  }, [connection, walletPublicKey, candyShop, isLoading, nfts]);
+    if (!connection || !walletPublicKey || !candyShopAddress) return;
+    (async () => {
+      setIsLoading(true);
+      const [userNfts, sellOrders] = await Promise.all([
+        fetchNftsFromWallet(connection, walletPublicKey),
+        fetchOrdersByStoreIdAndWalletAddress(
+          candyShopAddress,
+          walletPublicKey.toString()
+        ),
+      ]);
+      setNfts(userNfts);
+      setSellOrders(sellOrders);
+      setIsLoading(false);
+    })();
+  }, [candyShopAddress, walletPublicKey, connection]);
 
   const hashSellOrders: any = useMemo(() => {
     return (
