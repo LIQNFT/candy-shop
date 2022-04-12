@@ -36,25 +36,23 @@ export const Sell: React.FC<SellProps> = ({
   useEffect(() => {
     if (!connection || !walletPublicKey || !candyShop) return;
     (async () => {
-      if (!isLoading && nfts.length === 0) {
-        setIsLoading(true);
+      setIsLoading(true);
 
-        const [userNfts, sellOrders] = await Promise.all([
-          candyShop
-            .shopWlNfts()
-            .then((nfts) => nfts.result.map((item) => item.identifier))
-            .then((identifiers) =>
-              fetchNftsFromWallet(connection, walletPublicKey, identifiers)
-            ),
-          fetchOrdersByStoreIdAndWalletAddress(
-            candyShop.candyShopAddress.toString(),
-            walletPublicKey.toString()
+      const [userNfts, sellOrders] = await Promise.all([
+        candyShop
+          .shopWlNfts()
+          .then((nfts) => nfts.result.map((item) => item.identifier))
+          .then((identifiers: string[]) =>
+            fetchNftsFromWallet(connection, walletPublicKey, identifiers)
           ),
-        ]);
-        setNfts(userNfts);
-        setSellOrders(sellOrders);
-        setIsLoading(false);
-      }
+        fetchOrdersByStoreIdAndWalletAddress(
+          candyShop.candyShopAddress.toString(),
+          walletPublicKey.toString()
+        ),
+      ]);
+      setNfts(userNfts);
+      setSellOrders(sellOrders);
+      setIsLoading(false);
     })();
   }, [connection, walletPublicKey, candyShop]);
 
