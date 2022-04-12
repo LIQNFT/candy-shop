@@ -23,7 +23,7 @@ export const Order: React.FC<OrderProps> = ({
 
   const orderPrice = useMemo(() => {
     if (!order) return 0;
-    return (Number(order?.price) / web3.LAMPORTS_PER_SOL).toFixed(2);
+    return (Number(order?.price) / web3.LAMPORTS_PER_SOL).toFixed(3);
   }, [order]);
 
   const onClose = useCallback(() => {
