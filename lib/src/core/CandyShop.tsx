@@ -109,9 +109,7 @@ export class CandyShop {
     return this._programId;
   }
 
-  async orders(
-    ordersFilterQuery: OrdersFilterQuery
-  ): Promise<ListBase<Order>> {
+  async orders(ordersFilterQuery: OrdersFilterQuery): Promise<ListBase<Order>> {
     const { sortBy, offset, limit } = ordersFilterQuery;
     return fetchOrdersByStoreId(this._candyShopAddress.toString(), {
       sortBy,

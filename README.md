@@ -40,7 +40,7 @@ yarn add @liqnft/candy-shop
 
 ### Init CandyShop
 
-Create your Candy Shop [here](https://candy.liqnft.com/create-candy-shop).
+Create your Candy Shop [here](https://candy.liqnft.com/my-shop).
 
 Use code in the /example folder as reference to setup your Candy Shop.
 

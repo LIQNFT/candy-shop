@@ -8,10 +8,10 @@ export type SortBy = {
 };
 
 export type OrdersFilterQuery = {
-  sortBy?: SortBy,
-  offset?: number,
-  limit?: number
-}
+  sortBy?: SortBy;
+  offset?: number;
+  limit?: number;
+};
 
 export async function fetchOrdersByStoreId(
   storeId: string,
