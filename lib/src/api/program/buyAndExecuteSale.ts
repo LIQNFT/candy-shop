@@ -178,14 +178,18 @@ export async function buyAndExecuteSale(
     await getAtaForMint(tokenAccountMint, wallet.publicKey)
   )[0];
 
-  const tokenMintAtaIxs = await compileAtaCreationIxs(
-    wallet.publicKey,
-    [wallet.publicKey],
-    tokenAccountMint,
-    program
-  );
-  if (tokenMintAtaIxs) {
-    allAtaIxs.push(...tokenMintAtaIxs);
+  // for SOL as treausy shop we dont need this, as the ix has enough budget to complete execution
+  // but use for non-SOL as treasury shop to save the execution budget of executeSaleWithProxy
+  if (!isNative) {
+    const tokenMintAtaIxs = await compileAtaCreationIxs(
+      wallet.publicKey,
+      [wallet.publicKey],
+      tokenAccountMint,
+      program
+    );
+    if (tokenMintAtaIxs) {
+      allAtaIxs.push(...tokenMintAtaIxs);
+    }
   }
 
   const ix2 = await program.instruction.executeSaleWithProxy(
