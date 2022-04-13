@@ -8,6 +8,7 @@ import { Nft } from 'components/Nft';
 import { Skeleton } from 'components/Skeleton';
 import { breakPoints } from 'constant/breakPoints';
 import React, { useEffect, useMemo, useState } from 'react';
+import { useCallback } from 'react';
 import {
   Order as OrderSchema,
   WhitelistNft,
@@ -22,6 +23,12 @@ interface SellProps {
   style?: { [key: string]: string | number } | undefined;
 }
 
+enum LoadStatus {
+  ToLoad = 'ToLoad',
+  Loading = 'Loading',
+  Loaded = 'Loaded',
+}
+
 /**
  * React component that allows user to put an NFT for sale
  */
@@ -34,37 +41,55 @@ export const Sell: React.FC<SellProps> = ({
 }) => {
   const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
   const [sellOrders, setSellOrders] = useState<OrderSchema[]>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loadingStatus, setLoadingStatus] = useState<LoadStatus>(
+    LoadStatus.ToLoad
+  );
+
+  const fetchWalletNFTs = useCallback(
+    (walletPublicKey, connection) => {
+      setLoadingStatus(LoadStatus.Loading);
+      candyShop
+        .shopWlNfts()
+        .then((nfts) =>
+          nfts.result.reduce(
+            (arr: string[], item: WhitelistNft) => arr.concat(item.identifier),
+            []
+          )
+        )
+        .then((identifiers: string[]) =>
+          identifiers.length === 0
+            ? fetchNftsFromWallet(connection, walletPublicKey)
+            : fetchNftsFromWallet(connection, walletPublicKey, identifiers)
+        )
+        .then((userNFTs: SingleTokenInfo[]) => {
+          setNfts(userNFTs);
+        })
+        .finally(() => {
+          setLoadingStatus(LoadStatus.Loaded);
+        });
+    },
+    [walletPublicKey]
+  );
+
+  const fetchOrders = useCallback(
+    (walletPublicKey) => {
+      fetchOrdersByStoreIdAndWalletAddress(
+        candyShop.candyShopAddress.toString(),
+        walletPublicKey.toString()
+      ).then((sellOrders) => {
+        setSellOrders(sellOrders);
+      });
+    },
+    [walletPublicKey]
+  );
 
   useEffect(() => {
     if (!connection || !walletPublicKey || !candyShop) return;
-    (async () => {
-      setIsLoading(true);
 
-      const [userNfts, sellOrders] = await Promise.all([
-        candyShop
-          .shopWlNfts()
-          .then((nfts) =>
-            nfts.result.reduce(
-              (arr: string[], item: WhitelistNft) =>
-                arr.concat(item.identifier),
-              []
-            )
-          )
-          .then((identifiers: string[]) =>
-            identifiers.length === 0
-              ? fetchNftsFromWallet(connection, walletPublicKey)
-              : fetchNftsFromWallet(connection, walletPublicKey, identifiers)
-          ),
-        fetchOrdersByStoreIdAndWalletAddress(
-          candyShop.candyShopAddress.toString(),
-          walletPublicKey.toString()
-        ),
-      ]);
-      setNfts(userNfts);
-      setSellOrders(sellOrders);
-      setIsLoading(false);
-    })();
+    if (loadingStatus === LoadStatus.ToLoad) {
+      fetchWalletNFTs(walletPublicKey, connection);
+      fetchOrders(walletPublicKey);
+    }
   }, [connection, walletPublicKey, candyShop]);
 
   const hashSellOrders: any = useMemo(() => {
@@ -88,7 +113,7 @@ export const Sell: React.FC<SellProps> = ({
     <>
       <Wrap style={style}>
         <div className="cds-container">
-          {isLoading ? (
+          {loadingStatus !== LoadStatus.Loaded ? (
             <Flex>
               {Array(4)
                 .fill(0)
