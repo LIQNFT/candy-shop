@@ -109,15 +109,6 @@ export class CandyShop {
     return this._programId;
   }
 
-  async orders(ordersFilterQuery: OrdersFilterQuery): Promise<ListBase<Order>> {
-    const { sortBy, offset, limit } = ordersFilterQuery;
-    return fetchOrdersByStoreId(this._candyShopAddress.toString(), {
-      sortBy,
-      offset,
-      limit,
-    });
-  }
-
   public async buy(
     seller: web3.PublicKey,
     tokenAccount: web3.PublicKey,
@@ -261,6 +252,22 @@ export class CandyShop {
 
   public async nftInfo(mint: string): Promise<Nft> {
     return fetchNftByMint(mint);
+  }
+
+  async orders(
+    ordersFilterQuery: OrdersFilterQuery,
+    identifiers?: string[]
+  ): Promise<ListBase<Order>> {
+    const { sortBy, offset, limit } = ordersFilterQuery;
+    return fetchOrdersByStoreId(
+      this._candyShopAddress.toString(),
+      {
+        sortBy,
+        offset,
+        limit,
+      },
+      identifiers
+    );
   }
 
   public async activeOrdersByWalletAddress(
