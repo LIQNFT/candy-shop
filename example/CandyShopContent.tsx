@@ -1,9 +1,11 @@
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
-import { web3 } from "@project-serum/anchor";
+
+import { useWallet } from '@solana/wallet-adapter-react/lib/useWallet';
+import { web3 } from '@project-serum/anchor';
 import 'antd/dist/antd.min.css';
 import React from 'react';
-import { CandyShop, Orders, Sell, Stat } from '../lib/.';
+import { CandyShop, Orders, Sell, Stat, WhitelistCollection } from '../lib/.';
 import {
   CANDY_SHOP_PROGRAM_ID,
   CREATOR_ADDRESS,
@@ -13,6 +15,7 @@ import {
 export const CandyShopContent: React.FC = () => {
   const { connection } = useConnection();
   const wallet = useAnchorWallet();
+  const { signMessage } = useWallet();
 
   const candyShop = new CandyShop(
     new web3.PublicKey(CREATOR_ADDRESS),
@@ -37,6 +40,15 @@ export const CandyShopContent: React.FC = () => {
         }
       />
 
+      <div style={{ marginBottom: '50px' }}>
+        <h1 style={{ textAlign: 'center' }}>Whitelisted Collections</h1>
+        <WhitelistCollection
+          candyShop={candyShop}
+          walletPublicKey={wallet?.publicKey}
+          signMessage={signMessage}
+        />
+      </div>
+
       <div style={{ marginBottom: 50 }}>
         <Orders
           walletPublicKey={wallet?.publicKey}
@@ -46,7 +58,11 @@ export const CandyShopContent: React.FC = () => {
       </div>
 
       <div>
-        <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Sell Your NFTs</h1>
+        <h1
+          style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}
+        >
+          Sell Your NFTs
+        </h1>
         <Sell
           connection={connection}
           walletPublicKey={wallet?.publicKey}

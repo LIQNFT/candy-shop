@@ -1,7 +1,11 @@
 import { BN, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { fetchNftByMint } from 'api/backend/NftAPI';
-import { fetchShopWhitelistNftByShopId } from 'api/backend/ShopAPI';
+import {
+  addShopWhitelistNft,
+  fetchShopWhitelistNftByShopId,
+  deleteShopWhitelistNft,
+} from 'api/backend/ShopAPI';
 import { configBaseUrl } from 'config/axiosInstance';
 import {
   ListBase,
@@ -17,7 +21,6 @@ import {
   fetchOrdersByStoreId,
   fetchOrdersByStoreIdAndWalletAddress,
   OrdersFilterQuery,
-  SortBy,
 } from '../api/backend/OrderAPI';
 import { fetchStatsById } from '../api/backend/StatsAPI';
 import { fetchTradeById } from '../api/backend/TradeAPI';
@@ -281,6 +284,22 @@ export class CandyShop {
 
   public async shopWlNfts(): Promise<ListBase<WhitelistNft>> {
     return fetchShopWhitelistNftByShopId(this._candyShopAddress.toString());
+  }
+
+  public async addWhitelistToShop(body: {
+    signature: string;
+    message: string;
+    publicKey: string;
+  }): Promise<WhitelistNft> {
+    return addShopWhitelistNft(this._candyShopAddress.toString(), body);
+  }
+
+  public async deleteShopWhitelist(body: {
+    signature: string;
+    message: string;
+    publicKey: string;
+  }): Promise<WhitelistNft> {
+    return deleteShopWhitelistNft(this._candyShopAddress.toString(), body);
   }
 
   public async activeOrderByMintAddress(

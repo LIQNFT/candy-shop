@@ -21,3 +21,21 @@ export async function fetchShopWhitelistNftByShopId(
     .get<ListBase<WhitelistNft>>(`/shop/wlNfts/${shopId}`)
     .then((response) => response.data);
 }
+
+export async function addShopWhitelistNft(
+  shopId: string,
+  body: {
+    signature: string;
+    message: string;
+    publicKey: string;
+  }
+): Promise<WhitelistNft> {
+  return axiosInstance.post(`/wlNfts/${shopId}`, body);
+}
+
+export async function deleteShopWhitelistNft(
+  shopId: string,
+  body: { signature: string; message: string; publicKey: string }
+): Promise<WhitelistNft> {
+  return axiosInstance.delete(`/wlNfts/${shopId}`, { data: body });
+}
