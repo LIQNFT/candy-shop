@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import { BN, web3 } from '@project-serum/anchor';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { ExplorerLink } from 'components/ExplorerLink';
-import { breakPoints } from 'constant/breakPoints';
 import { CandyShop } from 'core/CandyShop';
+import { TransactionState } from 'model';
 import React from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import { notification } from 'utils/rc-notification';
+import { ErrorType, handleError } from 'utils/ErrorHandler';
 import { LiqImage } from '../LiqImage';
 import './style.less';
 
@@ -13,28 +14,30 @@ export interface CancelModalDetailProps {
   onCancel: any;
   candyShop: CandyShop;
   order: OrderSchema;
-  // eslint-disable-next-line no-unused-vars
-  onChangeStep: (...args: any) => void;
+  onChangeStep: (state: TransactionState) => void;
+  wallet: AnchorWallet;
 }
 
 export const CancelModalDetail = ({
   candyShop,
   order,
   onChangeStep,
+  wallet,
 }: CancelModalDetailProps): JSX.Element => {
   const cancel = async () => {
-    onChangeStep(1);
+    onChangeStep(TransactionState.PROCESSING);
     candyShop
       .cancel(
         new web3.PublicKey(order.tokenAccount),
         new web3.PublicKey(order.tokenMint),
-        new BN(order.price)
+        new BN(order.price),
+        wallet
       )
       .then(() => {
-        onChangeStep(2);
+        onChangeStep(TransactionState.CONFIRMED);
       })
       .catch(() => {
-        notification('Transaction failed. Please try again later.', 'error');
+        handleError(ErrorType.TransactionFailed);
       });
   };
 

@@ -1,11 +1,13 @@
 import { BN } from '@project-serum/anchor';
 import { web3 } from '@project-serum/anchor';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
 import { CandyShop } from 'core/CandyShop';
 import React, { useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import { notification } from 'utils/rc-notification';
+import { ErrorMsgMap, ErrorType, handleError } from 'utils/ErrorHandler';
+import { notification, NotificationType } from 'utils/rc-notification';
 import { TransactionState } from '../../model';
 import BuyModalConfirmed from './BuyModalConfirmed';
 import BuyModalDetail from './BuyModalDetail';
@@ -14,7 +16,7 @@ import './style.less';
 export interface BuyModalProps {
   order: OrderSchema;
   onClose: any;
-  walletPublicKey: web3.PublicKey | undefined;
+  wallet: AnchorWallet | undefined;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
 }
@@ -22,53 +24,68 @@ export interface BuyModalProps {
 export const BuyModal: React.FC<BuyModalProps> = ({
   order,
   onClose,
-  walletPublicKey,
+  wallet,
   candyShop,
   walletConnectComponent,
 }) => {
-  const [step, setStep] = useState(TransactionState.DISPLAY);
+  const [state, setState] = useState<TransactionState>(
+    TransactionState.DISPLAY
+  );
 
   const [hash, setHash] = useState(''); // txHash
 
   const buy = async () => {
-    setStep(TransactionState.PROCESSING);
+    if (!wallet) {
+      notification(
+        ErrorMsgMap[ErrorType.InvalidWallet],
+        NotificationType.Error
+      );
+      return;
+    }
+    setState(TransactionState.PROCESSING);
     return candyShop
       .buy(
         new web3.PublicKey(order.walletAddress),
         new web3.PublicKey(order.tokenAccount),
         new web3.PublicKey(order.tokenMint),
-        new BN(order.price)
+        new BN(order.price),
+        wallet
       )
       .then((txHash) => {
         setHash(txHash);
         console.log('Buy order made with transaction hash', txHash);
 
-        setStep(TransactionState.CONFIRMED);
+        setState(TransactionState.CONFIRMED);
       })
       .catch((err) => {
         console.log({ err });
-        notification('Transaction failed. Please try again later.', 'error');
-        setStep(TransactionState.DISPLAY);
+        handleError(ErrorType.TransactionFailed);
+        setState(TransactionState.DISPLAY);
       });
   };
 
   return (
     <>
-      <Modal onCancel={onClose} width={step !== 0 ? 600 : 1000}>
+      <Modal
+        onCancel={onClose}
+        width={state !== TransactionState.DISPLAY ? 600 : 1000}
+      >
         <div className="buy-modal">
-          {step === 0 && (
+          {state === TransactionState.DISPLAY && (
             <BuyModalDetail
               order={order}
               buy={buy}
-              walletPublicKey={walletPublicKey}
+              walletPublicKey={wallet?.publicKey}
               walletConnectComponent={walletConnectComponent}
               candyShop={candyShop}
             />
           )}
-          {step === 1 && <Processing text="Processing purchase" />}
-          {step === 2 && (
+          {state === TransactionState.PROCESSING && (
+            <Processing text="Processing purchase" />
+          )}
+          {state === TransactionState.CONFIRMED && wallet && (
             <BuyModalConfirmed
-              walletPublicKey={walletPublicKey}
+              walletPublicKey={wallet.publicKey}
               order={order}
               txHash={hash}
             />

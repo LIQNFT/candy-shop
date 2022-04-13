@@ -3,7 +3,7 @@ import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { web3 } from "@project-serum/anchor";
 import 'antd/dist/antd.min.css';
 import React from 'react';
-import { CandyShop, Orders, Sell, Stat, OrderDetail } from '../lib/.';
+import { CandyShop, Orders, Stat, OrderDetail, Sell } from '../lib/';
 import {
   CANDY_SHOP_PROGRAM_ID,
   CREATOR_ADDRESS,
@@ -13,13 +13,13 @@ import {
 export const CandyShopContent: React.FC = () => {
   const { connection } = useConnection();
   const wallet = useAnchorWallet();
+  const env: web3.Cluster = 'devnet';
 
   const candyShop = new CandyShop(
     new web3.PublicKey(CREATOR_ADDRESS),
     new web3.PublicKey(TREASURY_MINT),
     new web3.PublicKey(CANDY_SHOP_PROGRAM_ID),
-    'devnet',
-    wallet!
+    env
   );
 
   return (
@@ -40,7 +40,7 @@ export const CandyShopContent: React.FC = () => {
 
       <div >
         <Orders
-          walletPublicKey={wallet?.publicKey}
+          wallet={wallet}
           candyShop={candyShop}
           walletConnectComponent={<WalletMultiButton />}
         />
@@ -52,13 +52,13 @@ export const CandyShopContent: React.FC = () => {
         backUrl={'/'}
         candyShop={candyShop}
         walletConnectComponent={<WalletMultiButton />}
-        walletPublicKey={wallet?.publicKey}
+        wallet={wallet}
       />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Sell</h1>
       <Sell
         connection={connection}
-        walletPublicKey={wallet?.publicKey}
+        wallet={wallet}
         candyShop={candyShop}
         walletConnectComponent={<WalletMultiButton />}
       />

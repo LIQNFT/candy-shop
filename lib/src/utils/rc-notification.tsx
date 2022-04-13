@@ -20,17 +20,21 @@ Notification.newInstance(
   }
 );
 
-export const notification = (content: string, type: string): void => {
+export const notification = (content: string, type: NotificationType): void => {
   notificationIns.notice({
     content: (
       <NotiContent>
         <div className="candy-left">
-          {type === 'success' && <IconSuccess />}
-          {type === 'error' && <IconError />}
+          {type === NotificationType.Success && <IconSuccess />}
+          {type === NotificationType.Error && <IconError />}
         </div>
         <div className="candy-right">
-          {type === 'success' && <div className="title">Success</div>}
-          {type === 'error' && <div className="title">Error</div>}
+          {type === NotificationType.Success && (
+            <div className="title">Success</div>
+          )}
+          {type === NotificationType.Error && (
+            <div className="title">Error</div>
+          )}
           <div className="desc">{content}</div>
         </div>
       </NotiContent>
