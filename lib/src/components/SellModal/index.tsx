@@ -87,8 +87,8 @@ export const SellModal: React.FC<SellModalProps> = ({
               <div className="sell-modal-img">
                 <LiqImage
                   src={nft?.nftImage}
-                  alt="NFT image"
-                  style={{ borderTopRightRadius: 0, borderTopLeftRadius: 0 }}
+                  alt={nft?.metadata?.data?.name}
+                  fit="contain"
                 />
               </div>
               <div>
@@ -138,11 +138,7 @@ export const SellModal: React.FC<SellModalProps> = ({
             </div>
             <div className="sell-modal-content">
               <div className="sell-modal-img">
-                <LiqImage
-                  src={nft?.nftImage}
-                  alt="NFT image"
-                  style={{ borderTopRightRadius: 0, borderTopLeftRadius: 0 }}
-                />
+                <LiqImage src={nft?.nftImage} alt="NFT image" fit="contain" />
               </div>
               <div className="sell-modal-listed">
                 <span style={{ fontWeight: 'bold' }}>

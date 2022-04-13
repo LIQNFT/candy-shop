@@ -20,19 +20,19 @@ const Modal: React.FC<ModalProps> = ({
   return (
     <Container
       width={width}
-      className="cds-modal-mask"
+      className="candy-modal-mask"
       onClick={() => {
         onCancel();
       }}
     >
       <div
-        className="cds-modal-content"
+        className="candy-modal-content"
         onClick={(e) => {
           e.stopPropagation();
         }}
       >
         <Close onClick={onCancel}>
-          <div className="cds-close" />
+          <div className="candy-close" />
         </Close>
         {children}
       </div>
@@ -54,7 +54,7 @@ const Container = styled.div<{
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.45);
 
-  .cds-modal-content {
+  .candy-modal-content {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -81,7 +81,7 @@ const Close = styled.div`
   width: 50px;
   height: 50px;
 
-  .cds-close {
+  .candy-close {
     position: absolute;
     top: 50%;
     left: 50%;

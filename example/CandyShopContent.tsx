@@ -3,7 +3,7 @@ import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { web3 } from "@project-serum/anchor";
 import 'antd/dist/antd.min.css';
 import React from 'react';
-import { CandyShop, Orders, Sell, Stat } from '../lib/.';
+import { CandyShop, Orders, Sell, Stat, OrderDetail } from '../lib/.';
 import {
   CANDY_SHOP_PROGRAM_ID,
   CREATOR_ADDRESS,
@@ -23,21 +23,22 @@ export const CandyShopContent: React.FC = () => {
   );
 
   return (
-    <div style={{ paddingBottom: 50 }}>
+    <div style={{ paddingBottom: 50, textAlign: 'center' }}>
       <div style={{ textAlign: 'center', paddingBottom: 30 }}>
         <WalletMultiButton />
       </div>
 
-      <Stat
-        style={{ marginBottom: 50 }}
-        candyShop={candyShop}
-        title={'Marketplace'}
-        description={
-          'Candy Shop is an open source on-chain protocol that empowers DAOs, NFT projects and anyone interested in creating an NFT marketplace to do so within minutes!'
-        }
-      />
-
       <div style={{ marginBottom: 50 }}>
+        <Stat
+          candyShop={candyShop}
+          title={'Marketplace'}
+          description={
+            'Candy Shop is an open source on-chain protocol that empowers DAOs, NFT projects and anyone interested in creating an NFT marketplace to do so within minutes!'
+          }
+        />
+      </div>
+
+      <div >
         <Orders
           walletPublicKey={wallet?.publicKey}
           candyShop={candyShop}
@@ -45,15 +46,22 @@ export const CandyShopContent: React.FC = () => {
         />
       </div>
 
-      <div>
-        <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Sell Your NFTs</h1>
-        <Sell
-          connection={connection}
-          walletPublicKey={wallet?.publicKey}
-          candyShop={candyShop}
-          walletConnectComponent={<WalletMultiButton />}
-        />
-      </div>
+      <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Order Detail</h1>
+      <OrderDetail
+        tokenMint={'WfL9fAggBMHmjvBEu1v53fQkRmB3Cn4giJSSQxVSC5W'}
+        backUrl={'/'}
+        candyShop={candyShop}
+        walletConnectComponent={<WalletMultiButton />}
+        walletPublicKey={wallet?.publicKey}
+      />
+
+      <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Sell</h1>
+      <Sell
+        connection={connection}
+        walletPublicKey={wallet?.publicKey}
+        candyShop={candyShop}
+        walletConnectComponent={<WalletMultiButton />}
+      />
     </div>
   );
 };

@@ -1,8 +1,6 @@
 .buy-modal {
   display: flex;
   gap: 24px;
-
-  font-weight: 500;
   font-size: 16px;
   line-height: 24px;
 
@@ -16,11 +14,6 @@
       max-height: 100%;
       object-fit: contain;
     }
-  }
-
-  .buy-modal-attributes {
-    margin-top: 8px;
-    width: 340px;
   }
 
   .buy-modal-container {
@@ -39,7 +32,7 @@
       text-align: left;
       justify-content: space-between;
       align-items: center;
-      margin: 24px 0 32px;
+      margin: 20px 0 25px;
 
       .buy-modal-button {
         padding: 8px 50px;
@@ -53,29 +46,6 @@
           margin-right: 10px;
         }
       }
-    }
-
-    .buy-modal-description {
-      text-align: left;
-      margin-bottom: 24px;
-    }
-  }
-
-  .buy-modal-info {
-    display: flex;
-    gap: 32px;
-    text-align: left;
-
-    .buy-modal-info-line {
-      width: 1px;
-      background-color: #bdbdbd;
-      align-self: stretch;
-    }
-
-    .buy-modal-info-value {
-      font-weight: 500;
-      font-size: 16px;
-      line-height: 24px;
     }
   }
 
@@ -148,15 +118,5 @@
       text-align: center;
       margin-top: 40px;
     }
-  }
-}
-
-@keyframes buyModalLoading {
-  0% {
-    transform: rotate(0);
-  }
-
-  100% {
-    transform: rotate(360deg);
   }
 }

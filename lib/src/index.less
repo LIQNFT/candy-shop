@@ -15,7 +15,7 @@
 @font-size-base: 16px;
 @font-size-sm: 14px;
 
-@mobile: ~'only screen and (max-width: 576px)';
+@mobile: ~'only screen and (max-width: 600px)';
 @widescreen: ~'only screen and (min-width: 1600px)';
 
 *,
@@ -26,18 +26,18 @@
   box-sizing: border-box;
 }
 
-.cds-container {
+.candy-container {
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
 
-  @media only screen and (max-width: 600px) {
-    padding-left: 16px;
-    padding-right: 16px;
+  @media @mobile {
+    padding-left: 15px;
+    padding-right: 15px;
   }
 }
 
-.cds-line-limit-1 {
+.candy-line-limit-1 {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
@@ -46,43 +46,10 @@
   word-break: break-word;
 }
 
-// old style
-.candy-shop-list {
-  max-width: 1200px;
-  margin: 0 auto;
-
-  @media @mobile {
-    padding-left: 15px;
-    padding-right: 15px;
-  }
-}
-
-.candy-shop-modal {
-  max-width: 90vw;
-  background: #ffffff;
-  border: 1px solid #000000;
-  box-sizing: border-box;
-  border-radius: 16px;
-  padding: 0;
-
-  .ant-modal-content {
-    border-radius: 16px;
-  }
-
-  .ant-modal-body {
-    padding: 20px;
-    display: flex;
-    border-radius: 16px;
-  }
-}
-
-.candy-container {
-  width: 100%;
-}
-
 .candy-button {
   background: @primary-color;
   border-radius: 20px;
+  font-size: 16px;
   padding: 6px 16px;
   color: #ffffff;
   border: 2px solid transparent;
@@ -97,14 +64,6 @@
   }
 }
 
-.candy-title {
-  font-weight: bold;
-  font-size: 26px;
-  line-height: 36px;
-  margin-bottom: 42px;
-  text-align: center;
-}
-
 .candy-label {
   font-weight: 600;
   font-size: 12px;
@@ -112,75 +71,67 @@
   color: @gray-medium;
   margin: 0;
   margin-bottom: 4px;
+  text-align: left;
 }
 
 .candy-value {
   color: black;
+  font-size: 16px;
+  font-weight: 400;
+  text-align: left;
+
+  a {
+    color: @primary-color;
+  }
 }
 
-.candy-form {
-  .candy-button {
-    width: 100%;
-    margin-top: 40px;
+.candy-stat {
+  margin-bottom: 20px;
+}
+
+.candy-title {
+  font-size: 24px;
+  line-height: 34px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.candy-price {
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 30px;
+  text-align: left;
+}
+
+.candy-stat-horizontal {
+  display: flex;
+  margin-bottom: 20px;
+  gap: 32px;
+
+  .candy-stat-horizontal-line {
+    width: 1px;
+    background-color: @gray-light;
+    align-self: stretch;
   }
 
-  .ant-form-item-required {
-    &::before {
-      display: none !important;
-    }
+  .candy-stat-horizontal-value {
+    font-size: 16px;
+    line-height: 24px;
   }
+}
 
-  .ant-input-affix-wrapper,
-  .ant-picker-range {
-    width: 100%;
-    border: 2px solid #e0e0e0 !important;
-    box-sizing: border-box;
-    border-radius: 4px;
-    padding: 16px;
-    box-shadow: none !important;
-  }
+.candy-attribute-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 6px;
 
-  .ant-input-number-group-wrapper {
-    width: 100%;
-
-    .ant-input-number-wrapper {
-      width: 100%;
-      box-sizing: border-box;
-      border-radius: 4px 0 0 4px;
-      padding: 16px;
-      border: 2px solid #e0e0e0;
-
-      .ant-input-number {
-        box-shadow: none;
-        border: none;
-      }
-
-      input {
-        padding: 0;
-      }
-
-      .ant-input-number-handler-wrap {
-        display: none;
-      }
-
-      .ant-input-number-group-addon {
-        border-left: 0;
-        border: none;
-        padding: 0;
-        background-color: transparent;
-      }
-    }
-  }
-
-  .ant-input-affix-wrapper {
-    input[type='number'] {
-      -moz-appearance: textfield;
-    }
-
-    input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-    }
+  .candy-nft-attribute {
+    padding: 4px 12px;
+    background-color: @gray-light;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-right: 6px;
+    margin-bottom: 6px;
   }
 }
 
@@ -409,6 +360,11 @@
   z-index: 1;
   margin-bottom: 24px;
 
+  &.candy-loading-sm {
+    width: 18px;
+    height: 18px;
+  }
+
   &:after {
     content: '';
     position: absolute;
@@ -438,7 +394,17 @@
       rgba(117, 34, 245, 0) 0.04deg,
       #7522f5 360deg
     );
-    animation: buyModalLoading 2s linear infinite;
+    animation: spin 2s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(360deg);
   }
 }
 
@@ -446,15 +412,8 @@
   color: #ff0000;
 }
 
-.rc-notification {
-  right: 20px;
-  left: unset !important;
-}
-
-// NOTIFICATION
-@notificationPrefixCls: cds-rc-notification;
-
-.@{notificationPrefixCls} {
+// Notification
+.candy-notification {
   position: fixed;
   z-index: 1010;
 

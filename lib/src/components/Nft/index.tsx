@@ -31,7 +31,12 @@ export const Nft = ({ nft, candyShop, sellDetail }: NftProps): JSX.Element => {
       <Card onClick={onClick}>
         {isSellItem && <div className="vault-status-tag">Listed for Sale</div>}
 
-        <LiqImage src={nft?.nftImage} alt={nft?.metadata?.data?.name} />
+        <LiqImage
+          src={nft?.nftImage}
+          alt={nft?.metadata?.data?.name}
+          fit="cover"
+          style={{ borderTopRightRadius: 14, borderTopLeftRadius: 14 }}
+        />
         <div className="vault-list-item-body">
           <div className="vault-list-item-header">
             <CardName>

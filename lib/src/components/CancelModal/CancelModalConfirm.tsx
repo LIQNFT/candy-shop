@@ -14,24 +14,20 @@ export const CancelModalConfirm = ({
   onCancel,
 }: CancelModalConfirmProps): JSX.Element => {
   return (
-    <Container className="candy-container">
-      <div className="candy-title">
+    <Container>
+      <div className="candy-cancel-modal-confirm-title">
         <IconTick />
       </div>
-      <div className="cds-cancel-modal-confirm-content">
-        <div className="cds-cancel-modal-confirm-content-img">
-          <LiqImage
-            src={order.nftImageLink}
-            alt="NFT Image"
-            style={{ borderTopRightRadius: 0, borderTopLeftRadius: 0 }}
-          />
+      <div className="candy-cancel-modal-confirm-content">
+        <div className="candy-cancel-modal-confirm-content-img">
+          <LiqImage src={order.nftImageLink} alt={order.name} fit="contain" />
         </div>
-        <div className="cds-cancel-modal-confirm-content-text">
+        <div className="candy-cancel-modal-confirm-content-text">
           <span style={{ fontWeight: 'bold' }}>{order.name}</span> is no longer
           listed for sale
         </div>
       </div>
-      <div className="cds-cancel-modal-confirm-success">
+      <div className="candy-cancel-modal-confirm-success">
         <button className="candy-button" onClick={onCancel}>
           Continue Browsing
         </button>
@@ -46,8 +42,23 @@ const Container = styled.div`
   align-items: center;
   max-width: 600px;
   padding: 20px;
+  margin-left: auto;
+  margin-right: auto;
 
-  .cds-cancel-modal-confirm {
+  @media only screen and (max-width: 600px) {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .candy-cancel-modal-confirm {
+    &-title {
+      font-weight: bold;
+      font-size: 26px;
+      line-height: 36px;
+      margin-bottom: 42px;
+      text-align: center;
+    }
+
     &-content {
       display: flex;
       align-items: center;

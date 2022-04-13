@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { web3 } from '@project-serum/anchor';
 import { ExplorerLink } from 'components/ExplorerLink';
-import { Tag } from 'components/Tag';
+import { NftAttributes } from 'components/NftAttributes';
 import { CandyShop } from 'core/CandyShop';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
@@ -50,31 +50,17 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
         <div className="buy-modal-thumbnail">
           <LiqImage
             src={order?.nftImageLink || ''}
-            alt="NFT image"
-            style={{ borderTopRightRadius: 0, borderTopLeftRadius: 0 }}
+            alt={order?.name}
+            fit="contain"
           />
-        </div>
-        <div className="buy-modal-attributes">
-          <AttributesContainer>
-            {loadingNftInfo ? (
-              <div className="candy-loading" />
-            ) : (
-              nftInfo?.attributes &&
-              nftInfo.attributes.map((attribute) => (
-                <TagWithMargin>
-                  <Tag text={`${attribute.trait_type}: ${attribute.value}`} />
-                </TagWithMargin>
-              ))
-            )}
-          </AttributesContainer>
         </div>
       </div>
       <div className="buy-modal-container">
-        <div className="buy-modal-title">{order?.name}</div>
+        <div className="candy-title">{order?.name}</div>
         <div className="buy-modal-control">
           <div>
             <div className="candy-label">PRICE</div>
-            <Price>{orderPrice} SOL</Price>
+            <div className="candy-price">{orderPrice} SOL</div>
           </div>
           {!walletPublicKey ? (
             walletConnectComponent
@@ -84,27 +70,27 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
             </button>
           )}
         </div>
-        {order?.nftDescription && (
-          <div className="buy-modal-description">
+        {order.nftDescription && (
+          <div className="candy-stat">
             <div className="candy-label">DESCRIPTION</div>
             <div className="candy-value">{order?.nftDescription}</div>
           </div>
         )}
-        <div className="buy-modal-info">
+        <div className="candy-stat-horizontal">
           <div>
             <div className="candy-label">MINT ADDRESS</div>
             <div className="candy-value">
               <ExplorerLink type="address" address={order?.tokenMint} />
             </div>
           </div>
-          <div className="buy-modal-info-line" />
+          <div className="candy-stat-horizontal-line" />
           {order?.edition ? (
             <>
               <div>
                 <div className="candy-label">EDITION</div>
                 <div className="candy-value">{order?.edition}</div>
               </div>
-              <div className="buy-modal-info-line" />
+              <div className="candy-stat-horizontal-line" />
             </>
           ) : null}
           <div>
@@ -114,25 +100,13 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
             </div>
           </div>
         </div>
+        <NftAttributes
+          loading={loadingNftInfo}
+          attributes={nftInfo?.attributes}
+        />
       </div>
     </>
   );
 };
 
 export default BuyModalDetail;
-
-const Price = styled.div`
-  font-size: 16px;
-  font-weight: bold;
-`;
-
-const AttributesContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-`;
-
-const TagWithMargin = styled.div`
-  margin-right: 8px;
-  margin-bottom: 4px;
-`;
