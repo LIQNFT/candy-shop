@@ -7,8 +7,7 @@ import { Empty } from 'components/Empty';
 import { Nft } from 'components/Nft';
 import { Skeleton } from 'components/Skeleton';
 import { breakPoints } from 'constant/breakPoints';
-import React, { useEffect, useMemo, useState } from 'react';
-import { useCallback } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import {
   Order as OrderSchema,
   WhitelistNft,
@@ -68,7 +67,7 @@ export const Sell: React.FC<SellProps> = ({
           setLoadingStatus(LoadStatus.Loaded);
         });
     },
-    [walletPublicKey]
+    [walletPublicKey, candyShop]
   );
 
   const fetchOrders = useCallback(
@@ -80,12 +79,13 @@ export const Sell: React.FC<SellProps> = ({
         setSellOrders(sellOrders);
       });
     },
-    [walletPublicKey]
+    [walletPublicKey, candyShop]
   );
 
   useEffect(() => {
     if (!connection || !walletPublicKey || !candyShop) return;
 
+    console.log({ loadingStatus });
     if (loadingStatus === LoadStatus.ToLoad) {
       fetchWalletNFTs(walletPublicKey, connection);
       fetchOrders(walletPublicKey);

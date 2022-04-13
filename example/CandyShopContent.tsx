@@ -1,8 +1,8 @@
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
-import { web3 } from "@project-serum/anchor";
+import { web3 } from '@project-serum/anchor';
 import 'antd/dist/antd.min.css';
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { CandyShop, Orders, Sell, Stat } from '../lib/.';
 import {
   CANDY_SHOP_PROGRAM_ID,
@@ -11,16 +11,34 @@ import {
 } from './constant/publicKey';
 
 export const CandyShopContent: React.FC = () => {
+  const [candyShop, setCandyShop] = useState<CandyShop | null>(null);
   const { connection } = useConnection();
   const wallet = useAnchorWallet();
 
-  const candyShop = new CandyShop(
-    new web3.PublicKey(CREATOR_ADDRESS),
-    new web3.PublicKey(TREASURY_MINT),
-    new web3.PublicKey(CANDY_SHOP_PROGRAM_ID),
-    'devnet',
-    wallet!
-  );
+  useEffect(() => {
+    if (!wallet) return;
+
+    console.log('CREATE CANDYSHOP INSTANCE');
+    // anchorWallet re-render 2 time with different value
+    // we use timeout to accept only latest candyShop instance
+    const timeout = setTimeout(
+      () =>
+        setCandyShop(
+          new CandyShop(
+            new web3.PublicKey(CREATOR_ADDRESS),
+            new web3.PublicKey(TREASURY_MINT),
+            new web3.PublicKey(CANDY_SHOP_PROGRAM_ID),
+            'devnet',
+            wallet
+          )
+        ),
+      100
+    );
+
+    return () => clearTimeout(timeout);
+  }, [wallet]);
+
+  if (!candyShop) return null;
 
   return (
     <div style={{ paddingBottom: 50 }}>
