@@ -28,7 +28,8 @@ export const LiqImage: React.FC<LiqImageProps> = ({ src, alt, style = {} }) => {
     borderTopRightRadius: '14px',
     height: width,
     overflow: 'hidden',
-  };
+  } as React.CSSProperties;
+
   let combinedStyle = { ...baseStyle, ...style };
 
   const onElementResize = () =>

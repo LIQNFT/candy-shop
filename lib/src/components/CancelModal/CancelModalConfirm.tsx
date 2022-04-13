@@ -21,7 +21,7 @@ export const CancelModalConfirm = ({
       <div className="cds-cancel-modal-confirm-content">
         <div className="cds-cancel-modal-confirm-content-img">
           <LiqImage
-            src={order.nftImageLink || imgDefault}
+            src={order.nftImageLink}
             alt="NFT Image"
             style={{ borderTopRightRadius: 0, borderTopLeftRadius: 0 }}
           />
