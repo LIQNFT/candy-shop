@@ -11,6 +11,7 @@ export interface OrderProps {
   walletPublicKey?: web3.PublicKey;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
+  url?: string;
 }
 
 export const Order: React.FC<OrderProps> = ({
@@ -18,6 +19,7 @@ export const Order: React.FC<OrderProps> = ({
   walletPublicKey,
   candyShop,
   walletConnectComponent,
+  url,
 }) => {
   const [selection, setSelection] = useState<OrderSchema | null>(null);
 
@@ -31,21 +33,30 @@ export const Order: React.FC<OrderProps> = ({
   }, []);
 
   const onClick = useCallback(() => {
-    setSelection(order);
+    if (url) {
+      window.location.href = url.replace(':tokenMint', order.tokenMint);
+    } else {
+      setSelection(order);
+    }
   }, [order]);
 
   return (
     <>
       <Wrap onClick={onClick}>
-        <LiqImage alt={order?.name} src={order?.nftImageLink} />
+        <LiqImage
+          alt={order?.name}
+          src={order?.nftImageLink}
+          fit="cover"
+          style={{ borderTopRightRadius: 14, borderTopLeftRadius: 14 }}
+        />
         <OrderInfo>
           <Name>
             <div className="name">{order?.name}</div>
-            <div className="ticker cds-line-limit-1">{order?.ticker}</div>
+            <div className="ticker candy-line-limit-1">{order?.ticker}</div>
           </Name>
           <Price>
             <div className="text">Price</div>
-            <div className="price cds-line-limit-1">{orderPrice} SOL</div>
+            <div className="price candy-line-limit-1">{orderPrice} SOL</div>
           </Price>
         </OrderInfo>
       </Wrap>

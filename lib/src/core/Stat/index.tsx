@@ -44,26 +44,28 @@ export const Stat = ({
 
   return (
     <Wrap style={style}>
-      <div className="cds-container">
+      <div className="candy-container">
         <Flex>
           <Box1>
-            <div className="title">{title}</div>
-            <div className="description">{description}</div>
+            <div className="candy-stat-component-title">{title}</div>
+            <div className="candy-stat-component-description">
+              {description}
+            </div>
           </Box1>
           <Box2>
             <Item>
               <div className="candy-label">FLOOR PRICE</div>
-              <div className="statistics">
+              <div className="candy-value-lg">
                 {floorPrice === null ? 'N/A' : `${floorPrice} SOL`}
               </div>
             </Item>
             <Item>
               <div className="candy-label">TOTAL LISTED</div>
-              <div className="statistics">{totalListed}</div>
+              <div className="candy-value-lg">{totalListed}</div>
             </Item>
             <Item>
               <div className="candy-label">VOLUME</div>
-              <div className="statistics">{totalVolume} SOL</div>
+              <div className="candy-value-lg">{totalVolume} SOL</div>
             </Item>
           </Box2>
         </Flex>
@@ -90,7 +92,7 @@ const Flex = styled.div`
 `;
 
 const Box1 = styled.div`
-  .title {
+  .candy-stat-component-title {
     text-align: left;
     margin-bottom: 12px;
 
@@ -106,8 +108,9 @@ const Box1 = styled.div`
     }
   }
 
-  .description {
+  .candy-stat-component-description {
     text-align: left;
+    font-size: 16px;
     margin-bottom: 15px;
   }
 `;
@@ -132,7 +135,12 @@ const Item = styled.div`
     border-right: 1px solid #bdbdbd;
   }
 
-  .statistics {
+  .candy-label {
+    text-align: center;
+  }
+
+  .candy-value-lg {
+    text-align: center;
     font-size: 20px;
     font-weight: bold;
 

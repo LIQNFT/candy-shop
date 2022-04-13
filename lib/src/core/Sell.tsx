@@ -103,7 +103,7 @@ export const Sell: React.FC<SellProps> = ({
 
   if (!walletPublicKey) {
     return (
-      <div className="cds-container" style={{ textAlign: 'center' }}>
+      <div className="candy-container" style={{ textAlign: 'center' }}>
         {walletConnectComponent}
       </div>
     );
@@ -112,7 +112,7 @@ export const Sell: React.FC<SellProps> = ({
   return (
     <>
       <Wrap style={style}>
-        <div className="cds-container">
+        <div className="candy-container">
           {loadingStatus !== LoadStatus.Loaded ? (
             <Flex>
               {Array(4)

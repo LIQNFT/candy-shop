@@ -30,11 +30,7 @@ const BuyModalConfirmed = ({
       </div>
       <div className="buy-modal-confirmed-container">
         <div className="buy-modal-confirmed-thumbnail">
-          <LiqImage
-            src={order?.nftImageLink}
-            alt="NFT image"
-            style={{ borderTopRightRadius: 0, borderTopLeftRadius: 0 }}
-          />
+          <LiqImage src={order?.nftImageLink} alt={order?.name} fit="contain" />
         </div>
         <div className="buy-modal-confirmed-content">
           <div>

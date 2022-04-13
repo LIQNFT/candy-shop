@@ -47,6 +47,7 @@ interface OrdersProps {
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
   walletPublicKey?: web3.PublicKey;
+  url?: string;
   style?: { [key: string]: string | number } | undefined;
 }
 
@@ -57,6 +58,7 @@ export const Orders: React.FC<OrdersProps> = ({
   candyShop,
   walletConnectComponent,
   walletPublicKey,
+  url,
   style,
 }) => {
   const [sortedByOption, setSortedByOption] = useState(SORT_OPTIONS[0]);
@@ -112,7 +114,7 @@ export const Orders: React.FC<OrdersProps> = ({
   return (
     <>
       <Wrap style={style}>
-        <div className="cds-container">
+        <div className="candy-container">
           <FilterContainer>
             <Dropdown
               items={SORT_OPTIONS}
@@ -138,6 +140,7 @@ export const Orders: React.FC<OrdersProps> = ({
               walletConnectComponent={walletConnectComponent}
               walletPublicKey={walletPublicKey}
               candyShop={candyShop}
+              url={url}
               hasNextPage={hasNextPage}
               loadNextPage={() => loadNextPage(startIndex, ORDER_FETCH_LIMIT)}
             />
@@ -150,6 +153,7 @@ export const Orders: React.FC<OrdersProps> = ({
 
 const Wrap = styled.div`
   width: 100%;
+  margin-bottom: 50px;
 `;
 
 const FilterContainer = styled.div`

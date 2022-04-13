@@ -21,12 +21,6 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.1.0",
     "@rollup/plugin-typescript": "^8.1.0",
-    "@storybook/addon-actions": "^6.4.19",
-    "@storybook/addon-essentials": "^6.4.19",
-    "@storybook/addon-interactions": "^6.4.19",
-    "@storybook/addon-links": "^6.4.19",
-    "@storybook/react": "^6.4.19",
-    "@storybook/testing-library": "^0.0.9",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.14",
     "@typescript-eslint/eslint-plugin": "^4.14.0",
@@ -74,9 +68,7 @@
     "start": "yarn env:dev rollup -c --watch",
     "build": "yarn env:build rollup -c",
     "lint": "eslint --fix 'src/**/*.ts'",
-    "test": "jest",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "test": "jest"
   },
   "jest": {
     "moduleFileExtensions": [

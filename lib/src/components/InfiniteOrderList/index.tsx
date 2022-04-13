@@ -16,6 +16,7 @@ interface InfiniteOrderListProps {
     string | React.JSXElementConstructor<any>
   >;
   candyShop: CandyShop;
+  url?: string;
   hasNextPage: boolean;
   loadNextPage: () => void;
 }
@@ -27,6 +28,7 @@ export const InfiniteOrderList: React.FunctionComponent<
   walletPublicKey,
   walletConnectComponent,
   candyShop,
+  url,
   hasNextPage,
   loadNextPage,
 }) => {
@@ -55,6 +57,7 @@ export const InfiniteOrderList: React.FunctionComponent<
               walletConnectComponent={walletConnectComponent}
               walletPublicKey={walletPublicKey}
               candyShop={candyShop}
+              url={url}
             />
           </FlexItem>
         ))}
