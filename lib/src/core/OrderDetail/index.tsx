@@ -40,7 +40,16 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   const [hash, setHash] = useState('');
 
   const orderPrice = useMemo(() => {
-    return (Number(order?.price) / web3.LAMPORTS_PER_SOL).toFixed(3);
+    try {
+      return (
+        Number(order?.price) / candyShop.baseUnitsPerCurrency
+      ).toLocaleString(undefined, {
+        minimumFractionDigits: candyShop.priceDecimals,
+        maximumFractionDigits: candyShop.priceDecimals,
+      });
+    } catch (err) {
+      return null;
+    }
   }, [order]);
 
   useEffect(() => {
@@ -119,7 +128,9 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
           <div className="candy-order-detail-title">{order?.name}</div>
           <div className="candy-stat">
             <div className="candy-label">PRICE</div>
-            <div className="candy-price">{orderPrice} SOL</div>
+            <div className="candy-price">
+              {orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}
+            </div>
           </div>
           <div className="candy-stat">
             <div className="candy-label">DESCRIPTION</div>
@@ -189,6 +200,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
                 walletPublicKey={wallet.publicKey}
                 order={order}
                 txHash={hash}
+                candyShop={candyShop}
               />
             </div>
           </Modal>

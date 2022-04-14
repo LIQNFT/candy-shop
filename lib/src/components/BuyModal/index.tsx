@@ -88,6 +88,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
               walletPublicKey={wallet.publicKey}
               order={order}
               txHash={hash}
+              candyShop={candyShop}
             />
           )}
         </div>

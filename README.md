@@ -51,8 +51,16 @@ const candyShop = new CandyShop(
   new PublicKey("csa8JpYfKSZajP7JzxnJipUL3qagub1z29hLvp578iN"), // Candy Shop program id
   "devnet", // mainnet, devnet
   wallet! // user wallet address
+  settings // (optional) additional shop settings
 );
 ```
+
+You may pass an additional settings object to customize your shop:
+
+* **currencySymbol: string** your shop transaction currency symbol (default is SOL)
+* **currencyDecimals: number** your shop transaction currency decimals (default is 9 for SOL)
+* **priceDecimals: number** number of decimals to display for price numbers (default is 3)
+* **volumeDecimals: number** number of decimals to display for volume numbers (default is 1)
 
 ### Show Orders and Buy Interface
 
