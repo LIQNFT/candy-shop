@@ -95,7 +95,7 @@ const OrderInfo = styled.div`
 const Name = styled.div`
   .name {
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
     text-align: left;
     overflow: hidden;
     white-space: nowrap;

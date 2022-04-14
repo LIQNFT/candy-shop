@@ -6,7 +6,7 @@ import { Empty } from 'components/Empty';
 import { Skeleton } from 'components/Skeleton';
 import { breakPoints } from 'constant/breakPoints';
 import React, { useEffect, useState } from 'react';
-import { CandyShop } from './CandyShop';
+import { CandyShop } from 'core/CandyShop';
 import { InfiniteOrderList } from 'components/InfiniteOrderList';
 
 const ORDER_FETCH_LIMIT = 12;
@@ -48,6 +48,7 @@ interface OrdersProps {
   walletConnectComponent: React.ReactElement;
   walletPublicKey?: web3.PublicKey;
   url?: string;
+  filterIdentifiers?: Array<string>;
   style?: { [key: string]: string | number } | undefined;
 }
 
@@ -59,6 +60,7 @@ export const Orders: React.FC<OrdersProps> = ({
   walletConnectComponent,
   walletPublicKey,
   url,
+  filterIdentifiers,
   style,
 }) => {
   const [sortedByOption, setSortedByOption] = useState(SORT_OPTIONS[0]);

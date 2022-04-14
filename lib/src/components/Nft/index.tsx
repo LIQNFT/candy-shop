@@ -78,7 +78,7 @@ const CardName = styled.div`
   border-bottom-right-radius: 16px;
   .name {
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
     text-align: left;
     overflow: hidden;
     white-space: nowrap;

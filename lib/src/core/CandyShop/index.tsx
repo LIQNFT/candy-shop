@@ -18,12 +18,12 @@ import {
   fetchOrdersByStoreIdAndWalletAddress,
   OrdersFilterQuery,
   SortBy,
-} from '../api/backend/OrderAPI';
-import { fetchStatsById } from '../api/backend/StatsAPI';
-import { fetchTradeById } from '../api/backend/TradeAPI';
-import { buyAndExecuteSale } from '../api/program/buyAndExecuteSale';
-import { cancelOrder } from '../api/program/cancel';
-import { sellNft } from '../api/program/sell';
+} from 'api/backend/OrderAPI';
+import { fetchStatsById } from 'api/backend/StatsAPI';
+import { fetchTradeById } from 'api/backend/TradeAPI';
+import { buyAndExecuteSale } from 'api/program/buyAndExecuteSale';
+import { cancelOrder } from 'api/program/cancel';
+import { sellNft } from 'api/program/sell';
 import {
   getAuctionHouse,
   getAuctionHouseAuthority,
@@ -32,7 +32,7 @@ import {
   getAuctionHouseTreasuryAcct,
   getCandyShopSync,
   getMetadataAccount,
-} from '../api/utils';
+} from 'api/utils';
 
 /**
  * Core Candy Shop module

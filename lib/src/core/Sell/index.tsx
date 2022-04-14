@@ -13,7 +13,7 @@ import {
   Order as OrderSchema,
   WhitelistNft,
 } from 'solana-candy-shop-schema/dist';
-import { CandyShop } from './CandyShop';
+import { CandyShop } from 'core/CandyShop';
 
 interface SellProps {
   connection: web3.Connection;
