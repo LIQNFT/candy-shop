@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { SingleTokenInfo } from 'api/fetchMetadata';
 import { CancelModal } from 'components/CancelModal';
 import { LiqImage } from 'components/LiqImage';
@@ -10,10 +11,16 @@ import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 export interface NftProps {
   nft: SingleTokenInfo;
   candyShop: CandyShop;
+  wallet: AnchorWallet;
   sellDetail?: OrderSchema;
 }
 
-export const Nft = ({ nft, candyShop, sellDetail }: NftProps): JSX.Element => {
+export const Nft = ({
+  nft,
+  candyShop,
+  wallet,
+  sellDetail,
+}: NftProps): JSX.Element => {
   const [selection, setSelection] = useState<SingleTokenInfo | undefined>();
 
   const onClose = useCallback(() => {
@@ -48,7 +55,12 @@ export const Nft = ({ nft, candyShop, sellDetail }: NftProps): JSX.Element => {
       </Card>
 
       {selection && !isSellItem && (
-        <SellModal onCancel={onClose} nft={selection} candyShop={candyShop} />
+        <SellModal
+          onCancel={onClose}
+          nft={selection}
+          candyShop={candyShop}
+          wallet={wallet}
+        />
       )}
 
       {selection && sellDetail ? (
@@ -56,6 +68,7 @@ export const Nft = ({ nft, candyShop, sellDetail }: NftProps): JSX.Element => {
           onClose={onClose}
           candyShop={candyShop}
           order={sellDetail}
+          wallet={wallet}
         />
       ) : null}
     </>

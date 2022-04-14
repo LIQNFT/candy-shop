@@ -1,6 +1,8 @@
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
 import { CandyShop } from 'core/CandyShop';
+import { TransactionState } from 'model';
 import React, { useCallback, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { CancelModalConfirm } from './CancelModalConfirm';
@@ -10,34 +12,47 @@ export interface CancelModalProps {
   order: OrderSchema;
   onClose: any;
   candyShop: CandyShop;
+  wallet: AnchorWallet;
 }
 
 export const CancelModal: React.FC<CancelModalProps> = ({
   order,
   onClose: onUnSelectItem,
   candyShop,
+  wallet,
 }) => {
-  const [step, setStep] = useState(0);
+  const [state, setState] = useState<TransactionState>(
+    TransactionState.DISPLAY
+  );
 
   // Handle change step
-  const onChangeStep = useCallback((step: number) => setStep(step), []);
+  const onChangeStep = (state: TransactionState) => setState(state);
+
   const onCloseModal = useCallback(() => {
     onUnSelectItem();
-    if (step === 2) setTimeout(() => window.location.reload(), 3_000);
-  }, [step, onUnSelectItem]);
+    if (state === TransactionState.CONFIRMED)
+      // TODO: remove the window reload but using callback function to let parent reload by setState
+      setTimeout(() => window.location.reload(), 3_000);
+  }, [state, onUnSelectItem]);
 
   return (
-    <Modal onCancel={onCloseModal} width={step !== 0 ? 600 : 1000}>
-      {step === 0 && (
+    <Modal
+      onCancel={onCloseModal}
+      width={state !== TransactionState.DISPLAY ? 600 : 1000}
+    >
+      {state === TransactionState.DISPLAY && wallet && (
         <CancelModalDetail
           onCancel={onCloseModal}
           candyShop={candyShop}
           order={order}
           onChangeStep={onChangeStep}
+          wallet={wallet}
         />
       )}
-      {step === 1 && <Processing text="Canceling your sale" />}
-      {step === 2 && (
+      {state === TransactionState.PROCESSING && (
+        <Processing text="Canceling your sale" />
+      )}
+      {state === TransactionState.CONFIRMED && (
         <CancelModalConfirm order={order} onCancel={onCloseModal} />
       )}
     </Modal>

@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { web3 } from '@project-serum/anchor';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { fetchOrdersByStoreIdAndWalletAddress } from 'api/backend/OrderAPI';
 import { SingleTokenInfo } from 'api/fetchMetadata';
 import { fetchNftsFromWallet } from 'api/fetchNftsFromWallet';
@@ -17,7 +18,7 @@ import { CandyShop } from 'core/CandyShop';
 
 interface SellProps {
   connection: web3.Connection;
-  walletPublicKey?: web3.PublicKey;
+  wallet: AnchorWallet | undefined;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
   style?: { [key: string]: string | number } | undefined;
@@ -33,7 +34,7 @@ enum LoadStatus {
  * React component that allows user to put an NFT for sale
  */
 export const Sell: React.FC<SellProps> = ({
-  walletPublicKey,
+  wallet,
   connection,
   candyShop,
   walletConnectComponent,
@@ -44,6 +45,8 @@ export const Sell: React.FC<SellProps> = ({
   const [loadingStatus, setLoadingStatus] = useState<LoadStatus>(
     LoadStatus.ToLoad
   );
+
+  const walletPublicKey = wallet?.publicKey;
 
   const fetchWalletNFTs = useCallback(
     (walletPublicKey, connection) => {
@@ -101,7 +104,7 @@ export const Sell: React.FC<SellProps> = ({
     );
   }, [sellOrders]);
 
-  if (!walletPublicKey) {
+  if (!wallet) {
     return (
       <div className="candy-container" style={{ textAlign: 'center' }}>
         {walletConnectComponent}
@@ -132,6 +135,7 @@ export const Sell: React.FC<SellProps> = ({
                   <Nft
                     nft={item}
                     candyShop={candyShop}
+                    wallet={wallet}
                     sellDetail={hashSellOrders[item.tokenMintAddress]}
                   />
                 </FlexItem>

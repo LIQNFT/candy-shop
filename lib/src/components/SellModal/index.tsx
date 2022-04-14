@@ -1,12 +1,15 @@
 import styled from '@emotion/styled';
 import { BN, web3 } from '@project-serum/anchor';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { SingleTokenInfo } from 'api/fetchMetadata';
 import IconTick from 'assets/IconTick';
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
 import { CandyShop } from 'core/CandyShop';
 import React, { useCallback, useState } from 'react';
-import { notification } from 'utils/rc-notification';
+import { ErrorMsgMap } from 'utils/ErrorHandler';
+import { ErrorType, handleError } from 'utils/ErrorHandler';
+import { notification, NotificationType } from 'utils/rc-notification';
 import { TransactionState } from '../../model';
 import { LiqImage } from '../LiqImage';
 
@@ -16,25 +19,35 @@ export interface SellModalProps {
   onCancel: any;
   nft: SingleTokenInfo;
   candyShop: CandyShop;
+  wallet: AnchorWallet;
 }
 
 export const SellModal: React.FC<SellModalProps> = ({
   onCancel: onUnSelectItem,
   nft,
   candyShop,
+  wallet,
 }: SellModalProps) => {
   const [formState, setFormState] = useState<{ price: number | undefined }>({
     price: undefined,
   });
-  const [step, setStep] = useState(TransactionState.DISPLAY);
+  const [state, setState] = useState(TransactionState.DISPLAY);
 
   // List for sale and move to next step
   const sell = async () => {
-    setStep(TransactionState.PROCESSING);
+    setState(TransactionState.PROCESSING);
+
+    if (!wallet) {
+      notification(
+        ErrorMsgMap[ErrorType.InvalidWallet],
+        NotificationType.Error
+      );
+      return;
+    }
 
     if (!formState.price) {
-      notification('Please input sell price', 'error');
-      setStep(TransactionState.DISPLAY);
+      notification('Please input sell price', NotificationType.Error);
+      setState(TransactionState.DISPLAY);
       return;
     }
 
@@ -44,17 +57,20 @@ export const SellModal: React.FC<SellModalProps> = ({
       .sell(
         new web3.PublicKey(nft.tokenAccountAddress),
         new web3.PublicKey(nft.tokenMintAddress),
-        new BN(price)
+        new BN(price),
+        wallet
       )
       .then((txHash) => {
-        console.log('Place sell order with transaction hash', txHash);
-        setStep(TransactionState.CONFIRMED);
+        console.log(
+          'SellModal: Place sell order with transaction hash= ',
+          txHash
+        );
+        setState(TransactionState.CONFIRMED);
       })
       .catch((err) => {
-        // Show error and redirect to step 0 again
-        console.log({ err });
-        notification('Transaction failed. Please try again later.', 'error');
-        setStep(TransactionState.DISPLAY);
+        console.log('SellModal: error= ', err);
+        handleError(ErrorType.TransactionFailed);
+        setState(TransactionState.DISPLAY);
       });
   };
 
@@ -72,15 +88,16 @@ export const SellModal: React.FC<SellModalProps> = ({
 
   const onCancel = useCallback(() => {
     onUnSelectItem();
-    if (step === 2) setTimeout(() => window.location.reload(), 3_000);
-  }, [step, onUnSelectItem]);
+    if (state === TransactionState.CONFIRMED)
+      setTimeout(() => window.location.reload(), 3_000);
+  }, [state, onUnSelectItem]);
 
   const isSubmit = formState.price !== undefined;
 
   return (
     <Modal onCancel={onCancel} width={600}>
       <div className="sell-modal">
-        {step === TransactionState.DISPLAY && (
+        {state === TransactionState.DISPLAY && (
           <Content>
             <div className="sell-modal-title">Sell</div>
             <div className="sell-modal-content">
@@ -128,10 +145,10 @@ export const SellModal: React.FC<SellModalProps> = ({
             </form>
           </Content>
         )}
-        {step === TransactionState.PROCESSING && (
+        {state === TransactionState.PROCESSING && (
           <Processing text="Listing your NFT" />
         )}
-        {step === TransactionState.CONFIRMED && (
+        {state === TransactionState.CONFIRMED && (
           <>
             <div className="sell-modal-title">
               <IconTick />

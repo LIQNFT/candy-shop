@@ -66,7 +66,7 @@
     "env:dev": "env-cmd -f dev.env",
     "env:build": "env-cmd -f build.env",
     "start": "yarn env:dev rollup -c --watch",
-    "build": "yarn env:build rollup -c",
+    "build": "rm -rf dist && yarn env:build rollup -c",
     "lint": "eslint --fix 'src/**/*.ts'",
     "test": "jest"
   },

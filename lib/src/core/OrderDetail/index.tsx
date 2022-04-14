@@ -6,20 +6,20 @@ import { CandyShop } from 'core/CandyShop';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { TransactionState } from '../../model';
-import { notification } from 'utils/rc-notification';
 import { LiqImage } from 'components/LiqImage';
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
 import BuyModalConfirmed from 'components/BuyModal/BuyModalConfirmed';
 import './style.less';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { ErrorType, handleError } from 'utils/ErrorHandler';
 
 interface OrderDetailProps {
   tokenMint: string;
   backUrl?: string;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
-  walletPublicKey?: web3.PublicKey;
-  style?: { [key: string]: string | number } | undefined;
+  wallet: AnchorWallet | undefined;
 }
 
 export const OrderDetail: React.FC<OrderDetailProps> = ({
@@ -27,15 +27,16 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   backUrl = '/',
   candyShop,
   walletConnectComponent,
-  walletPublicKey,
-  style,
+  wallet,
 }) => {
   const [loadingOrder, setLoadingOrder] = useState(false);
   const [loadingNftInfo, setLoadingNftInfo] = useState(false);
   const [order, setOrder] = useState<OrderSchema | null>(null);
   const [nftInfo, setNftInfo] = useState<Nft | null>(null);
 
-  const [step, setStep] = useState(TransactionState.DISPLAY);
+  const [state, setState] = useState<TransactionState>(
+    TransactionState.DISPLAY
+  );
   const [hash, setHash] = useState('');
 
   const orderPrice = useMemo(() => {
@@ -74,24 +75,25 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   }, [order, candyShop]);
 
   const buy = async () => {
-    if (order !== null) {
-      setStep(TransactionState.PROCESSING);
+    if (order !== null && wallet) {
+      setState(TransactionState.PROCESSING);
       return candyShop
         .buy(
           new web3.PublicKey(order.walletAddress),
           new web3.PublicKey(order.tokenAccount),
           new web3.PublicKey(order.tokenMint),
-          new BN(order.price)
+          new BN(order.price),
+          wallet
         )
         .then((txHash) => {
           setHash(txHash);
           console.log('Buy made with transaction hash', txHash);
-          setStep(TransactionState.CONFIRMED);
+          setState(TransactionState.CONFIRMED);
         })
         .catch((err) => {
           console.log({ err });
-          notification('Transaction failed. Please try again later.', 'error');
-          setStep(TransactionState.DISPLAY);
+          handleError(ErrorType.TransactionFailed);
+          setState(TransactionState.DISPLAY);
         });
     }
   };
@@ -155,30 +157,36 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
             attributes={nftInfo?.attributes}
           />
 
-          {!walletPublicKey ? (
+          {!wallet ? (
             walletConnectComponent
           ) : (
             <button
               className="candy-button"
               onClick={buy}
-              disabled={step === 1 || step === 2}
+              disabled={
+                state === TransactionState.PROCESSING ||
+                state === TransactionState.CONFIRMED
+              }
             >
               Buy Now
             </button>
           )}
         </div>
-        {step === 1 && (
-          <Modal onCancel={() => setStep(0)} width={600}>
+        {state === TransactionState.PROCESSING && (
+          <Modal
+            onCancel={() => setState(TransactionState.DISPLAY)}
+            width={600}
+          >
             <div className="buy-modal">
               <Processing text="Processing purchase" />
             </div>
           </Modal>
         )}
-        {step === 2 && (
+        {state === TransactionState.CONFIRMED && wallet && (
           <Modal onCancel={goToMarketplace} width={600}>
             <div className="buy-modal">
               <BuyModalConfirmed
-                walletPublicKey={walletPublicKey}
+                walletPublicKey={wallet.publicKey}
                 order={order}
                 txHash={hash}
               />

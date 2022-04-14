@@ -19,7 +19,7 @@ export const LiqImage: React.FC<LiqImageProps> = ({
   const [loaded, setLoaded] = useState<boolean>(false);
   const [width, setWidth] = useState<number>();
 
-  let loaderDivStyles = loaded
+  const loaderDivStyles = loaded
     ? { display: 'none' }
     : {
         height: 0,
@@ -28,13 +28,13 @@ export const LiqImage: React.FC<LiqImageProps> = ({
         backgroundColor: '#E5E5E5',
       };
 
-  let baseStyle = {
+  const baseStyle = {
     position: 'relative',
     height: width,
     overflow: 'hidden',
   } as React.CSSProperties;
 
-  let combinedStyle = { ...baseStyle, ...style };
+  const combinedStyle = { ...baseStyle, ...style };
 
   const onElementResize = () =>
     setWidth(ref.current ? ref.current.offsetWidth : 0);

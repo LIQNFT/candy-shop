@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { web3 } from '@project-serum/anchor';
 import { SortBy } from 'api/backend/OrderAPI';
 import { Dropdown } from 'components/Dropdown';
 import { Empty } from 'components/Empty';
@@ -8,6 +7,7 @@ import { breakPoints } from 'constant/breakPoints';
 import React, { useEffect, useState } from 'react';
 import { CandyShop } from 'core/CandyShop';
 import { InfiniteOrderList } from 'components/InfiniteOrderList';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 
 const ORDER_FETCH_LIMIT = 12;
 const LOADING_SKELETON_COUNT = 4;
@@ -46,7 +46,7 @@ const SORT_OPTIONS: { value: SortBy; label: string }[] = [
 interface OrdersProps {
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
-  walletPublicKey?: web3.PublicKey;
+  wallet: AnchorWallet | undefined;
   url?: string;
   filterIdentifiers?: Array<string>;
   style?: { [key: string]: string | number } | undefined;
@@ -58,9 +58,8 @@ interface OrdersProps {
 export const Orders: React.FC<OrdersProps> = ({
   candyShop,
   walletConnectComponent,
-  walletPublicKey,
+  wallet,
   url,
-  filterIdentifiers,
   style,
 }) => {
   const [sortedByOption, setSortedByOption] = useState(SORT_OPTIONS[0]);
@@ -140,7 +139,7 @@ export const Orders: React.FC<OrdersProps> = ({
             <InfiniteOrderList
               orders={orders}
               walletConnectComponent={walletConnectComponent}
-              walletPublicKey={walletPublicKey}
+              wallet={wallet}
               candyShop={candyShop}
               url={url}
               hasNextPage={hasNextPage}
