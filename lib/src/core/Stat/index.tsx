@@ -20,13 +20,29 @@ export const Stat = ({
   const [stat, setStat] = useState<any>([]);
 
   const floorPrice = stat?.floorPrice
-    ? (Number(stat.floorPrice) / web3.LAMPORTS_PER_SOL).toFixed(3)
+    ? (Number(stat.floorPrice) / candyShop.baseUnitsPerCurrency).toLocaleString(
+        undefined,
+        {
+          minimumFractionDigits: candyShop.priceDecimals,
+          maximumFractionDigits: candyShop.priceDecimals,
+        }
+      )
     : null;
 
-  const totalListed = stat?.totalListed ? stat.totalListed : 0;
+  const totalListed = stat?.totalListed
+    ? stat.totalListed.toLocaleString(undefined, {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      })
+    : 0;
 
   const totalVolume = stat?.totalVolume
-    ? (Number(stat.totalVolume) / web3.LAMPORTS_PER_SOL).toFixed(3)
+    ? (
+        Number(stat.totalVolume) / candyShop.baseUnitsPerCurrency
+      ).toLocaleString(undefined, {
+        minimumFractionDigits: candyShop.volumeDecimals,
+        maximumFractionDigits: candyShop.volumeDecimals,
+      })
     : 0;
 
   // handle fetch data
@@ -56,7 +72,9 @@ export const Stat = ({
             <Item>
               <div className="candy-label">FLOOR PRICE</div>
               <div className="candy-value-lg">
-                {floorPrice === null ? 'N/A' : `${floorPrice} SOL`}
+                {floorPrice === null
+                  ? 'N/A'
+                  : `${floorPrice} ${candyShop.currencySymbol}`}
               </div>
             </Item>
             <Item>
@@ -65,7 +83,9 @@ export const Stat = ({
             </Item>
             <Item>
               <div className="candy-label">VOLUME</div>
-              <div className="candy-value-lg">{totalVolume} SOL</div>
+              <div className="candy-value-lg">
+                {totalVolume} {candyShop.currencySymbol}
+              </div>
             </Item>
           </Box2>
         </Flex>

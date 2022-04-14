@@ -48,7 +48,6 @@ interface OrdersProps {
   walletConnectComponent: React.ReactElement;
   wallet: AnchorWallet | undefined;
   url?: string;
-  filterIdentifiers?: Array<string>;
   style?: { [key: string]: string | number } | undefined;
 }
 

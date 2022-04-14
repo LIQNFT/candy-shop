@@ -4,7 +4,7 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { CandyShop } from 'core/CandyShop';
 import { TransactionState } from 'model';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { ErrorType, handleError } from 'utils/ErrorHandler';
 import { LiqImage } from '../LiqImage';
@@ -43,6 +43,19 @@ export const CancelModalDetail = ({
 
   const buttonContent = 'Cancel listing';
 
+  const orderPrice = useMemo(() => {
+    try {
+      return (
+        Number(order?.price) / candyShop.baseUnitsPerCurrency
+      ).toLocaleString(undefined, {
+        minimumFractionDigits: candyShop.priceDecimals,
+        maximumFractionDigits: candyShop.priceDecimals,
+      });
+    } catch (err) {
+      return null;
+    }
+  }, [order]);
+
   return (
     <div className="candy-cancel-modal">
       <div className="candy-cancel-modal-thumbnail">
@@ -55,8 +68,7 @@ export const CancelModalDetail = ({
           <div>
             <div className="candy-label">PRICE</div>
             <div className="candy-price">
-              {((order.price as any) / web3.LAMPORTS_PER_SOL || 0).toFixed(2)}{' '}
-              SOL
+              {orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}
             </div>
           </div>
           <button

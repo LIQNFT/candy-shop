@@ -25,8 +25,16 @@ export const Order: React.FC<OrderProps> = ({
   const [selection, setSelection] = useState<OrderSchema | null>(null);
 
   const orderPrice = useMemo(() => {
-    if (!order) return 0;
-    return (Number(order?.price) / web3.LAMPORTS_PER_SOL).toFixed(3);
+    try {
+      return (
+        Number(order?.price) / candyShop.baseUnitsPerCurrency
+      ).toLocaleString(undefined, {
+        minimumFractionDigits: candyShop.priceDecimals,
+        maximumFractionDigits: candyShop.priceDecimals,
+      });
+    } catch (err) {
+      return null;
+    }
   }, [order]);
 
   const onClose = useCallback(() => {
@@ -57,7 +65,9 @@ export const Order: React.FC<OrderProps> = ({
           </Name>
           <Price>
             <div className="text">Price</div>
-            <div className="price candy-line-limit-1">{orderPrice} SOL</div>
+            <div className="price candy-line-limit-1">
+              {orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}
+            </div>
           </Price>
         </OrderInfo>
       </Wrap>
