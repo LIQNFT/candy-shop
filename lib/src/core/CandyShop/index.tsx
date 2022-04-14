@@ -307,7 +307,7 @@ export class CandyShop {
 
   async orders(
     ordersFilterQuery: OrdersFilterQuery,
-    identifiers?: string[]
+    identifiers?: number[]
   ): Promise<ListBase<Order>> {
     const { sortBy, offset, limit } = ordersFilterQuery;
     return fetchOrdersByStoreId(

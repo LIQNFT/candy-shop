@@ -48,6 +48,8 @@ interface OrdersProps {
   walletConnectComponent: React.ReactElement;
   wallet: AnchorWallet | undefined;
   url?: string;
+  identifiers?: number[];
+  filters?: Array<{ name: string; identifier: number }>;
   style?: { [key: string]: string | number } | undefined;
 }
 
@@ -59,13 +61,18 @@ export const Orders: React.FC<OrdersProps> = ({
   walletConnectComponent,
   wallet,
   url,
+  identifiers,
+  filters,
   style,
 }) => {
   const [sortedByOption, setSortedByOption] = useState(SORT_OPTIONS[0]);
   const [orders, setOrders] = useState<any[]>([]);
   const [hasNextPage, setHasNextPage] = useState(true);
-  const [firstLoadInProgress, setFirstLoadInProgress] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
+  const [filterIdentifiers, setFilterIdentifiers] = useState<
+    number[] | undefined
+  >(undefined);
 
   const loadNextPage = (startIndex: number, limit: number) => {
     candyShop
@@ -86,13 +93,23 @@ export const Orders: React.FC<OrdersProps> = ({
   };
 
   useEffect(() => {
-    setFirstLoadInProgress(true);
+    setLoading(true);
+
+    let uniqueIdentifiers = [
+      ...(identifiers || []),
+      ...(filterIdentifiers || []),
+    ];
+    uniqueIdentifiers = [...new Set(uniqueIdentifiers)];
+
     candyShop
-      .orders({
-        sortBy: sortedByOption.value,
-        offset: 0,
-        limit: ORDER_FETCH_LIMIT,
-      })
+      .orders(
+        {
+          sortBy: sortedByOption.value,
+          offset: 0,
+          limit: ORDER_FETCH_LIMIT,
+        },
+        uniqueIdentifiers
+      )
       .then((data: any) => {
         if (!data.result) return;
         if (data.offset + data.count >= data.totalCount) {
@@ -107,22 +124,99 @@ export const Orders: React.FC<OrdersProps> = ({
         console.info('fetchOrdersByStoreId failed: ', err);
       })
       .finally(() => {
-        setFirstLoadInProgress(false);
+        setLoading(false);
       });
-  }, [candyShop, sortedByOption]);
+  }, [candyShop, sortedByOption, filterIdentifiers]);
 
-  return (
-    <>
+  if (filters) {
+    return (
       <Wrap style={style}>
         <div className="candy-container">
-          <FilterContainer>
+          <SortContainerRight>
             <Dropdown
               items={SORT_OPTIONS}
               selectedItem={sortedByOption}
               onSelectItem={(item) => setSortedByOption(item)}
             />
-          </FilterContainer>
-          {firstLoadInProgress ? (
+          </SortContainerRight>
+          <FlexWithFilter>
+            <div className="candy-filter">
+              <div className="candy-filter-title">Filter by Collection</div>
+              <ul className="candy-filter-by-collection">
+                <li
+                  onClick={() => {
+                    setFilterIdentifiers(undefined);
+                  }}
+                  key={'All'}
+                  className={!filterIdentifiers ? 'selected' : undefined}
+                >
+                  All
+                </li>
+                {filters.map((filter) => {
+                  return (
+                    <li
+                      onClick={() => {
+                        setFilterIdentifiers([filter.identifier]);
+                      }}
+                      key={filter.identifier}
+                      className={
+                        filterIdentifiers &&
+                        filterIdentifiers[0] === filter.identifier
+                          ? 'selected'
+                          : undefined
+                      }
+                    >
+                      {filter.name}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+            <div className="candy-orders-content">
+              {loading ? (
+                <Flex>
+                  {Array(LOADING_SKELETON_COUNT)
+                    .fill(0)
+                    .map((_, key) => (
+                      <FlexItem key={key}>
+                        <Skeleton />
+                      </FlexItem>
+                    ))}
+                </Flex>
+              ) : !loading && !orders.length ? (
+                <Empty description="No orders found" />
+              ) : (
+                <InfiniteOrderList
+                  orders={orders}
+                  walletConnectComponent={walletConnectComponent}
+                  wallet={wallet}
+                  candyShop={candyShop}
+                  url={url}
+                  hasNextPage={hasNextPage}
+                  loadNextPage={() =>
+                    loadNextPage(startIndex, ORDER_FETCH_LIMIT)
+                  }
+                />
+              )}
+            </div>
+          </FlexWithFilter>
+        </div>
+      </Wrap>
+    );
+  }
+
+  return (
+    <>
+      <Wrap style={style}>
+        <div className="candy-container">
+          <SortContainer>
+            <Dropdown
+              items={SORT_OPTIONS}
+              selectedItem={sortedByOption}
+              onSelectItem={(item) => setSortedByOption(item)}
+            />
+          </SortContainer>
+          {loading ? (
             <Flex>
               {Array(LOADING_SKELETON_COUNT)
                 .fill(0)
@@ -132,7 +226,7 @@ export const Orders: React.FC<OrdersProps> = ({
                   </FlexItem>
                 ))}
             </Flex>
-          ) : !firstLoadInProgress && !orders.length ? (
+          ) : !loading && !orders.length ? (
             <Empty description="No orders found" />
           ) : (
             <InfiniteOrderList
@@ -156,9 +250,15 @@ const Wrap = styled.div`
   margin-bottom: 50px;
 `;
 
-const FilterContainer = styled.div`
+const SortContainer = styled.div`
   display: flex;
   margin-bottom: 16px;
+`;
+
+const SortContainerRight = styled.div`
+  display: flex;
+  margin-bottom: 16px;
+  justify-content: flex-end;
 `;
 
 const Flex = styled.div`
@@ -180,3 +280,47 @@ const Flex = styled.div`
 `;
 
 const FlexItem = styled.div``;
+
+const FlexWithFilter = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+
+  > .candy-filter {
+    text-align: left;
+    width: 200px;
+    padding-right: 20px;
+
+    ul {
+      list-style-type: none;
+
+      li {
+        line-height: 22px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      li.selected {
+        font-weight: bold;
+      }
+    }
+
+    .candy-filter-title {
+      font-weight: bold;
+      font-size: 16px;
+      line-height: 26px;
+      margin-bottom: 5px;
+    }
+  }
+
+  > .candy-orders-content {
+    flex: 1;
+  }
+
+  @media ${breakPoints.tabletM} {
+    row-gap: 16px;
+    column-gap: 16px;
+    > * {
+      width: 100%;
+    }
+  }
+`;

@@ -71,6 +71,7 @@ const Flex = styled.div`
   flex-flow: row wrap;
   row-gap: 12px;
   column-gap: 12px;
+
   > * {
     width: calc((100% - 12px * 3) / 4);
   }

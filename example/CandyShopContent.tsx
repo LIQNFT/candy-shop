@@ -3,7 +3,7 @@ import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { web3 } from "@project-serum/anchor";
 import 'antd/dist/antd.min.css';
 import React from 'react';
-import { CandyShop, Orders, Stat, OrderDetail, Sell } from '../lib/';
+import { CandyShop, Orders, Stat, OrderDetail, Sell } from '../lib/.';
 import {
   CANDY_SHOP_PROGRAM_ID,
   CREATOR_ADDRESS,
@@ -43,6 +43,10 @@ export const CandyShopContent: React.FC = () => {
           wallet={wallet}
           candyShop={candyShop}
           walletConnectComponent={<WalletMultiButton />}
+          filters={[
+            {name: 'Sword', identifier: -280213123 },
+            {name: 'Happy', identifier: -38328789 },
+          ]}
         />
       </div>
 
