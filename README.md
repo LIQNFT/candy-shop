@@ -42,7 +42,14 @@ yarn add @liqnft/candy-shop
 
 Create your Candy Shop [here](https://candy.liqnft.com/my-shop).
 
-Use code in the /example folder as reference to setup your Candy Shop.
+Use code in the `/example` folder as reference to setup your Candy Shop.
+
+You can also configure the following:
+
+* Create a shop with SOL or an SPL token as transaction currency
+* Deposit syrup, a small budget to maintain your shop (e.g. gas fees for on-chain account space allocation)
+* Restrict NFT collections that can be bought and sold on your shop
+* Claim share of transaction fees from your shop
 
 ```
 const candyShop = new CandyShop(
@@ -50,7 +57,6 @@ const candyShop = new CandyShop(
   new PublicKey("So11111111111111111111111111111111111111112"), // treasury mint (i.e. currency to buy and sell with)
   new PublicKey("csa8JpYfKSZajP7JzxnJipUL3qagub1z29hLvp578iN"), // Candy Shop program id
   "devnet", // mainnet, devnet
-  wallet! // user wallet address
   settings // (optional) additional shop settings
 );
 ```
@@ -70,11 +76,16 @@ Show the NFTs that are for sale and allow users to connect their wallet and buy 
 import { Orders } from '@liqnft/candy-shop';
 
 <Orders
-  walletPublicKey={publicKey}
+  wallet={wallet}
   candyShop={candyShop}
   walletConnectComponent={<WalletMultiButton />}
 />
 ```
+
+Additional params:
+* **filters: Array<{ name: string, identifier: number}>** You can let users filter by NFT collection by specifying the filters parameter. Name is the label shown in the filter box. Identifier is the unique NFT collection identifier, which you can get by whitelisting an NFT collection in My Shop or by using the getIdentifier helper method in the Candy Shop library
+* **identifiers: Array<number>** By default, only show orders from certain NFT collections. Takes an array of identifiers.
+* **url: string** When user clicks on an NFT order, direct user to a new route instead of opening a buy NFT modal. Route should be in form of `/my-route/:tokenMint` where `:tokenMint` will be replaced by the NFT token mint
 
 ### Show Sell Interface
 
@@ -94,7 +105,7 @@ import { Sell } from '@liqnft/candy-shop';
 
 ### Show Stats
 
-Display key stats about your collection
+Show key stats about your collection
 
 ```
 import { Stats } from '@liqnft/candy-shop';
@@ -103,6 +114,23 @@ import { Stats } from '@liqnft/candy-shop';
   candyShop={candyShop}
   title={'Marketplace'}
   description={'Candy Shop is an open source on-chain protocol that empowers DAOs, NFT projects and anyone interested in creating an NFT marketplace to do so within minutes!'}
+/>
+
+```
+
+### Buy Single NFT Interface
+
+Show buy interface for a single NFT order. This component can be used by specifying the URL param to the Orders component. Token mint can be parsed from the URL and inserted into the OrderDetail component.
+
+```
+import { OrderDetail } from '@liqnft/candy-shop';
+
+<OrderDetail
+  tokenMint={'WfL9fAggBMHmjvBEu1v53fQkRmB3Cn4giJSSQxVSC5W'} // token mint of the NFT
+  backUrl={'/'} // will redirect to this route after sale is completed
+  candyShop={candyShop}
+  walletConnectComponent={<WalletMultiButton />}
+  wallet={wallet}
 />
 
 ```

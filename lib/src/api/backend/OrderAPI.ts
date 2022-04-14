@@ -16,7 +16,7 @@ export type OrdersFilterQuery = {
 export async function fetchOrdersByStoreId(
   storeId: string,
   ordersFilterQuery: OrdersFilterQuery,
-  identifiers?: string[]
+  identifiers?: number[]
 ): Promise<ListBase<Order>> {
   const { sortBy, offset, limit } = ordersFilterQuery;
 
@@ -31,8 +31,9 @@ export async function fetchOrdersByStoreId(
     queryObject['limit'] = limit;
   }
 
+  let filterString = '';
   if (identifiers) {
-    const filterString = identifiers.reduce(
+    filterString = identifiers.reduce(
       (aggregated, identifier) =>
         aggregated +
         `&filterArr[]=${JSON.stringify({
@@ -42,10 +43,10 @@ export async function fetchOrdersByStoreId(
         })}`,
       ''
     );
-    queryObject['filterArr'] = filterString;
   }
 
-  const queryString = qs.stringify(queryObject);
+  let queryString = qs.stringify(queryObject);
+  queryString += filterString;
 
   return axiosInstance
     .get<ListBase<Order>>(`/order/${storeId}?${queryString}`)
