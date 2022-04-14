@@ -23,7 +23,16 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   candyShop,
 }) => {
   const orderPrice = useMemo(() => {
-    return (Number(order?.price) / web3.LAMPORTS_PER_SOL).toFixed(3);
+    try {
+      return (
+        Number(order?.price) / candyShop.baseUnitsPerCurrency
+      ).toLocaleString(undefined, {
+        minimumFractionDigits: candyShop.priceDecimals,
+        maximumFractionDigits: candyShop.priceDecimals,
+      });
+    } catch (err) {
+      return null;
+    }
   }, [order]);
 
   const [loadingNftInfo, setLoadingNftInfo] = useState(false);
@@ -60,7 +69,9 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
         <div className="buy-modal-control">
           <div>
             <div className="candy-label">PRICE</div>
-            <div className="candy-price">{orderPrice} SOL</div>
+            <div className="candy-price">
+              {orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}
+            </div>
           </div>
           {!walletPublicKey ? (
             walletConnectComponent

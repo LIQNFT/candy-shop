@@ -51,7 +51,7 @@ export const SellModal: React.FC<SellModalProps> = ({
       return;
     }
 
-    const price = formState.price * web3.LAMPORTS_PER_SOL;
+    const price = formState.price * candyShop.baseUnitsPerCurrency;
 
     return candyShop
       .sell(
@@ -127,7 +127,7 @@ export const SellModal: React.FC<SellModalProps> = ({
                   type="number"
                   value={formState.price}
                 />
-                <span>SOL</span>
+                <span>{candyShop.currencySymbol}</span>
               </InputNumber>
 
               <Row>

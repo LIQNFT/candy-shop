@@ -33,6 +33,18 @@ import {
   getMetadataAccount,
 } from 'api/utils';
 
+const DEFAULT_CURRENCY_SYMBOL = 'SOL';
+const DEFAULT_CURRENCY_DECIMALS = 9;
+const DEFAULT_PRICE_DECIMALS = 3;
+const DEFAULT_VOLUME_DECIMALS = 1;
+
+export type Settings = {
+  currencySymbol: string;
+  currencyDecimals: number;
+  priceDecimals: number;
+  volumeDecimals: number;
+};
+
 /**
  * Core Candy Shop module
  */
@@ -42,14 +54,24 @@ export class CandyShop {
   private _treasuryMint: web3.PublicKey;
   private _programId: web3.PublicKey;
   private _env: web3.Cluster;
+  private _settings: Settings;
+  private _baseUnitsPerCurrency: number;
   private _program: Program | undefined;
 
   constructor(
     candyShopCreatorAddress: web3.PublicKey,
     treasuryMint: web3.PublicKey,
     candyShopProgramId: web3.PublicKey,
-    env: web3.Cluster
+    env: web3.Cluster,
+    settings?: {
+      currencySymbol?: string;
+      currencyDecimals?: number;
+      priceDecimals?: number;
+      volumeDecimals?: number;
+    }
   ) {
+    settings = settings ?? {};
+
     this._candyShopAddress = getCandyShopSync(
       candyShopCreatorAddress,
       treasuryMint,
@@ -59,6 +81,14 @@ export class CandyShop {
     this._treasuryMint = treasuryMint;
     this._programId = candyShopProgramId;
     this._env = env;
+    this._settings = {
+      currencySymbol: settings?.currencySymbol ?? DEFAULT_CURRENCY_SYMBOL,
+      currencyDecimals: settings?.currencyDecimals ?? DEFAULT_CURRENCY_DECIMALS,
+      priceDecimals: settings?.priceDecimals ?? DEFAULT_PRICE_DECIMALS,
+      volumeDecimals: settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
+    };
+    this._baseUnitsPerCurrency = Math.pow(10, this._settings.currencyDecimals);
+
     configBaseUrl(env);
   }
   /**
@@ -109,6 +139,22 @@ export class CandyShop {
 
   get programId(): web3.PublicKey {
     return this._programId;
+  }
+
+  get baseUnitsPerCurrency(): number {
+    return this._baseUnitsPerCurrency;
+  }
+
+  get currencySymbol(): string {
+    return this._settings.currencySymbol;
+  }
+
+  get priceDecimals(): number {
+    return this._settings.priceDecimals;
+  }
+
+  get volumeDecimals(): number {
+    return this._settings.volumeDecimals;
   }
 
   public async buy(

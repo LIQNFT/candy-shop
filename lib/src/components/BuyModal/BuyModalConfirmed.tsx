@@ -6,21 +6,37 @@ import imgDefault from '../../assets/img-default.png';
 import { formatDate } from '../../utils/format';
 import { ExplorerLink } from '../ExplorerLink';
 import { LiqImage } from '../LiqImage';
+import { CandyShop } from 'core/CandyShop';
 
 const BuyModalConfirmed = ({
   order,
   txHash,
   walletPublicKey,
+  candyShop,
 }: {
   order: any;
   txHash: string;
   walletPublicKey: web3.PublicKey | undefined;
+  candyShop: CandyShop;
 }) => {
   // Get wallet address follow walletPublicKey
   const walletAddress = useMemo(
     () => walletPublicKey?.toBase58() || '',
     [walletPublicKey]
   );
+
+  const orderPrice = useMemo(() => {
+    try {
+      return (
+        Number(order?.price) / candyShop.baseUnitsPerCurrency
+      ).toLocaleString(undefined, {
+        minimumFractionDigits: candyShop.priceDecimals,
+        maximumFractionDigits: candyShop.priceDecimals,
+      });
+    } catch (err) {
+      return null;
+    }
+  }, [order]);
 
   return (
     <div className="buy-modal-confirmed">
@@ -39,7 +55,7 @@ const BuyModalConfirmed = ({
           </div>
           <div>
             <div className="buy-modal-price">
-              {(+order?.price / 10e9).toFixed(3)} SOL
+              {orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}
             </div>
           </div>
         </div>

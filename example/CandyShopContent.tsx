@@ -48,7 +48,7 @@ export const CandyShopContent: React.FC = () => {
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Order Detail</h1>
       <OrderDetail
-        tokenMint={'WfL9fAggBMHmjvBEu1v53fQkRmB3Cn4giJSSQxVSC5W'}
+        tokenMint={'EVdLAk8GeWRsj2HpyBujG1pJPip5gjkPcZ76QinsHHtJ'}
         backUrl={'/'}
         candyShop={candyShop}
         walletConnectComponent={<WalletMultiButton />}
