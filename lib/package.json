@@ -1,6 +1,6 @@
 {
   "name": "@liqnft/candy-shop",
-  "version": "0.4.22",
+  "version": "0.4.23",
   "description": "Your own decentralized and escrowless marketplace in minutes",
   "main": "dist/index.es.js",
   "module": "dist/index.cjs.js",
@@ -65,7 +65,7 @@
   "scripts": {
     "env:dev": "env-cmd -f dev.env",
     "env:build": "env-cmd -f build.env",
-    "start": "yarn env:dev rollup -c --watch",
+    "start": "rm -rf dist && yarn env:dev rollup -c --watch",
     "build": "rm -rf dist && yarn env:build rollup -c",
     "lint": "eslint --fix 'src/**/*.ts'",
     "test": "jest"
