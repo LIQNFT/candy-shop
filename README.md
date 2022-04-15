@@ -38,20 +38,23 @@ yarn add @liqnft/candy-shop
 
 ## Usage
 
-### Init CandyShop
+### Create Candy Shop
 
 Create your Candy Shop [here](https://candy.liqnft.com/my-shop).
 
-Use code in the `/example` folder as reference to setup your Candy Shop.
-
-You can also configure the following:
+You can configure the following in My Shop:
 
 * Create a shop with SOL or an SPL token as transaction currency
 * Deposit syrup, a small budget to maintain your shop (e.g. gas fees for on-chain account space allocation)
 * Restrict NFT collections that can be bought and sold on your shop
 * Claim share of transaction fees from your shop
 
-```
+
+### Init CandyShop
+
+Use code in the `/example` folder as reference to setup and instantiate CandyShop.
+
+```ts
 const candyShop = new CandyShop(
   new PublicKey("Fo2cXie4UwreZi7LHMpnsyVPvzuo4FMwAVbSUYQsmbsh"), // creator address (i.e. your wallet address)
   new PublicKey("So11111111111111111111111111111111111111112"), // treasury mint (i.e. currency to buy and sell with)
@@ -68,11 +71,22 @@ You may pass an additional settings object to customize your shop:
 * **priceDecimals: number** number of decimals to display for price numbers (default is 3)
 * **volumeDecimals: number** number of decimals to display for volume numbers (default is 1)
 
+Example settings object:
+
+```ts
+const settings = {
+  currencySymbol: 'SOL',
+  currencyDecimals: 9,
+  priceDecimals: 3,
+  volumeDecimals: 1
+};
+```
+
 ### Show Orders and Buy Interface
 
 Show the NFTs that are for sale and allow users to connect their wallet and buy them.
 
-```
+```ts
 import { Orders } from '@liqnft/candy-shop';
 
 <Orders
@@ -91,23 +105,22 @@ Additional params:
 
 Show sell interface that allows users to connect their wallet and list their NFTs for sale.
 
-```
+```ts
 import { Sell } from '@liqnft/candy-shop';
 
 <Sell
   connection={connection}
-  walletPublicKey={publicKey}
+  wallet={wallet}
   candyShop={candyShop}
   walletConnectComponent={<WalletMultiButton />}
 />
-
 ```
 
 ### Show Stats
 
 Show key stats about your collection
 
-```
+```ts
 import { Stats } from '@liqnft/candy-shop';
 
 <Stat
@@ -115,14 +128,13 @@ import { Stats } from '@liqnft/candy-shop';
   title={'Marketplace'}
   description={'Candy Shop is an open source on-chain protocol that empowers DAOs, NFT projects and anyone interested in creating an NFT marketplace to do so within minutes!'}
 />
-
 ```
 
 ### Buy Single NFT Interface
 
-Show buy interface for a single NFT order. This component can be used by specifying the URL param to the Orders component. Token mint can be parsed from the URL and inserted into the OrderDetail component.
+Show buy interface for a single NFT order. This component can be used by specifying the `url` param to the Orders component. Token mint can be parsed from the URL and inserted into the OrderDetail component.
 
-```
+```ts
 import { OrderDetail } from '@liqnft/candy-shop';
 
 <OrderDetail
@@ -132,42 +144,29 @@ import { OrderDetail } from '@liqnft/candy-shop';
   walletConnectComponent={<WalletMultiButton />}
   wallet={wallet}
 />
-
 ```
 
 ### Custom Marketplace Builds
 
 You can also ship your own custom marketplace using the methods below.
 
-```
-import { CandyShop } from '@liqnft/candy-shop';
-
-// Initialize your store
-const candy = new CandyShop(
-  new PublicKey("Fo2cXie4UwreZi7LHMpnsyVPvzuo4FMwAVbSUYQsmbsh"), // creator address (i.e. your wallet address)
-  new PublicKey("So11111111111111111111111111111111111111112"), // treasury mint (i.e. currency to buy and sell with)
-  new PublicKey("csa8JpYfKSZajP7JzxnJipUL3qagub1z29hLvp578iN"), // Candy Shop program id
-  "devnet", // mainnet, devnet
-  wallet! // user wallet address
-);
-
 // Fetch orders
-candy.getOrders();
+candyShop.getOrders();
 
 // Buy
-candy.buy();
+candyShop.buy();
 
 // Sell
-candy.sell();
+candyShop.sell();
 
 // Cancel sell order
-candy.cancel();
+candyShop.cancel();
 
 // Get statistics
-candy.getStats();
+candyShop.getStats();
 
 // Get transactions
-candy.getTransactions();
+candyShop.getTransactions();
 ```
 
 ## For Contributors

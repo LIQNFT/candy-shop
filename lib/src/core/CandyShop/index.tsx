@@ -38,7 +38,13 @@ const DEFAULT_CURRENCY_DECIMALS = 9;
 const DEFAULT_PRICE_DECIMALS = 3;
 const DEFAULT_VOLUME_DECIMALS = 1;
 
-export type Settings = {
+/**
+ * @field currencySymbol your shop transaction currency symbol (default is SOL)
+ * @field currencyDecimals your shop transaction currency decimals (default is 9 for SOL)
+ * @field priceDecimals number of decimals to display for price numbers (default is 3)
+ * @field volumeDecimals number of decimals to display for volume numbers (default is 1)
+ */
+export type CandyShopSettings = {
   currencySymbol: string;
   currencyDecimals: number;
   priceDecimals: number;
@@ -46,7 +52,7 @@ export type Settings = {
 };
 
 /**
- * Core Candy Shop module
+ * @class CandyShop
  */
 export class CandyShop {
   private _candyShopAddress: web3.PublicKey;
@@ -54,24 +60,25 @@ export class CandyShop {
   private _treasuryMint: web3.PublicKey;
   private _programId: web3.PublicKey;
   private _env: web3.Cluster;
-  private _settings: Settings;
+  private _settings: CandyShopSettings;
   private _baseUnitsPerCurrency: number;
   private _program: Program | undefined;
 
+  /**
+   * @constructor
+   * @param candyShopCreatorAddress creator address (i.e. your wallet address)
+   * @param treasuryMint treasury mint (i.e. currency to buy and sell with)
+   * @param candyShopProgramId Candy Shop program id
+   * @param env web3.Cluster mainnet, devnet
+   * @param settings optional, additional shop settings
+   */
   constructor(
     candyShopCreatorAddress: web3.PublicKey,
     treasuryMint: web3.PublicKey,
     candyShopProgramId: web3.PublicKey,
     env: web3.Cluster,
-    settings?: {
-      currencySymbol?: string;
-      currencyDecimals?: number;
-      priceDecimals?: number;
-      volumeDecimals?: number;
-    }
+    settings?: CandyShopSettings
   ) {
-    settings = settings ?? {};
-
     this._candyShopAddress = getCandyShopSync(
       candyShopCreatorAddress,
       treasuryMint,
