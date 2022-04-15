@@ -1,9 +1,9 @@
+import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { Dropdown } from 'components/Dropdown';
 import { Empty } from 'components/Empty';
 import { Skeleton } from 'components/Skeleton';
 import { breakPoints } from 'constant/breakPoints';
-import React, { useEffect, useState } from 'react';
 import { CandyShop, OrderSortBy } from '@liqnft/candy-shop-sdk';
 import { InfiniteOrderList } from 'components/InfiniteOrderList';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
@@ -111,12 +111,9 @@ export const Orders: React.FC<OrdersProps> = ({
       )
       .then((data: any) => {
         if (!data.result) return;
-        if (data.offset + data.count >= data.totalCount) {
-          setHasNextPage(false);
-        } else {
-          setHasNextPage(true);
-        }
-        setStartIndex((startIndex) => 0 + ORDER_FETCH_LIMIT);
+        const haveNextPage = data.offset + data.count < data.totalCount;
+        setHasNextPage(haveNextPage);
+        setStartIndex(() => 0 + ORDER_FETCH_LIMIT);
         setOrders(data.result);
       })
       .catch((err) => {
@@ -125,7 +122,7 @@ export const Orders: React.FC<OrdersProps> = ({
       .finally(() => {
         setLoading(false);
       });
-  }, [candyShop, sortedByOption, filterIdentifiers]);
+  }, [candyShop, sortedByOption, filterIdentifiers, identifiers]);
 
   if (filters) {
     return (

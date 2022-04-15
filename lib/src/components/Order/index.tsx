@@ -46,7 +46,7 @@ export const Order: React.FC<OrderProps> = ({
     } else {
       setSelection(order);
     }
-  }, [order]);
+  }, [order, url]);
 
   return (
     <>
