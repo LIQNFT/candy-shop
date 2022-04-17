@@ -73,8 +73,6 @@ export async function buyAndExecuteSale(
   const [programAsSigner, programAsSignerBump] =
     await getAuctionHouseProgramAsSigner();
 
-  const transaction = new web3.Transaction();
-
   const paymentAccount = isNative
     ? wallet.publicKey
     : (await getAtaForMint(treasuryMint, wallet.publicKey))[0];
@@ -125,7 +123,7 @@ export async function buyAndExecuteSale(
     isSigner: boolean;
   }>;
 
-  const accountsRequireAta = [] as Array<web3.PublicKey>;
+  const accountsRequireAta = new Set() as Set<string>;
 
   if (metadataDecoded != null) {
     if (metadataDecoded.data && metadataDecoded.data.creators) {
@@ -148,7 +146,7 @@ export async function buyAndExecuteSale(
             isWritable: true,
             isSigner: false,
           });
-          accountsRequireAta.push(creatorPublicKey);
+          accountsRequireAta.add(creatorPublicKey.toString());
         }
       }
     }
@@ -159,14 +157,14 @@ export async function buyAndExecuteSale(
     : (await getAtaForMint(treasuryMint, counterParty))[0];
 
   if (!isNative) {
-    accountsRequireAta.push(counterParty);
+    accountsRequireAta.add(counterParty.toString());
   }
 
   const allAtaIxs = [];
 
   const treasuyMintAtaIxs = await compileAtaCreationIxs(
     wallet.publicKey,
-    accountsRequireAta,
+    Array.from(accountsRequireAta).map((ata) => new web3.PublicKey(ata)),
     treasuryMint,
     program
   );
@@ -229,8 +227,6 @@ export async function buyAndExecuteSale(
       remainingAccounts,
     }
   );
-  transaction.add(ix);
-  transaction.add(ix2);
 
   if (allAtaIxs.length > 0) {
     const ataCreationTx = new web3.Transaction();
@@ -239,10 +235,26 @@ export async function buyAndExecuteSale(
     console.log('atasCreationTx', atasCreationTx);
   }
 
-  const buyAndExecuteTx = await sendTx(wallet, transaction, program);
-  console.log('buyAndExecuteTx', buyAndExecuteTx);
+  // if creators has too many, separate the buy and executeSales program call
+  let buyAndExecuteTx;
+  if (remainingAccounts.length > 6) {
+    console.log('splitting ixs into 2 txs');
+    const buyTransaction = new web3.Transaction();
+    buyTransaction.add(ix);
+    const buyTx = await sendTx(wallet, buyTransaction, program);
+    console.log('buyTx', buyTx);
 
-  console.log('sale executed');
+    const executeSaleTransaction = new web3.Transaction();
+    executeSaleTransaction.add(ix2);
+    buyAndExecuteTx = await sendTx(wallet, executeSaleTransaction, program);
+  } else {
+    const transaction = new web3.Transaction();
+    transaction.add(ix);
+    transaction.add(ix2);
+    buyAndExecuteTx = await sendTx(wallet, transaction, program);
+  }
+
+  console.log('buyAndExecuteTx', buyAndExecuteTx);
   return buyAndExecuteTx;
 }
 
@@ -262,6 +274,8 @@ async function compileAtaCreationIxs(
       program.provider.connection,
       ataAddress
     ).catch((err) => {
+      console.log('owner', addr.toString());
+      console.log('ataAddress', ataAddress.toString());
       console.log('fetch ata error', err);
       return null;
     });
