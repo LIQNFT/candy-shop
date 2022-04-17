@@ -18,7 +18,7 @@ import {
 import { awaitTransactionSignatureConfirmation } from './submitTx';
 
 export async function buyAndExecuteSale(
-  wallet: AnchorWallet,
+  wallet: AnchorWallet | web3.Keypair,
   counterParty: web3.PublicKey,
   tokenAccount: web3.PublicKey,
   tokenAccountMint: web3.PublicKey,
@@ -282,7 +282,7 @@ async function compileAtaCreationIxs(
 }
 
 async function sendTx(
-  wallet: AnchorWallet,
+  wallet: AnchorWallet | web3.Keypair,
   transaction: web3.Transaction,
   program: Program
 ): Promise<string> {
@@ -291,7 +291,17 @@ async function sendTx(
   );
   transaction.recentBlockhash = recentBlockhash.blockhash;
   transaction.feePayer = wallet.publicKey;
-  const signedTx = await wallet.signTransaction(transaction);
+
+  const signedTx =
+    'signTransaction' in wallet
+      ? await wallet.signTransaction(transaction)
+      : await (async () => {
+          await transaction.sign({
+            publicKey: wallet.publicKey,
+            secretKey: wallet.secretKey,
+          });
+          return transaction;
+        })();
   const txHash = await awaitTransactionSignatureConfirmation(
     program.provider.connection,
     signedTx.serialize()
