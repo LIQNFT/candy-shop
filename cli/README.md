@@ -18,6 +18,11 @@ Buy
 ts-node src/cli.ts buy -e devnet -k <keypair>.json -s <Seller> -ta <TokenAccount> -tam <tokenAccountMint>  -tm <TreasuryMint> -p <PriceInDecimals> -sc <ShopCreator>
 ```
 
+help
+```
+ts-node src/cli.ts --help
+```
+
 Note:
 
 1. user cannot self sell and buy, will result in error
