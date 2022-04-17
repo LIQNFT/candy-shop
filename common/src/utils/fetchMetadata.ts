@@ -1,9 +1,9 @@
-import { getAccount, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { web3 } from '@project-serum/anchor';
+import { getAccount } from '@solana/spl-token';
 import axios from 'axios';
-import { Metadata, parseEdition, parseMetadata } from '../utils/parseData';
-import { safeAwait } from '../utils/PromiseHelper';
 import * as crc32 from 'crc-32';
+import { safeAwait } from './promiseUtils';
+import { Metadata, parseEdition, parseMetadata } from '../utils/parseData';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);

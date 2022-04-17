@@ -148,7 +148,7 @@ import { OrderDetail } from '@liqnft/candy-shop';
 
 ### Custom Marketplace Builds
 
-You can also ship your own custom marketplace using the methods below.
+You can also ship your own custom marketplace using the methods below, neatly with the `candy-shop-common` pacakge.
 
 // Fetch orders
 candyShop.getOrders();

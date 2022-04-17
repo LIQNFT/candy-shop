@@ -1,13 +1,17 @@
 import { NftStats, ShopStats, SingleBase } from 'solana-candy-shop-schema/dist';
-import axiosInstance from '../../config/axiosInstance';
+import { AxiosInstance } from 'axios';
 
-export async function fetchStatsById(storeId: string): Promise<ShopStats> {
+export async function fetchStatsById(
+  axiosInstance: AxiosInstance,
+  storeId: string
+): Promise<ShopStats> {
   return axiosInstance
     .get<SingleBase<ShopStats>>(`/stats/${storeId}`)
     .then((response) => response.data.result);
 }
 
 export async function fetchStatsMintById(
+  axiosInstance: AxiosInstance,
   storeId: string,
   mint: string
 ): Promise<NftStats> {

@@ -1,12 +1,11 @@
 import styled from '@emotion/styled';
-import React, { useMemo } from 'react';
+import { CandyShop } from '@liqnft/candy-shop-common';
 import { web3 } from '@project-serum/anchor';
+import React, { useMemo } from 'react';
 import IconTick from '../../assets/IconTick';
-import imgDefault from '../../assets/img-default.png';
 import { formatDate } from '../../utils/format';
 import { ExplorerLink } from '../ExplorerLink';
 import { LiqImage } from '../LiqImage';
-import { CandyShop } from 'core/CandyShop';
 
 const BuyModalConfirmed = ({
   order,

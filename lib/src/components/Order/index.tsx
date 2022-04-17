@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
-import { web3 } from '@project-serum/anchor';
+import { CandyShop } from '@liqnft/candy-shop-common';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { BuyModal } from 'components/BuyModal';
 import { LiqImage } from 'components/LiqImage';
-import { CandyShop } from 'core/CandyShop';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 
