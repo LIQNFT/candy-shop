@@ -125,7 +125,7 @@ export async function buyAndExecuteSale(
     isSigner: boolean;
   }>;
 
-  const accountsRequireAta = [] as Array<web3.PublicKey>;
+  const accountsRequireAta = new Set() as Set<web3.PublicKey>;
 
   if (metadataDecoded != null) {
     if (metadataDecoded.data && metadataDecoded.data.creators) {
@@ -148,7 +148,7 @@ export async function buyAndExecuteSale(
             isWritable: true,
             isSigner: false,
           });
-          accountsRequireAta.push(creatorPublicKey);
+          accountsRequireAta.add(creatorPublicKey);
         }
       }
     }
@@ -159,14 +159,14 @@ export async function buyAndExecuteSale(
     : (await getAtaForMint(treasuryMint, counterParty))[0];
 
   if (!isNative) {
-    accountsRequireAta.push(counterParty);
+    accountsRequireAta.add(counterParty);
   }
 
   const allAtaIxs = [];
 
   const treasuyMintAtaIxs = await compileAtaCreationIxs(
     wallet.publicKey,
-    accountsRequireAta,
+    Array.from(accountsRequireAta),
     treasuryMint,
     program
   );
@@ -233,10 +233,12 @@ export async function buyAndExecuteSale(
   transaction.add(ix2);
 
   if (allAtaIxs.length > 0) {
-    const ataCreationTx = new web3.Transaction();
-    ataCreationTx.add(...allAtaIxs);
-    const atasCreationTx = await sendTx(wallet, ataCreationTx, program);
-    console.log('atasCreationTx', atasCreationTx);
+    for (let i = 0; i < allAtaIxs.length; i += 3) {
+      const ataCreationTx = new web3.Transaction();
+      ataCreationTx.add(...allAtaIxs.slice(i, i + 3));
+      const atasCreationTx = await sendTx(wallet, ataCreationTx, program);
+      console.log('atasCreationTx', atasCreationTx);
+    }
   }
 
   const buyAndExecuteTx = await sendTx(wallet, transaction, program);
