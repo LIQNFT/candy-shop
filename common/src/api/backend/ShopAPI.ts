@@ -4,9 +4,10 @@ import {
   CandyShop,
 } from 'solana-candy-shop-schema/src/response/index';
 
-import axiosInstance from '../../config/axiosInstance';
+import { AxiosInstance } from 'axios';
 
 export async function fetchShopByWalletAddress(
+  axiosInstance: AxiosInstance,
   walletAddress: string
 ): Promise<ListBase<CandyShop>> {
   return axiosInstance
@@ -15,6 +16,7 @@ export async function fetchShopByWalletAddress(
 }
 
 export async function fetchShopWhitelistNftByShopId(
+  axiosInstance: AxiosInstance,
   shopId: string
 ): Promise<ListBase<WhitelistNft>> {
   return axiosInstance

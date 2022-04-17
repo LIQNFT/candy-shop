@@ -1,5 +1,5 @@
 import { ListBase, Order, SingleBase } from 'solana-candy-shop-schema/dist';
-import axiosInstance from '../../config/axiosInstance';
+import { AxiosInstance } from 'axios';
 import qs from 'qs';
 
 export type SortBy = {
@@ -14,9 +14,10 @@ export type OrdersFilterQuery = {
 };
 
 export async function fetchOrdersByStoreId(
+  axiosInstance: AxiosInstance,
   storeId: string,
   ordersFilterQuery: OrdersFilterQuery,
-  identifiers?: number[]
+  identifiers?: number[],
 ): Promise<ListBase<Order>> {
   const { sortBy, offset, limit } = ordersFilterQuery;
 
@@ -54,6 +55,7 @@ export async function fetchOrdersByStoreId(
 }
 
 export async function fetchOrderByTokenMint(
+  axiosInstance: AxiosInstance,
   mintAddress: string
 ): Promise<SingleBase<Order>> {
   return axiosInstance
@@ -62,6 +64,7 @@ export async function fetchOrderByTokenMint(
 }
 
 export async function fetchOrdersByStoreIdAndWalletAddress(
+  axiosInstance: AxiosInstance,
   storeId: string,
   walletAddress: string
 ): Promise<Order[]> {

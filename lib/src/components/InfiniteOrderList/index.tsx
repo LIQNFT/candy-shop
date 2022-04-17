@@ -1,7 +1,7 @@
 import React from 'react';
 import { Order as OrderComponent } from 'components/Order';
 import { Order } from 'solana-candy-shop-schema/dist';
-import { CandyShop } from 'core/CandyShop';
+import { CandyShop } from '@liqnft/candy-shop-common';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import styled from '@emotion/styled';
 import { breakPoints } from 'constant/breakPoints';

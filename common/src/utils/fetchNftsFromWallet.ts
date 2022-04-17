@@ -1,6 +1,6 @@
 import * as anchor from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { sleepPromise } from '../utils/PromiseHelper';
+import { sleepPromise } from './promiseUtils';
 import { SingleTokenInfo, singleTokenInfoPromise } from './fetchMetadata';
 
 export const fetchNftsFromWallet = async (

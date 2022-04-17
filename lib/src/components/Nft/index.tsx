@@ -1,10 +1,9 @@
 import styled from '@emotion/styled';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { SingleTokenInfo } from 'api/fetchMetadata';
 import { CancelModal } from 'components/CancelModal';
 import { LiqImage } from 'components/LiqImage';
 import { SellModal } from 'components/SellModal';
-import { CandyShop } from 'core/CandyShop';
+import { CandyShop, SingleTokenInfo } from '@liqnft/candy-shop-common';
 import React, { useCallback, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 

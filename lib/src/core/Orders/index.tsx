@@ -1,18 +1,17 @@
 import styled from '@emotion/styled';
-import { SortBy } from 'api/backend/OrderAPI';
 import { Dropdown } from 'components/Dropdown';
 import { Empty } from 'components/Empty';
 import { Skeleton } from 'components/Skeleton';
 import { breakPoints } from 'constant/breakPoints';
 import React, { useEffect, useState } from 'react';
-import { CandyShop } from 'core/CandyShop';
+import { CandyShop, OrderSortBy } from '@liqnft/candy-shop-common';
 import { InfiniteOrderList } from 'components/InfiniteOrderList';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
 const ORDER_FETCH_LIMIT = 12;
 const LOADING_SKELETON_COUNT = 4;
 
-const SORT_OPTIONS: { value: SortBy; label: string }[] = [
+const SORT_OPTIONS: { value: OrderSortBy; label: string }[] = [
   {
     value: {
       column: 'blockTimeAtCreation',

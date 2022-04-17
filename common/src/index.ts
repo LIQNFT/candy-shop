@@ -1,8 +1,8 @@
 import { BN, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { fetchNftByMint } from 'api/backend/NftAPI';
-import { fetchShopWhitelistNftByShopId } from 'api/backend/ShopAPI';
-import { configBaseUrl } from 'config/axiosInstance';
+import { fetchNftByMint } from './api/backend/NftAPI';
+import { fetchShopWhitelistNftByShopId } from './api/backend/ShopAPI';
+import axiosInstance, { configBaseUrl } from './config';
 import {
   ListBase,
   Nft,
@@ -17,12 +17,12 @@ import {
   fetchOrdersByStoreId,
   fetchOrdersByStoreIdAndWalletAddress,
   OrdersFilterQuery,
-} from 'api/backend/OrderAPI';
-import { fetchStatsById } from 'api/backend/StatsAPI';
-import { fetchTradeById } from 'api/backend/TradeAPI';
-import { buyAndExecuteSale } from 'api/program/buyAndExecuteSale';
-import { cancelOrder } from 'api/program/cancel';
-import { sellNft } from 'api/program/sell';
+} from './api/backend/OrderAPI';
+import { fetchStatsById } from './api/backend/StatsAPI';
+import { fetchTradeById } from './api/backend/TradeAPI';
+import { buyAndExecuteSale } from './api/program/buyAndExecuteSale';
+import { cancelOrder } from './api/program/cancel';
+import { sellNft } from './api/program/sell';
 import {
   getAuctionHouse,
   getAuctionHouseAuthority,
@@ -31,7 +31,10 @@ import {
   getAuctionHouseTreasuryAcct,
   getCandyShopSync,
   getMetadataAccount,
-} from 'api/utils';
+} from './api/utils';
+
+export * from './utils';
+export {SortBy as OrderSortBy, OrdersFilterQuery} from "./api"
 
 const DEFAULT_CURRENCY_SYMBOL = 'SOL';
 const DEFAULT_CURRENCY_DECIMALS = 9;
@@ -301,15 +304,15 @@ export class CandyShop {
   }
 
   public async stats(): Promise<ShopStats> {
-    return fetchStatsById(this._candyShopAddress.toString());
+    return fetchStatsById(axiosInstance, this._candyShopAddress.toString());
   }
 
   public async transactions(): Promise<Trade[]> {
-    return fetchTradeById(this._candyShopAddress.toString());
+    return fetchTradeById(axiosInstance, this._candyShopAddress.toString());
   }
 
   public async nftInfo(mint: string): Promise<Nft> {
-    return fetchNftByMint(mint);
+    return fetchNftByMint(axiosInstance, mint);
   }
 
   async orders(
@@ -318,6 +321,7 @@ export class CandyShop {
   ): Promise<ListBase<Order>> {
     const { sortBy, offset, limit } = ordersFilterQuery;
     return fetchOrdersByStoreId(
+      axiosInstance,
       this._candyShopAddress.toString(),
       {
         sortBy,
@@ -332,18 +336,22 @@ export class CandyShop {
     walletAddress: string
   ): Promise<Order[]> {
     return fetchOrdersByStoreIdAndWalletAddress(
+      axiosInstance,
       this._candyShopAddress.toString(),
       walletAddress
     );
   }
 
   public async shopWlNfts(): Promise<ListBase<WhitelistNft>> {
-    return fetchShopWhitelistNftByShopId(this._candyShopAddress.toString());
+    return fetchShopWhitelistNftByShopId(
+      axiosInstance,
+      this._candyShopAddress.toString()
+    );
   }
 
   public async activeOrderByMintAddress(
     mintAddress: string
   ): Promise<SingleBase<Order>> {
-    return fetchOrderByTokenMint(mintAddress);
+    return fetchOrderByTokenMint(axiosInstance, mintAddress);
   }
 }

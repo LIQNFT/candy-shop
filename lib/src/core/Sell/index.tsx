@@ -1,9 +1,7 @@
 import styled from '@emotion/styled';
 import { web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { fetchOrdersByStoreIdAndWalletAddress } from 'api/backend/OrderAPI';
-import { SingleTokenInfo } from 'api/fetchMetadata';
-import { fetchNftsFromWallet } from 'api/fetchNftsFromWallet';
+
 import { Empty } from 'components/Empty';
 import { Nft } from 'components/Nft';
 import { Skeleton } from 'components/Skeleton';
@@ -14,7 +12,11 @@ import {
   Order as OrderSchema,
   WhitelistNft,
 } from 'solana-candy-shop-schema/dist';
-import { CandyShop } from 'core/CandyShop';
+import {
+  CandyShop,
+  fetchNftsFromWallet,
+  SingleTokenInfo,
+} from '@liqnft/candy-shop-common';
 
 interface SellProps {
   connection: web3.Connection;
@@ -75,13 +77,12 @@ export const Sell: React.FC<SellProps> = ({
   );
 
   const fetchOrders = useCallback(
-    (walletPublicKey) => {
-      fetchOrdersByStoreIdAndWalletAddress(
-        candyShop.candyShopAddress.toString(),
-        walletPublicKey.toString()
-      ).then((sellOrders) => {
-        setSellOrders(sellOrders);
-      });
+    (candyShop: CandyShop, walletPublicKey: web3.PublicKey) => {
+      candyShop
+        .activeOrdersByWalletAddress(walletPublicKey.toString())
+        .then((sellOrders) => {
+          setSellOrders(sellOrders);
+        });
     },
     [walletPublicKey]
   );
@@ -91,7 +92,7 @@ export const Sell: React.FC<SellProps> = ({
 
     if (loadingStatus === LoadStatus.ToLoad) {
       fetchWalletNFTs(walletPublicKey, connection);
-      fetchOrders(walletPublicKey);
+      fetchOrders(candyShop, walletPublicKey);
     }
   }, [connection, walletPublicKey, candyShop]);
 

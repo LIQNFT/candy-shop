@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
-import { web3 } from '@project-serum/anchor';
 import { breakPoints } from 'constant/breakPoints';
-import { CandyShop } from 'core/CandyShop';
+import { CandyShop } from '@liqnft/candy-shop-common';
 import React, { useEffect, useState } from 'react';
 
 export interface StatProps {

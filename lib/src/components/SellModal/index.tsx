@@ -1,11 +1,10 @@
 import styled from '@emotion/styled';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { SingleTokenInfo } from 'api/fetchMetadata';
 import IconTick from 'assets/IconTick';
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
-import { CandyShop } from 'core/CandyShop';
+import { CandyShop, SingleTokenInfo } from '@liqnft/candy-shop-common';
 import React, { useCallback, useState } from 'react';
 import { ErrorMsgMap } from 'utils/ErrorHandler';
 import { ErrorType, handleError } from 'utils/ErrorHandler';
