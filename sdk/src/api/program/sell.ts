@@ -1,4 +1,5 @@
 import * as anchor from '@project-serum/anchor';
+import { web3 } from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
@@ -8,7 +9,7 @@ import {
 } from '../utils';
 
 export async function sellNft(
-  wallet: AnchorWallet,
+  wallet: AnchorWallet | web3.Keypair,
   tokenAccount: anchor.web3.PublicKey,
   tokenAccountMint: anchor.web3.PublicKey,
   treasuryMint: anchor.web3.PublicKey,

@@ -5,7 +5,7 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 
 export async function cancelOrder(
-  wallet: AnchorWallet,
+  wallet: AnchorWallet | web3.Keypair,
   tokenAccount: web3.PublicKey,
   tokenAccountMint: web3.PublicKey,
   authority: web3.PublicKey,

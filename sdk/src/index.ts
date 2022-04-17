@@ -35,6 +35,8 @@ import {
 
 export * from './utils';
 export {SortBy as OrderSortBy, OrdersFilterQuery} from "./api"
+// for CLI
+export {buyAndExecuteSale, sellNft, cancelOrder} from "./api";
 
 const DEFAULT_CURRENCY_SYMBOL = 'SOL';
 const DEFAULT_CURRENCY_DECIMALS = 9;
