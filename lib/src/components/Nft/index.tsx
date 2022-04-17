@@ -3,7 +3,7 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CancelModal } from 'components/CancelModal';
 import { LiqImage } from 'components/LiqImage';
 import { SellModal } from 'components/SellModal';
-import { CandyShop, SingleTokenInfo } from '@liqnft/candy-shop-common';
+import { CandyShop, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
 import React, { useCallback, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 

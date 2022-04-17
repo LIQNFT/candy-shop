@@ -3,7 +3,7 @@
   "workspaces": [
     "@liqnft/candy-shop",
     "example",
-    "@liqnft/candy-shop-common"
+    "@liqnft/candy-shop-sdk"
   ],
   "scripts": {
     "start": "parcel example/index.html",

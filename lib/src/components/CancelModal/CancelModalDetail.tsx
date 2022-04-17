@@ -1,4 +1,4 @@
-import { CandyShop } from '@liqnft/candy-shop-common';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { ExplorerLink } from 'components/ExplorerLink';

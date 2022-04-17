@@ -4,7 +4,7 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import IconTick from 'assets/IconTick';
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
-import { CandyShop, SingleTokenInfo } from '@liqnft/candy-shop-common';
+import { CandyShop, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
 import React, { useCallback, useState } from 'react';
 import { ErrorMsgMap } from 'utils/ErrorHandler';
 import { ErrorType, handleError } from 'utils/ErrorHandler';

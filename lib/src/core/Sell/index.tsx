@@ -16,7 +16,7 @@ import {
   CandyShop,
   fetchNftsFromWallet,
   SingleTokenInfo,
-} from '@liqnft/candy-shop-common';
+} from '@liqnft/candy-shop-sdk';
 
 interface SellProps {
   connection: web3.Connection;

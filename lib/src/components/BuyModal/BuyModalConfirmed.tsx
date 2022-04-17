@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { CandyShop } from '@liqnft/candy-shop-common';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { web3 } from '@project-serum/anchor';
 import React, { useMemo } from 'react';
 import IconTick from '../../assets/IconTick';

@@ -3,7 +3,7 @@ import { web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
-import { CandyShop } from '@liqnft/candy-shop-common';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 import React, { useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { ErrorMsgMap, ErrorType, handleError } from 'utils/ErrorHandler';

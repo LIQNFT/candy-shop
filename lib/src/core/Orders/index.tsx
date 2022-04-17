@@ -4,7 +4,7 @@ import { Empty } from 'components/Empty';
 import { Skeleton } from 'components/Skeleton';
 import { breakPoints } from 'constant/breakPoints';
 import React, { useEffect, useState } from 'react';
-import { CandyShop, OrderSortBy } from '@liqnft/candy-shop-common';
+import { CandyShop, OrderSortBy } from '@liqnft/candy-shop-sdk';
 import { InfiniteOrderList } from 'components/InfiniteOrderList';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 

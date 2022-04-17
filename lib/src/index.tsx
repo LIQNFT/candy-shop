@@ -7,7 +7,7 @@ export {
   SingleTokenInfo,
   OrderSortBy,
   OrdersFilterQuery,
-} from '@liqnft/candy-shop-common';
+} from '@liqnft/candy-shop-sdk';
 export { Orders } from './core/Orders';
 export { OrderDetail } from './core/OrderDetail';
 export { Sell } from './core/Sell';
