@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { CandyShop } from '@liqnft/candy-shop-common';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { BuyModal } from 'components/BuyModal';
 import { LiqImage } from 'components/LiqImage';

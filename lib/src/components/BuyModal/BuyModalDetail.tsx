@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { web3 } from '@project-serum/anchor';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { NftAttributes } from 'components/NftAttributes';
-import { CandyShop } from '@liqnft/candy-shop-common';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { LiqImage } from '../LiqImage';

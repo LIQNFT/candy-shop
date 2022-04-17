@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { breakPoints } from 'constant/breakPoints';
-import { CandyShop } from '@liqnft/candy-shop-common';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 import React, { useEffect, useState } from 'react';
 
 export interface StatProps {
