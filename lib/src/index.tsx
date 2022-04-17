@@ -1,6 +1,13 @@
 import './index.less';
 
-export * from '@liqnft/candy-shop-common';
+export {
+  CandyShop,
+  fetchNftsFromWallet,
+  getIdentifier,
+  SingleTokenInfo,
+  OrderSortBy,
+  OrdersFilterQuery,
+} from '@liqnft/candy-shop-common';
 export { Orders } from './core/Orders';
 export { OrderDetail } from './core/OrderDetail';
 export { Sell } from './core/Sell';
