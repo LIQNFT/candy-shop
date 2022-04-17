@@ -18,7 +18,7 @@ export const Nft = ({
   nft,
   candyShop,
   wallet,
-  sellDetail,
+  sellDetail
 }: NftProps): JSX.Element => {
   const [selection, setSelection] = useState<SingleTokenInfo | undefined>();
 

@@ -5,7 +5,7 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 import {
   getAuctionHouseProgramAsSigner,
-  getAuctionHouseTradeState,
+  getAuctionHouseTradeState
 } from '../utils';
 
 export async function sellNft(
@@ -67,8 +67,8 @@ export async function sellNft(
         tokenProgram: TOKEN_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
         programAsSigner,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-      },
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY
+      }
     }
   );
 

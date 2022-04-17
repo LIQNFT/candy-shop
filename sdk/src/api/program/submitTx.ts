@@ -22,7 +22,7 @@ export async function awaitTransactionSignatureConfirmation(
       // log.debug("sending tx in background");
       txid = await connection
         .sendRawTransaction(rawTransaction, {
-          skipPreflight: true,
+          skipPreflight: true
         })
         .catch((err) => {
           console.error(err.toString());
@@ -39,7 +39,7 @@ export async function awaitTransactionSignatureConfirmation(
           try {
             if (txid === null) return;
             const signatureStatuses = await connection.getSignatureStatuses([
-              txid,
+              txid
             ]);
 
             status = signatureStatuses && signatureStatuses.value[0];

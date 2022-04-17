@@ -3,7 +3,7 @@ import { Command } from 'commander';
 import {
   buyAndExecuteSale,
   cancelOrder,
-  sellNft,
+  sellNft
 } from '@liqnft/candy-shop-sdk';
 import {
   getAuctionHouse,
@@ -11,7 +11,7 @@ import {
   getAuctionHouseFeeAcct,
   getAuctionHouseTradeState,
   getAuctionHouseTreasuryAcct,
-  getCandyShop,
+  getCandyShop
 } from '@liqnft/candy-shop-sdk/dist/api/utils';
 import * as anchor from '@project-serum/anchor';
 
@@ -49,7 +49,7 @@ programCommand('sell')
       tokenAccountMint,
       treasuryMint,
       price,
-      shopCreator,
+      shopCreator
     } = cmd.opts();
 
     const [walletKeyPair, program] = await loadWalletKeyAndProgram(
@@ -117,7 +117,7 @@ programCommand('cancel')
       tokenAccountMint,
       treasuryMint,
       price,
-      shopCreator,
+      shopCreator
     } = cmd.opts();
 
     const [walletKeyPair, program] = await loadWalletKeyAndProgram(
@@ -191,7 +191,7 @@ programCommand('buy')
       tokenAccountMint,
       treasuryMint,
       shopCreator,
-      price,
+      price
     } = cmd.opts();
 
     const [walletKeyPair, program] = await loadWalletKeyAndProgram(

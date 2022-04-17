@@ -10,13 +10,13 @@ import {
   ShopStats,
   SingleBase,
   Trade,
-  WhitelistNft,
+  WhitelistNft
 } from 'solana-candy-shop-schema/dist';
 import {
   fetchOrderByTokenMint,
   fetchOrdersByStoreId,
   fetchOrdersByStoreIdAndWalletAddress,
-  OrdersFilterQuery,
+  OrdersFilterQuery
 } from './api/backend/OrderAPI';
 import { fetchStatsById } from './api/backend/StatsAPI';
 import { fetchTradeById } from './api/backend/TradeAPI';
@@ -30,13 +30,13 @@ import {
   getAuctionHouseTradeState,
   getAuctionHouseTreasuryAcct,
   getCandyShopSync,
-  getMetadataAccount,
+  getMetadataAccount
 } from './api/utils';
 
 export * from './utils';
-export {SortBy as OrderSortBy, OrdersFilterQuery} from "./api"
+export { SortBy as OrderSortBy, OrdersFilterQuery } from './api';
 // for CLI
-export {buyAndExecuteSale, sellNft, cancelOrder} from "./api";
+export { buyAndExecuteSale, sellNft, cancelOrder } from './api';
 
 const DEFAULT_CURRENCY_SYMBOL = 'SOL';
 const DEFAULT_CURRENCY_DECIMALS = 9;
@@ -97,7 +97,7 @@ export class CandyShop {
       currencySymbol: settings?.currencySymbol ?? DEFAULT_CURRENCY_SYMBOL,
       currencyDecimals: settings?.currencyDecimals ?? DEFAULT_CURRENCY_DECIMALS,
       priceDecimals: settings?.priceDecimals ?? DEFAULT_PRICE_DECIMALS,
-      volumeDecimals: settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
+      volumeDecimals: settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS
     };
     this._baseUnitsPerCurrency = Math.pow(10, this._settings.currencyDecimals);
 
@@ -328,7 +328,7 @@ export class CandyShop {
       {
         sortBy,
         offset,
-        limit,
+        limit
       },
       identifiers
     );

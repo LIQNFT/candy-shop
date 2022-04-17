@@ -6,14 +6,14 @@ import IconError from 'assets/IconError';
 
 export enum NotificationType {
   Success = 'Success',
-  Error = 'Error',
+  Error = 'Error'
 }
 
 let notificationIns: any = null;
 Notification.newInstance(
   {
     style: { top: 10, left: 'unset', right: 10 },
-    prefixCls: 'candy-notification',
+    prefixCls: 'candy-notification'
   },
   (n) => {
     notificationIns = n;
@@ -40,7 +40,7 @@ export const notification = (content: string, type: NotificationType): void => {
       </NotiContent>
     ),
     duration: 3,
-    prefixCls: 'candy',
+    prefixCls: 'candy'
   });
 };
 

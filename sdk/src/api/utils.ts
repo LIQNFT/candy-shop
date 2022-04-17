@@ -1,7 +1,7 @@
 import * as anchor from '@project-serum/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
+  TOKEN_PROGRAM_ID
 } from '@solana/spl-token';
 import {
   AUCTION_HOUSE,
@@ -9,7 +9,7 @@ import {
   AUTHORITY,
   CANDY_STORE,
   FEE_PAYER,
-  TREASURY,
+  TREASURY
 } from './constants';
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
 
@@ -36,7 +36,7 @@ export const getAuctionHouseAuthority = async (
       Buffer.from(CANDY_STORE),
       creator.toBuffer(),
       treasuryMint.toBuffer(),
-      Buffer.from(AUTHORITY),
+      Buffer.from(AUTHORITY)
     ],
     marketProgramId
   );
@@ -91,7 +91,7 @@ export const getAuctionHouseTradeState = async (
       treasuryMint.toBuffer(),
       tokenMint.toBuffer(),
       buyPrice.toArrayLike(Buffer, 'le', 8),
-      tokenSize.toArrayLike(Buffer, 'le', 8),
+      tokenSize.toArrayLike(Buffer, 'le', 8)
     ],
     AUCTION_HOUSE_PROGRAM_ID
   );
@@ -104,7 +104,7 @@ export const getAuctionHouseFeeAcct = async (
     [
       Buffer.from(AUCTION_HOUSE),
       auctionHouse.toBuffer(),
-      Buffer.from(FEE_PAYER),
+      Buffer.from(FEE_PAYER)
     ],
     AUCTION_HOUSE_PROGRAM_ID
   );
@@ -117,7 +117,7 @@ export const getAuctionHouseTreasuryAcct = async (
     [
       Buffer.from(AUCTION_HOUSE),
       auctionHouse.toBuffer(),
-      Buffer.from(TREASURY),
+      Buffer.from(TREASURY)
     ],
     AUCTION_HOUSE_PROGRAM_ID
   );
@@ -148,7 +148,7 @@ export async function getMetadataAccount(tokenMint: anchor.web3.PublicKey) {
     [
       Buffer.from('metadata'),
       metadataProgramId.toBuffer(),
-      tokenMint.toBuffer(),
+      tokenMint.toBuffer()
     ],
     metadataProgramId
   );

@@ -20,7 +20,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   buy,
   walletPublicKey,
   walletConnectComponent,
-  candyShop,
+  candyShop
 }) => {
   const orderPrice = useMemo(() => {
     try {
@@ -28,7 +28,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
         Number(order?.price) / candyShop.baseUnitsPerCurrency
       ).toLocaleString(undefined, {
         minimumFractionDigits: candyShop.priceDecimals,
-        maximumFractionDigits: candyShop.priceDecimals,
+        maximumFractionDigits: candyShop.priceDecimals
       });
     } catch (err) {
       return null;

@@ -32,7 +32,7 @@ export const singleTokenInfoPromise = async (
     [
       Buffer.from('metadata'),
       metadataProgramId.toBuffer(),
-      token.mint.toBuffer(),
+      token.mint.toBuffer()
     ],
     metadataProgramId
   );
@@ -41,7 +41,7 @@ export const singleTokenInfoPromise = async (
       Buffer.from('metadata'),
       metadataProgramId.toBuffer(),
       token.mint.toBuffer(),
-      Buffer.from('edition'),
+      Buffer.from('edition')
     ],
     metadataProgramId
   );
@@ -89,7 +89,7 @@ export const singleTokenInfoPromise = async (
           tokenMintAddress: token.mint.toString(),
           nftImage,
           nftAnimation,
-          nftDescription,
+          nftDescription
         };
       })
       .catch((err) => {
@@ -107,7 +107,7 @@ function isValidCollection(identifiers: string[], tokenInfo: Metadata) {
   const creators = tokenInfo.data.creators?.map((creator) => ({
     address: new web3.PublicKey(creator.address).toString(),
     verified: creator.verified,
-    share: creator.share,
+    share: creator.share
   }));
   const symbol = tokenInfo.data.symbol;
 

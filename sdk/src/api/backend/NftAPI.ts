@@ -3,7 +3,7 @@ import { AxiosInstance } from 'axios';
 
 export async function fetchNftByMint(
   axiosInstance: AxiosInstance,
-  mint: string,
+  mint: string
 ): Promise<Nft> {
   return await axiosInstance
     .get<SingleBase<Nft>>(`/nft/${mint}`)

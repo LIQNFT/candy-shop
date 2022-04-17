@@ -14,7 +14,7 @@ export const Stat = ({
   candyShop,
   title,
   description,
-  style,
+  style
 }: StatProps): JSX.Element => {
   const [stat, setStat] = useState<any>([]);
 
@@ -23,7 +23,7 @@ export const Stat = ({
         undefined,
         {
           minimumFractionDigits: candyShop.priceDecimals,
-          maximumFractionDigits: candyShop.priceDecimals,
+          maximumFractionDigits: candyShop.priceDecimals
         }
       )
     : null;
@@ -31,7 +31,7 @@ export const Stat = ({
   const totalListed = stat?.totalListed
     ? stat.totalListed.toLocaleString(undefined, {
         minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
+        maximumFractionDigits: 0
       })
     : 0;
 
@@ -40,7 +40,7 @@ export const Stat = ({
         Number(stat.totalVolume) / candyShop.baseUnitsPerCurrency
       ).toLocaleString(undefined, {
         minimumFractionDigits: candyShop.volumeDecimals,
-        maximumFractionDigits: candyShop.volumeDecimals,
+        maximumFractionDigits: candyShop.volumeDecimals
       })
     : 0;
 

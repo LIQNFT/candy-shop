@@ -26,7 +26,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   onClose,
   wallet,
   candyShop,
-  walletConnectComponent,
+  walletConnectComponent
 }) => {
   const [state, setState] = useState<TransactionState>(
     TransactionState.DISPLAY

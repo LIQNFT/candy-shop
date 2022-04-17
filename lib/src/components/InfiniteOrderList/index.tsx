@@ -30,7 +30,7 @@ export const InfiniteOrderList: React.FunctionComponent<
   candyShop,
   url,
   hasNextPage,
-  loadNextPage,
+  loadNextPage
 }) => {
   return (
     <InfiniteScroll

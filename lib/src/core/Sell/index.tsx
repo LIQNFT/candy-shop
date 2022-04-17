@@ -10,12 +10,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useCallback } from 'react';
 import {
   Order as OrderSchema,
-  WhitelistNft,
+  WhitelistNft
 } from 'solana-candy-shop-schema/dist';
 import {
   CandyShop,
   fetchNftsFromWallet,
-  SingleTokenInfo,
+  SingleTokenInfo
 } from '@liqnft/candy-shop-sdk';
 
 interface SellProps {
@@ -29,7 +29,7 @@ interface SellProps {
 enum LoadStatus {
   ToLoad = 'ToLoad',
   Loading = 'Loading',
-  Loaded = 'Loaded',
+  Loaded = 'Loaded'
 }
 
 /**
@@ -40,7 +40,7 @@ export const Sell: React.FC<SellProps> = ({
   connection,
   candyShop,
   walletConnectComponent,
-  style,
+  style
 }) => {
   const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
   const [sellOrders, setSellOrders] = useState<OrderSchema[]>();

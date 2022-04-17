@@ -4,7 +4,7 @@ import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   createAssociatedTokenAccountInstruction,
   getAccount,
-  TOKEN_PROGRAM_ID,
+  TOKEN_PROGRAM_ID
 } from '@solana/spl-token';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Metadata, parseMetadata } from '../../utils/parseData';
@@ -13,7 +13,7 @@ import {
   getAtaForMint,
   getAuctionHouseEscrow,
   getAuctionHouseProgramAsSigner,
-  getAuctionHouseTradeState,
+  getAuctionHouseTradeState
 } from '../utils';
 import { awaitTransactionSignatureConfirmation } from './submitTx';
 
@@ -102,8 +102,8 @@ export async function buyAndExecuteSale(
         ahProgram: AUCTION_HOUSE_PROGRAM_ID,
         tokenProgram: TOKEN_PROGRAM_ID,
         systemProgram: web3.SystemProgram.programId,
-        rent: web3.SYSVAR_RENT_PUBKEY,
-      },
+        rent: web3.SYSVAR_RENT_PUBKEY
+      }
     }
   );
 
@@ -136,7 +136,7 @@ export async function buyAndExecuteSale(
         remainingAccounts.push({
           pubkey: creatorPublicKey,
           isWritable: true,
-          isSigner: false,
+          isSigner: false
         });
 
         if (!isNative) {
@@ -146,7 +146,7 @@ export async function buyAndExecuteSale(
           remainingAccounts.push({
             pubkey: ataAddress,
             isWritable: true,
-            isSigner: false,
+            isSigner: false
           });
           accountsRequireAta.push(creatorPublicKey);
         }
@@ -224,9 +224,9 @@ export async function buyAndExecuteSale(
         systemProgram: web3.SystemProgram.programId,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
         programAsSigner: programAsSigner,
-        rent: web3.SYSVAR_RENT_PUBKEY,
+        rent: web3.SYSVAR_RENT_PUBKEY
       },
-      remainingAccounts,
+      remainingAccounts
     }
   );
   transaction.add(ix);
@@ -298,7 +298,7 @@ async function sendTx(
       : await (async () => {
           await transaction.sign({
             publicKey: wallet.publicKey,
-            secretKey: wallet.secretKey,
+            secretKey: wallet.secretKey
           });
           return transaction;
         })();

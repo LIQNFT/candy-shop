@@ -1,13 +1,13 @@
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
-import { web3 } from "@project-serum/anchor";
+import { web3 } from '@project-serum/anchor';
 import 'antd/dist/antd.min.css';
 import React, { useRef } from 'react';
 import { CandyShop, Orders, Stat, OrderDetail, Sell } from '../lib/.';
 import {
   CANDY_SHOP_PROGRAM_ID,
   CREATOR_ADDRESS,
-  TREASURY_MINT,
+  TREASURY_MINT
 } from './constant/publicKey';
 
 export const CandyShopContent: React.FC = () => {
@@ -40,19 +40,21 @@ export const CandyShopContent: React.FC = () => {
         />
       </div>
 
-      <div >
+      <div>
         <Orders
           wallet={wallet}
           candyShop={candyShopRef.current}
           walletConnectComponent={<WalletMultiButton />}
           filters={[
-            {name: 'Sword', identifier: -280213123 },
-            {name: 'Happy', identifier: -38328789 },
+            { name: 'Sword', identifier: -280213123 },
+            { name: 'Happy', identifier: -38328789 }
           ]}
         />
       </div>
 
-      <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Order Detail</h1>
+      <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>
+        Order Detail
+      </h1>
       <OrderDetail
         tokenMint={'EVdLAk8GeWRsj2HpyBujG1pJPip5gjkPcZ76QinsHHtJ'}
         backUrl={'/'}
@@ -61,7 +63,9 @@ export const CandyShopContent: React.FC = () => {
         wallet={wallet}
       />
 
-      <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Sell</h1>
+      <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>
+        Sell
+      </h1>
       <Sell
         connection={connection}
         wallet={wallet}

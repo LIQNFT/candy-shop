@@ -17,7 +17,7 @@ export async function fetchOrdersByStoreId(
   axiosInstance: AxiosInstance,
   storeId: string,
   ordersFilterQuery: OrdersFilterQuery,
-  identifiers?: number[],
+  identifiers?: number[]
 ): Promise<ListBase<Order>> {
   const { sortBy, offset, limit } = ordersFilterQuery;
 
@@ -40,7 +40,7 @@ export async function fetchOrdersByStoreId(
         `&filterArr[]=${JSON.stringify({
           side: 1,
           status: 0,
-          identifier,
+          identifier
         })}`,
       ''
     );
@@ -80,7 +80,7 @@ export async function fetchOrdersByStoreIdAndWalletAddress(
           {
             side: 1,
             status: 0,
-            walletAddress,
+            walletAddress
           }
         )}`
       )

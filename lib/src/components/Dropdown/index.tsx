@@ -18,7 +18,7 @@ interface DropdownProps {
 export const Dropdown: React.FunctionComponent<DropdownProps> = ({
   selectedItem,
   items,
-  onSelectItem,
+  onSelectItem
 }) => {
   const dropdownRef = useRef(null);
 
