@@ -73,9 +73,12 @@ export const Sell: React.FC<SellProps> = ({
           []
         )
       )
-      .then((identifiers: string[]) =>
-        fetchNftsFromWallet(connection, walletPublicKey, identifiers)
-      )
+      .then((identifiers: string[]) => {
+        console.log(
+          `Sell: shop ${candyShop.candyShopAddress} identifiers ${identifiers}`
+        );
+        return fetchNftsFromWallet(connection, walletPublicKey, identifiers);
+      })
       .then((userNFTs: SingleTokenInfo[]) => {
         setNfts(userNFTs);
       })

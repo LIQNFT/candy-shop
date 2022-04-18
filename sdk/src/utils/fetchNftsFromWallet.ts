@@ -6,7 +6,7 @@ import { SingleTokenInfo, singleTokenInfoPromise } from './fetchMetadata';
 export const fetchNftsFromWallet = async (
   connection: anchor.web3.Connection,
   walletAddress: anchor.web3.PublicKey,
-  identifiers?: string[]
+  identifiers: string[]
 ): Promise<SingleTokenInfo[]> => {
   const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
     walletAddress,
@@ -35,7 +35,7 @@ const fetchDataArrayInBatches = async (
   connection: anchor.web3.Connection,
   array: any[],
   singleItemAsyncCallback: any,
-  identifiers?: string[]
+  identifiers: string[]
 ): Promise<SingleTokenInfo[]> => {
   const chunkSize = 20;
   const delayMs = 1000;

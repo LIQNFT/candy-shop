@@ -334,7 +334,7 @@ export class CandyShop {
     ordersFilterQuery: OrdersFilterQuery,
     identifiers?: number[]
   ): Promise<ListBase<Order>> {
-    console.log('CandyShop: performing orders'. {identifiers, ordersFilterQuery});
+    console.log('CandyShop: performing orders', {identifiers, ordersFilterQuery});
     const { sortBy, offset, limit } = ordersFilterQuery;
     return fetchOrdersByStoreId(
       axiosInstance,
