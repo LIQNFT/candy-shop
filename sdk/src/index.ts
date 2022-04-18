@@ -34,9 +34,9 @@ import {
 } from './api/utils';
 
 export * from './utils';
-export {SortBy as OrderSortBy, OrdersFilterQuery} from "./api"
+export { SortBy as OrderSortBy, OrdersFilterQuery } from './api';
 // for CLI
-export {buyAndExecuteSale, sellNft, cancelOrder} from "./api";
+export { buyAndExecuteSale, sellNft, cancelOrder } from './api';
 
 const DEFAULT_CURRENCY_SYMBOL = 'SOL';
 const DEFAULT_CURRENCY_DECIMALS = 9;
@@ -176,7 +176,12 @@ export class CandyShop {
     price: BN,
     wallet: AnchorWallet
   ): Promise<string> {
-    console.log('buy called');
+    console.log('CandyShop: performing buy', {
+      seller: seller.toString(), 
+      tokenAccount: tokenAccount.toString(), 
+      tokenMint: tokenMint.toString(), 
+      price
+    });
     const program = await this.getStaticProgram(wallet);
     const [auctionHouseAuthority, authorityBump] =
       await getAuctionHouseAuthority(
@@ -221,6 +226,7 @@ export class CandyShop {
     price: BN,
     wallet: AnchorWallet
   ): Promise<string> {
+    console.log('CandyShop: performing sell', {tokenMint: tokenMint.toString(), tokenAccount: tokenAccount.toString(), price});
     const program = await this.getStaticProgram(wallet);
     const [auctionHouseAuthority, authorityBump] =
       await getAuctionHouseAuthority(
@@ -262,6 +268,11 @@ export class CandyShop {
     price: BN,
     wallet: AnchorWallet
   ): Promise<string> {
+    console.log('CandyShop: performing cancel', {
+      tokenAccount: tokenAccount.toString(), 
+      tokenMint: tokenMint.toString(), 
+      price
+    });
     const program = await this.getStaticProgram(wallet);
     const [auctionHouseAuthority, authorityBump] =
       await getAuctionHouseAuthority(
@@ -306,6 +317,7 @@ export class CandyShop {
   }
 
   public async stats(): Promise<ShopStats> {
+    console.log('CandyShop: performing stats');
     return fetchStatsById(axiosInstance, this._candyShopAddress.toString());
   }
 
@@ -314,6 +326,7 @@ export class CandyShop {
   }
 
   public async nftInfo(mint: string): Promise<Nft> {
+    console.log('CandyShop: performing nftInfo', {mint});
     return fetchNftByMint(axiosInstance, mint);
   }
 
@@ -321,6 +334,7 @@ export class CandyShop {
     ordersFilterQuery: OrdersFilterQuery,
     identifiers?: number[]
   ): Promise<ListBase<Order>> {
+    console.log('CandyShop: performing orders'. {identifiers, ordersFilterQuery});
     const { sortBy, offset, limit } = ordersFilterQuery;
     return fetchOrdersByStoreId(
       axiosInstance,
@@ -337,6 +351,7 @@ export class CandyShop {
   public async activeOrdersByWalletAddress(
     walletAddress: string
   ): Promise<Order[]> {
+    console.log('CandyShop: performing activeOrdersByWalletAddress', {walletAddress});
     return fetchOrdersByStoreIdAndWalletAddress(
       axiosInstance,
       this._candyShopAddress.toString(),
@@ -345,6 +360,7 @@ export class CandyShop {
   }
 
   public async shopWlNfts(): Promise<ListBase<WhitelistNft>> {
+    console.log('CandyShop: performing shopWlNfts');
     return fetchShopWhitelistNftByShopId(
       axiosInstance,
       this._candyShopAddress.toString()
@@ -354,6 +370,7 @@ export class CandyShop {
   public async activeOrderByMintAddress(
     mintAddress: string
   ): Promise<SingleBase<Order>> {
+    console.log('CandyShop: performing activeOrderByMintAddress', {mintAddress});
     return fetchOrderByTokenMint(axiosInstance, mintAddress);
   }
 }

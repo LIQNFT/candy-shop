@@ -50,7 +50,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
     } catch (err) {
       return null;
     }
-  }, [order]);
+  }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimals, order?.price]);
 
   useEffect(() => {
     if (!order) {
@@ -81,7 +81,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
           setLoadingNftInfo(false);
         });
     }
-  }, [order, candyShop]);
+  }, [order, candyShop, nftInfo, tokenMint]);
 
   const buy = async () => {
     if (order !== null && wallet) {
