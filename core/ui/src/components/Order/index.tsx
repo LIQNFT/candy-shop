@@ -1,8 +1,12 @@
+import React, { useMemo, useState } from 'react';
+
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
+
 import { BuyModal } from 'components/BuyModal';
 import { LiqImage } from 'components/LiqImage';
-import React, { useCallback, useMemo, useState } from 'react';
+import { CancelModal } from 'components/CancelModal';
+
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 
 import './index.less';
@@ -22,7 +26,7 @@ export const Order: React.FC<OrderProps> = ({
   walletConnectComponent,
   url
 }) => {
-  const [selection, setSelection] = useState<OrderSchema | null>(null);
+  const [selection, setSelection] = useState<OrderSchema>();
 
   const orderPrice = useMemo(() => {
     try {
@@ -35,23 +39,25 @@ export const Order: React.FC<OrderProps> = ({
     } catch (err) {
       return null;
     }
-  }, [order]);
+  }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimals, order?.price]);
 
-  const onClose = useCallback(() => {
-    setSelection(null);
-  }, []);
+  const onClose = () => setSelection(undefined);
 
-  const onClick = useCallback(() => {
+  const onClick = () => {
     if (url) {
       window.location.href = url.replace(':tokenMint', order.tokenMint);
     } else {
       setSelection(order);
     }
-  }, [order, url]);
+  };
+
+  const isUserListing =
+    wallet?.publicKey && order.walletAddress === wallet.publicKey.toString();
 
   return (
     <>
       <div className="candy-order candy-card-border" onClick={onClick}>
+        {isUserListing && <div className="candy-status-tag">Your Listing</div>}
         <LiqImage
           alt={order?.name}
           src={order?.nftImageLink}
@@ -72,7 +78,7 @@ export const Order: React.FC<OrderProps> = ({
         </div>
       </div>
 
-      {selection && (
+      {selection && !isUserListing && (
         <BuyModal
           order={selection}
           onClose={onClose}
@@ -81,6 +87,15 @@ export const Order: React.FC<OrderProps> = ({
           walletConnectComponent={walletConnectComponent}
         />
       )}
+
+      {selection && isUserListing && wallet ? (
+        <CancelModal
+          onClose={onClose}
+          candyShop={candyShop}
+          order={selection}
+          wallet={wallet}
+        />
+      ) : null}
     </>
   );
 };

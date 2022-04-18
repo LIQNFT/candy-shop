@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CancelModal } from 'components/CancelModal';
@@ -24,13 +24,13 @@ export const Nft = ({
 }: NftProps): JSX.Element => {
   const [selection, setSelection] = useState<SingleTokenInfo | undefined>();
 
-  const onClose = useCallback(() => {
+  const onClose = () => {
     setSelection(undefined);
-  }, []);
+  };
 
-  const onClick = useCallback(() => {
+  const onClick = () => {
     setSelection(nft);
-  }, [nft]);
+  };
 
   const isSellItem = Boolean(sellDetail);
 

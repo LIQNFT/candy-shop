@@ -52,7 +52,7 @@ export const CancelModalDetail = ({
     } catch (err) {
       return null;
     }
-  }, [order]);
+  }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimals, order?.price]);
 
   return (
     <div className="candy-cancel-modal">
@@ -102,7 +102,7 @@ export const CancelModalDetail = ({
           <div>
             <div className="candy-label">CURRENT OWNER</div>
             <div className="candy-value">
-              <ExplorerLink type="address" address={order.tokenAccount} />
+              <ExplorerLink type="address" address={order.walletAddress} />
             </div>
           </div>
         </div>

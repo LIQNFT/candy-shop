@@ -19,9 +19,7 @@ interface InfiniteOrderListProps {
   loadNextPage: () => void;
 }
 
-export const InfiniteOrderList: React.FunctionComponent<
-  InfiniteOrderListProps
-> = ({
+export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
   orders,
   wallet,
   walletConnectComponent,
@@ -48,10 +46,10 @@ export const InfiniteOrderList: React.FunctionComponent<
       }
     >
       <div className="candy-container-list">
-        {orders.map((item, key) => (
-          <div key={key}>
+        {orders.map((order) => (
+          <div key={order.tokenMint}>
             <OrderComponent
-              order={item}
+              order={order}
               walletConnectComponent={walletConnectComponent}
               wallet={wallet}
               candyShop={candyShop}
