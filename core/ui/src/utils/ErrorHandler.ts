@@ -12,7 +12,7 @@ export const ErrorMsgMap = {
   [ErrorType.InsufficientBalance]: 'Insufficient balance.'
 };
 
-export const handleError = (errorType: ErrorType) => {
+export const handleError = (errorType: ErrorType): void => {
   if (errorType === ErrorType.TransactionFailed) {
     notification(
       ErrorMsgMap[ErrorType.TransactionFailed],

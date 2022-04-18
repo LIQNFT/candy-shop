@@ -52,6 +52,9 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
     }
   }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimals, order?.price]);
 
+  const isUserListing =
+    wallet?.publicKey && order.walletAddress === wallet.publicKey.toString();
+
   useEffect(() => {
     if (!order) {
       setLoadingOrder(true);
@@ -125,6 +128,9 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
           />
         </div>
         <div className="candy-order-detail-right">
+          {isUserListing && (
+            <div className="candy-status-tag-inline">Your Listing</div>
+          )}
           <div className="candy-order-detail-title">{order?.name}</div>
           <div className="candy-stat">
             <div className="candy-label">PRICE</div>

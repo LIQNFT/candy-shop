@@ -32,7 +32,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
     } catch (err) {
       return null;
     }
-  }, [order]);
+  }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimals, order?.price]);
 
   const [loadingNftInfo, setLoadingNftInfo] = useState(false);
   const [nftInfo, setNftInfo] = useState<Nft | null>(null);

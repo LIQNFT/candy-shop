@@ -73,7 +73,7 @@ export const Orders: React.FC<OrdersProps> = ({
   >(undefined);
   const [filterName, setFilterName] = useState<string | undefined>(undefined);
 
-  const loadNextPage = (startIndex: number, limit: number) => {
+  const loadNextPage = (startIndex: number, limit: number) => () => {
     candyShop
       .orders({ sortBy: sortedByOption.value, offset: startIndex, limit })
       .then((data: any) => {
@@ -181,9 +181,7 @@ export const Orders: React.FC<OrdersProps> = ({
                       </div>
                     ))}
                 </div>
-              ) : !loading && !orders.length ? (
-                <Empty description="No orders found" />
-              ) : (
+              ) : orders.length ? (
                 <InfiniteOrderList
                   orders={orders}
                   walletConnectComponent={walletConnectComponent}
@@ -191,10 +189,10 @@ export const Orders: React.FC<OrdersProps> = ({
                   candyShop={candyShop}
                   url={url}
                   hasNextPage={hasNextPage}
-                  loadNextPage={() =>
-                    loadNextPage(startIndex, ORDER_FETCH_LIMIT)
-                  }
+                  loadNextPage={loadNextPage(startIndex, ORDER_FETCH_LIMIT)}
                 />
+              ) : (
+                <Empty description="No orders found" />
               )}
             </div>
           </div>
