@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { web3 } from '@project-serum/anchor';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { NftAttributes } from 'components/NftAttributes';
@@ -33,7 +32,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
     } catch (err) {
       return null;
     }
-  }, [order]);
+  }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimals, order?.price]);
 
   const [loadingNftInfo, setLoadingNftInfo] = useState(false);
   const [nftInfo, setNftInfo] = useState<Nft | null>(null);
