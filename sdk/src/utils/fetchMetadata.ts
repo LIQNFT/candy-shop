@@ -21,7 +21,7 @@ export type SingleTokenInfo = {
 export const singleTokenInfoPromise = async (
   connection: web3.Connection,
   tokenAccountAddress: string,
-  identifiers?: string[]
+  identifiers: string[]
 ): Promise<SingleTokenInfo | null> => {
   // Get account
   const token = await getAccount(
@@ -72,7 +72,11 @@ export const singleTokenInfoPromise = async (
 
   if (tokenInfo) {
     // collection check here
-    if (identifiers && !isValidCollection(identifiers, tokenInfo)) return null;
+    if (
+      identifiers.length > 0 &&
+      !isValidCollection(identifiers, tokenInfo)
+    )
+      return null;
 
     return axios
       .get(tokenInfo.data.uri)
