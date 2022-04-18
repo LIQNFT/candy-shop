@@ -128,22 +128,22 @@ export const Sell: React.FC<SellProps> = ({
             {Array(4)
               .fill(0)
               .map((_, key) => (
-                <FlexItem key={key}>
+                <div key={key}>
                   <Skeleton />
-                </FlexItem>
+                </div>
               ))}
           </Flex>
         ) : nfts.length ? (
           <Flex>
             {nfts.map((item) => (
-              <FlexItem key={item.tokenAccountAddress}>
+              <div key={item.tokenAccountAddress}>
                 <Nft
                   nft={item}
                   candyShop={candyShop}
                   wallet={wallet}
                   sellDetail={hashSellOrders[item.tokenMintAddress]}
                 />
-              </FlexItem>
+              </div>
             ))}
           </Flex>
         ) : (
@@ -175,5 +175,3 @@ const Flex = styled.div`
     }
   }
 `;
-
-const FlexItem = styled.div``;

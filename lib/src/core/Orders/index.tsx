@@ -73,7 +73,7 @@ export const Orders: React.FC<OrdersProps> = ({
     number[] | undefined
   >(undefined);
 
-  const loadNextPage = (startIndex: number, limit: number) => {
+  const loadNextPage = (startIndex: number, limit: number) => () => {
     candyShop
       .orders({ sortBy: sortedByOption.value, offset: startIndex, limit })
       .then((data: any) => {
@@ -156,8 +156,7 @@ export const Orders: React.FC<OrdersProps> = ({
                       }}
                       key={filter.identifier}
                       className={
-                        filterIdentifiers &&
-                        filterIdentifiers[0] === filter.identifier
+                        filterIdentifiers?.[0] === filter.identifier
                           ? 'selected'
                           : undefined
                       }
@@ -179,9 +178,7 @@ export const Orders: React.FC<OrdersProps> = ({
                       </FlexItem>
                     ))}
                 </Flex>
-              ) : !loading && !orders.length ? (
-                <Empty description="No orders found" />
-              ) : (
+              ) : !orders.length ? (
                 <InfiniteOrderList
                   orders={orders}
                   walletConnectComponent={walletConnectComponent}
@@ -189,10 +186,10 @@ export const Orders: React.FC<OrdersProps> = ({
                   candyShop={candyShop}
                   url={url}
                   hasNextPage={hasNextPage}
-                  loadNextPage={() =>
-                    loadNextPage(startIndex, ORDER_FETCH_LIMIT)
-                  }
+                  loadNextPage={loadNextPage(startIndex, ORDER_FETCH_LIMIT)}
                 />
+              ) : (
+                <Empty description="No orders found" />
               )}
             </div>
           </FlexWithFilter>
@@ -202,42 +199,40 @@ export const Orders: React.FC<OrdersProps> = ({
   }
 
   return (
-    <>
-      <Wrap style={style}>
-        <div className="candy-container">
-          <SortContainer>
-            <Dropdown
-              items={SORT_OPTIONS}
-              selectedItem={sortedByOption}
-              onSelectItem={(item) => setSortedByOption(item)}
-            />
-          </SortContainer>
-          {loading ? (
-            <Flex>
-              {Array(LOADING_SKELETON_COUNT)
-                .fill(0)
-                .map((_, key) => (
-                  <FlexItem key={key}>
-                    <Skeleton />
-                  </FlexItem>
-                ))}
-            </Flex>
-          ) : !loading && !orders.length ? (
-            <Empty description="No orders found" />
-          ) : (
-            <InfiniteOrderList
-              orders={orders}
-              walletConnectComponent={walletConnectComponent}
-              wallet={wallet}
-              candyShop={candyShop}
-              url={url}
-              hasNextPage={hasNextPage}
-              loadNextPage={() => loadNextPage(startIndex, ORDER_FETCH_LIMIT)}
-            />
-          )}
-        </div>
-      </Wrap>
-    </>
+    <Wrap style={style}>
+      <div className="candy-container">
+        <SortContainer>
+          <Dropdown
+            items={SORT_OPTIONS}
+            selectedItem={sortedByOption}
+            onSelectItem={(item) => setSortedByOption(item)}
+          />
+        </SortContainer>
+        {loading ? (
+          <Flex>
+            {Array(LOADING_SKELETON_COUNT)
+              .fill(0)
+              .map((_, key) => (
+                <FlexItem key={key}>
+                  <Skeleton />
+                </FlexItem>
+              ))}
+          </Flex>
+        ) : orders.length ? (
+          <InfiniteOrderList
+            orders={orders}
+            walletConnectComponent={walletConnectComponent}
+            wallet={wallet}
+            candyShop={candyShop}
+            url={url}
+            hasNextPage={hasNextPage}
+            loadNextPage={loadNextPage(startIndex, ORDER_FETCH_LIMIT)}
+          />
+        ) : (
+          <Empty description="No orders found" />
+        )}
+      </div>
+    </Wrap>
   );
 };
 
