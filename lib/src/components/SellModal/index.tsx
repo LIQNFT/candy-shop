@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import IconTick from 'assets/IconTick';
@@ -31,6 +30,8 @@ export const SellModal: React.FC<SellModalProps> = ({
     price: undefined,
   });
   const [state, setState] = useState(TransactionState.DISPLAY);
+
+  const regex3Decimals = new RegExp('^[0-9]{1,11}(?:.[0-9]{1,3})?$');
 
   // List for sale and move to next step
   const sell = async () => {
@@ -95,12 +96,12 @@ export const SellModal: React.FC<SellModalProps> = ({
 
   return (
     <Modal onCancel={onCancel} width={600}>
-      <div className="sell-modal">
+      <div className="candy-sell-modal">
         {state === TransactionState.DISPLAY && (
-          <Content>
-            <div className="sell-modal-title">Sell</div>
-            <div className="sell-modal-content">
-              <div className="sell-modal-img">
+          <div>
+            <div className="candy-sell-modal-title">Sell</div>
+            <div className="candy-sell-modal-content">
+              <div className="candy-sell-modal-img">
                 <LiqImage
                   src={nft?.nftImage}
                   alt={nft?.metadata?.data?.name}
@@ -108,17 +109,17 @@ export const SellModal: React.FC<SellModalProps> = ({
                 />
               </div>
               <div>
-                <div className="sell-modal-nft-name">
+                <div className="candy-sell-modal-nft-name">
                   {nft?.metadata?.data?.name}
                 </div>
-                <div className="sell-modal-symbol">
+                <div className="candy-sell-modal-symbol">
                   {nft?.metadata?.data?.symbol}
                 </div>
               </div>
             </div>
-            <div className="sell-modal-hr"></div>
+            <div className="candy-sell-modal-hr"></div>
             <form>
-              <InputNumber>
+              <div className="candy-sell-modal-input-number">
                 <input
                   placeholder="Price"
                   min={0}
@@ -127,44 +128,47 @@ export const SellModal: React.FC<SellModalProps> = ({
                   value={formState.price}
                 />
                 <span>{candyShop.currencySymbol}</span>
-              </InputNumber>
+              </div>
 
-              <Row>
+              <div className="candy-sell-modal-transaction">
                 <div>Transaction Fees</div>
                 <div>1.0%</div>
-              </Row>
+              </div>
 
               <button
-                className="sell-modal-button"
+                className="candy-sell-modal-button candy-button"
                 onClick={sell}
                 disabled={!isSubmit}
               >
                 List for Sale
               </button>
             </form>
-          </Content>
+          </div>
         )}
         {state === TransactionState.PROCESSING && (
           <Processing text="Listing your NFT" />
         )}
         {state === TransactionState.CONFIRMED && (
           <>
-            <div className="sell-modal-title">
+            <div className="candy-sell-modal-title">
               <IconTick />
             </div>
-            <div className="sell-modal-content">
-              <div className="sell-modal-img">
+            <div className="candy-sell-modal-content">
+              <div className="candy-sell-modal-img">
                 <LiqImage src={nft?.nftImage} alt="NFT image" fit="contain" />
               </div>
-              <div className="sell-modal-listed">
+              <div className="candy-sell-modal-listed">
                 <span style={{ fontWeight: 'bold' }}>
                   {nft?.metadata?.data?.name}
                 </span>{' '}
                 is now listed for sale
               </div>
             </div>
-            <div className="sell-modal-hr"></div>
-            <button className="sell-modal-button" onClick={onCancel}>
+            <div className="candy-sell-modal-hr"></div>
+            <button
+              className="candy-sell-modal-button candy-button"
+              onClick={onCancel}
+            >
               Continue Browsing
             </button>
           </>
@@ -173,44 +177,3 @@ export const SellModal: React.FC<SellModalProps> = ({
     </Modal>
   );
 };
-
-const regex3Decimals = new RegExp('^[0-9]{1,11}(?:.[0-9]{1,3})?$');
-
-const InputNumber = styled.div`
-  width: 100%;
-  height: 40px;
-  padding: 4px 8px;
-  display: flex;
-  align-items: center;
-
-  border-radius: 4px;
-  border: 2px solid #bdbdbd;
-
-  input {
-    border: none;
-    outline: none;
-    flex-grow: 1;
-
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    /* Firefox */
-    &[type='number'] {
-      -moz-appearance: textfield;
-    }
-  }
-`;
-
-const Row = styled.div`
-  font-size: 14px;
-
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-  margin-bottom: 20px;
-`;
-
-const Content = styled.div``;

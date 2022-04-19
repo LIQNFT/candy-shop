@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { web3 } from '@project-serum/anchor';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { NftAttributes } from 'components/NftAttributes';
@@ -56,7 +55,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   return (
     <>
       <div>
-        <div className="buy-modal-thumbnail">
+        <div className="candy-buy-modal-thumbnail">
           <LiqImage
             src={order?.nftImageLink || ''}
             alt={order?.name}
@@ -64,9 +63,9 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
           />
         </div>
       </div>
-      <div className="buy-modal-container">
+      <div className="candy-buy-modal-container">
         <div className="candy-title">{order?.name}</div>
-        <div className="buy-modal-control">
+        <div className="candy-buy-modal-control">
           <div>
             <div className="candy-label">PRICE</div>
             <div className="candy-price">
@@ -76,7 +75,10 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
           {!walletPublicKey ? (
             walletConnectComponent
           ) : (
-            <button className="candy-button buy-modal-button" onClick={buy}>
+            <button
+              className="candy-button candy-buy-modal-button"
+              onClick={buy}
+            >
               Buy Now
             </button>
           )}

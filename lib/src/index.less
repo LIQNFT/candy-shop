@@ -1,22 +1,4 @@
-@primary-color: #7522f5;
-@popover-background: #1a2029;
-@primary-color-light: #f4edfe;
-@primary-color-dark: #4c00c0;
-@secondary-color-dark: #e9ae00;
-@lnft-green: #85bb13;
-@lnft-blue: #52acd3;
-@lnft-red: #e75d3e;
-@gray-medium: #757575;
-@gray-medium-alt: #bdbdbd;
-@gray-light: #e5e5e5;
-@gray-lightest: #f7f7f7;
-@layout-body-background: #fff;
-@layout-header-background: #fff;
-@font-size-base: 16px;
-@font-size-sm: 14px;
-
-@mobile: ~'only screen and (max-width: 600px)';
-@widescreen: ~'only screen and (min-width: 1600px)';
+@import './variable.less';
 
 *,
 *::after,
@@ -31,10 +13,14 @@
   margin-left: auto;
   margin-right: auto;
 
-  @media @mobile {
+  @media @tabletS {
     padding-left: 15px;
     padding-right: 15px;
   }
+}
+
+.candy-sell-component {
+  width: 100%;
 }
 
 .candy-line-limit-1 {
@@ -51,7 +37,7 @@
   border-radius: 20px;
   font-size: 16px;
   padding: 6px 16px;
-  color: #ffffff;
+  color: #fff;
   border: 2px solid transparent;
   cursor: pointer;
 
@@ -75,13 +61,22 @@
 }
 
 .candy-value {
-  color: black;
   font-size: 16px;
   font-weight: 400;
   text-align: left;
 
   a {
     color: @primary-color;
+  }
+}
+
+.candy-value-lg {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+
+  @media @tabletM {
+    font-size: 16px;
   }
 }
 
@@ -101,6 +96,14 @@
   font-weight: bold;
   line-height: 30px;
   text-align: left;
+}
+
+.candy-liq-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .candy-stat-horizontal {
@@ -126,6 +129,7 @@
   margin-top: 6px;
 
   .candy-nft-attribute {
+    color: black;
     padding: 4px 12px;
     background-color: @gray-light;
     border-radius: 8px;
@@ -135,176 +139,30 @@
   }
 }
 
-.vault-list-item {
-  border: 2px solid black;
-  border-radius: 16px;
-  height: auto;
-  position: relative;
-  z-index: 3;
-
-  @media @mobile {
-    margin-bottom: 15px;
+.candy-container-list {
+  display: flex;
+  flex-flow: row wrap;
+  row-gap: 18px;
+  column-gap: 18px;
+  > * {
+    width: calc((100% - 18px * 3) / 4);
   }
 
-  .vault-list-icon {
-    position: absolute;
-    width: 32px;
-    height: 32px;
-    top: 16px;
-    right: 16px;
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .vault-list-info {
-    font-size: 25px;
-    padding-left: 5px;
-    position: absolute;
-  }
-
-  img {
-    border-top-right-radius: 14px;
-    border-top-left-radius: 14px;
-    object-fit: cover;
-  }
-
-  .vault-statistic-title {
-    font-size: 16px;
-    color: @gray-medium;
-    margin-bottom: 4px;
-  }
-
-  .vault-statistic-title-caps {
-    font-size: 14px;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: @gray-medium;
-  }
-
-  .vault-list-item-body {
-    position: relative;
-    padding: 15px;
-
-    .vault-video-tag {
-      position: absolute;
-      right: 15px;
-      top: -55px;
-
-      svg {
-        fill: @gray-light;
-        font-size: 40px;
-      }
+  @media @tabletM {
+    row-gap: 16px;
+    column-gap: 16px;
+    > * {
+      width: 100%;
     }
-
-    .vault-name {
-      font-size: 20px;
-
-      @media @mobile {
-        font-size: 18px;
-      }
-    }
-
-    .vault-ticker {
-      padding-bottom: 15px;
-    }
-
-    .token-sale-label {
-      color: @gray-medium;
-    }
-
-    .vault-list-item-header {
-      .vault-name {
-        float: left;
-        text-align: left;
-      }
-
-      .mint-price {
-        width: 40%;
-        float: right;
-        text-align: right;
-        padding-top: 6px;
-        white-space: nowrap;
-      }
-
-      .title {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .subtitle {
-        font-size: 14px;
-        height: 22px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        text-align: left;
-      }
-
-      &::after {
-        content: '';
-        display: block;
-        clear: both;
-      }
-    }
-  }
-
-  .available-for-sale-block {
-    height: 61px;
-  }
-
-  .vault-list-item-left-right {
-    padding-top: 12px;
-
-    .left {
-      float: left;
-    }
-
-    .right {
-      float: right;
-    }
-
-    &::after {
-      content: '';
-      display: block;
-      clear: both;
-    }
-  }
-
-  .vault-list-item-footer {
-    padding: 15px;
-
-    .left {
-      float: left;
-    }
-
-    .right {
-      float: right;
-    }
-
-    &::after {
-      content: '';
-      display: block;
-      clear: both;
-    }
-
-    .vault-footer-item {
-      padding-bottom: 10px;
-
-      &::after {
-        content: '';
-        display: block;
-        clear: both;
-      }
-    }
-  }
-
-  .ant-card-body {
-    padding: 0px;
   }
 }
 
-.vault-status-tag {
+.candy-card-border {
+  border: 2px solid black;
+  border-radius: 16px;
+}
+
+.candy-status-tag {
   z-index: 1;
   background-color: @primary-color;
   position: absolute;
@@ -505,6 +363,39 @@
     }
     100% {
       opacity: 0;
+    }
+  }
+}
+
+.candy-notification-content {
+  padding: 12px 20px 12px 10px;
+  display: flex;
+  margin: 10px 0;
+
+  border-radius: 8px;
+  background-color: #fff;
+  color: black;
+  border: 1px solid #000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+
+  .candy-right {
+    .title {
+      font-size: 18px;
+      line-height: 24px;
+    }
+    .desc {
+      font-size: 14px;
+    }
+  }
+
+  .candy-left {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+
+    svg {
+      width: 20px;
+      height: 20px;
     }
   }
 }

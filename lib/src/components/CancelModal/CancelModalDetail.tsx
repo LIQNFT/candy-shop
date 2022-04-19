@@ -7,7 +7,6 @@ import React, { useMemo } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { ErrorType, handleError } from 'utils/ErrorHandler';
 import { LiqImage } from '../LiqImage';
-import './style.less';
 
 export interface CancelModalDetailProps {
   onCancel: any;

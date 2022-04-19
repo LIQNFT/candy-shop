@@ -7,6 +7,7 @@ import React, { useCallback, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { CancelModalConfirm } from './CancelModalConfirm';
 import { CancelModalDetail } from './CancelModalDetail';
+import './index.less';
 
 export interface CancelModalProps {
   order: OrderSchema;

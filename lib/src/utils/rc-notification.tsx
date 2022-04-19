@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from '@emotion/styled';
+
 import Notification from 'rc-notification';
 import IconSuccess from 'assets/IconSuccess';
 import IconError from 'assets/IconError';
@@ -23,7 +23,7 @@ Notification.newInstance(
 export const notification = (content: string, type: NotificationType): void => {
   notificationIns.notice({
     content: (
-      <NotiContent>
+      <div className="candy-notification-content">
         <div className="candy-left">
           {type === NotificationType.Success && <IconSuccess />}
           {type === NotificationType.Error && <IconError />}
@@ -37,42 +37,9 @@ export const notification = (content: string, type: NotificationType): void => {
           )}
           <div className="desc">{content}</div>
         </div>
-      </NotiContent>
+      </div>
     ),
     duration: 3,
     prefixCls: 'candy',
   });
 };
-
-const NotiContent = styled.div`
-  padding: 12px 20px 12px 10px;
-  display: flex;
-  margin: 10px 0;
-
-  border-radius: 8px;
-  background-color: #fff;
-  color: black;
-  border: 1px solid #000;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-
-  .candy-right {
-    .title {
-      font-size: 18px;
-      line-height: 24px;
-    }
-    .desc {
-      font-size: 14px;
-    }
-  }
-
-  .candy-left {
-    display: flex;
-    align-items: center;
-    margin-right: 10px;
-
-    svg {
-      width: 20px;
-      height: 20px;
-    }
-  }
-`;

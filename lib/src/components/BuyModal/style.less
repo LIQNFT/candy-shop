@@ -1,10 +1,10 @@
-.buy-modal {
+.candy-buy-modal {
   display: flex;
   gap: 24px;
   font-size: 16px;
   line-height: 24px;
 
-  .buy-modal-thumbnail {
+  .candy-buy-modal-thumbnail {
     width: 340px;
     height: 340px;
     text-align: center;
@@ -16,25 +16,25 @@
     }
   }
 
-  .buy-modal-container {
+  .candy-buy-modal-container {
     flex: 1;
     padding-top: 20px;
     padding-bottom: 20px;
 
-    .buy-modal-title {
+    .candy-buy-modal-title {
       text-align: left;
       font-weight: bold;
       font-size: 24px;
     }
 
-    .buy-modal-control {
+    .candy-buy-modal-control {
       display: flex;
       text-align: left;
       justify-content: space-between;
       align-items: center;
       margin: 20px 0 25px;
 
-      .buy-modal-button {
+      .candy-buy-modal-button {
         padding: 8px 50px;
         border-radius: 32px;
 
@@ -49,16 +49,30 @@
     }
   }
 
-  .buy-modal-price {
+  .candy-buy-modal-price {
     font-weight: bold;
     font-size: 16px;
     line-height: 24px;
   }
 
-  .buy-modal-confirmed {
+  .candy-buy-modal-confirmed {
     width: 100%;
 
-    .buy-modal-confirmed-header {
+    &-flex {
+      display: flex;
+      flex-flow: row wrap;
+      row-gap: 24px;
+      column-gap: 16px;
+      > * {
+        width: calc((100% - 16px) / 2);
+      }
+    }
+
+    &-item {
+      text-align: left;
+    }
+
+    .candy-buy-modal-confirmed-header {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -71,7 +85,7 @@
       line-height: 36px;
     }
 
-    .buy-modal-confirmed-container {
+    .candy-buy-modal-confirmed-container {
       width: 100%;
       display: flex;
       align-items: center;
@@ -82,26 +96,26 @@
       }
     }
 
-    .buy-modal-confirmed-content {
+    .candy-buy-modal-confirmed-content {
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
       width: 100%;
       flex: 1;
 
-      .buy-modal-name {
+      .candy-buy-modal-name {
         text-align: left;
         font-size: 16px;
         font-weight: bold;
       }
 
-      .buy-modal-ticker {
+      .candy-buy-modal-ticker {
         text-align: left;
         font-size: 14px;
       }
     }
 
-    .buy-modal-confirmed-thumbnail {
+    .candy-buy-modal-confirmed-thumbnail {
       width: 100px;
       height: 100px;
       margin-right: 20px;

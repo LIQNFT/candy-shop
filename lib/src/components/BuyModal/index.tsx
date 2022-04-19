@@ -11,9 +11,9 @@ import { notification, NotificationType } from 'utils/rc-notification';
 import { TransactionState } from '../../model';
 import BuyModalConfirmed from './BuyModalConfirmed';
 import BuyModalDetail from './BuyModalDetail';
-import './style.less';
 import { getAccount } from '@solana/spl-token';
 import { WRAPPED_SOL_MINT } from '@liqnft/candy-shop-sdk';
+import './style.less';
 
 export interface BuyModalProps {
   order: OrderSchema;
@@ -86,34 +86,32 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   };
 
   return (
-    <>
-      <Modal
-        onCancel={onClose}
-        width={state !== TransactionState.DISPLAY ? 600 : 1000}
-      >
-        <div className="buy-modal">
-          {state === TransactionState.DISPLAY && (
-            <BuyModalDetail
-              order={order}
-              buy={buy}
-              walletPublicKey={wallet?.publicKey}
-              walletConnectComponent={walletConnectComponent}
-              candyShop={candyShop}
-            />
-          )}
-          {state === TransactionState.PROCESSING && (
-            <Processing text="Processing purchase" />
-          )}
-          {state === TransactionState.CONFIRMED && wallet && (
-            <BuyModalConfirmed
-              walletPublicKey={wallet.publicKey}
-              order={order}
-              txHash={hash}
-              candyShop={candyShop}
-            />
-          )}
-        </div>
-      </Modal>
-    </>
+    <Modal
+      onCancel={onClose}
+      width={state !== TransactionState.DISPLAY ? 600 : 1000}
+    >
+      <div className="candy-buy-modal">
+        {state === TransactionState.DISPLAY && (
+          <BuyModalDetail
+            order={order}
+            buy={buy}
+            walletPublicKey={wallet?.publicKey}
+            walletConnectComponent={walletConnectComponent}
+            candyShop={candyShop}
+          />
+        )}
+        {state === TransactionState.PROCESSING && (
+          <Processing text="Processing purchase" />
+        )}
+        {state === TransactionState.CONFIRMED && wallet && (
+          <BuyModalConfirmed
+            walletPublicKey={wallet.publicKey}
+            order={order}
+            txHash={hash}
+            candyShop={candyShop}
+          />
+        )}
+      </div>
+    </Modal>
   );
 };

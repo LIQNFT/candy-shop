@@ -1,0 +1,39 @@
+.candy-skeleton {
+  padding: 42px 24px;
+
+  &-container {
+    position: relative;
+    overflow: hidden;
+  }
+  &-item {
+    height: 16px;
+    background-color: #d1d7dc;
+  }
+  &-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: translateX(-80px);
+    animation: skeleton-shine 1200ms linear 1200ms infinite;
+    @keyframes skeleton-shine {
+      0% {
+        transform: translateX(-80px);
+      }
+
+      40%,
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
+    &::before {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 100%;
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0), #fff);
+    }
+  }
+}

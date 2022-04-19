@@ -1,12 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import styled from '@emotion/styled';
 import { web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
 import { Empty } from 'components/Empty';
 import { Nft } from 'components/Nft';
 import { Skeleton } from 'components/Skeleton';
-import { breakPoints } from 'constant/breakPoints';
 
 import {
   Order as OrderSchema,
@@ -35,6 +33,7 @@ enum LoadStatus {
 /**
  * React component that allows user to put an NFT for sale
  */
+
 export const Sell: React.FC<SellProps> = ({
   wallet,
   connection,
@@ -120,60 +119,36 @@ export const Sell: React.FC<SellProps> = ({
   }
 
   return (
-    <Wrap style={style}>
+    <div style={style} className="candy-sell-component">
       <div className="candy-container">
         {loadingStatus !== LoadStatus.Loaded ||
         orderLoading === LoadStatus.Loading ? (
-          <Flex>
+          <div className="candy-container-list">
             {Array(4)
               .fill(0)
               .map((_, key) => (
-                <FlexItem key={key}>
+                <div key={key}>
                   <Skeleton />
-                </FlexItem>
+                </div>
               ))}
-          </Flex>
+          </div>
         ) : nfts.length ? (
-          <Flex>
+          <div className="candy-container-list">
             {nfts.map((item) => (
-              <FlexItem key={item.tokenAccountAddress}>
+              <div key={item.tokenAccountAddress}>
                 <Nft
                   nft={item}
                   candyShop={candyShop}
                   wallet={wallet}
                   sellDetail={hashSellOrders[item.tokenMintAddress]}
                 />
-              </FlexItem>
+              </div>
             ))}
-          </Flex>
+          </div>
         ) : (
           <Empty description="No NFTs found" />
         )}
       </div>
-    </Wrap>
+    </div>
   );
 };
-
-const Wrap = styled.div`
-  width: 100%;
-`;
-
-const Flex = styled.div`
-  display: flex;
-  flex-flow: row wrap;
-  row-gap: 18px;
-  column-gap: 18px;
-  > * {
-    width: calc((100% - 18px * 3) / 4);
-  }
-
-  @media ${breakPoints.tabletM} {
-    row-gap: 16px;
-    column-gap: 16px;
-    > * {
-      width: 100%;
-    }
-  }
-`;
-
-const FlexItem = styled.div``;

@@ -1,10 +1,11 @@
-import styled from '@emotion/styled';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { BuyModal } from 'components/BuyModal';
 import { LiqImage } from 'components/LiqImage';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+
+import './index.less';
 
 export interface OrderProps {
   order: OrderSchema;
@@ -50,26 +51,26 @@ export const Order: React.FC<OrderProps> = ({
 
   return (
     <>
-      <Wrap onClick={onClick}>
+      <div className="candy-order candy-card-border" onClick={onClick}>
         <LiqImage
           alt={order?.name}
           src={order?.nftImageLink}
           fit="cover"
           style={{ borderTopRightRadius: 14, borderTopLeftRadius: 14 }}
         />
-        <OrderInfo>
-          <Name>
+        <div className="candy-order-info">
+          <div className="candy-order-name-container">
             <div className="name">{order?.name}</div>
             <div className="ticker candy-line-limit-1">{order?.ticker}</div>
-          </Name>
-          <Price>
+          </div>
+          <div className="candy-order-price-container">
             <div className="text">Price</div>
             <div className="price candy-line-limit-1">
               {orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}
             </div>
-          </Price>
-        </OrderInfo>
-      </Wrap>
+          </div>
+        </div>
+      </div>
 
       {selection && (
         <BuyModal
@@ -83,51 +84,3 @@ export const Order: React.FC<OrderProps> = ({
     </>
   );
 };
-
-const Wrap = styled.div`
-  height: 100%;
-  border-radius: 16px;
-  border: 2px solid black;
-  background-color: white;
-`;
-
-const OrderInfo = styled.div`
-  padding: 15px;
-  display: flex;
-  > *:nth-of-type(1) {
-    width: 60%;
-  }
-  > *:nth-of-type(2) {
-    width: 40%;
-  }
-`;
-
-const Name = styled.div`
-  .name {
-    font-weight: bold;
-    font-size: 16px;
-    text-align: left;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-  .ticker {
-    font-size: 14px;
-    text-align: left;
-  }
-`;
-
-const Price = styled.div`
-  align-self: flex-end;
-  text-align: right;
-  .text {
-    color: #757575;
-    font-size: 12px;
-    text-transform: uppercase;
-    font-weight: bold;
-  }
-  .price {
-    font-size: 14px;
-    font-weight: bold;
-  }
-`;

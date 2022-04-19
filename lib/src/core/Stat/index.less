@@ -1,0 +1,61 @@
+@import '../../variable.less';
+
+.candy-stat-component {
+  &-container {
+    display: flex;
+    > * {
+      width: 50%;
+    }
+
+    @media @tabletL {
+      flex-direction: column;
+      gap: 12px;
+      > * {
+        width: 100%;
+      }
+    }
+  }
+  &-title {
+    text-align: left;
+    margin-bottom: 12px;
+    font-size: 48px;
+    line-height: 58px;
+    text-align: left;
+    font-weight: bold;
+
+    @media @tabletS {
+      font-size: 40px;
+      line-height: 50px;
+      text-align: left;
+    }
+  }
+  &-description {
+    text-align: left;
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+  &-table {
+    text-align: center;
+    align-self: flex-end;
+    display: flex;
+
+    > * {
+      width: calc(100% / 3);
+    }
+
+    @media @tabletM {
+      align-self: initial;
+    }
+  }
+
+  &-item {
+    &:nth-of-type(2) {
+      border-left: 1px solid @gray-medium-alt;
+      border-right: 1px solid @gray-medium-alt;
+    }
+
+    .candy-label {
+      text-align: center;
+    }
+  }
+}

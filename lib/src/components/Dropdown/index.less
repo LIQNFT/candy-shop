@@ -1,0 +1,55 @@
+@import '../../variable.less';
+
+.candy-dropdown {
+  padding: 12px;
+  border: 2px solid #000;
+  width: 184px;
+  &:hover {
+    cursor: pointer;
+  }
+  border-radius: 4px;
+  position: relative;
+  background-color: #fff;
+
+  &-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &-icon {
+    pointer-events: none;
+  }
+
+  &-menu {
+    width: 184px;
+    color: black;
+    background-color: #fff;
+    margin-top: 8px;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 99;
+    border: 2px solid #000;
+    border-radius: 4px;
+    .menu-middle-item {
+      padding: 12px;
+      border-bottom: 2px solid #000;
+      text-align: left;
+    }
+    .menu-last-item {
+      padding: 12px;
+      text-align: left;
+    }
+  }
+
+  &-label {
+    margin: 0;
+    &--purple {
+      color: @primary-color;
+    }
+    &--black {
+      color: #000;
+    }
+  }
+}

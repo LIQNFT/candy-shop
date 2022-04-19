@@ -1,0 +1,61 @@
+@import '../../variable.less';
+
+.candy-orders {
+  &-container {
+    width: 100%;
+    margin-bottom: 50px;
+  }
+
+  &-filter {
+    display: flex;
+    flex-flow: row wrap;
+
+    > .candy-filter {
+      text-align: left;
+      width: 200px;
+      padding-right: 20px;
+
+      ul {
+        list-style-type: none;
+
+        li {
+          line-height: 22px;
+          font-size: 14px;
+          cursor: pointer;
+        }
+
+        li.selected {
+          font-weight: bold;
+        }
+      }
+
+      .candy-filter-title {
+        font-weight: bold;
+        font-size: 16px;
+        line-height: 26px;
+        margin-bottom: 5px;
+      }
+    }
+
+    > .candy-orders-content {
+      flex: 1;
+    }
+
+    @media @tabletM {
+      row-gap: 16px;
+      column-gap: 16px;
+      > * {
+        width: 100%;
+      }
+    }
+  }
+
+  &-sort {
+    display: flex;
+    margin-bottom: 16px;
+
+    &-right {
+      justify-content: flex-end;
+    }
+  }
+}
