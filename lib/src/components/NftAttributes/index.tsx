@@ -7,7 +7,7 @@ interface NftAttributesProps {
 
 export const NftAttributes: React.FunctionComponent<NftAttributesProps> = ({
   attributes,
-  loading,
+  loading
 }) => {
   return (
     <div className="candy-stat">

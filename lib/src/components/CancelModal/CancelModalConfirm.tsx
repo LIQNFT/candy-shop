@@ -11,7 +11,7 @@ export interface CancelModalConfirmProps {
 
 export const CancelModalConfirm = ({
   order,
-  onCancel,
+  onCancel
 }: CancelModalConfirmProps): JSX.Element => {
   return (
     <div className="candy-cancel-modal-confirm-container">

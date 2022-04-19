@@ -10,13 +10,13 @@ import {
   ShopStats,
   SingleBase,
   Trade,
-  WhitelistNft,
+  WhitelistNft
 } from 'solana-candy-shop-schema/dist';
 import {
   fetchOrderByTokenMint,
   fetchOrdersByStoreId,
   fetchOrdersByStoreIdAndWalletAddress,
-  OrdersFilterQuery,
+  OrdersFilterQuery
 } from './api/backend/OrderAPI';
 import { fetchStatsById } from './api/backend/StatsAPI';
 import { fetchTradeById } from './api/backend/TradeAPI';
@@ -30,11 +30,16 @@ import {
   getAuctionHouseTradeState,
   getAuctionHouseTreasuryAcct,
   getCandyShopSync,
-  getMetadataAccount,
+  getMetadataAccount
 } from './api/utils';
 
 export * from './utils';
-export { SortBy as OrderSortBy, OrdersFilterQuery, getAtaForMint, WRAPPED_SOL_MINT } from './api';
+export {
+  SortBy as OrderSortBy,
+  OrdersFilterQuery,
+  getAtaForMint,
+  WRAPPED_SOL_MINT
+} from './api';
 // for CLI
 export { buyAndExecuteSale, sellNft, cancelOrder } from './api';
 
@@ -97,7 +102,7 @@ export class CandyShop {
       currencySymbol: settings?.currencySymbol ?? DEFAULT_CURRENCY_SYMBOL,
       currencyDecimals: settings?.currencyDecimals ?? DEFAULT_CURRENCY_DECIMALS,
       priceDecimals: settings?.priceDecimals ?? DEFAULT_PRICE_DECIMALS,
-      volumeDecimals: settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
+      volumeDecimals: settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS
     };
     this._baseUnitsPerCurrency = Math.pow(10, this._settings.currencyDecimals);
 
@@ -191,7 +196,7 @@ export class CandyShop {
       seller: seller.toString(),
       tokenAccount: tokenAccount.toString(),
       tokenMint: tokenMint.toString(),
-      price,
+      price
     });
     const program = await this.getStaticProgram(wallet);
     const [auctionHouseAuthority, authorityBump] =
@@ -240,7 +245,7 @@ export class CandyShop {
     console.log('CandyShop: performing sell', {
       tokenMint: tokenMint.toString(),
       tokenAccount: tokenAccount.toString(),
-      price,
+      price
     });
     const program = await this.getStaticProgram(wallet);
     const [auctionHouseAuthority, authorityBump] =
@@ -286,7 +291,7 @@ export class CandyShop {
     console.log('CandyShop: performing cancel', {
       tokenAccount: tokenAccount.toString(),
       tokenMint: tokenMint.toString(),
-      price,
+      price
     });
     const program = await this.getStaticProgram(wallet);
     const [auctionHouseAuthority, authorityBump] =
@@ -351,7 +356,7 @@ export class CandyShop {
   ): Promise<ListBase<Order>> {
     console.log('CandyShop: performing orders', {
       identifiers,
-      ordersFilterQuery,
+      ordersFilterQuery
     });
     const { sortBy, offset, limit } = ordersFilterQuery;
     return fetchOrdersByStoreId(
@@ -360,7 +365,7 @@ export class CandyShop {
       {
         sortBy,
         offset,
-        limit,
+        limit
       },
       identifiers
     );
@@ -370,7 +375,7 @@ export class CandyShop {
     walletAddress: string
   ): Promise<Order[]> {
     console.log('CandyShop: performing activeOrdersByWalletAddress', {
-      walletAddress,
+      walletAddress
     });
     return fetchOrdersByStoreIdAndWalletAddress(
       axiosInstance,
@@ -391,7 +396,7 @@ export class CandyShop {
     mintAddress: string
   ): Promise<SingleBase<Order>> {
     console.log('CandyShop: performing activeOrderByMintAddress', {
-      mintAddress,
+      mintAddress
     });
     return fetchOrderByTokenMint(axiosInstance, mintAddress);
   }

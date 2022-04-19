@@ -11,7 +11,7 @@ export interface ModalProps {
 const Modal: React.FC<ModalProps> = ({
   children,
   onCancel,
-  width = 1000,
+  width = 1000
 }: ModalProps) => {
   useEffect(() => {
     window.addEventListener('click', onCancel);

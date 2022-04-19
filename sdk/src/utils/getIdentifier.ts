@@ -25,7 +25,7 @@ const getTokenMetadataByMintAddress = async function (
     [
       Buffer.from('metadata'),
       metadataProgramId.toBuffer(),
-      new web3.PublicKey(mintAddress).toBuffer(),
+      new web3.PublicKey(mintAddress).toBuffer()
     ],
     metadataProgramId
   );
@@ -38,10 +38,10 @@ const getTokenMetadataByMintAddress = async function (
     creators: metadata.creators?.map((creator) => ({
       address: new web3.PublicKey(creator.address).toString(),
       verified: creator.verified,
-      share: creator.share,
+      share: creator.share
     })),
     symbol: metadata.symbol,
-    metadataAddress: newEditionMetadata.toString(),
+    metadataAddress: newEditionMetadata.toString()
   };
 };
 

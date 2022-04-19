@@ -20,7 +20,7 @@ export const Order: React.FC<OrderProps> = ({
   wallet,
   candyShop,
   walletConnectComponent,
-  url,
+  url
 }) => {
   const [selection, setSelection] = useState<OrderSchema | null>(null);
 
@@ -30,7 +30,7 @@ export const Order: React.FC<OrderProps> = ({
         Number(order?.price) / candyShop.baseUnitsPerCurrency
       ).toLocaleString(undefined, {
         minimumFractionDigits: candyShop.priceDecimals,
-        maximumFractionDigits: candyShop.priceDecimals,
+        maximumFractionDigits: candyShop.priceDecimals
       });
     } catch (err) {
       return null;

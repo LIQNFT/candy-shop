@@ -27,7 +27,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   backUrl = '/',
   candyShop,
   walletConnectComponent,
-  wallet,
+  wallet
 }) => {
   const [loadingOrder, setLoadingOrder] = useState(false);
   const [loadingNftInfo, setLoadingNftInfo] = useState(false);
@@ -45,7 +45,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
         Number(order?.price) / candyShop.baseUnitsPerCurrency
       ).toLocaleString(undefined, {
         minimumFractionDigits: candyShop.priceDecimals,
-        maximumFractionDigits: candyShop.priceDecimals,
+        maximumFractionDigits: candyShop.priceDecimals
       });
     } catch (err) {
       return null;

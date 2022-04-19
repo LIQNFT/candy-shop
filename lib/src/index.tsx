@@ -6,7 +6,7 @@ export {
   getIdentifier,
   SingleTokenInfo,
   OrderSortBy,
-  OrdersFilterQuery,
+  OrdersFilterQuery
 } from '@liqnft/candy-shop-sdk';
 export { Orders } from './core/Orders';
 export { OrderDetail } from './core/OrderDetail';

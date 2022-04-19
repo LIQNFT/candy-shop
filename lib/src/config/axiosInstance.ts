@@ -3,9 +3,9 @@ import { web3 } from '@project-serum/anchor';
 
 const axiosInstance = axios.create({
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json'
   },
-  baseURL: `https://ckaho.liqnft.com/api`,
+  baseURL: `https://ckaho.liqnft.com/api`
 });
 
 export default axiosInstance;

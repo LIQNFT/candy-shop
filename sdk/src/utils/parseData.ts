@@ -26,7 +26,7 @@ export enum MetadataKey {
   EditionV1 = 1,
   MasterEditionV1 = 2,
   MasterEditionV2 = 6,
-  EditionMarker = 7,
+  EditionMarker = 7
 }
 
 export class MasterEditionV2 {
@@ -115,9 +115,9 @@ export const METADATA_SCHEMA = new Map<any, any>([
       fields: [
         ['key', 'u8'],
         ['supply', 'u64'],
-        ['maxSupply', { kind: 'option', type: 'u64' }],
-      ],
-    },
+        ['maxSupply', { kind: 'option', type: 'u64' }]
+      ]
+    }
   ],
   [
     Edition,
@@ -126,9 +126,9 @@ export const METADATA_SCHEMA = new Map<any, any>([
       fields: [
         ['key', 'u8'],
         ['parent', [32]],
-        ['edition', 'u64'],
-      ],
-    },
+        ['edition', 'u64']
+      ]
+    }
   ],
   [
     Data,
@@ -139,9 +139,9 @@ export const METADATA_SCHEMA = new Map<any, any>([
         ['symbol', 'string'],
         ['uri', 'string'],
         ['sellerFeeBasisPoints', 'u16'],
-        ['creators', { kind: 'option', type: [Creator] }],
-      ],
-    },
+        ['creators', { kind: 'option', type: [Creator] }]
+      ]
+    }
   ],
   [
     Creator,
@@ -150,9 +150,9 @@ export const METADATA_SCHEMA = new Map<any, any>([
       fields: [
         ['address', [32]],
         ['verified', 'u8'],
-        ['share', 'u8'],
-      ],
-    },
+        ['share', 'u8']
+      ]
+    }
   ],
   [
     Metadata,
@@ -164,9 +164,9 @@ export const METADATA_SCHEMA = new Map<any, any>([
         ['mint', [32]],
         ['data', Data],
         ['primarySaleHappened', 'u8'],
-        ['isMutable', 'u8'],
-      ],
-    },
+        ['isMutable', 'u8']
+      ]
+    }
   ],
   [
     EditionMarker,
@@ -174,10 +174,10 @@ export const METADATA_SCHEMA = new Map<any, any>([
       kind: 'struct',
       fields: [
         ['key', 'u8'],
-        ['ledger', [31]],
-      ],
-    },
-  ],
+        ['ledger', [31]]
+      ]
+    }
+  ]
 ]);
 
 export type AssetKey = { mediaExt: string; index: string };

@@ -33,8 +33,8 @@ export async function cancelOrder(
         tradeState,
         candyShop,
         ahProgram: AUCTION_HOUSE_PROGRAM_ID,
-        tokenProgram: TOKEN_PROGRAM_ID,
-      },
+        tokenProgram: TOKEN_PROGRAM_ID
+      }
     }
   );
 

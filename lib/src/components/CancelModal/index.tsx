@@ -20,7 +20,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
   order,
   onClose: onUnSelectItem,
   candyShop,
-  wallet,
+  wallet
 }) => {
   const [state, setState] = useState<TransactionState>(
     TransactionState.DISPLAY
