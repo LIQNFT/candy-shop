@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import React, { useState, useEffect, useRef } from 'react';
 import imgDefault from '../../assets/img-default.png';
 
@@ -49,7 +48,8 @@ export const LiqImage: React.FC<LiqImageProps> = ({
     <div style={combinedStyle} ref={ref}>
       <div style={loaderDivStyles}></div>
       {src ? (
-        <Image
+        <img
+          className="candy-liq-image"
           alt={alt}
           src={src}
           width="100%"
@@ -60,7 +60,8 @@ export const LiqImage: React.FC<LiqImageProps> = ({
           onLoad={() => setLoaded(true)}
         />
       ) : (
-        <Image
+        <img
+          className="candy-liq-image"
           src={imgDefault}
           alt="NFT image"
           width="100%"
@@ -73,11 +74,3 @@ export const LiqImage: React.FC<LiqImageProps> = ({
     </div>
   );
 };
-
-const Image = styled.img`
-  position: absolute;
-  top: 0;
-  left: 0;
-  max-width: 100%;
-  max-height: 100%;
-`;

@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
 import React from 'react';
+
+import './index.less';
 
 interface EmptyProps {
   description?: string;
@@ -9,8 +10,8 @@ export const Empty: React.FC<EmptyProps> = ({
   description = 'No orders found',
 }) => {
   return (
-    <Wrap>
-      <ImgWrap>
+    <div className="candy-empty">
+      <div className="candy-empty-img-wrap">
         <svg
           className="candy-empty-img"
           width="184"
@@ -58,48 +59,8 @@ export const Empty: React.FC<EmptyProps> = ({
             </g>
           </g>
         </svg>
-      </ImgWrap>
-      <Description>{description}</Description>
-    </Wrap>
+      </div>
+      <div>{description}</div>
+    </div>
   );
 };
-
-const Wrap = styled.div`
-  margin: 0 8px;
-  font-size: 16px;
-  line-height: 1.5715;
-  text-align: center;
-`;
-
-const ImgWrap = styled.div`
-  height: 100px;
-  margin-bottom: 8px;
-  .candy-empty-img {
-    height: 100%;
-    margin: auto;
-  }
-  .candy-empty-img-default-ellipse {
-    fill: #f5f5f5;
-    fill-opacity: 0.8;
-  }
-  .candy-empty-img-default-path-1 {
-    fill: #aeb8c2;
-  }
-  .candy-empty-img-default-path-2 {
-    fill: url('#linearGradient-1');
-  }
-  .candy-empty-img-default-path-3 {
-    fill: #f5f5f7;
-  }
-  .candy-empty-img-default-path-4 {
-    fill: #dce0e6;
-  }
-  .candy-empty-img-default-path-5 {
-    fill: #dce0e6;
-  }
-  .candy-empty-img-default-g {
-    fill: #fff;
-  }
-`;
-
-const Description = styled.div``;

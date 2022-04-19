@@ -1,11 +1,12 @@
-import styled from '@emotion/styled';
+import React, { useMemo } from 'react';
+
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { web3 } from '@project-serum/anchor';
-import React, { useMemo } from 'react';
-import IconTick from '../../assets/IconTick';
 import { formatDate } from '../../utils/format';
+
 import { ExplorerLink } from '../ExplorerLink';
-import { LiqImage } from '../LiqImage';
+import { LiqImage } from 'components/LiqImage';
+import IconTick from 'assets/IconTick';
 
 const BuyModalConfirmed = ({
   order,
@@ -38,52 +39,52 @@ const BuyModalConfirmed = ({
   }, [order]);
 
   return (
-    <div className="buy-modal-confirmed">
-      <div className="buy-modal-confirmed-header">
+    <div className="candy-buy-modal-confirmed">
+      <div className="candy-buy-modal-confirmed-header">
         <IconTick />
         <div>Transaction Confirmed</div>
       </div>
-      <div className="buy-modal-confirmed-container">
-        <div className="buy-modal-confirmed-thumbnail">
+      <div className="candy-buy-modal-confirmed-container">
+        <div className="candy-buy-modal-confirmed-thumbnail">
           <LiqImage src={order?.nftImageLink} alt={order?.name} fit="contain" />
         </div>
-        <div className="buy-modal-confirmed-content">
+        <div className="candy-buy-modal-confirmed-content">
           <div>
-            <div className="buy-modal-name">{order?.name}</div>
-            <div className="buy-modal-ticker">{order?.ticker}</div>
+            <div className="candy-buy-modal-name">{order?.name}</div>
+            <div className="candy-buy-modal-ticker">{order?.ticker}</div>
           </div>
           <div>
-            <div className="buy-modal-price">
+            <div className="candy-buy-modal-price">
               {orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}
             </div>
           </div>
         </div>
       </div>
       <hr />
-      <Flex>
-        <Item>
+      <div className="candy-buy-modal-confirmed-flex">
+        <div className="candy-buy-modal-confirmed-item">
           <div className="candy-label">FROM</div>
           <div className="candy-value">
             <ExplorerLink type="address" address={order.walletAddress} />
           </div>
-        </Item>
-        <Item>
+        </div>
+        <div className="candy-buy-modal-confirmed-item">
           <div className="candy-label">TO</div>
           <div className="candy-value">
             <ExplorerLink type="address" address={walletAddress} />
           </div>
-        </Item>
-        <Item>
+        </div>
+        <div className="candy-buy-modal-confirmed-item">
           <div className="candy-label">TRANSACTION HASH</div>
           <div className="candy-value">
             <ExplorerLink type="tx" address={txHash} />
           </div>
-        </Item>
-        <Item>
+        </div>
+        <div className="candy-buy-modal-confirmed-item">
           <div className="candy-label">CONFIRMED ON</div>
           <div className="candy-value">{formatDate(new Date())}</div>
-        </Item>
-      </Flex>
+        </div>
+      </div>
       <button
         className="candy-button"
         onClick={() => {
@@ -97,17 +98,3 @@ const BuyModalConfirmed = ({
 };
 
 export default BuyModalConfirmed;
-
-const Flex = styled.div`
-  display: flex;
-  flex-flow: row wrap;
-  row-gap: 24px;
-  column-gap: 16px;
-  > * {
-    width: calc((100% - 16px) / 2);
-  }
-`;
-
-const Item = styled.div`
-  text-align: left;
-`;

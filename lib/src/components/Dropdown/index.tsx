@@ -1,8 +1,9 @@
-import styled from '@emotion/styled';
+import React, { useRef, useState } from 'react';
+import { useClickOutside } from 'hooks/useClickOutside';
+
 import IconChevronDown from 'assets/IconChevronDown';
 import IconChevronUp from 'assets/IconChevronUp';
-import { useClickOutside } from 'hooks/useClickOutside';
-import React, { useRef, useState } from 'react';
+import './index.less';
 
 type DropdownItem = {
   value: any;
@@ -32,24 +33,31 @@ export const Dropdown: React.FunctionComponent<DropdownProps> = ({
   });
 
   return (
-    <DropdownWrap
+    <div
+      className="candy-dropdown"
       ref={dropdownRef}
       onClick={() => setIsMenuOpen((isOpen) => !isOpen)}
     >
-      <Flex>
-        <Label isMenuOpen={isMenuOpen}>{currentlySelectedItem?.label}</Label>
+      <div className="candy-dropdown-flex">
+        <div
+          className={`candy-dropdown-label candy-dropdown-label--${
+            isMenuOpen ? 'purple' : 'black'
+          }`}
+        >
+          {currentlySelectedItem?.label}
+        </div>
         {isMenuOpen ? (
-          <IconWrapper>
+          <div className="candy-dropdown-icon">
             <IconChevronUp />
-          </IconWrapper>
+          </div>
         ) : (
-          <IconWrapper>
+          <div className="candy-dropdown-icon">
             <IconChevronDown />
-          </IconWrapper>
+          </div>
         )}
-      </Flex>
+      </div>
       {isMenuOpen ? (
-        <DropdownMenu>
+        <div className="candy-dropdown-menu">
           {items.map((item, index) => (
             <div
               className={
@@ -61,61 +69,11 @@ export const Dropdown: React.FunctionComponent<DropdownProps> = ({
                 onSelectItem && onSelectItem(item);
               }}
             >
-              <Label>{item.label}</Label>
+              <div className="candy-dropdown-label">{item.label}</div>
             </div>
           ))}
-        </DropdownMenu>
-      ) : (
-        <></>
-      )}
-    </DropdownWrap>
+        </div>
+      ) : null}
+    </div>
   );
 };
-
-const DropdownWrap = styled.div`
-  padding: 12px;
-  border: 2px solid black;
-  width: 184px;
-  &:hover {
-    cursor: pointer;
-  }
-  border-radius: 4px;
-  position: relative;
-  background-color: white;
-`;
-
-const Flex = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const Label = styled.p<{ isMenuOpen?: boolean }>`
-  margin: 0;
-  color: ${(props) => (props.isMenuOpen ? '#7522F5' : 'black')};
-`;
-
-const IconWrapper = styled.div`
-  pointer-events: none;
-`;
-
-const DropdownMenu = styled.div`
-  width: 184px;
-  background-color: white;
-  margin-top: 8px;
-  position: absolute;
-  left: 0;
-  top: 100%;
-  z-index: 99;
-  border: 2px solid black;
-  border-radius: 4px;
-  .menu-middle-item {
-    padding: 12px;
-    border-bottom: 2px solid black;
-    text-align: left;
-  }
-  .menu-last-item {
-    padding: 12px;
-    text-align: left;
-  }
-`;

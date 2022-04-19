@@ -3,8 +3,6 @@ import { Order as OrderComponent } from 'components/Order';
 import { Order } from 'solana-candy-shop-schema/dist';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import styled from '@emotion/styled';
-import { breakPoints } from 'constant/breakPoints';
 import { Skeleton } from 'components/Skeleton';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
@@ -38,20 +36,20 @@ export const InfiniteOrderList: React.FunctionComponent<
       next={loadNextPage}
       hasMore={hasNextPage}
       loader={
-        <Flex>
+        <div className="candy-container-list">
           {Array(4)
             .fill(0)
             .map((_, key) => (
-              <FlexItem key={key}>
+              <div key={key}>
                 <Skeleton />
-              </FlexItem>
+              </div>
             ))}
-        </Flex>
+        </div>
       }
     >
-      <Flex>
+      <div className="candy-container-list">
         {orders.map((item, key) => (
-          <FlexItem key={key}>
+          <div key={key}>
             <OrderComponent
               order={item}
               walletConnectComponent={walletConnectComponent}
@@ -59,30 +57,9 @@ export const InfiniteOrderList: React.FunctionComponent<
               candyShop={candyShop}
               url={url}
             />
-          </FlexItem>
+          </div>
         ))}
-      </Flex>
+      </div>
     </InfiniteScroll>
   );
 };
-
-const Flex = styled.div`
-  display: flex;
-  flex-flow: row wrap;
-  row-gap: 12px;
-  column-gap: 12px;
-
-  > * {
-    width: calc((100% - 12px * 3) / 4);
-  }
-
-  @media ${breakPoints.tabletM} {
-    row-gap: 16px;
-    column-gap: 16px;
-    > * {
-      width: 100%;
-    }
-  }
-`;
-
-const FlexItem = styled.div``;

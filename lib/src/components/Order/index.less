@@ -1,0 +1,46 @@
+.candy-order {
+  height: 100%;
+  background-color: white;
+
+  &-info {
+    color: black;
+    padding: 15px;
+    display: flex;
+
+    > *:nth-of-type(1) {
+      width: 60%;
+    }
+    > *:nth-of-type(2) {
+      width: 40%;
+    }
+  }
+  &-name-container {
+    .name {
+      font-weight: bold;
+      font-size: 16px;
+      text-align: left;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .ticker {
+      font-size: 14px;
+      text-align: left;
+    }
+  }
+
+  &-price-container {
+    align-self: flex-end;
+    text-align: right;
+    .text {
+      color: #757575;
+      font-size: 12px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+    .price {
+      font-size: 14px;
+      font-weight: bold;
+    }
+  }
+}

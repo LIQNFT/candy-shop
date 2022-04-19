@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import styled from '@emotion/styled';
 import { Dropdown } from 'components/Dropdown';
 import { Empty } from 'components/Empty';
 import { Skeleton } from 'components/Skeleton';
-import { breakPoints } from 'constant/breakPoints';
 import { CandyShop, OrderSortBy } from '@liqnft/candy-shop-sdk';
 import { InfiniteOrderList } from 'components/InfiniteOrderList';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
+import './index.less';
 
 const ORDER_FETCH_LIMIT = 12;
 const LOADING_SKELETON_COUNT = 4;
@@ -126,16 +125,16 @@ export const Orders: React.FC<OrdersProps> = ({
 
   if (filters) {
     return (
-      <Wrap style={style}>
+      <div className="candy-orders-container" style={style}>
         <div className="candy-container">
-          <SortContainerRight>
+          <div className="candy-orders-sort candy-orders-sort-right">
             <Dropdown
               items={SORT_OPTIONS}
               selectedItem={sortedByOption}
               onSelectItem={(item) => setSortedByOption(item)}
             />
-          </SortContainerRight>
-          <FlexWithFilter>
+          </div>
+          <div className="candy-orders-filter">
             <div className="candy-filter">
               <div className="candy-filter-title">Filter by Collection</div>
               <ul className="candy-filter-by-collection">
@@ -170,15 +169,15 @@ export const Orders: React.FC<OrdersProps> = ({
             </div>
             <div className="candy-orders-content">
               {loading ? (
-                <Flex>
+                <div className="candy-container-list">
                   {Array(LOADING_SKELETON_COUNT)
                     .fill(0)
                     .map((_, key) => (
-                      <FlexItem key={key}>
+                      <div key={key}>
                         <Skeleton />
-                      </FlexItem>
+                      </div>
                     ))}
-                </Flex>
+                </div>
               ) : !loading && !orders.length ? (
                 <Empty description="No orders found" />
               ) : (
@@ -195,33 +194,33 @@ export const Orders: React.FC<OrdersProps> = ({
                 />
               )}
             </div>
-          </FlexWithFilter>
+          </div>
         </div>
-      </Wrap>
+      </div>
     );
   }
 
   return (
     <>
-      <Wrap style={style}>
+      <div className="candy-orders-container" style={style}>
         <div className="candy-container">
-          <SortContainer>
+          <div className="candy-orders-sort">
             <Dropdown
               items={SORT_OPTIONS}
               selectedItem={sortedByOption}
               onSelectItem={(item) => setSortedByOption(item)}
             />
-          </SortContainer>
+          </div>
           {loading ? (
-            <Flex>
+            <div className="candy-container-list">
               {Array(LOADING_SKELETON_COUNT)
                 .fill(0)
                 .map((_, key) => (
-                  <FlexItem key={key}>
+                  <div key={key}>
                     <Skeleton />
-                  </FlexItem>
+                  </div>
                 ))}
-            </Flex>
+            </div>
           ) : !loading && !orders.length ? (
             <Empty description="No orders found" />
           ) : (
@@ -236,87 +235,7 @@ export const Orders: React.FC<OrdersProps> = ({
             />
           )}
         </div>
-      </Wrap>
+      </div>
     </>
   );
 };
-
-const Wrap = styled.div`
-  width: 100%;
-  margin-bottom: 50px;
-`;
-
-const SortContainer = styled.div`
-  display: flex;
-  margin-bottom: 16px;
-`;
-
-const SortContainerRight = styled.div`
-  display: flex;
-  margin-bottom: 16px;
-  justify-content: flex-end;
-`;
-
-const Flex = styled.div`
-  display: flex;
-  flex-flow: row wrap;
-  row-gap: 18px;
-  column-gap: 18px;
-  > * {
-    width: calc((100% - 18px * 3) / 4);
-  }
-
-  @media ${breakPoints.tabletM} {
-    row-gap: 16px;
-    column-gap: 16px;
-    > * {
-      width: 100%;
-    }
-  }
-`;
-
-const FlexItem = styled.div``;
-
-const FlexWithFilter = styled.div`
-  display: flex;
-  flex-flow: row wrap;
-
-  > .candy-filter {
-    text-align: left;
-    width: 200px;
-    padding-right: 20px;
-
-    ul {
-      list-style-type: none;
-
-      li {
-        line-height: 22px;
-        font-size: 14px;
-        cursor: pointer;
-      }
-
-      li.selected {
-        font-weight: bold;
-      }
-    }
-
-    .candy-filter-title {
-      font-weight: bold;
-      font-size: 16px;
-      line-height: 26px;
-      margin-bottom: 5px;
-    }
-  }
-
-  > .candy-orders-content {
-    flex: 1;
-  }
-
-  @media ${breakPoints.tabletM} {
-    row-gap: 16px;
-    column-gap: 16px;
-    > * {
-      width: 100%;
-    }
-  }
-`;
