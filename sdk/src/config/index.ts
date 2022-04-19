@@ -5,13 +5,19 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  baseURL: `https://ckaho.liqnft.com/api`,
 });
 
 export default axiosInstance;
+let interceptorEvents: number[] = [];
 
 export const configBaseUrl = (env: web3.Cluster): void => {
-  axiosInstance.interceptors.request.use(
+  if (interceptorEvents.length) {
+    interceptorEvents.forEach((id) => {
+      axiosInstance.interceptors.request.eject(id);
+    });
+    interceptorEvents = [];
+  }
+  const interceptorEvent = axiosInstance.interceptors.request.use(
     (config: AxiosRequestConfig<any>) => {
       // Do something before request is sent
       if (env === 'devnet') {
@@ -20,6 +26,7 @@ export const configBaseUrl = (env: web3.Cluster): void => {
       if (env === 'mainnet-beta') {
         config.baseURL = 'https://candy-shop.liqnft.com/api/';
       }
+
       return config;
     },
     (error: any) => {
@@ -27,4 +34,5 @@ export const configBaseUrl = (env: web3.Cluster): void => {
       return Promise.reject(error);
     }
   );
+  interceptorEvents.push(interceptorEvent);
 };
