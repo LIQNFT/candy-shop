@@ -34,7 +34,7 @@ import {
 } from './api/utils';
 
 export * from './utils';
-export { SortBy as OrderSortBy, OrdersFilterQuery } from './api';
+export { SortBy as OrderSortBy, OrdersFilterQuery, getAtaForMint, WRAPPED_SOL_MINT } from './api';
 // for CLI
 export { buyAndExecuteSale, sellNft, cancelOrder } from './api';
 
@@ -167,6 +167,17 @@ export class CandyShop {
 
   get volumeDecimals(): number {
     return this._settings.volumeDecimals;
+  }
+
+  public async connection(): Promise<web3.Connection> {
+    const options = Provider.defaultOptions();
+    const connection = new web3.Connection(
+      this._env === 'mainnet-beta'
+        ? 'https://ssc-dao.genesysgo.net/'
+        : web3.clusterApiUrl('devnet'),
+      options.commitment
+    );
+    return connection;
   }
 
   public async buy(
