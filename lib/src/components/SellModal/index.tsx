@@ -24,10 +24,10 @@ export const SellModal: React.FC<SellModalProps> = ({
   onCancel: onUnSelectItem,
   nft,
   candyShop,
-  wallet,
+  wallet
 }: SellModalProps) => {
   const [formState, setFormState] = useState<{ price: number | undefined }>({
-    price: undefined,
+    price: undefined
   });
   const [state, setState] = useState(TransactionState.DISPLAY);
 

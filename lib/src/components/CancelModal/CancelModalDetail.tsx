@@ -20,7 +20,7 @@ export const CancelModalDetail = ({
   candyShop,
   order,
   onChangeStep,
-  wallet,
+  wallet
 }: CancelModalDetailProps): JSX.Element => {
   const cancel = async () => {
     onChangeStep(TransactionState.PROCESSING);
@@ -47,7 +47,7 @@ export const CancelModalDetail = ({
         Number(order?.price) / candyShop.baseUnitsPerCurrency
       ).toLocaleString(undefined, {
         minimumFractionDigits: candyShop.priceDecimals,
-        maximumFractionDigits: candyShop.priceDecimals,
+        maximumFractionDigits: candyShop.priceDecimals
       });
     } catch (err) {
       return null;

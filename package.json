@@ -11,8 +11,8 @@
     "build": "parcel build example/index.html --public-url ./ --no-scope-hoist",
     "gh-pages": "push-dir --dir=dist --branch=gh-pages --cleanup --verbose",
     "deploy": "yarn build && yarn gh-pages",
-    "format:check": "prettier --check lib/src",
-    "format:fix": "prettier --write lib/src",
+    "format:check": "prettier --check \"**/*.+(js|jsx|ts|tsx|json|css|less)\"",
+    "format:fix": "prettier --write \"**/*.+(js|jsx|ts|tsx|json|css|less)\"",
     "prepare": "husky install"
   },
   "devDependencies": {

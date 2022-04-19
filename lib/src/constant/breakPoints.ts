@@ -7,5 +7,5 @@ export const breakPoints = {
   tabletL: 'only screen and (max-width: 992px)',
   tabletM: 'only screen and (max-width: 768px)',
   tabletS: 'only screen and (max-width: 576px)',
-  mobile: 'only screen and (max-width: 480px)',
+  mobile: 'only screen and (max-width: 480px)'
 };

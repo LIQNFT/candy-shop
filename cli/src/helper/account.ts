@@ -56,7 +56,7 @@ export async function getMetadataAccount(tokenMint: web3.PublicKey) {
     [
       Buffer.from('metadata'),
       METADATA_PROGRAM_ID.toBuffer(),
-      tokenMint.toBuffer(),
+      tokenMint.toBuffer()
     ],
     METADATA_PROGRAM_ID
   );

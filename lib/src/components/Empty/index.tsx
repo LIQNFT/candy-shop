@@ -7,7 +7,7 @@ interface EmptyProps {
 }
 
 export const Empty: React.FC<EmptyProps> = ({
-  description = 'No orders found',
+  description = 'No orders found'
 }) => {
   return (
     <div className="candy-empty">

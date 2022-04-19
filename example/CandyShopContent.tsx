@@ -7,7 +7,7 @@ import { CandyShop, Orders, Stat, OrderDetail, Sell } from '../lib/.';
 import {
   CANDY_SHOP_PROGRAM_ID,
   CREATOR_ADDRESS,
-  TREASURY_MINT,
+  TREASURY_MINT
 } from './constant/publicKey';
 
 export const CandyShopContent: React.FC = () => {
@@ -83,5 +83,5 @@ export const CandyShopContent: React.FC = () => {
 
 const FILTERS = [
   { name: 'Sword', identifier: -280213123 },
-  { name: 'Happy', identifier: -38328789 },
+  { name: 'Happy', identifier: -38328789 }
 ];

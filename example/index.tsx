@@ -2,7 +2,7 @@ import { WalletModalProvider } from '@solana/wallet-adapter-ant-design';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import {
   ConnectionProvider,
-  WalletProvider,
+  WalletProvider
 } from '@solana/wallet-adapter-react';
 import {
   getLedgerWallet,
@@ -11,9 +11,9 @@ import {
   getSolflareWallet,
   getSolletWallet,
   getSolongWallet,
-  getTorusWallet,
+  getTorusWallet
 } from '@solana/wallet-adapter-wallets';
-import { web3 } from "@project-serum/anchor";
+import { web3 } from '@project-serum/anchor';
 import React, { useMemo } from 'react';
 import 'react-app-polyfill/ie11';
 import ReactDOM from 'react-dom';
@@ -31,13 +31,13 @@ const App = () => {
       getSolflareWallet(),
       getTorusWallet({
         options: {
-          clientId: TORUS_WALLET_CLIENT_ID,
-        },
+          clientId: TORUS_WALLET_CLIENT_ID
+        }
       }),
       getLedgerWallet(),
       getSolongWallet(),
       getMathWallet(),
-      getSolletWallet(),
+      getSolletWallet()
     ],
     []
   );

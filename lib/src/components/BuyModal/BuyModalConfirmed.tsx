@@ -12,7 +12,7 @@ const BuyModalConfirmed = ({
   order,
   txHash,
   walletPublicKey,
-  candyShop,
+  candyShop
 }: {
   order: any;
   txHash: string;
@@ -31,7 +31,7 @@ const BuyModalConfirmed = ({
         Number(order?.price) / candyShop.baseUnitsPerCurrency
       ).toLocaleString(undefined, {
         minimumFractionDigits: candyShop.priceDecimals,
-        maximumFractionDigits: candyShop.priceDecimals,
+        maximumFractionDigits: candyShop.priceDecimals
       });
     } catch (err) {
       return null;

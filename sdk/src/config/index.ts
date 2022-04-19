@@ -3,8 +3,8 @@ import { web3 } from '@project-serum/anchor';
 
 const axiosInstance = axios.create({
   headers: {
-    'Content-Type': 'application/json',
-  },
+    'Content-Type': 'application/json'
+  }
 });
 
 export default axiosInstance;

@@ -14,31 +14,31 @@ const SORT_OPTIONS: { value: OrderSortBy; label: string }[] = [
   {
     value: {
       column: 'blockTimeAtCreation',
-      order: 'desc',
+      order: 'desc'
     },
-    label: 'Newest',
+    label: 'Newest'
   },
   {
     value: {
       column: 'blockTimeAtCreation',
-      order: 'asc',
+      order: 'asc'
     },
-    label: 'Oldest',
+    label: 'Oldest'
   },
   {
     value: {
       column: 'price',
-      order: 'asc',
+      order: 'asc'
     },
-    label: 'Price: Low → High',
+    label: 'Price: Low → High'
   },
   {
     value: {
       column: 'price',
-      order: 'desc',
+      order: 'desc'
     },
-    label: 'Price: High → Low',
-  },
+    label: 'Price: High → Low'
+  }
 ];
 
 interface OrdersProps {
@@ -61,7 +61,7 @@ export const Orders: React.FC<OrdersProps> = ({
   url,
   identifiers,
   filters,
-  style,
+  style
 }) => {
   const [sortedByOption, setSortedByOption] = useState(SORT_OPTIONS[0]);
   const [orders, setOrders] = useState<any[]>([]);
@@ -95,7 +95,7 @@ export const Orders: React.FC<OrdersProps> = ({
 
     let uniqueIdentifiers = [
       ...(identifiers || []),
-      ...(filterIdentifiers || []),
+      ...(filterIdentifiers || [])
     ];
     uniqueIdentifiers = [...new Set(uniqueIdentifiers)];
 
@@ -104,7 +104,7 @@ export const Orders: React.FC<OrdersProps> = ({
         {
           sortBy: sortedByOption.value,
           offset: 0,
-          limit: ORDER_FETCH_LIMIT,
+          limit: ORDER_FETCH_LIMIT
         },
         uniqueIdentifiers
       )

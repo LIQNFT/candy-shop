@@ -1,7 +1,7 @@
 import { WhitelistNft } from 'solana-candy-shop-schema/dist';
 import {
   ListBase,
-  CandyShop,
+  CandyShop
 } from 'solana-candy-shop-schema/src/response/index';
 
 import { AxiosInstance } from 'axios';

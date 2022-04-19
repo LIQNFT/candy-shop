@@ -12,7 +12,7 @@ export const LiqImage: React.FC<LiqImageProps> = ({
   src,
   alt,
   fit = 'cover',
-  style = {},
+  style = {}
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -24,13 +24,13 @@ export const LiqImage: React.FC<LiqImageProps> = ({
         height: 0,
         paddingBottom: '100%',
         width: '100%',
-        backgroundColor: '#E5E5E5',
+        backgroundColor: '#E5E5E5'
       };
 
   const baseStyle = {
     position: 'relative',
     height: width,
-    overflow: 'hidden',
+    overflow: 'hidden'
   } as React.CSSProperties;
 
   const combinedStyle = { ...baseStyle, ...style };
