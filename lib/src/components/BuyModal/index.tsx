@@ -59,8 +59,6 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       const account = await getAccount(connection, ata);
       balance = new BN(account.amount.toString());
     }
-    console.log(`user account balance ${balance.toString()}`);
-    console.log(`order price ${order.price}`);
     if (balance.lt(new BN(order.price))) {
       setState(TransactionState.DISPLAY);
       return handleError(ErrorType.InsufficientBalance);
