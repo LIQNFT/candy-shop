@@ -2,10 +2,12 @@ import { ListBase, Order, SingleBase } from 'solana-candy-shop-schema/dist';
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
 
-export type SortBy = {
+type SortBy = {
   column: string;
   order: 'asc' | 'desc';
 };
+
+export type OrderSortBy = SortBy;
 
 export type OrdersFilterQuery = {
   sortBy?: SortBy;
