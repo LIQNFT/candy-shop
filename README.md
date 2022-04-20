@@ -1,21 +1,13 @@
-# Candy Shop
-
-**IN BETA**
-
+# Candy Shop (IN BETA) 
+## Intro
 Candy Shop is a JavaScript library that allows DAOs, NFT projects and anyone to create an NFT marketplace on Solana in minutes!
 
 Drawing inspiration from Project Serum’s mission to accelerate Solana’s on-chain trading infrastructure, Candy Shop aspires to do the same for the Solana NFT marketplace ecosystem.
 
 Candy Shop provides an easy to integrate marketplace protocol & toolset with a full suite of data endpoints and command APIs to help  users deliver a simplistic, seamless and efficient NFT marketplace experience. For different marketplace hosting options, please refer to [this doc](Market.md)
 
-Key features:
-* **Simple Integration.** Integrate marketplace features into your website easily with Candy Shop SDK - your marketplace could be fully operational within a few minutes. 
-* **Seamless User Experience.** The commands and data endpoints have been designed in a way to simplify user journey and provide a seamless experience for browsing, buying and selling NFTs on your in-house marketplace.
-* **Give More, Earn More.** Users save on transaction fees when they transact on your Candy Shop marketplace, and you will also earn 20% of the 1% transaction fee. 
-* **Candy Shop Network.** Standardized implementation allows you to import other Candy Shop NFT listings directly onto your marketplace or vice versa - creating a network effect of listings for maximum traffic flow
-* **Transparency.** Candy Shop is an open source and on-chain protocol, providing your community with full transparency on what is happening behind the scene for your marketplace. 
+**Links**
 
-Links:
 * [Website + Demo](https://candy.liqnft.com)
 * [Whitepaper](https://liqnft.gitbook.io/candy-shop/)
 * [Candy Machine V2 + Candy Shop Starter Repo](https://github.com/LIQNFT/candy-machine-v2-with-marketplace)
@@ -23,20 +15,28 @@ Links:
 
 <img width="1200" alt="Candy Shop Marketplace" src="https://user-images.githubusercontent.com/89616076/160229442-30f59d07-cd33-4b7d-8798-424013731f47.png">
 
-## Installation
+## Key Features
 
-Using npm:
+- **Simple Integration.** 
+ - Integrate marketplace features into your website easily with Candy Shop SDK - your marketplace could be fully operational within a few minutes. 
+- **Seamless User Experience.** 
+ - The commands and data endpoints have been designed in a way to simplify user journey and provide a    seamless experience for browsing, buying and selling NFTs on your in-house marketplace.
+- **Give More, Earn More.** 
+ - Users save on transaction fees when they transact on your Candy Shop marketplace, and you will also earn 20% of the 1% transaction fee. 
+- **Candy Shop Network.** 
+ - Standardized implementation allows you to import other Candy Shop NFT listings directly onto your marketplace or vice versa - creating a network effect of listings for maximum traffic flow
+- **Transparency.** 
+ - Candy Shop is an open source and on-chain protocol, providing your community with full transparency on what is happening behind the scene for your marketplace. 
 
-```
+## Usage
+
+```bash
 npm install @liqnft/candy-shop
 ```
 
-Using yarn:
-```
+```bash
 yarn add @liqnft/candy-shop
 ```
-
-## Usage
 
 ### Create Candy Shop
 
@@ -50,7 +50,7 @@ You can configure the following in My Shop:
 * Claim share of transaction fees from your shop
 
 
-### Init CandyShop
+### Init CandyShop in Codes
 
 Use code in the `/example` folder as reference to setup and instantiate CandyShop.
 
@@ -64,14 +64,7 @@ const candyShop = new CandyShop(
 );
 ```
 
-You may pass an additional settings object to customize your shop:
-
-* **currencySymbol: string** your shop transaction currency symbol (default is SOL)
-* **currencyDecimals: number** your shop transaction currency decimals (default is 9 for SOL)
-* **priceDecimals: number** number of decimals to display for price numbers (default is 3)
-* **volumeDecimals: number** number of decimals to display for volume numbers (default is 1)
-
-Example settings object:
+#### Default settings
 
 ```ts
 const settings = {
@@ -81,6 +74,48 @@ const settings = {
   volumeDecimals: 1
 };
 ```
+
+#### Additional Settings
+
+You may pass an additional settings object to customize your shop:
+
+- `currencySymbol: string`
+  - your shop transaction currency symbol (default is SOL)
+- `currencyDecimals: number` 
+  - your shop transaction currency decimals (default is 9 for SOL)
+- `priceDecimals: number` 
+  - number of decimals to display for price numbers (default is 3)
+- `volumeDecimals: number` 
+  - number of decimals to display for volume numbers (default is 1)
+
+
+## Custom Marketplace Builds
+
+Using the `@liqnft/candy-shop-sdk`, you can ship your own custom marketplace with desired UI by the methods below.
+
+```ts
+
+import { CandyShop } from '@liqnft/candy-shop-sdk';
+// Fetch orders
+candyShop.getOrders();
+
+// Buy
+candyShop.buy();
+
+// Sell
+candyShop.sell();
+
+// Cancel sell order
+candyShop.cancel();
+
+// Get statistics
+candyShop.getStats();
+
+// Get transactions
+candyShop.getTransactions();
+```
+
+## Embedded UI Usages
 
 ### Show Orders and Buy Interface
 
@@ -96,10 +131,13 @@ import { Orders } from '@liqnft/candy-shop';
 />
 ```
 
-Additional params:
-* **filters: Array<{ name: string, identifier: number}>** You can let users filter by NFT collection by specifying the filters parameter. Name is the label shown in the filter box. Identifier is the unique NFT collection identifier, which you can get by whitelisting an NFT collection in My Shop or by using the getIdentifier helper method in the Candy Shop library
-* **identifiers: Array<number>** By default, only show orders from certain NFT collections. Takes an array of identifiers.
-* **url: string** When user clicks on an NFT order, direct user to a new route instead of opening a buy NFT modal. Route should be in form of `/my-route/:tokenMint` where `:tokenMint` will be replaced by the NFT token mint
+### Additional params:
+- `filters: Array<{ name: string, identifier: number}>`
+  - You can let users filter by NFT collection by specifying the filters parameter. Name is the label shown in the filter box. Identifier is the unique NFT collection identifier, which you can get by whitelisting an NFT collection in My Shop or by using the getIdentifier helper method in the Candy Shop library
+- `identifiers: Array<number>`
+  - By default, only show orders from certain NFT collections. Takes an array of identifiers.
+- `url: string` 
+  - When user clicks on an NFT order, direct user to a new route instead of opening a buy NFT modal. Route should be in form of `/my-route/:tokenMint` where `:tokenMint` will be replaced by the NFT token mint
 
 ### Show Sell Interface
 
@@ -146,55 +184,32 @@ import { OrderDetail } from '@liqnft/candy-shop';
 />
 ```
 
-### Custom Marketplace Builds
+# Contributors
+## Prerequisite
 
-You can also ship your own custom marketplace using the methods below, neatly with the `candy-shop-sdk` pacakge.
+Install Node (above 14.17.x), NPM, Yarn
 
-// Fetch orders
-candyShop.getOrders();
+## Launch example
 
-// Buy
-candyShop.buy();
-
-// Sell
-candyShop.sell();
-
-// Cancel sell order
-candyShop.cancel();
-
-// Get statistics
-candyShop.getStats();
-
-// Get transactions
-candyShop.getTransactions();
+1. `core/sdk`
+```bash
+cd core/sdk
+yarn
+yarn build
 ```
 
-## For Contributors
+2. `core/ui`
+```bash
+cd core/ui
+yarn
+yarn build
+```
+This builds resources of embedded ui components  to `/core/ui/dist`
 
-In first console, run the NPM module
+3. In root folder, hosting example dist at `localhost:1234`
 
 ```bash
-cd lib
 yarn
+yarn build
 yarn start
-```
-
-This builds to `/lib/dist` and runs the project in watch mode so any edits you save inside `/lib/src` causes a rebuild to `/lib/dist`.
-
-In second console, run example:
-
-```bash
-# in example folder
-yarn
-
-# in root folder
-yarn
-yarn start
-```
-
-To publish
-
-```bash
-# in lib folder
-npm publish
 ```

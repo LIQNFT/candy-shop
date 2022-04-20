@@ -3,7 +3,7 @@ import { getAccount } from '@solana/spl-token';
 import axios from 'axios';
 import * as crc32 from 'crc-32';
 import { safeAwait } from './promiseUtils';
-import { Metadata, parseEdition, parseMetadata } from '../utils/parseData';
+import { Metadata, parseEdition, parseMetadata } from './parseData';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);

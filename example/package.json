@@ -25,8 +25,8 @@
     "typescript": "^3.4.5"
   },
   "alias": {
-    "react": "../lib/node_modules/react",
-    "react-dom": "../lib/node_modules/react-dom/profiling",
-    "scheduler/tracing": "../lib/node_modules/scheduler/tracing-profiling"
+    "react": "../core/ui/node_modules/react",
+    "react-dom": "../core/ui/node_modules/react-dom/profiling",
+    "scheduler/tracing": "../core/ui/node_modules/scheduler/tracing-profiling"
   }
 }

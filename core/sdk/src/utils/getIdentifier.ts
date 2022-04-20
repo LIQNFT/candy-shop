@@ -1,5 +1,5 @@
 import { web3 } from '@project-serum/anchor';
-import { parseMetadata } from '../utils/parseData';
+import { parseMetadata } from './parseData';
 import * as crc32 from 'crc-32';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
