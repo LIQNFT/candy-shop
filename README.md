@@ -191,30 +191,24 @@ Install Node (above 14.17.x), NPM, Yarn
 
 ## Launch example
 
-
-1. In root, installing required modules
-```
-yarn
-```
-
-2. `core/sdk`
-```bash
-cd core/sdk
-yarn
-yarn build
-```
-
-3. `core/ui`
-```bash
-cd core/ui
-yarn
-yarn build
-```
-This builds resources of embedded ui components  to `/core/ui/dist`
-
-4. In root folder, hosting example dist at `localhost:1234`
+Installing & Building all required packages by `setup.sh`
 
 ```bash
-yarn build
+// run chmod when executing it first time
+chmod 755 setup.sh 
+./setup.sh
+```
+
+In root folder, hosting dist from example at `localhost:1234`
+
+```bash
 yarn start
+```
+
+## Clean node_modules for clean building
+
+In root folder
+
+```bash
+yarn clean:all
 ```

@@ -13,7 +13,11 @@
     "deploy": "yarn build && yarn gh-pages",
     "format:check": "prettier --check \"**/*.+(js|jsx|ts|tsx|json|css|less)\"",
     "format:fix": "prettier --write \"**/*.+(js|jsx|ts|tsx|json|css|less)\"",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "clean:root": "rm -rf node_modules && rm -rf dist",
+    "clean:sdk": "rm -rf core/sdk/node_modules && rm -rf core/sdk/dist",
+    "clean:ui": "rm -rf core/ui/node_modules && rm -rf core/ui/dist",
+    "clean:all": "yarn clean:root && yarn clean:sdk && yarn clean:ui"
   },
   "devDependencies": {
     "@parcel/packager-raw-url": "2.4.1",
