@@ -1,0 +1,58 @@
+@import '../../variable.less';
+
+.candy-tooltip {
+  position: relative;
+  cursor: pointer;
+  // move the triangle to left or right of inner
+  &-right {
+    .candy-tooltip-inner {
+      left: unset;
+      transform: translateX(0);
+      right: 0;
+    }
+  }
+
+  &-left {
+    .candy-tooltip-inner {
+      left: 10%;
+      transform: translateX(0);
+    }
+  }
+
+  &-inner {
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 12px;
+    background-color: @popover-background;
+    transition: 0.1s all cubic-bezier(0.05, 1.09, 0.83, 0.67);
+    color: #fff;
+    border-radius: 8px;
+    width: max-content;
+    max-width: 300px;
+    visibility: hidden;
+  }
+
+  &-label::after {
+    content: '';
+    visibility: hidden;
+    position: absolute;
+    top: -25%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+    transition: 0.1s all cubic-bezier(0.05, 1.09, 0.83, 0.67);
+  }
+
+  &-label:hover + &-inner {
+    visibility: visible;
+  }
+  &-label:hover {
+    &::after {
+      visibility: visible;
+    }
+  }
+}

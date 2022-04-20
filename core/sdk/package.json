@@ -1,6 +1,6 @@
 {
   "name": "@liqnft/candy-shop-sdk",
-  "version": "0.4.13",
+  "version": "0.4.15",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
@@ -14,7 +14,7 @@
     "axios": "^0.26.1",
     "crc-32": "^1.2.2",
     "qs": "^6.10.3",
-    "solana-candy-shop-schema": "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#73ba87363932ab8e3571f2266a2fd4e8e630b085"
+    "solana-candy-shop-schema": "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#1e020e95ba24e0f1a70b3c593b6a112eb9cb7687"
   },
   "devDependencies": {
     "@types/expect": "^24.3.0",

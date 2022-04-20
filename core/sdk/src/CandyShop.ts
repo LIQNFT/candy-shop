@@ -1,8 +1,7 @@
 import { BN, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { fetchNftByMint } from './api/backend/NftAPI';
-import { fetchShopWhitelistNftByShopId } from './api/backend/ShopAPI';
 import axiosInstance, { configBaseUrl } from './config';
+
 import {
   ListBase,
   Nft,
@@ -10,16 +9,22 @@ import {
   ShopStats,
   SingleBase,
   Trade,
-  WhitelistNft
+  WhitelistNft,
+  CandyShop as CandyShopResponse
 } from 'solana-candy-shop-schema/dist';
+
+import { fetchNftByMint } from './api/backend/NftAPI';
+import { fetchShopWhitelistNftByShopId } from './api/backend/ShopAPI';
 import {
   fetchOrderByTokenMint,
   fetchOrdersByStoreId,
   fetchOrdersByStoreIdAndWalletAddress,
   OrdersFilterQuery
 } from './api/backend/OrderAPI';
+import { fetchShopByWalletAddress } from './api/backend/ShopAPI';
 import { fetchStatsById } from './api/backend/StatsAPI';
 import { fetchTradeById } from './api/backend/TradeAPI';
+
 import { buyAndExecuteSale } from './api/program/buyAndExecuteSale';
 import { cancelOrder } from './api/program/cancel';
 import { sellNft } from './api/program/sell';
@@ -395,5 +400,14 @@ export class CandyShop {
       mintAddress
     });
     return fetchOrderByTokenMint(axiosInstance, mintAddress);
+  }
+
+  public async fetchShopByWalletAddress(): Promise<
+    ListBase<CandyShopResponse>
+  > {
+    return fetchShopByWalletAddress(
+      axiosInstance,
+      this._candyShopCreatorAddress.toString()
+    );
   }
 }

@@ -11,13 +11,14 @@ interface NftMetadataCreator {
   verified: number;
 }
 
-interface NftMetadata {
+export interface NftMetadata {
   symbol: string;
   creators: NftMetadataCreator[];
   metadataAddress: string;
+  sellerFeeBasisPoints: number;
 }
 
-const getTokenMetadataByMintAddress = async function (
+export const getTokenMetadataByMintAddress = async function (
   mintAddress: string,
   connection: web3.Connection
 ): Promise<NftMetadata> {
@@ -33,6 +34,7 @@ const getTokenMetadataByMintAddress = async function (
     newEditionMetadata
   );
   const metadata = parseMetadata(newEditionMetadataAccountInfo!.data).data;
+
   return {
     // @ts-ignore
     creators: metadata.creators?.map((creator) => ({
@@ -41,7 +43,8 @@ const getTokenMetadataByMintAddress = async function (
       share: creator.share
     })),
     symbol: metadata.symbol,
-    metadataAddress: newEditionMetadata.toString()
+    metadataAddress: newEditionMetadata.toString(),
+    sellerFeeBasisPoints: metadata.sellerFeeBasisPoints
   };
 };
 
