@@ -49,16 +49,14 @@ export const CancelModalDetail = ({
   };
 
   const orderPrice = useMemo(() => {
-    try {
-      return (
-        Number(order?.price) / candyShop.baseUnitsPerCurrency
-      ).toLocaleString(undefined, {
-        minimumFractionDigits: candyShop.priceDecimals,
-        maximumFractionDigits: candyShop.priceDecimals
-      });
-    } catch (err) {
-      return null;
-    }
+    if (!order?.price) return null;
+
+    return (
+      Number(order?.price) / candyShop.baseUnitsPerCurrency
+    ).toLocaleString(undefined, {
+      minimumFractionDigits: candyShop.priceDecimals,
+      maximumFractionDigits: candyShop.priceDecimals
+    });
   }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimals, order?.price]);
 
   return (

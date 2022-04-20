@@ -41,16 +41,14 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   const [hash, setHash] = useState('');
 
   const orderPrice = useMemo(() => {
-    try {
-      return (
-        Number(order?.price) / candyShop.baseUnitsPerCurrency
-      ).toLocaleString(undefined, {
-        minimumFractionDigits: candyShop.priceDecimals,
-        maximumFractionDigits: candyShop.priceDecimals
-      });
-    } catch (err) {
-      return null;
-    }
+    if (!order?.price) return null;
+
+    return (
+      Number(order?.price) / candyShop.baseUnitsPerCurrency
+    ).toLocaleString(undefined, {
+      minimumFractionDigits: candyShop.priceDecimals,
+      maximumFractionDigits: candyShop.priceDecimals
+    });
   }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimals, order?.price]);
 
   const isUserListing =

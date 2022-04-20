@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 
 import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { web3 } from '@project-serum/anchor';
 import { CancelModal } from 'components/CancelModal';
 import { LiqImage } from 'components/LiqImage';
 import { SellModal } from 'components/SellModal';
 
 import { CandyShop, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
-import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import {
+  Order as OrderSchema,
+  CandyShop as CandyShopResponse
+} from 'solana-candy-shop-schema/dist';
+
 import './index.less';
 
 export interface NftProps {
@@ -14,13 +19,17 @@ export interface NftProps {
   candyShop: CandyShop;
   wallet: AnchorWallet;
   sellDetail?: OrderSchema;
+  shop: CandyShopResponse;
+  connection: web3.Connection;
 }
 
 export const Nft = ({
   nft,
   candyShop,
   wallet,
-  sellDetail
+  sellDetail,
+  shop,
+  connection
 }: NftProps): JSX.Element => {
   const [selection, setSelection] = useState<SingleTokenInfo | undefined>();
 
@@ -58,6 +67,8 @@ export const Nft = ({
           nft={selection}
           candyShop={candyShop}
           wallet={wallet}
+          shop={shop}
+          connection={connection}
         />
       )}
 
