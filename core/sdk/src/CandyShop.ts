@@ -33,23 +33,6 @@ import {
   getMetadataAccount
 } from './api/utils';
 
-export * from './utils';
-export {
-  SortBy as OrderSortBy,
-  OrdersFilterQuery,
-  getAtaForMint,
-  WRAPPED_SOL_MINT,
-  AUCTION_HOUSE_PROGRAM_ID,
-  getAuctionHouse,
-  getAuctionHouseAuthority,
-  getAuctionHouseFeeAcct,
-  getAuctionHouseTradeState,
-  getAuctionHouseTreasuryAcct,
-  getCandyShop
-} from './api';
-// for CLI
-export { buyAndExecuteSale, sellNft, cancelOrder } from './api';
-
 const DEFAULT_CURRENCY_SYMBOL = 'SOL';
 const DEFAULT_CURRENCY_DECIMALS = 9;
 const DEFAULT_PRICE_DECIMALS = 3;
