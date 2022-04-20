@@ -1,6 +1,6 @@
 import { web3, Program, Idl, Provider } from '@project-serum/anchor';
 import * as anchor from '@project-serum/anchor';
-import { AUCTION_HOUSE_PROGRAM_ID } from '@liqnft/candy-shop-sdk/dist/api/constants';
+import { AUCTION_HOUSE_PROGRAM_ID } from '@liqnft/candy-shop-sdk';
 
 import fs from 'fs';
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';

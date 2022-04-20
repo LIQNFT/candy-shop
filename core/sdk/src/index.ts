@@ -38,7 +38,14 @@ export {
   SortBy as OrderSortBy,
   OrdersFilterQuery,
   getAtaForMint,
-  WRAPPED_SOL_MINT
+  WRAPPED_SOL_MINT,
+  AUCTION_HOUSE_PROGRAM_ID,
+  getAuctionHouse,
+  getAuctionHouseAuthority,
+  getAuctionHouseFeeAcct,
+  getAuctionHouseTradeState,
+  getAuctionHouseTreasuryAcct,
+  getCandyShop
 } from './api';
 // for CLI
 export { buyAndExecuteSale, sellNft, cancelOrder } from './api';

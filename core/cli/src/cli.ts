@@ -12,7 +12,7 @@ import {
   getAuctionHouseTradeState,
   getAuctionHouseTreasuryAcct,
   getCandyShop
-} from '@liqnft/candy-shop-sdk/dist/api/utils';
+} from '@liqnft/candy-shop-sdk';
 import * as anchor from '@project-serum/anchor';
 
 import { getMetadataAccount, loadWalletKeyAndProgram } from './helper/account';
