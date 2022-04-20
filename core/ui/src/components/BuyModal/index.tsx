@@ -3,8 +3,12 @@ import { web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
-import { CandyShop, getAtaForMint } from '@liqnft/candy-shop-sdk';
-import React, { useState, useContext } from 'react';
+import {
+  CandyShop,
+  getAtaForMint,
+  WRAPPED_SOL_MINT
+} from '@liqnft/candy-shop-sdk';
+import React, { useContext, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { ErrorMsgMap, ErrorType, handleError } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
@@ -12,11 +16,10 @@ import { TransactionState } from '../../model';
 import BuyModalConfirmed from './BuyModalConfirmed';
 import BuyModalDetail from './BuyModalDetail';
 import { getAccount } from '@solana/spl-token';
-import { WRAPPED_SOL_MINT } from '@liqnft/candy-shop-sdk';
-import { CandyActionContext } from 'public/Context';
-import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
-import { TIMEOUT_REFETCH_NFT } from 'constant';
 import './style.less';
+import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
+import { CandyActionContext } from 'public/Context';
+import { TIMEOUT_REFETCH_NFT } from 'constant';
 
 export interface BuyModalProps {
   order: OrderSchema;
