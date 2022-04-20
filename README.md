@@ -191,14 +191,20 @@ Install Node (above 14.17.x), NPM, Yarn
 
 ## Launch example
 
-1. `core/sdk`
+
+1. In root, installing required modules
+```
+yarn
+```
+
+2. `core/sdk`
 ```bash
 cd core/sdk
 yarn
 yarn build
 ```
 
-2. `core/ui`
+3. `core/ui`
 ```bash
 cd core/ui
 yarn
@@ -206,10 +212,9 @@ yarn build
 ```
 This builds resources of embedded ui components  to `/core/ui/dist`
 
-3. In root folder, hosting example dist at `localhost:1234`
+4. In root folder, hosting example dist at `localhost:1234`
 
 ```bash
-yarn
 yarn build
 yarn start
 ```
