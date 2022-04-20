@@ -32,6 +32,7 @@ import {
   getCandyShopSync,
   getMetadataAccount
 } from './api/utils';
+import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
 
 const DEFAULT_CURRENCY_SYMBOL = 'SOL';
 const DEFAULT_CURRENCY_DECIMALS = 9;
@@ -101,7 +102,7 @@ export class CandyShop {
   /**
    * Initiate the CandyShop object
    */
-  async getStaticProgram(wallet: AnchorWallet): Promise<any> {
+  async getStaticProgram(wallet: AnchorWallet | web3.Keypair): Promise<any> {
     if (this._program) {
       return this._program;
     }
@@ -113,7 +114,12 @@ export class CandyShop {
         : web3.clusterApiUrl('devnet'),
       options.commitment
     );
-    const provider = new Provider(connection, wallet, options);
+    const provider = new Provider(
+      connection,
+      // check the instance type
+      'signTransaction' in wallet ? wallet : new NodeWallet(wallet),
+      options
+    );
     console.log(
       'CandyShop init: fetching idl for programId',
       this._programId.toString()
@@ -180,7 +186,7 @@ export class CandyShop {
     tokenAccount: web3.PublicKey,
     tokenMint: web3.PublicKey,
     price: BN,
-    wallet: AnchorWallet
+    wallet: AnchorWallet | web3.Keypair
   ): Promise<string> {
     console.log('CandyShop: performing buy', {
       seller: seller.toString(),
@@ -230,7 +236,7 @@ export class CandyShop {
     tokenAccount: web3.PublicKey,
     tokenMint: web3.PublicKey,
     price: BN,
-    wallet: AnchorWallet
+    wallet: AnchorWallet | web3.Keypair
   ): Promise<string> {
     console.log('CandyShop: performing sell', {
       tokenMint: tokenMint.toString(),
@@ -276,7 +282,7 @@ export class CandyShop {
     tokenAccount: web3.PublicKey,
     tokenMint: web3.PublicKey,
     price: BN,
-    wallet: AnchorWallet
+    wallet: AnchorWallet | web3.Keypair
   ): Promise<string> {
     console.log('CandyShop: performing cancel', {
       tokenAccount: tokenAccount.toString(),
