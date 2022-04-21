@@ -1,5 +1,6 @@
 import { CandyShop } from '@liqnft/candy-shop-sdk';
-import React, { useEffect, useState } from 'react';
+import { CandyContext } from 'public/Context';
+import React, { useContext, useEffect, useState } from 'react';
 import './index.less';
 
 export interface StatProps {
@@ -16,6 +17,7 @@ export const Stat = ({
   style
 }: StatProps): JSX.Element => {
   const [stat, setStat] = useState<any>([]);
+  const { refetch } = useContext(CandyContext);
 
   const floorPrice = stat?.floorPrice
     ? (Number(stat.floorPrice) / candyShop.baseUnitsPerCurrency).toLocaleString(
@@ -54,7 +56,7 @@ export const Stat = ({
       .catch((err) => {
         console.info('fetchOrdersByStoreId failed: ', err);
       });
-  }, [candyShop]);
+  }, [candyShop, refetch]);
 
   return (
     <div style={style}>

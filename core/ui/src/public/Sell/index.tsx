@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
@@ -15,6 +15,7 @@ import {
   fetchNftsFromWallet,
   SingleTokenInfo
 } from '@liqnft/candy-shop-sdk';
+import { CandyContext } from 'public/Context';
 
 interface SellProps {
   connection: web3.Connection;
@@ -51,12 +52,15 @@ export const Sell: React.FC<SellProps> = ({
     LoadStatus.ToLoad
   );
 
+  const { refetch } = useContext(CandyContext);
+
   useEffect(() => {
     if (wallet?.publicKey) {
       setWalletPublicKey(wallet.publicKey);
       setLoadingStatus(LoadStatus.ToLoad); // refetch fetchNftsFromWallet when get new publicKey
     }
-  }, [wallet?.publicKey]);
+    // refetch: get list when buy/sell/cancel nft
+  }, [wallet?.publicKey, refetch]);
 
   // fetch current wallet nfts when mount and when publicKey was changed.
   useEffect(() => {
@@ -99,7 +103,8 @@ export const Sell: React.FC<SellProps> = ({
       .finally(() => {
         setOrderLoading(LoadStatus.ToLoad);
       });
-  }, [candyShop, walletPublicKey]);
+    // refetch: get list when buy/sell/cancel nft
+  }, [candyShop, walletPublicKey, refetch]);
 
   const hashSellOrders: any = useMemo(() => {
     return (

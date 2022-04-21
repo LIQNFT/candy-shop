@@ -41,7 +41,9 @@ export const Order: React.FC<OrderProps> = ({
     }
   }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimals, order?.price]);
 
-  const onClose = () => setSelection(undefined);
+  const onClose = () => {
+    setSelection(undefined);
+  };
 
   const onClick = () => {
     if (url) {

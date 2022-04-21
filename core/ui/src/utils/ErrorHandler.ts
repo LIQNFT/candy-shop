@@ -3,13 +3,16 @@ import { notification, NotificationType } from './rc-notification';
 export enum ErrorType {
   InvalidWallet = 'InvalidWallet',
   TransactionFailed = 'TransactionFailed',
-  InsufficientBalance = 'InsufficientBalance'
+  InsufficientBalance = 'InsufficientBalance',
+  GetAccountInfoFailed = 'GetAccountInfoFailed'
 }
 
 export const ErrorMsgMap = {
   [ErrorType.InvalidWallet]: 'Invalid wallet, please connect the wallet.',
   [ErrorType.TransactionFailed]: 'Transaction failed. Please try again later.',
-  [ErrorType.InsufficientBalance]: 'Insufficient balance.'
+  [ErrorType.InsufficientBalance]: 'Insufficient balance.',
+  [ErrorType.GetAccountInfoFailed]:
+    'Get Account Information failed. Please try again later.'
 };
 
 export const handleError = (errorType: ErrorType): void => {

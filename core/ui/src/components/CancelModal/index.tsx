@@ -1,13 +1,15 @@
+import React, { useState, useContext } from 'react';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { TransactionState } from 'model';
-import React, { useCallback, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { CancelModalConfirm } from './CancelModalConfirm';
 import { CancelModalDetail } from './CancelModalDetail';
 import './index.less';
+
+import { CandyActionContext } from 'public/Context';
 
 export interface CancelModalProps {
   order: OrderSchema;
@@ -26,15 +28,17 @@ export const CancelModal: React.FC<CancelModalProps> = ({
     TransactionState.DISPLAY
   );
 
+  const { setRefetch } = useContext(CandyActionContext);
+
   // Handle change step
   const onChangeStep = (state: TransactionState) => setState(state);
 
-  const onCloseModal = useCallback(() => {
+  const onCloseModal = () => {
     onUnSelectItem();
-    if (state === TransactionState.CONFIRMED)
-      // TODO: remove the window reload but using callback function to let parent reload by setState
-      setTimeout(() => window.location.reload(), 3_000);
-  }, [state, onUnSelectItem]);
+    if (state === TransactionState.CONFIRMED) {
+      setRefetch();
+    }
+  };
 
   return (
     <Modal
@@ -43,7 +47,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
     >
       {state === TransactionState.DISPLAY && wallet && (
         <CancelModalDetail
-          onCancel={onCloseModal}
+          onCancel={onUnSelectItem}
           candyShop={candyShop}
           order={order}
           onChangeStep={onChangeStep}

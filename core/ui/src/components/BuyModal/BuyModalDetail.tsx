@@ -1,10 +1,12 @@
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { web3 } from '@project-serum/anchor';
+
 import { ExplorerLink } from 'components/ExplorerLink';
 import { NftAttributes } from 'components/NftAttributes';
+import { LiqImage } from 'components/LiqImage';
+
 import { CandyShop } from '@liqnft/candy-shop-sdk';
-import React, { useEffect, useMemo, useState } from 'react';
 import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import { LiqImage } from '../LiqImage';
 
 export interface BuyModalDetailProps {
   order: OrderSchema;
@@ -21,6 +23,9 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   walletConnectComponent,
   candyShop
 }) => {
+  const [nftInfo, setNftInfo] = useState<Nft>();
+  const [loadingNftInfo, setLoadingNftInfo] = useState<boolean>(false);
+
   const orderPrice = useMemo(() => {
     try {
       return (
@@ -33,9 +38,6 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
       return null;
     }
   }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimals, order?.price]);
-
-  const [loadingNftInfo, setLoadingNftInfo] = useState(false);
-  const [nftInfo, setNftInfo] = useState<Nft | null>(null);
 
   useEffect(() => {
     if (order) {

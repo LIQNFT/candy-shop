@@ -1,16 +1,20 @@
+import React, { useContext, useState } from 'react';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import IconTick from 'assets/IconTick';
-import Modal from 'components/Modal';
-import Processing from 'components/Processing';
+
 import { CandyShop, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
-import React, { useCallback, useState } from 'react';
 import { ErrorMsgMap } from 'utils/ErrorHandler';
 import { ErrorType, handleError } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
-import { TransactionState } from '../../model';
-import { LiqImage } from '../LiqImage';
+import { LiqImage } from 'components/LiqImage';
+import Modal from 'components/Modal';
+import Processing from 'components/Processing';
+import IconTick from 'assets/IconTick';
 
+import { TransactionState } from 'model';
+import { TIMEOUT_REFETCH_NFT } from 'constant';
+import { CandyActionContext } from 'public/Context';
+import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 import './style.less';
 
 export interface SellModalProps {
@@ -20,8 +24,10 @@ export interface SellModalProps {
   wallet: AnchorWallet;
 }
 
+const regex3Decimals = new RegExp('^[0-9]{1,11}(?:.[0-9]{1,3})?$');
+
 export const SellModal: React.FC<SellModalProps> = ({
-  onCancel: onUnSelectItem,
+  onCancel,
   nft,
   candyShop,
   wallet
@@ -30,8 +36,9 @@ export const SellModal: React.FC<SellModalProps> = ({
     price: undefined
   });
   const [state, setState] = useState(TransactionState.DISPLAY);
+  const { setRefetch } = useContext(CandyActionContext);
 
-  const regex3Decimals = new RegExp('^[0-9]{1,11}(?:.[0-9]{1,3})?$');
+  const timeoutRef = useUnmountTimeout();
 
   // List for sale and move to next step
   const sell = async () => {
@@ -65,7 +72,9 @@ export const SellModal: React.FC<SellModalProps> = ({
           'SellModal: Place sell order with transaction hash= ',
           txHash
         );
-        setState(TransactionState.CONFIRMED);
+        timeoutRef.current = setTimeout(() => {
+          setState(TransactionState.CONFIRMED);
+        }, TIMEOUT_REFETCH_NFT);
       })
       .catch((err) => {
         console.log('SellModal: error= ', err);
@@ -86,16 +95,17 @@ export const SellModal: React.FC<SellModalProps> = ({
     }
   };
 
-  const onCancel = useCallback(() => {
-    onUnSelectItem();
-    if (state === TransactionState.CONFIRMED)
-      setTimeout(() => window.location.reload(), 3_000);
-  }, [state, onUnSelectItem]);
-
   const isSubmit = formState.price !== undefined;
 
+  const onCloseModal = () => {
+    onCancel();
+    if (state === TransactionState.CONFIRMED) {
+      setRefetch();
+    }
+  };
+
   return (
-    <Modal onCancel={onCancel} width={600}>
+    <Modal onCancel={onCloseModal} width={600}>
       <div className="candy-sell-modal">
         {state === TransactionState.DISPLAY && (
           <div>
@@ -167,7 +177,10 @@ export const SellModal: React.FC<SellModalProps> = ({
             <div className="candy-sell-modal-hr"></div>
             <button
               className="candy-sell-modal-button candy-button"
-              onClick={onCancel}
+              onClick={() => {
+                onCancel();
+                setRefetch();
+              }}
             >
               Continue Browsing
             </button>
