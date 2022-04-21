@@ -11,7 +11,7 @@ import { notification, NotificationType } from 'utils/rc-notification';
 import { TransactionState } from '../../model';
 import BuyModalConfirmed from './BuyModalConfirmed';
 import BuyModalDetail from './BuyModalDetail';
-import { getAccount, TokenAccountNotFoundError } from '@solana/spl-token';
+import { getAccount } from '@solana/spl-token';
 import { WRAPPED_SOL_MINT } from '@liqnft/candy-shop-sdk';
 import './style.less';
 
