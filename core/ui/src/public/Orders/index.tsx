@@ -47,7 +47,7 @@ interface OrdersProps {
   wallet: AnchorWallet | undefined;
   url?: string;
   identifiers?: number[];
-  filters?: Array<{ name: string; identifier: number }>;
+  filters?: Array<{ name: string; identifier: number | Array<number> }>;
   style?: { [key: string]: string | number } | undefined;
 }
 
@@ -71,6 +71,7 @@ export const Orders: React.FC<OrdersProps> = ({
   const [filterIdentifiers, setFilterIdentifiers] = useState<
     number[] | undefined
   >(undefined);
+  const [filterName, setFilterName] = useState<string | undefined>(undefined);
 
   const loadNextPage = (startIndex: number, limit: number) => {
     candyShop
@@ -148,17 +149,19 @@ export const Orders: React.FC<OrdersProps> = ({
                   All
                 </li>
                 {filters.map((filter) => {
+                  let filterArr = Array.isArray(filter.identifier)
+                    ? filter.identifier
+                    : [filter.identifier];
+
                   return (
                     <li
                       onClick={() => {
-                        setFilterIdentifiers([filter.identifier]);
+                        setFilterIdentifiers(filterArr);
+                        setFilterName(filter.name);
                       }}
-                      key={filter.identifier}
+                      key={filter.name}
                       className={
-                        filterIdentifiers &&
-                        filterIdentifiers[0] === filter.identifier
-                          ? 'selected'
-                          : undefined
+                        filterName === filter.name ? 'selected' : undefined
                       }
                     >
                       {filter.name}
