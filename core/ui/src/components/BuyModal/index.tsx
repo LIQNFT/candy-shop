@@ -11,7 +11,7 @@ import { notification, NotificationType } from 'utils/rc-notification';
 import { TransactionState } from '../../model';
 import BuyModalConfirmed from './BuyModalConfirmed';
 import BuyModalDetail from './BuyModalDetail';
-import { getAccount } from '@solana/spl-token';
+import { getAccount, TokenAccountNotFoundError } from '@solana/spl-token';
 import { WRAPPED_SOL_MINT } from '@liqnft/candy-shop-sdk';
 import './style.less';
 
@@ -56,8 +56,12 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       const ata = (
         await getAtaForMint(candyShop.treasuryMint, wallet.publicKey)
       )[0];
-      const account = await getAccount(connection, ata);
-      balance = new BN(account.amount.toString());
+      try {
+        const account = await getAccount(connection, ata);
+        balance = new BN(account.amount.toString());
+      } catch (err) {
+        balance = new BN('0');
+      }
     }
     if (balance.lt(new BN(order.price))) {
       setState(TransactionState.DISPLAY);
