@@ -56,8 +56,12 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       const ata = (
         await getAtaForMint(candyShop.treasuryMint, wallet.publicKey)
       )[0];
-      const account = await getAccount(connection, ata);
-      balance = new BN(account.amount.toString());
+      try {
+        const account = await getAccount(connection, ata);
+        balance = new BN(account.amount.toString());
+      } catch (err) {
+        balance = new BN('0');
+      }
     }
     if (balance.lt(new BN(order.price))) {
       setState(TransactionState.DISPLAY);
