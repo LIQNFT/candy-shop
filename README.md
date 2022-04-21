@@ -1,4 +1,16 @@
 # Candy Shop (IN BETA) 
+
+**Table of contents**
+
+* [Intro](#intro)
+* [Key Features](#key-features)
+* [Invoke Your Candy Shop](#invoke-your-candy-shop)
+* [Install Candy Shop](#install-candyshop)
+  - [How to use CandyShop](#how-to-use-candyshop)
+* [Customize Your Marketplace](#customize-your-marketplace)
+  - [How to use sdk](#how-to-use-sdk)
+* [Embedded UI Usages](#embedded-ui-usages)
+* [Contribute to Candy Shop](#contribute-to-candy-shop)
 ## Intro
 Candy Shop is a JavaScript library that allows DAOs, NFT projects and anyone to create an NFT marketplace on Solana in minutes!
 
@@ -6,39 +18,29 @@ Drawing inspiration from Project Serum’s mission to accelerate Solana’s on-c
 
 Candy Shop provides an easy to integrate marketplace protocol & toolset with a full suite of data endpoints and command APIs to help  users deliver a simplistic, seamless and efficient NFT marketplace experience. For different marketplace hosting options, please refer to [this doc](Market.md)
 
-**Links**
-
-* [Website + Demo](https://candy.liqnft.com)
-* [Whitepaper](https://liqnft.gitbook.io/candy-shop/)
-* [Candy Machine V2 + Candy Shop Starter Repo](https://github.com/LIQNFT/candy-machine-v2-with-marketplace)
-* [Support](https://discord.com/invite/PYZWRHgVwM)
+### Links
+- [Website + Demo](https://candy.liqnft.com)
+- [Whitepaper](https://liqnft.gitbook.io/candy-shop/)
+- [Candy Machine V2 + Candy Shop Starter Repo](https://github.com/LIQNFT/candy-machine-v2-with-marketplace)
+- [Support](https://discord.com/invite/PYZWRHgVwM)
 
 <img width="1200" alt="Candy Shop Marketplace" src="https://user-images.githubusercontent.com/89616076/160229442-30f59d07-cd33-4b7d-8798-424013731f47.png">
 
 ## Key Features
 
 - **Simple Integration.** 
- - Integrate marketplace features into your website easily with Candy Shop SDK - your marketplace could be fully operational within a few minutes. 
+  - Integrate marketplace features into your website easily with Candy Shop SDK - your marketplace could be fully operational within a few minutes. 
 - **Seamless User Experience.** 
- - The commands and data endpoints have been designed in a way to simplify user journey and provide a    seamless experience for browsing, buying and selling NFTs on your in-house marketplace.
+  - The commands and data endpoints have been designed in a way to simplify user journey and provide a    seamless experience for browsing, buying and selling NFTs on your in-house marketplace.
 - **Give More, Earn More.** 
- - Users save on transaction fees when they transact on your Candy Shop marketplace, and you will also earn 20% of the 1% transaction fee. 
+  - Users save on transaction fees when they transact on your Candy Shop marketplace, and you will also earn 20% of the 1% transaction fee. 
 - **Candy Shop Network.** 
- - Standardized implementation allows you to import other Candy Shop NFT listings directly onto your marketplace or vice versa - creating a network effect of listings for maximum traffic flow
+  - Standardized implementation allows you to import other Candy Shop NFT listings directly onto your marketplace or vice versa - creating a network effect of listings for maximum traffic flow
 - **Transparency.** 
- - Candy Shop is an open source and on-chain protocol, providing your community with full transparency on what is happening behind the scene for your marketplace. 
+  - Candy Shop is an open source and on-chain protocol, providing your community with full transparency on what is happening behind the scene for your marketplace. 
 
-## Usage
 
-```bash
-npm install @liqnft/candy-shop
-```
-
-```bash
-yarn add @liqnft/candy-shop
-```
-
-### Create Candy Shop
+## Invoke Your Candy Shop
 
 Create your Candy Shop [here](https://candy.liqnft.com/my-shop).
 
@@ -50,9 +52,20 @@ You can configure the following in My Shop:
 * Claim share of transaction fees from your shop
 
 
-### Init CandyShop in Codes
+## Install CandyShop
 
-Use code in the `/example` folder as reference to setup and instantiate CandyShop.
+```bash
+npm install @liqnft/candy-shop
+```
+or
+
+```bash
+yarn add @liqnft/candy-shop
+```
+
+### How to use CandyShop
+
+**Refer to `/example` folder to instantiate `CandyShop`**
 
 ```ts
 const candyShop = new CandyShop(
@@ -89,12 +102,12 @@ You may pass an additional settings object to customize your shop:
   - number of decimals to display for volume numbers (default is 1)
 
 
-## Custom Marketplace Builds
+## Customize Your Marketplace
 
-Using the `@liqnft/candy-shop-sdk`, you can ship your own custom marketplace with desired UI by the methods below.
+`@liqnft/candy-shop-sdk` that inside `@liqnft/candy-shop`, allows you to ship your own custom marketplace with desired UI by calling methods below.
 
+### How to use sdk
 ```ts
-
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 // Fetch orders
 candyShop.getOrders();
@@ -116,7 +129,7 @@ candyShop.getTransactions();
 ```
 
 ## Embedded UI Usages
-
+We provide a few built-in UI to speed up building your market place without crafting the styles. If you want to have your own styles, please refer to [Customize Your Marketplace](#customize-your-marketplace) section that just using the sdk to perform the marketplace functions.
 ### Show Orders and Buy Interface
 
 Show the NFTs that are for sale and allow users to connect their wallet and buy them.
@@ -131,7 +144,7 @@ import { Orders } from '@liqnft/candy-shop';
 />
 ```
 
-### Additional params:
+#### Additional params:
 - `filters: Array<{ name: string, identifier: number}>`
   - You can let users filter by NFT collection by specifying the filters parameter. Name is the label shown in the filter box. Identifier is the unique NFT collection identifier, which you can get by whitelisting an NFT collection in My Shop or by using the getIdentifier helper method in the Candy Shop library
 - `identifiers: Array<number>`
@@ -184,7 +197,11 @@ import { OrderDetail } from '@liqnft/candy-shop';
 />
 ```
 
-# Contributors
+# Contribute to Candy Shop
+
+We're welcoming to receive any contribution for candy-shop! Feel free to open a PR can request LIQNFT team to review.
+
+Following is some set up you might need to know before building up together.
 ## Prerequisite
 
 Install Node (above 14.17.x), NPM, Yarn
@@ -211,4 +228,11 @@ In root folder
 
 ```bash
 yarn clean:all
+```
+## Formatting
+
+In root folder
+
+```bash
+yarn format:fix
 ```
