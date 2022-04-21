@@ -4,7 +4,7 @@ import { web3 } from '@project-serum/anchor';
 import 'antd/dist/antd.min.css';
 import React, { useEffect, useState } from 'react';
 import { CandyShop } from '../core/sdk/.';
-import { Orders, Stat, OrderDetail, Sell } from '../core/ui/.';
+import { Orders, Stat, OrderDetail, Sell, FilterData } from '../core/ui/.';
 import {
   CANDY_SHOP_PROGRAM_ID,
   CREATOR_ADDRESS,
@@ -82,8 +82,7 @@ export const CandyShopContent: React.FC = () => {
   );
 };
 
-const FILTERS = [
-  { name: 'Puppies', identifier: 2036309415 },
-  { name: 'Smilies', identifier: -38328789 },
-  { name: 'Puppies + Smilies', identifier: [-38328789, 2036309415] }
+const FILTERS: Array<FilterData> = [
+  { collectionName: 'Puppies', identifier: 2036309415 },
+  { collectionName: 'Smilies', identifier: -38328789 }
 ];

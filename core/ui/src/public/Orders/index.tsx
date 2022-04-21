@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Dropdown } from 'components/Dropdown';
 import { Empty } from 'components/Empty';
 import { Skeleton } from 'components/Skeleton';
@@ -41,13 +41,18 @@ const SORT_OPTIONS: { value: OrderSortBy; label: string }[] = [
   }
 ];
 
+export interface FilterData {
+  collectionName: string;
+  identifier: number;
+}
+
 interface OrdersProps {
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
   wallet: AnchorWallet | undefined;
   url?: string;
   identifiers?: number[];
-  filters?: Array<{ name: string; identifier: number | Array<number> }>;
+  filters?: Array<FilterData>;
   style?: { [key: string]: string | number } | undefined;
 }
 
@@ -68,19 +73,13 @@ export const Orders: React.FC<OrdersProps> = ({
   const [hasNextPage, setHasNextPage] = useState(true);
   const [loading, setLoading] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
-  const [filterIdentifiers, setFilterIdentifiers] = useState<
-    number[] | undefined
-  >(undefined);
-  const [filterName, setFilterName] = useState<string | undefined>(undefined);
+  const [filterIdentifiers, setFilterIdentifiers] = useState<number[]>([]);
 
-  const getUniqueIdentifiers = () => {
-    let uniqueIdentifiers = [
-      ...(identifiers || []),
-      ...(filterIdentifiers || [])
-    ];
+  const getUniqueIdentifiers = useCallback(() => {
+    const uniqueIdentifiers = [...(identifiers || []), ...filterIdentifiers];
 
     return [...new Set(uniqueIdentifiers)];
-  };
+  }, [identifiers, filterIdentifiers]);
 
   const loadNextPage = (startIndex: number, limit: number) => () => {
     candyShop
@@ -102,9 +101,23 @@ export const Orders: React.FC<OrdersProps> = ({
         setStartIndex((startIndex) => startIndex + limit);
         setOrders((existingOrders) => [...existingOrders, ...data.result]);
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.info('fetchOrdersByStoreId failed: ', err);
       });
+  };
+
+  const onSelectFilter = (selectedId: number | undefined) => {
+    let cloneFilters = [...filterIdentifiers];
+    if (selectedId) {
+      if (cloneFilters.includes(selectedId)) {
+        // Remove selected identifier from current filters as deselection
+        cloneFilters = cloneFilters.filter((id) => id !== selectedId);
+      } else {
+        cloneFilters.push(selectedId);
+      }
+    }
+    console.log('Orders: filtering with identifiers=', cloneFilters);
+    setFilterIdentifiers(cloneFilters);
   };
 
   useEffect(() => {
@@ -126,13 +139,19 @@ export const Orders: React.FC<OrdersProps> = ({
         setStartIndex(() => 0 + ORDER_FETCH_LIMIT);
         setOrders(data.result);
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.info('fetchOrdersByStoreId failed: ', err);
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [candyShop, sortedByOption, filterIdentifiers, identifiers]);
+  }, [
+    candyShop,
+    sortedByOption,
+    filterIdentifiers,
+    identifiers,
+    getUniqueIdentifiers
+  ]);
 
   if (filters) {
     return (
@@ -149,33 +168,25 @@ export const Orders: React.FC<OrdersProps> = ({
             <div className="candy-filter">
               <div className="candy-filter-title">Filter by Collection</div>
               <ul className="candy-filter-by-collection">
-                <li
-                  onClick={() => {
-                    setFilterIdentifiers(undefined);
-                  }}
-                  key={'All'}
-                  className={!filterIdentifiers ? 'selected' : undefined}
-                >
+                <label onClick={() => onSelectFilter(undefined)} key={'All'}>
+                  <input
+                    type="checkbox"
+                    checked={filterIdentifiers.length === 0}
+                  />
                   All
-                </li>
+                </label>
                 {filters.map((filter) => {
-                  let filterArr = Array.isArray(filter.identifier)
-                    ? filter.identifier
-                    : [filter.identifier];
-
                   return (
-                    <li
-                      onClick={() => {
-                        setFilterIdentifiers(filterArr);
-                        setFilterName(filter.name);
-                      }}
-                      key={filter.name}
-                      className={
-                        filterName === filter.name ? 'selected' : undefined
-                      }
+                    <label
+                      onClick={() => onSelectFilter(filter.identifier)}
+                      key={filter.identifier}
                     >
-                      {filter.name}
-                    </li>
+                      <input
+                        type="checkbox"
+                        checked={filterIdentifiers.includes(filter.identifier)}
+                      />
+                      {filter.collectionName}
+                    </label>
                   );
                 })}
               </ul>
