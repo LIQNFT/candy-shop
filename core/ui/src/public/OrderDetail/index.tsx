@@ -53,7 +53,9 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimals, order?.price]);
 
   const isUserListing =
-    wallet?.publicKey && order.walletAddress === wallet.publicKey.toString();
+    wallet?.publicKey &&
+    order &&
+    order.walletAddress === wallet.publicKey.toString();
 
   useEffect(() => {
     if (!order) {

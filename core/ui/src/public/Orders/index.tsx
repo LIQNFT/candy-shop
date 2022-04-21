@@ -73,9 +73,25 @@ export const Orders: React.FC<OrdersProps> = ({
   >(undefined);
   const [filterName, setFilterName] = useState<string | undefined>(undefined);
 
+  const getUniqueIdentifiers = () => {
+    let uniqueIdentifiers = [
+      ...(identifiers || []),
+      ...(filterIdentifiers || [])
+    ];
+
+    return [...new Set(uniqueIdentifiers)];
+  };
+
   const loadNextPage = (startIndex: number, limit: number) => () => {
     candyShop
-      .orders({ sortBy: sortedByOption.value, offset: startIndex, limit })
+      .orders(
+        {
+          sortBy: sortedByOption.value,
+          offset: startIndex,
+          limit
+        },
+        getUniqueIdentifiers()
+      )
       .then((data: any) => {
         if (!data.result) return;
         if (data.offset + data.count >= data.totalCount) {
@@ -94,12 +110,6 @@ export const Orders: React.FC<OrdersProps> = ({
   useEffect(() => {
     setLoading(true);
 
-    let uniqueIdentifiers = [
-      ...(identifiers || []),
-      ...(filterIdentifiers || [])
-    ];
-    uniqueIdentifiers = [...new Set(uniqueIdentifiers)];
-
     candyShop
       .orders(
         {
@@ -107,7 +117,7 @@ export const Orders: React.FC<OrdersProps> = ({
           offset: 0,
           limit: ORDER_FETCH_LIMIT
         },
-        uniqueIdentifiers
+        getUniqueIdentifiers()
       )
       .then((data: any) => {
         if (!data.result) return;
