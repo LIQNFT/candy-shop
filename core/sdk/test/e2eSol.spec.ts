@@ -1,10 +1,9 @@
-import { AnchorError, BN, web3 } from '@project-serum/anchor';
-import { CandyShop } from '../src/CandyShop';
+import { BN, web3 } from '@project-serum/anchor';
 import {
   createTransferInstruction,
-  getAssociatedTokenAddress,
-  TOKEN_PROGRAM_ID
+  getAssociatedTokenAddress
 } from '@solana/spl-token';
+import { CandyShop } from '../src/CandyShop';
 // 81nKpQT3rWpWw3NzdThR6zKN5gfF6mQ2J2BQYxoSDmoq
 const USER_1 = new Uint8Array([
   204, 63, 56, 180, 214, 13, 187, 253, 122, 98, 229, 241, 24, 137, 217, 242, 66,
@@ -41,7 +40,7 @@ const TOKEN_MINT = new web3.PublicKey(
 
 const PRICE = new BN('100000000');
 
-describe('e2e flow', function () {
+describe('e2e sol flow', function () {
   let user1: web3.Keypair, user2: web3.Keypair;
 
   before(async function () {
@@ -50,7 +49,7 @@ describe('e2e flow', function () {
   });
 
   it('sell -> cancel -> sell -> buy', async function () {
-    this.timeout(20000);
+    this.timeout(60000);
 
     const candyShop = new CandyShop(
       CREATOR_ADDRESS,
