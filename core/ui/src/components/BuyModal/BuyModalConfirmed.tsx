@@ -1,29 +1,32 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
 
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { web3 } from '@project-serum/anchor';
-import { formatDate } from '../../utils/format';
+import { formatDate } from 'utils/format';
 
-import { ExplorerLink } from '../ExplorerLink';
+import { ExplorerLink } from 'components/ExplorerLink';
 import { LiqImage } from 'components/LiqImage';
 import IconTick from 'assets/IconTick';
+import { CandyActionContext } from 'public/Context';
 
-const BuyModalConfirmed = ({
-  order,
-  txHash,
-  walletPublicKey,
-  candyShop
-}: {
+interface BuyModalConfirmedProps {
   order: any;
   txHash: string;
   walletPublicKey: web3.PublicKey | undefined;
   candyShop: CandyShop;
+  onClose: () => void;
+}
+
+const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
+  order,
+  txHash,
+  walletPublicKey,
+  candyShop,
+  onClose
 }) => {
+  const { setRefetch } = useContext(CandyActionContext);
   // Get wallet address follow walletPublicKey
-  const walletAddress = useMemo(
-    () => walletPublicKey?.toBase58() || '',
-    [walletPublicKey]
-  );
+  const walletAddress = walletPublicKey?.toBase58();
 
   const orderPrice = useMemo(() => {
     try {
@@ -36,7 +39,12 @@ const BuyModalConfirmed = ({
     } catch (err) {
       return null;
     }
-  }, [order]);
+  }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimals, order?.price]);
+
+  const onConfirm = () => {
+    onClose();
+    setRefetch();
+  };
 
   return (
     <div className="candy-buy-modal-confirmed">
@@ -71,7 +79,9 @@ const BuyModalConfirmed = ({
         <div className="candy-buy-modal-confirmed-item">
           <div className="candy-label">TO</div>
           <div className="candy-value">
-            <ExplorerLink type="address" address={walletAddress} />
+            {walletAddress && (
+              <ExplorerLink type="address" address={walletAddress} />
+            )}
           </div>
         </div>
         <div className="candy-buy-modal-confirmed-item">
@@ -85,12 +95,7 @@ const BuyModalConfirmed = ({
           <div className="candy-value">{formatDate(new Date())}</div>
         </div>
       </div>
-      <button
-        className="candy-button"
-        onClick={() => {
-          window.location.reload();
-        }}
-      >
+      <button className="candy-button" onClick={onConfirm}>
         Continue Shopping
       </button>
     </div>

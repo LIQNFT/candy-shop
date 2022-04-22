@@ -19,6 +19,7 @@ import 'react-app-polyfill/ie11';
 import ReactDOM from 'react-dom';
 import { CandyShopContent } from './CandyShopContent';
 import { TORUS_WALLET_CLIENT_ID } from './constant/clientId';
+import { CandyShopDataValidator } from '../core/ui/.';
 
 const App = () => {
   const network = WalletAdapterNetwork.Devnet;
@@ -46,7 +47,9 @@ const App = () => {
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
-          <CandyShopContent />
+          <CandyShopDataValidator>
+            <CandyShopContent />
+          </CandyShopDataValidator>
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>

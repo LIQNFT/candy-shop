@@ -4,7 +4,7 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
 import { CandyShop, getAtaForMint } from '@liqnft/candy-shop-sdk';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { ErrorMsgMap, ErrorType, handleError } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
@@ -13,11 +13,14 @@ import BuyModalConfirmed from './BuyModalConfirmed';
 import BuyModalDetail from './BuyModalDetail';
 import { getAccount } from '@solana/spl-token';
 import { WRAPPED_SOL_MINT } from '@liqnft/candy-shop-sdk';
+import { CandyActionContext } from 'public/Context';
+import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
+import { TIMEOUT_REFETCH_NFT } from 'constant';
 import './style.less';
 
 export interface BuyModalProps {
   order: OrderSchema;
-  onClose: any;
+  onClose: () => void;
   wallet: AnchorWallet | undefined;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
@@ -33,8 +36,11 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   const [state, setState] = useState<TransactionState>(
     TransactionState.DISPLAY
   );
-
   const [hash, setHash] = useState(''); // txHash
+
+  const { setRefetch } = useContext(CandyActionContext);
+
+  const timeoutRef = useUnmountTimeout();
 
   const buy = async () => {
     if (!wallet) {
@@ -47,15 +53,21 @@ export const BuyModal: React.FC<BuyModalProps> = ({
     setState(TransactionState.PROCESSING);
     // check balance before proceed
     let balance: BN;
-    let connection = await candyShop.connection();
+    const connection = await candyShop.connection();
 
     if (candyShop.treasuryMint.equals(WRAPPED_SOL_MINT)) {
       const account = await connection.getAccountInfo(wallet.publicKey);
-      balance = new BN(account!.lamports.toString());
+      if (!account) {
+        notification(
+          ErrorMsgMap[ErrorType.GetAccountInfoFailed],
+          NotificationType.Error
+        );
+        return;
+      }
+      balance = new BN(account.lamports.toString());
     } else {
-      const ata = (
-        await getAtaForMint(candyShop.treasuryMint, wallet.publicKey)
-      )[0];
+      // prettier-ignore
+      const ata = (await getAtaForMint(candyShop.treasuryMint, wallet.publicKey))[0];
       try {
         const account = await getAccount(connection, ata);
         balance = new BN(account.amount.toString());
@@ -79,8 +91,9 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       .then((txHash) => {
         setHash(txHash);
         console.log('Buy order made with transaction hash', txHash);
-
-        setState(TransactionState.CONFIRMED);
+        timeoutRef.current = setTimeout(() => {
+          setState(TransactionState.CONFIRMED);
+        }, TIMEOUT_REFETCH_NFT);
       })
       .catch((err) => {
         console.log({ err });
@@ -89,9 +102,16 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       });
   };
 
+  const closeModal = () => {
+    onClose();
+    if (TransactionState.CONFIRMED === state) {
+      setRefetch();
+    }
+  };
+
   return (
     <Modal
-      onCancel={onClose}
+      onCancel={closeModal}
       width={state !== TransactionState.DISPLAY ? 600 : 1000}
     >
       <div className="candy-buy-modal">
@@ -113,6 +133,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             order={order}
             txHash={hash}
             candyShop={candyShop}
+            onClose={onClose}
           />
         )}
       </div>

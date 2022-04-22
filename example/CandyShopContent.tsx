@@ -1,15 +1,19 @@
+import React, { useEffect, useState } from 'react';
+
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { web3 } from '@project-serum/anchor';
-import 'antd/dist/antd.min.css';
-import React, { useEffect, useState } from 'react';
+
 import { CandyShop } from '../core/sdk/.';
 import { Orders, Stat, OrderDetail, Sell } from '../core/ui/.';
+
 import {
   CANDY_SHOP_PROGRAM_ID,
   CREATOR_ADDRESS,
   TREASURY_MINT
 } from './constant/publicKey';
+
+import 'antd/dist/antd.min.css';
 
 export const CandyShopContent: React.FC = () => {
   const { connection } = useConnection();

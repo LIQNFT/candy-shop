@@ -1,18 +1,19 @@
-import { BN } from '@project-serum/anchor';
-import { web3 } from '@project-serum/anchor';
+import React, { useEffect, useMemo, useState } from 'react';
+import { web3, BN } from '@project-serum/anchor';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
+
 import { ExplorerLink } from 'components/ExplorerLink';
 import { NftAttributes } from 'components/NftAttributes';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import { TransactionState } from '../../model';
 import { LiqImage } from 'components/LiqImage';
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
 import BuyModalConfirmed from 'components/BuyModal/BuyModalConfirmed';
-import './style.less';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
+
 import { ErrorType, handleError } from 'utils/ErrorHandler';
+import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { TransactionState } from 'model';
+import './style.less';
 
 interface OrderDetailProps {
   tokenMint: string;
@@ -31,8 +32,8 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
 }) => {
   const [loadingOrder, setLoadingOrder] = useState(false);
   const [loadingNftInfo, setLoadingNftInfo] = useState(false);
-  const [order, setOrder] = useState<OrderSchema | null>(null);
-  const [nftInfo, setNftInfo] = useState<Nft | null>(null);
+  const [order, setOrder] = useState<OrderSchema>();
+  const [nftInfo, setNftInfo] = useState<Nft>();
 
   const [state, setState] = useState<TransactionState>(
     TransactionState.DISPLAY
@@ -89,7 +90,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   }, [order, candyShop, nftInfo, tokenMint]);
 
   const buy = async () => {
-    if (order !== null && wallet) {
+    if (order && wallet) {
       setState(TransactionState.PROCESSING);
       return candyShop
         .buy(
@@ -209,6 +210,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
                 order={order}
                 txHash={hash}
                 candyShop={candyShop}
+                onClose={goToMarketplace}
               />
             </div>
           </Modal>
