@@ -197,6 +197,10 @@ import { OrderDetail } from '@liqnft/candy-shop';
 />
 ```
 
+## ⚠️ Solana Transaction Size Limit ⚠️
+
+For Candy Shops that use a SPL token as the payment currency, if any NFT's are listed on it that have 4 creators or more, users trying to buy those NFT's will not be able to successfully do so. This is because in this case, the Solana transaction size becomes too large, exceeding the current Solana transaction size limit. Workarounds for this issue are actively being looked into.
+
 # Contribute to Candy Shop
 
 We're welcoming to receive any contribution for candy-shop! Feel free to open a PR can request LIQNFT team to review.
