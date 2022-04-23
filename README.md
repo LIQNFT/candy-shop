@@ -10,6 +10,7 @@
 * [Customize Your Marketplace](#customize-your-marketplace)
   - [How to use sdk](#how-to-use-sdk)
 * [Embedded UI Usages](#embedded-ui-usages)
+* [Solana Transaction Size Limit](#%EF%B8%8F-solana-transaction-size-limit-%EF%B8%8F)
 * [Contribute to Candy Shop](#contribute-to-candy-shop)
 ## Intro
 Candy Shop is a JavaScript library that allows DAOs, NFT projects and anyone to create an NFT marketplace on Solana in minutes!
@@ -196,6 +197,10 @@ import { OrderDetail } from '@liqnft/candy-shop';
   wallet={wallet}
 />
 ```
+
+## ⚠️ Solana Transaction Size Limit ⚠️
+
+For Candy Shops that use a SPL token as the payment currency, if any NFT's are listed on it that have 4 creators or more, users trying to buy those NFT's will not be able to successfully do so. This is because in this case, the Solana transaction size becomes too large, exceeding the current Solana transaction size limit. Workarounds for this issue are actively being looked into.
 
 # Contribute to Candy Shop
 
