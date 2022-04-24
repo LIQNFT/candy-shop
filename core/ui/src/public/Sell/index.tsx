@@ -17,7 +17,7 @@ import {
   fetchNftsFromWallet,
   SingleTokenInfo
 } from '@liqnft/candy-shop-sdk';
-import { CandyContext } from 'index';
+import { CandyContext } from 'public/Context';
 
 interface SellProps {
   connection: web3.Connection;
