@@ -5,7 +5,7 @@ import { Skeleton } from 'components/Skeleton';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { InfiniteOrderList } from 'components/InfiniteOrderList';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyContext } from 'index';
+import { CandyContext } from 'public/Context';
 import {
   ORDER_FETCH_LIMIT,
   LOADING_SKELETON_COUNT,
