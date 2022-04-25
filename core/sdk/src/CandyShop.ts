@@ -19,7 +19,7 @@ import {
   fetchShopByShopId
 } from './api/backend/ShopAPI';
 import {
-  fetchOrderByTokenMintAndShopId,
+  fetchOrderByTokenMint,
   fetchOrdersByStoreId,
   fetchOrdersByStoreIdAndWalletAddress,
   OrdersFilterQuery
@@ -402,11 +402,7 @@ export class CandyShop {
     console.log('CandyShop: performing activeOrderByMintAddress', {
       mintAddress
     });
-    return fetchOrderByTokenMintAndShopId(
-      axiosInstance,
-      mintAddress,
-      this._candyShopAddress.toString()
-    );
+    return fetchOrderByTokenMint(axiosInstance, mintAddress);
   }
 
   public async fetchShopByWalletAddress(): Promise<
