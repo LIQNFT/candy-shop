@@ -14,7 +14,10 @@ import {
 } from 'solana-candy-shop-schema/dist';
 
 import { fetchNftByMint } from './api/backend/NftAPI';
-import { fetchShopWhitelistNftByShopId } from './api/backend/ShopAPI';
+import {
+  fetchShopWhitelistNftByShopId,
+  fetchShopByShopId
+} from './api/backend/ShopAPI';
 import {
   fetchOrderByTokenMint,
   fetchOrdersByStoreId,
@@ -409,5 +412,9 @@ export class CandyShop {
       axiosInstance,
       this._candyShopCreatorAddress.toString()
     );
+  }
+
+  public async fetchShopByShopId(): Promise<SingleBase<CandyShopResponse>> {
+    return fetchShopByShopId(axiosInstance, this._candyShopAddress.toString());
   }
 }
