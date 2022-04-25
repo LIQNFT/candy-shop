@@ -48,7 +48,7 @@ const App = () => {
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
           <CandyShopDataValidator>
-            <CandyShopContent />
+            <CandyShopContent network={network} />
           </CandyShopDataValidator>
         </WalletModalProvider>
       </WalletProvider>

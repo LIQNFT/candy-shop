@@ -85,7 +85,13 @@ const settings = {
   currencySymbol: 'SOL',
   currencyDecimals: 9,
   priceDecimals: 3,
-  volumeDecimals: 1
+  volumeDecimals: 1,
+  mainnetConnectionUrl: "https://ssc-dao.genesysgo.net/",
+  connectionConfig: {
+    httpHeaders: {
+      '[NODE_SPECIFIC_HEADERS]': '[VALUE]'
+    }
+  }
 };
 ```
 
@@ -101,6 +107,10 @@ You may pass an additional settings object to customize your shop:
   - number of decimals to display for price numbers (default is 3)
 - `volumeDecimals: number` 
   - number of decimals to display for volume numbers (default is 1)
+- `mainnetConnectionUrl: string` 
+  - your mainnet connection node url (default is https://ssc-dao.genesysgo.net/)
+- `connectionConfig: object` 
+  - your mainnet connection node url configuration
 
 
 ## Customize Your Marketplace
