@@ -54,14 +54,12 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
 
   return (
     <>
-      <div>
-        <div className="candy-buy-modal-thumbnail">
-          <LiqImage
-            src={order?.nftImageLink || ''}
-            alt={order?.name}
-            fit="contain"
-          />
-        </div>
+      <div className="candy-buy-modal-thumbnail">
+        <LiqImage
+          src={order?.nftImageLink || ''}
+          alt={order?.name}
+          fit="contain"
+        />
       </div>
       <div className="candy-buy-modal-container">
         <div className="candy-title">{order?.name}</div>
