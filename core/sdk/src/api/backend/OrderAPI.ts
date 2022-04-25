@@ -56,12 +56,26 @@ export async function fetchOrdersByStoreId(
     .then((response) => response.data);
 }
 
+/**
+ * @deprecated The method should not be used.
+ * Please use function fetchOrderByTokenMintAndShopId below
+ */
 export async function fetchOrderByTokenMint(
   axiosInstance: AxiosInstance,
   mintAddress: string
 ): Promise<SingleBase<Order>> {
   return axiosInstance
     .get<SingleBase<Order>>(`/order/mint/${mintAddress}`)
+    .then((response) => response.data);
+}
+
+export async function fetchOrderByTokenMintAndShopId(
+  axiosInstance: AxiosInstance,
+  mintAddress: string,
+  shopId: string
+): Promise<SingleBase<Order>> {
+  return axiosInstance
+    .get<SingleBase<Order>>(`/order/mint/${mintAddress}/shop/${shopId}`)
     .then((response) => response.data);
 }
 
