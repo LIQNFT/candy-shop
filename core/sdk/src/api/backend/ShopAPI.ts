@@ -3,15 +3,6 @@ import { ListBase, CandyShop } from 'solana-candy-shop-schema/src/response';
 
 import { AxiosInstance } from 'axios';
 
-export async function fetchShopByWalletAddress(
-  axiosInstance: AxiosInstance,
-  walletAddress: string
-): Promise<ListBase<CandyShop>> {
-  return axiosInstance
-    .get<ListBase<CandyShop>>(`/shop/${walletAddress}`)
-    .then((response) => response.data);
-}
-
 export async function fetchShopWhitelistNftByShopId(
   axiosInstance: AxiosInstance,
   shopId: string
