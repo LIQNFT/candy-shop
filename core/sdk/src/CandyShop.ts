@@ -27,8 +27,9 @@ import {
 import { fetchShopByWalletAddress } from './api/backend/ShopAPI';
 import { fetchStatsById } from './api/backend/StatsAPI';
 import { fetchTradeById } from './api/backend/TradeAPI';
-
+import { CANDY_SHOP_INS_PROGRAM_ID } from './api/constants';
 import { buyAndExecuteSale } from './api/program/buyAndExecuteSale';
+import { buyAndExecuteSale as insBuyAndExecuteSale } from './api/program/InsBuyAndExecuteSale';
 import { cancelOrder } from './api/program/cancel';
 import { sellNft } from './api/program/sell';
 import {
@@ -219,23 +220,45 @@ export class CandyShop {
 
     const [metadata] = await getMetadataAccount(tokenMint);
 
-    const txHash = await buyAndExecuteSale(
-      wallet,
-      seller,
-      tokenAccount,
-      tokenMint,
-      this._treasuryMint,
-      treasuryAccount,
-      metadata,
-      auctionHouseAuthority,
-      authorityBump,
-      auctionHouse,
-      feeAccount,
-      this._candyShopAddress,
-      price,
-      new BN(1),
-      program
-    );
+    let txHash;
+
+    if (this._programId.equals(CANDY_SHOP_INS_PROGRAM_ID)) {
+      txHash = await insBuyAndExecuteSale(
+        wallet,
+        seller,
+        tokenAccount,
+        tokenMint,
+        this._treasuryMint,
+        treasuryAccount,
+        metadata,
+        auctionHouseAuthority,
+        authorityBump,
+        auctionHouse,
+        feeAccount,
+        this._candyShopAddress,
+        price,
+        new BN(1),
+        program
+      );
+    } else {
+      txHash = await buyAndExecuteSale(
+        wallet,
+        seller,
+        tokenAccount,
+        tokenMint,
+        this._treasuryMint,
+        treasuryAccount,
+        metadata,
+        auctionHouseAuthority,
+        authorityBump,
+        auctionHouse,
+        feeAccount,
+        this._candyShopAddress,
+        price,
+        new BN(1),
+        program
+      );
+    }
 
     return txHash;
   }
