@@ -10,7 +10,8 @@ import {
   Order as OrderSchema,
   WhitelistNft,
   ListBase,
-  CandyShop as CandyShopResponse
+  CandyShop as CandyShopResponse,
+  SingleBase
 } from 'solana-candy-shop-schema/dist';
 import {
   CandyShop,
@@ -61,15 +62,9 @@ export const Sell: React.FC<SellProps> = ({
     if (!candyShop || !walletPublicKey) return;
     setShopLoading(LoadStatus.Loading);
     candyShop
-      .fetchShopByWalletAddress()
-      .then(({ result }: ListBase<CandyShopResponse>) => {
-        setShop(
-          result.find((item) => {
-            return (
-              item.candyShopAddress === candyShop.candyShopAddress.toString()
-            );
-          })
-        );
+      .fetchShopByShopId()
+      .then((data: SingleBase<CandyShopResponse>) => {
+        setShop(data.result);
       })
       .catch(() => {
         console.log('ERROR get shop detail.');

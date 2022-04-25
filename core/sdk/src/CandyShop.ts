@@ -24,7 +24,7 @@ import {
   fetchOrdersByStoreIdAndWalletAddress,
   OrdersFilterQuery
 } from './api/backend/OrderAPI';
-import { fetchShopByWalletAddress } from './api/backend/ShopAPI';
+
 import { fetchStatsById } from './api/backend/StatsAPI';
 import { fetchTradeById } from './api/backend/TradeAPI';
 import { CANDY_SHOP_INS_PROGRAM_ID } from './api/constants';
@@ -426,15 +426,6 @@ export class CandyShop {
       mintAddress
     });
     return fetchOrderByTokenMint(axiosInstance, mintAddress);
-  }
-
-  public async fetchShopByWalletAddress(): Promise<
-    ListBase<CandyShopResponse>
-  > {
-    return fetchShopByWalletAddress(
-      axiosInstance,
-      this._candyShopCreatorAddress.toString()
-    );
   }
 
   public async fetchShopByShopId(): Promise<SingleBase<CandyShopResponse>> {

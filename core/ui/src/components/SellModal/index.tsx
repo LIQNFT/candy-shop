@@ -47,12 +47,9 @@ export const SellModal: React.FC<SellModalProps> = ({
   const { setRefetch } = useContext(CandyActionContext);
 
   const timeoutRef = useUnmountTimeout();
-  const [token, setToken] = useState<NftMetadata>();
+
   const [loading, setLoading] = useState<boolean>(true);
   const [royalties, setRoyalties] = useState<number>();
-  const [transactionFee, setTransactionFee] = useState<number>(
-    shop.feeRate / 100
-  );
 
   // List for sale and move to next step
   const sell = async () => {
@@ -122,7 +119,6 @@ export const SellModal: React.FC<SellModalProps> = ({
     setLoading(true);
     getTokenMetadataByMintAddress(nft.tokenMintAddress, candyShop.connection())
       .then((data: NftMetadata) => {
-        setToken(data);
         setRoyalties(data.sellerFeeBasisPoints / 100);
       })
       .catch((err) => {
@@ -133,18 +129,15 @@ export const SellModal: React.FC<SellModalProps> = ({
       });
   }, [nft.tokenMintAddress, candyShop]);
 
-  if (!loading) {
-    console.log({ shop, token });
-  }
-
-  const disableListedBtn = formState.price === undefined || loading;
-
   const onCloseModal = () => {
     onCancel();
     if (state === TransactionState.CONFIRMED) {
       setRefetch();
     }
   };
+
+  const disableListedBtn = formState.price === undefined || loading;
+  const transactionFee = shop.feeRate / 100;
 
   return (
     <Modal onCancel={onCloseModal} width={600}>
@@ -181,7 +174,7 @@ export const SellModal: React.FC<SellModalProps> = ({
                   min={0}
                   onChange={onChangeInput}
                   type="number"
-                  value={formState.price}
+                  value={formState.price === undefined ? '' : formState.price}
                 />
                 <span>{candyShop.currencySymbol}</span>
               </div>
