@@ -15,13 +15,18 @@ import {
 
 import 'antd/dist/antd.min.css';
 
-export const CandyShopContent: React.FC = () => {
+interface CandyShopContentProps {
+  network: web3.Cluster;
+}
+
+export const CandyShopContent: React.FC<CandyShopContentProps> = ({
+  network
+}) => {
   const { connection } = useConnection();
   const [candyShop, setCandyShop] = useState<CandyShop>();
   const [treasuryMint] = useState(new web3.PublicKey(TREASURY_MINT));
 
   const wallet = useAnchorWallet();
-  const env: web3.Cluster = 'devnet';
 
   useEffect(() => {
     if (!treasuryMint) return;
@@ -30,10 +35,13 @@ export const CandyShopContent: React.FC = () => {
         new web3.PublicKey(CREATOR_ADDRESS),
         treasuryMint,
         new web3.PublicKey(CANDY_SHOP_PROGRAM_ID),
-        env
+        network,
+        {
+          mainnetConnectionUrl: 'https://ssc-dao.genesysgo.net/'
+        }
       )
     );
-  }, [treasuryMint]);
+  }, [treasuryMint, network]);
 
   if (!candyShop) return null;
 

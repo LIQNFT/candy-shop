@@ -56,7 +56,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
     setState(TransactionState.PROCESSING);
     // check balance before proceed
     let balance: BN;
-    const connection = await candyShop.connection();
+    const connection = candyShop.connection();
 
     if (candyShop.treasuryMint.equals(WRAPPED_SOL_MINT)) {
       const account = await connection.getAccountInfo(wallet.publicKey);

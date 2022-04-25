@@ -47,6 +47,7 @@ const DEFAULT_CURRENCY_SYMBOL = 'SOL';
 const DEFAULT_CURRENCY_DECIMALS = 9;
 const DEFAULT_PRICE_DECIMALS = 3;
 const DEFAULT_VOLUME_DECIMALS = 1;
+const DEFAULT_MAINNET_CONNECTION_URL = 'https://ssc-dao.genesysgo.net/';
 
 /**
  * @field currencySymbol your shop transaction currency symbol (default is SOL)
@@ -59,6 +60,8 @@ export type CandyShopSettings = {
   currencyDecimals: number;
   priceDecimals: number;
   volumeDecimals: number;
+  mainnetConnectionUrl: string;
+  connectionConfig: object | undefined;
 };
 
 /**
@@ -87,7 +90,7 @@ export class CandyShop {
     treasuryMint: web3.PublicKey,
     candyShopProgramId: web3.PublicKey,
     env: web3.Cluster,
-    settings?: CandyShopSettings
+    settings?: Partial<CandyShopSettings>
   ) {
     this._candyShopAddress = getCandyShopSync(
       candyShopCreatorAddress,
@@ -102,7 +105,10 @@ export class CandyShop {
       currencySymbol: settings?.currencySymbol ?? DEFAULT_CURRENCY_SYMBOL,
       currencyDecimals: settings?.currencyDecimals ?? DEFAULT_CURRENCY_DECIMALS,
       priceDecimals: settings?.priceDecimals ?? DEFAULT_PRICE_DECIMALS,
-      volumeDecimals: settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS
+      volumeDecimals: settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
+      mainnetConnectionUrl:
+        settings?.mainnetConnectionUrl ?? DEFAULT_MAINNET_CONNECTION_URL,
+      connectionConfig: settings?.connectionConfig
     };
     this._baseUnitsPerCurrency = Math.pow(10, this._settings.currencyDecimals);
 
@@ -111,18 +117,23 @@ export class CandyShop {
   /**
    * Initiate the CandyShop object
    */
-  async getStaticProgram(wallet: AnchorWallet | web3.Keypair): Promise<any> {
-    if (this._program) {
-      return this._program;
+  public connection(): web3.Connection {
+    const options = Provider.defaultOptions();
+    if (this._env === 'devnet') {
+      return new web3.Connection(web3.clusterApiUrl('devnet'));
     }
 
-    const options = Provider.defaultOptions();
-    const connection = new web3.Connection(
-      this._env === 'mainnet-beta'
-        ? 'https://ssc-dao.genesysgo.net/'
-        : web3.clusterApiUrl('devnet'),
-      options.commitment
+    return new web3.Connection(
+      this._settings.mainnetConnectionUrl,
+      this._settings.connectionConfig || options.commitment
     );
+  }
+
+  async getStaticProgram(wallet: AnchorWallet | web3.Keypair): Promise<any> {
+    if (this._program) return this._program;
+
+    const options = Provider.defaultOptions();
+    const connection = this.connection();
     const provider = new Provider(
       connection,
       // check the instance type
@@ -177,17 +188,6 @@ export class CandyShop {
 
   get volumeDecimals(): number {
     return this._settings.volumeDecimals;
-  }
-
-  public async connection(): Promise<web3.Connection> {
-    const options = Provider.defaultOptions();
-    const connection = new web3.Connection(
-      this._env === 'mainnet-beta'
-        ? 'https://ssc-dao.genesysgo.net/'
-        : web3.clusterApiUrl('devnet'),
-      options.commitment
-    );
-    return connection;
   }
 
   public async buy(
