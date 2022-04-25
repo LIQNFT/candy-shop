@@ -7,4 +7,4 @@ export { Stat } from './public/Stat';
 export { Activity } from './public/Activity';
 
 export { TransactionState } from './model';
-export { CandyActionContext, CandyContext, CandyShopDataValidator } from './public/Context';
+export { CandyContext, CandyShopDataValidator } from './public/Context';

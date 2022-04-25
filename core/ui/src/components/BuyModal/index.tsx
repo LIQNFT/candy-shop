@@ -1,35 +1,34 @@
-import { BN } from '@project-serum/anchor';
-import { web3 } from '@project-serum/anchor';
+import React, { useState } from 'react';
+import { web3, BN } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Modal } from 'components/Modal';
 import { Processing } from 'components/Processing';
+import { getAccount } from '@solana/spl-token';
+
+import BuyModalConfirmed from './BuyModalConfirmed';
+import BuyModalDetail from './BuyModalDetail';
+
+import { TransactionState } from 'model';
+import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 import { CandyShop, getAtaForMint, WRAPPED_SOL_MINT } from '@liqnft/candy-shop-sdk';
-import React, { useContext, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { handleError, ErrorType, ErrorMsgMap } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
-import { TransactionState } from '../../model';
-import BuyModalConfirmed from './BuyModalConfirmed';
-import BuyModalDetail from './BuyModalDetail';
-import { getAccount } from '@solana/spl-token';
+import { TIMEOUT_EXTRA_LOADING } from 'constant';
+
 import './style.less';
-import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
-import { CandyActionContext } from 'public/Context';
-import { TIMEOUT_REFETCH_NFT } from 'constant';
 
 export interface BuyModalProps {
   order: OrderSchema;
   onClose: () => void;
   wallet: AnchorWallet | undefined;
-  candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
+  candyShop: CandyShop;
 }
 
-export const BuyModal: React.FC<BuyModalProps> = ({ order, onClose, wallet, candyShop, walletConnectComponent }) => {
+export const BuyModal: React.FC<BuyModalProps> = ({ order, onClose, wallet, walletConnectComponent, candyShop }) => {
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
   const [hash, setHash] = useState(''); // txHash
-
-  const { setRefetch } = useContext(CandyActionContext);
 
   const timeoutRef = useUnmountTimeout();
 
@@ -74,7 +73,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({ order, onClose, wallet, cand
         console.log('Buy order made with transaction hash', txHash);
         timeoutRef.current = setTimeout(() => {
           setState(TransactionState.CONFIRMED);
-        }, TIMEOUT_REFETCH_NFT);
+        }, TIMEOUT_EXTRA_LOADING);
       })
       .catch((err) => {
         console.log({ err });
@@ -83,15 +82,8 @@ export const BuyModal: React.FC<BuyModalProps> = ({ order, onClose, wallet, cand
       });
   };
 
-  const closeModal = () => {
-    onClose();
-    if (TransactionState.CONFIRMED === state) {
-      setRefetch();
-    }
-  };
-
   return (
-    <Modal onCancel={closeModal} width={state !== TransactionState.DISPLAY ? 600 : 1000}>
+    <Modal onCancel={onClose} width={state !== TransactionState.DISPLAY ? 600 : 1000}>
       <div className="candy-buy-modal">
         {state === TransactionState.DISPLAY && (
           <BuyModalDetail
@@ -108,8 +100,8 @@ export const BuyModal: React.FC<BuyModalProps> = ({ order, onClose, wallet, cand
             walletPublicKey={wallet.publicKey}
             order={order}
             txHash={hash}
-            candyShop={candyShop}
             onClose={onClose}
+            candyShop={candyShop}
           />
         )}
       </div>

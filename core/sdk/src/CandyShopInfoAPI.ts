@@ -12,7 +12,8 @@ import {
   SingleBase,
   Trade,
   WhitelistNft,
-  CandyShop as CandyShopResponse
+  CandyShop as CandyShopResponse,
+  ShopStatus
 } from 'solana-candy-shop-schema/dist';
 import {
   fetchNftByMint,
@@ -24,7 +25,8 @@ import {
   fetchStatsById,
   fetchTradeById,
   OrdersFilterQuery,
-  TradeQuery
+  TradeQuery,
+  fetchShopStatusByShopId
 } from './api/backend';
 import axiosInstance from './config';
 
@@ -81,4 +83,8 @@ export function fetchOrderByShopAndMintAddress(
 
 export function fetchShopByShopAddress(candyShopAddress: web3.PublicKey): Promise<SingleBase<CandyShopResponse>> {
   return fetchShopByShopId(axiosInstance, candyShopAddress.toString());
+}
+
+export function fetchShopStatusByShopAddress(candyShopAddress: web3.PublicKey): Promise<SingleBase<ShopStatus[]>> {
+  return fetchShopStatusByShopId(axiosInstance, candyShopAddress.toString());
 }

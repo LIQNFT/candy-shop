@@ -16,13 +16,14 @@ interface CandyShopContentProps {
 }
 
 export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) => {
-  const [candyShop, setCandyShop] = useState<CandyShop>();
   const [treasuryMint] = useState(new web3.PublicKey(TREASURY_MINT));
+  const [candyShop, setCandyShop] = useState<CandyShop>();
 
   const wallet = useAnchorWallet();
 
   useEffect(() => {
-    if (!treasuryMint) return;
+    if (!treasuryMint || !network) return;
+
     setCandyShop(
       new CandyShop(
         new web3.PublicKey(CREATOR_ADDRESS),
@@ -46,20 +47,20 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
 
       <div style={{ marginBottom: 50 }}>
         <Stat
-          candyShop={candyShop}
           title={'Marketplace'}
           description={
             'Candy Shop is an open source on-chain protocol that empowers DAOs, NFT projects and anyone interested in creating an NFT marketplace to do so within minutes!'
           }
+          candyShop={candyShop}
         />
       </div>
 
       <div>
         <Orders
           wallet={wallet}
-          candyShop={candyShop}
           walletConnectComponent={<WalletMultiButton />}
           filters={FILTERS}
+          candyShop={candyShop}
         />
       </div>
 
@@ -67,9 +68,9 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
       <OrderDetail
         tokenMint={'EVdLAk8GeWRsj2HpyBujG1pJPip5gjkPcZ76QinsHHtJ'}
         backUrl={'/'}
-        candyShop={candyShop}
         walletConnectComponent={<WalletMultiButton />}
         wallet={wallet}
+        candyShop={candyShop}
       />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Sell</h1>

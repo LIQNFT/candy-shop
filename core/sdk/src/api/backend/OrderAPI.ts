@@ -21,7 +21,9 @@ export async function fetchOrdersByStoreId(
   ordersFilterQuery: OrdersFilterQuery,
   identifiers?: number[]
 ): Promise<ListBase<Order>> {
-  console.log(`CandyShop: fetching orders from ${storeId}, query=${ordersFilterQuery}, identifiers=${identifiers}`);
+  console.log(
+    `CandyShop: fetching orders from ${storeId}, query=${JSON.stringify(ordersFilterQuery)}, identifiers=${identifiers}`
+  );
   const { sortBy, offset, limit } = ordersFilterQuery;
 
   const queryObject = {} as any;
@@ -88,6 +90,7 @@ export async function fetchOrdersByStoreIdAndWalletAddress(
   let offset = 0;
   let resCount = null;
   let orders: Order[] = [];
+
   while (resCount === null || resCount == limit) {
     const page: Order[] = await axiosInstance
       .get<ListBase<Order>>(

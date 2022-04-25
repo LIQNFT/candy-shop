@@ -8,6 +8,7 @@
 
 [![Stars](https://img.shields.io/github/stars/LIQNFT/candy-shop?style=social&label=Star)](https://github.com/LIQNFT/candy-shop/stargazers)
 [![Forks](https://img.shields.io/github/forks/LIQNFT/candy-shop?style=social&label=Forks&color=blueviolet)](https://github.com/LIQNFT/candy-shop/network/members)
+
 ### Solana NFT Marketplace JS Library (In Beta)
 
 **Contents**
@@ -21,6 +22,7 @@
 - [Customize Your Marketplace](#customize-your-marketplace)
   - [How to use sdk](#how-to-use-sdk)
 - [Embedded UI Usages](#embedded-ui-usages)
+  - [Refresh CandyShop by React Context](#refresh-candyshop-by-react-context)
 - [Solana Transaction Size Limit](#%EF%B8%8F-solana-transaction-size-limit-%EF%B8%8F)
 - [Contribute to Candy Shop](#contribute-to-candy-shop)
 
@@ -56,10 +58,12 @@ Candy Shop provides an easy to integrate marketplace protocol & toolset with a f
 
 ## Release Notes
 
-Please refer to the tag notes for latest release. 
+Please refer to the tag notes for latest release.
+
 - https://github.com/LIQNFT/candy-shop/tags
 
 Branch `master` contains the latest changes and might not be ready for production uses.
+
 ## Invoke Your Candy Shop
 
 Create your Candy Shop [here](https://candy.liqnft.com/my-shop).
@@ -86,6 +90,18 @@ yarn add @liqnft/candy-shop
 ### How to use CandyShop
 
 **Refer to `/example` folder to instantiate `CandyShop`**
+
+[CandyShopDataValidator](#refresh-candyshop-by-react-context) is a contextAPI store to revalidate content of Embedded UIs when any transactions occurred in current CandyShop.
+
+```ts
+import { Sell } from '@liqnft/candy-shop';
+
+<CandyShopDataValidator>
+  <CandyShopContent network={network} />
+</CandyShopDataValidator>;
+```
+
+Create a new CandyShop instance
 
 ```ts
 const candyShop = new CandyShop(
@@ -162,6 +178,40 @@ candyShop.getTransactions();
 
 We provide a few built-in UI to speed up building your market place without crafting the styles. If you want to have your own styles, please refer to [Customize Your Marketplace](#customize-your-marketplace) section that just using the sdk to perform the marketplace functions.
 
+### Refresh CandyShop by React Context
+
+CandyShopDataValidator Context helps Embedded UI component to have latest shop status when any transactions occurred in current CandyShop by checking the candy-shop database state in certain interval.
+
+Check [here](https://github.com/LIQNFT/candy-shop/blob/master/core/ui/src/public/Context/index.tsx) to get more details
+
+```ts
+import { fetchShopStatusByShopAddress } from '@liqnft/candy-shop-sdk';
+
+const POLLING_SHOP_TIMEOUT = 3_000;
+
+const CandyShopDataValidator: React.FC<any> = () => {
+  useEffect(() => {
+    let timeout;
+    const pollingAction = () => {
+      fetchShopStatusByShopAddress(CANDY_SHOP_ADDRESS)
+        .then((res: any) => {
+          // internal logic to trigger component update content
+        })
+        .catch((err: any) => {
+          // handle error API
+        });
+    };
+    const polling = () => {
+      pollingAction();
+      timeout = setTimeout(polling, POLLING_SHOP_TIMEOUT);
+    };
+    timeout = setTimeout(polling, POLLING_SHOP_TIMEOUT);
+
+    return () => clearTimeout(timeout);
+  }, []);
+};
+```
+
 ### Show Orders and Buy Interface
 
 Show the NFTs that are for sale and allow users to connect their wallet and buy them.
@@ -169,11 +219,7 @@ Show the NFTs that are for sale and allow users to connect their wallet and buy 
 ```ts
 import { Orders } from '@liqnft/candy-shop';
 
-<Orders
-  wallet={wallet}
-  candyShop={candyShop}
-  walletConnectComponent={<WalletMultiButton />}
-/>;
+<Orders wallet={wallet} candyShop={candyShop} walletConnectComponent={<WalletMultiButton />} />;
 ```
 
 #### Additional params:
@@ -192,11 +238,7 @@ Show sell interface that allows users to connect their wallet and list their NFT
 ```ts
 import { Sell } from '@liqnft/candy-shop';
 
-<Sell
-  wallet={wallet}
-  candyShop={candyShop}
-  walletConnectComponent={<WalletMultiButton />}
-/>;
+<Sell wallet={wallet} candyShop={candyShop} walletConnectComponent={<WalletMultiButton />} />;
 ```
 
 ### Show Stats
@@ -250,6 +292,7 @@ Install Node (above 14.17.x), NPM, Yarn
 Installing & Building all required packages by `setup.sh`
 
 Use `setup.sh` in root folder.
+
 ```bash
 # run chmod when executing it first time
 chmod 755 setup.sh
@@ -261,6 +304,7 @@ chmod 755 setup.sh
 Currently, `core/ui` depends on the published package from `core/sdk`, if development both locally, we need to use symbolic link to let `core/ui` use the live changes from `core/sdk`.
 
 Add `arg: --link-build` when executing script
+
 ```sh
 ./setup.sh --link-build
 ```
@@ -281,7 +325,6 @@ yarn clean:all
 
 We also have individual clean up scripts provided in root's package.json.
 
-
 #### How to reflect the changes after linked
 
 Always build sdk at first.
@@ -291,12 +334,15 @@ Always build sdk at first.
 ```bash
 yarn build
 ```
+
 2. In `core/ui`
 
 ```bash
 yarn build
 ```
+
 3. In root folder
+
 ```bash
 yarn build
 ```

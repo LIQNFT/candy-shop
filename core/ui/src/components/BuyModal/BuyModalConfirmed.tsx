@@ -1,46 +1,41 @@
-import React, { useMemo, useContext } from 'react';
+import React from 'react';
 
-import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { web3 } from '@project-serum/anchor';
 import { formatDate } from 'utils/format';
-
+import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { LiqImage } from 'components/LiqImage';
 import IconTick from 'assets/IconTick';
-import { CandyActionContext } from 'public/Context';
+
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 
 interface BuyModalConfirmedProps {
-  order: any;
+  order: OrderSchema;
   txHash: string;
   walletPublicKey: web3.PublicKey | undefined;
-  candyShop: CandyShop;
   onClose: () => void;
+  candyShop: CandyShop;
 }
+
+const getPrice = (candyShop: CandyShop, order: OrderSchema) => {
+  if (!order?.price) return null;
+
+  return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
+    minimumFractionDigits: candyShop.priceDecimalsMin,
+    maximumFractionDigits: candyShop.priceDecimals
+  });
+};
 
 const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
   order,
   txHash,
   walletPublicKey,
-  candyShop,
-  onClose
+  onClose,
+  candyShop
 }) => {
-  const { setRefetch } = useContext(CandyActionContext);
-  // Get wallet address follow walletPublicKey
   const walletAddress = walletPublicKey?.toBase58();
 
-  const orderPrice = useMemo(() => {
-    if (!order?.price) return null;
-
-    return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-      minimumFractionDigits: candyShop.priceDecimalsMin,
-      maximumFractionDigits: candyShop.priceDecimals
-    });
-  }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimalsMin, candyShop.priceDecimals, order?.price]);
-
-  const onConfirm = () => {
-    onClose();
-    setRefetch();
-  };
+  const orderPrice = getPrice(candyShop, order);
 
   return (
     <div className="candy-buy-modal-confirmed">
@@ -87,7 +82,7 @@ const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
           <div className="candy-value">{formatDate(new Date())}</div>
         </div>
       </div>
-      <button className="candy-button" onClick={onConfirm}>
+      <button className="candy-button" onClick={onClose}>
         Continue Shopping
       </button>
     </div>

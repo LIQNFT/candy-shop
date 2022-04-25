@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { web3 } from '@project-serum/anchor';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
 
 import { LiqImage } from 'components/LiqImage';
 import { NftStat } from 'components/NftStat';
 import { NftAttributes } from 'components/NftAttributes';
 
 import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 
 export interface BuyModalDetailProps {
   order: OrderSchema;
@@ -27,19 +27,17 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   const [nftInfo, setNftInfo] = useState<Nft | null>(null);
 
   useEffect(() => {
-    if (order) {
-      setLoadingNftInfo(true);
-      candyShop
-        .nftInfo(order.tokenMint)
-        .then((nft) => setNftInfo(nft))
-        .catch((err) => {
-          console.info('fetchNftByMint failed:', err);
-        })
-        .finally(() => {
-          setLoadingNftInfo(false);
-        });
-    }
-  }, [order, candyShop]);
+    setLoadingNftInfo(true);
+    candyShop
+      .nftInfo(order.tokenMint)
+      .then((nft) => setNftInfo(nft))
+      .catch((err) => {
+        console.info('fetchNftByMint failed:', err);
+      })
+      .finally(() => {
+        setLoadingNftInfo(false);
+      });
+  }, [order.tokenMint, candyShop]);
 
   const orderPrice = useMemo(() => {
     if (!order?.price) return null;
@@ -48,7 +46,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
       minimumFractionDigits: candyShop.priceDecimalsMin,
       maximumFractionDigits: candyShop.priceDecimals
     });
-  }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimalsMin, candyShop.priceDecimals, order?.price]);
+  }, [candyShop, order?.price]);
 
   return (
     <>

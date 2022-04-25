@@ -1,36 +1,31 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Modal } from 'components/Modal';
 import { Processing } from 'components/Processing';
+
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { TransactionState } from 'model';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { CancelModalConfirm } from './CancelModalConfirm';
 import { CancelModalDetail } from './CancelModalDetail';
-import './index.less';
 
-import { CandyActionContext } from 'public/Context';
+import './index.less';
 
 export interface CancelModalProps {
   order: OrderSchema;
   onClose: any;
-  candyShop: CandyShop;
   wallet: AnchorWallet;
+  candyShop: CandyShop;
 }
 
-export const CancelModal: React.FC<CancelModalProps> = ({ order, onClose: onUnSelectItem, candyShop, wallet }) => {
+export const CancelModal: React.FC<CancelModalProps> = ({ order, onClose: onUnSelectItem, wallet, candyShop }) => {
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
-
-  const { setRefetch } = useContext(CandyActionContext);
 
   // Handle change step
   const onChangeStep = (state: TransactionState) => setState(state);
 
   const onCloseModal = () => {
     onUnSelectItem();
-    if (state === TransactionState.CONFIRMED) {
-      setRefetch();
-    }
   };
 
   return (
@@ -38,10 +33,10 @@ export const CancelModal: React.FC<CancelModalProps> = ({ order, onClose: onUnSe
       {state === TransactionState.DISPLAY && wallet && (
         <CancelModalDetail
           onCancel={onUnSelectItem}
-          candyShop={candyShop}
           order={order}
           onChangeStep={onChangeStep}
           wallet={wallet}
+          candyShop={candyShop}
         />
       )}
       {state === TransactionState.PROCESSING && <Processing text="Canceling your sale" />}

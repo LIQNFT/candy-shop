@@ -1,26 +1,26 @@
 import React, { useMemo } from 'react';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
 import { LiqImage } from 'components/LiqImage';
 import { ExplorerLink } from 'components/ExplorerLink';
-import { TIMEOUT_REFETCH_NFT } from 'constant';
+import { TIMEOUT_EXTRA_LOADING } from 'constant';
 import { TransactionState } from 'model';
 
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import { handleError } from 'utils/ErrorHandler';
+import { ErrorType, handleError } from 'utils/ErrorHandler';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 
 export interface CancelModalDetailProps {
   onCancel: any;
-  candyShop: CandyShop;
   order: OrderSchema;
   onChangeStep: (state: TransactionState) => void;
   wallet: AnchorWallet;
+  candyShop: CandyShop;
 }
 
-export const CancelModalDetail = ({ candyShop, order, onChangeStep, wallet }: CancelModalDetailProps): JSX.Element => {
+export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({ order, onChangeStep, wallet, candyShop }) => {
   const timeoutRef = useUnmountTimeout();
 
   const cancel = async () => {
@@ -35,7 +35,7 @@ export const CancelModalDetail = ({ candyShop, order, onChangeStep, wallet }: Ca
       .then(() => {
         timeoutRef.current = setTimeout(() => {
           onChangeStep(TransactionState.CONFIRMED);
-        }, TIMEOUT_REFETCH_NFT);
+        }, TIMEOUT_EXTRA_LOADING);
       })
       .catch((err) => {
         handleError({ error: err });
@@ -50,7 +50,7 @@ export const CancelModalDetail = ({ candyShop, order, onChangeStep, wallet }: Ca
       minimumFractionDigits: candyShop.priceDecimalsMin,
       maximumFractionDigits: candyShop.priceDecimals
     });
-  }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimalsMin, candyShop.priceDecimals, order?.price]);
+  }, [candyShop, order?.price]);
 
   return (
     <div className="candy-cancel-modal">
@@ -63,7 +63,7 @@ export const CancelModalDetail = ({ candyShop, order, onChangeStep, wallet }: Ca
         <div className="candy-cancel-modal-control">
           <div>
             <div className="candy-label">PRICE</div>
-            <div className="candy-price">{orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}</div>
+            <div className="candy-price">{orderPrice ? `${orderPrice} ${candyShop?.currencySymbol}` : 'N/A'}</div>
           </div>
           <button className="candy-button candy-cancel-modal-button" onClick={cancel}>
             {buttonContent}

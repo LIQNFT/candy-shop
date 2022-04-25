@@ -1,29 +1,29 @@
 import React from 'react';
 import { Order as OrderComponent } from 'components/Order';
 import { Order } from 'solana-candy-shop-schema/dist';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Skeleton } from 'components/Skeleton';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 
 interface InfiniteOrderListProps {
   orders: Order[];
   wallet: AnchorWallet | undefined;
   walletConnectComponent: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
-  candyShop: CandyShop;
   url?: string;
   hasNextPage: boolean;
   loadNextPage: () => void;
+  candyShop: CandyShop;
 }
 
 export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
   orders,
   wallet,
   walletConnectComponent,
-  candyShop,
   url,
   hasNextPage,
-  loadNextPage
+  loadNextPage,
+  candyShop
 }) => {
   return (
     <InfiniteScroll
@@ -49,8 +49,8 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
               order={order}
               walletConnectComponent={walletConnectComponent}
               wallet={wallet}
-              candyShop={candyShop}
               url={url}
+              candyShop={candyShop}
             />
           </div>
         ))}
