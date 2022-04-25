@@ -65,6 +65,16 @@ export async function fetchOrderByTokenMint(
     .then((response) => response.data);
 }
 
+export async function fetchOrderByTokenMintAndShopId(
+  axiosInstance: AxiosInstance,
+  mintAddress: string,
+  shopId: string
+): Promise<SingleBase<Order>> {
+  return axiosInstance
+    .get<SingleBase<Order>>(`/order/mint/${mintAddress}/shop/${shopId}`)
+    .then((response) => response.data);
+}
+
 export async function fetchOrdersByStoreIdAndWalletAddress(
   axiosInstance: AxiosInstance,
   storeId: string,
