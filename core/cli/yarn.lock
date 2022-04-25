@@ -54,9 +54,9 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@liqnft/candy-shop-sdk@^0.4.15":
-  version "0.4.15"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-sdk/-/candy-shop-sdk-0.4.15.tgz#22581312bb69e58cbe5eea34e4670c1331624134"
+"@liqnft/candy-shop-sdk@^0.4.19":
+  version "0.4.19"
+  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-sdk/-/candy-shop-sdk-0.4.19.tgz#22581312bb69e58cbe5eea34e4670c1331624134"
   integrity sha512-kgkAV7Euf8wsNQR/QaoRGFaCJoqtzEvK+iaQJcwAbvGi1KnO6DYQacFG6knzWV1bdOMNSiZDu1rdG0N4t+ehhQ==
   dependencies:
     "@project-serum/anchor" "^0.23.0"
