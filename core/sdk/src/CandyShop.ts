@@ -41,13 +41,13 @@ import {
   getCandyShopSync,
   getMetadataAccount
 } from './api/utils';
-import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
 
 const DEFAULT_CURRENCY_SYMBOL = 'SOL';
 const DEFAULT_CURRENCY_DECIMALS = 9;
 const DEFAULT_PRICE_DECIMALS = 3;
 const DEFAULT_VOLUME_DECIMALS = 1;
 const DEFAULT_MAINNET_CONNECTION_URL = 'https://ssc-dao.genesysgo.net/';
+let staticNodeWallet: any = null;
 
 /**
  * @field currencySymbol your shop transaction currency symbol (default is SOL)
@@ -137,7 +137,7 @@ export class CandyShop {
     const provider = new Provider(
       connection,
       // check the instance type
-      'signTransaction' in wallet ? wallet : new NodeWallet(wallet),
+      wallet instanceof web3.Keypair ? getNodeWallet(wallet) : wallet,
       options
     );
     console.log(
@@ -435,4 +435,13 @@ export class CandyShop {
   public async fetchShopByShopId(): Promise<SingleBase<CandyShopResponse>> {
     return fetchShopByShopId(axiosInstance, this._candyShopAddress.toString());
   }
+}
+
+function getNodeWallet(wallet: web3.Keypair) {
+  if (!staticNodeWallet) {
+    const NodeWallet =
+      require('@project-serum/anchor/dist/cjs/nodewallet').default;
+    staticNodeWallet = new NodeWallet(wallet);
+  }
+  return staticNodeWallet;
 }
