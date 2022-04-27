@@ -31,7 +31,6 @@ export interface SellModalProps {
   candyShop: CandyShop;
   wallet: AnchorWallet;
   shop: CandyShopResponse;
-  connection: web3.Connection;
 }
 
 export const SellModal: React.FC<SellModalProps> = ({
@@ -39,8 +38,7 @@ export const SellModal: React.FC<SellModalProps> = ({
   nft,
   candyShop,
   wallet,
-  shop,
-  connection
+  shop
 }) => {
   const [formState, setFormState] = useState<{ price: number | undefined }>({
     price: undefined
@@ -122,7 +120,7 @@ export const SellModal: React.FC<SellModalProps> = ({
     //prettier-ignore
     console.log('getTokenMetadataByMintAddress', { mint: nft.tokenMintAddress });
     setLoading(true);
-    getTokenMetadataByMintAddress(nft.tokenMintAddress, connection)
+    getTokenMetadataByMintAddress(nft.tokenMintAddress, candyShop.connection())
       .then((data: NftMetadata) => {
         setToken(data);
         setRoyalties(data.sellerFeeBasisPoints / 100);
@@ -133,7 +131,7 @@ export const SellModal: React.FC<SellModalProps> = ({
       .finally(() => {
         setLoading(false);
       });
-  }, [connection, nft.tokenMintAddress]);
+  }, [nft.tokenMintAddress, candyShop]);
 
   if (!loading) {
     console.log({ shop, token });

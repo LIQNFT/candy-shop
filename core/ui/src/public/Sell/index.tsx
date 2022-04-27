@@ -20,7 +20,6 @@ import {
 import { CandyContext } from 'public/Context';
 
 interface SellProps {
-  connection: web3.Connection;
   wallet: AnchorWallet | undefined;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
@@ -39,7 +38,6 @@ enum LoadStatus {
 
 export const Sell: React.FC<SellProps> = ({
   wallet,
-  connection,
   candyShop,
   walletConnectComponent,
   style
@@ -92,7 +90,7 @@ export const Sell: React.FC<SellProps> = ({
 
   // fetch current wallet nfts when mount and when publicKey was changed.
   useEffect(() => {
-    if (!connection || !walletPublicKey || !candyShop) return;
+    if (!walletPublicKey || !candyShop) return;
     if (loadingStatus !== LoadStatus.ToLoad) return;
 
     setLoadingStatus(LoadStatus.Loading);
@@ -108,7 +106,11 @@ export const Sell: React.FC<SellProps> = ({
         console.log(
           `Sell: shop ${candyShop.candyShopAddress} identifiers ${identifiers}`
         );
-        return fetchNftsFromWallet(connection, walletPublicKey, identifiers);
+        return fetchNftsFromWallet(
+          candyShop.connection(),
+          walletPublicKey,
+          identifiers
+        );
       })
       .then((userNFTs: SingleTokenInfo[]) => {
         setNfts(userNFTs);
@@ -116,7 +118,7 @@ export const Sell: React.FC<SellProps> = ({
       .finally(() => {
         setLoadingStatus(LoadStatus.Loaded);
       });
-  }, [candyShop, connection, loadingStatus, walletPublicKey]);
+  }, [candyShop, loadingStatus, walletPublicKey]);
 
   // fetch list orders
   useEffect(() => {
@@ -179,7 +181,6 @@ export const Sell: React.FC<SellProps> = ({
                   wallet={wallet}
                   sellDetail={hashSellOrders[item.tokenMintAddress]}
                   shop={shop}
-                  connection={connection}
                 />
               </div>
             ))}
