@@ -72,9 +72,9 @@ export async function fetchOrdersByStoreIdAndWalletAddress(
 ): Promise<Order[]> {
   // handles pagination internally
   const limit = 10;
-  let offset = 0,
-    resCount = null;
-  const orders: Order[] = [];
+  let offset = 0;
+  let resCount = null;
+  let orders: Order[] = [];
   while (resCount === null || resCount == limit) {
     const page: Order[] = await axiosInstance
       .get<ListBase<Order>>(
@@ -88,8 +88,8 @@ export async function fetchOrdersByStoreIdAndWalletAddress(
       )
       .then((response) => response.data?.result);
     resCount = page.length;
-    offset = (offset + 1) * 10;
-    orders.push(...page);
+    offset = offset + limit;
+    orders = orders.concat(page);
   }
 
   return orders;

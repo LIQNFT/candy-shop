@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { web3 } from '@project-serum/anchor';
 import { CancelModal } from 'components/CancelModal';
 import { LiqImage } from 'components/LiqImage';
 import { SellModal } from 'components/SellModal';
@@ -20,7 +19,6 @@ export interface NftProps {
   wallet: AnchorWallet;
   sellDetail?: OrderSchema;
   shop: CandyShopResponse;
-  connection: web3.Connection;
 }
 
 export const Nft = ({
@@ -28,8 +26,7 @@ export const Nft = ({
   candyShop,
   wallet,
   sellDetail,
-  shop,
-  connection
+  shop
 }: NftProps): JSX.Element => {
   const [selection, setSelection] = useState<SingleTokenInfo | undefined>();
 
@@ -68,7 +65,6 @@ export const Nft = ({
           candyShop={candyShop}
           wallet={wallet}
           shop={shop}
-          connection={connection}
         />
       )}
 

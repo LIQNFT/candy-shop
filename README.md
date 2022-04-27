@@ -171,7 +171,6 @@ Show sell interface that allows users to connect their wallet and list their NFT
 import { Sell } from '@liqnft/candy-shop';
 
 <Sell
-  connection={connection}
   wallet={wallet}
   candyShop={candyShop}
   walletConnectComponent={<WalletMultiButton />}

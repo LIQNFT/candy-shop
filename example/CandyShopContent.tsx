@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
-import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
+import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { web3 } from '@project-serum/anchor';
 
 import { CandyShop } from '../core/sdk/.';
@@ -22,7 +22,6 @@ interface CandyShopContentProps {
 export const CandyShopContent: React.FC<CandyShopContentProps> = ({
   network
 }) => {
-  const { connection } = useConnection();
   const [candyShop, setCandyShop] = useState<CandyShop>();
   const [treasuryMint] = useState(new web3.PublicKey(TREASURY_MINT));
 
@@ -85,7 +84,6 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({
         Sell
       </h1>
       <Sell
-        connection={connection}
         wallet={wallet}
         candyShop={candyShop}
         walletConnectComponent={<WalletMultiButton />}
