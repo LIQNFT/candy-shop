@@ -64,6 +64,11 @@ or
 yarn add @liqnft/candy-shop
 ```
 
+## Releases
+
+Please refer to the tags for the releases. Branch `master` contains the latest changes and might not be ready for production uses.
+
+
 ### How to use CandyShop
 
 **Refer to `/example` folder to instantiate `CandyShop`**
