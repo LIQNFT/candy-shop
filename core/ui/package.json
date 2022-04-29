@@ -56,6 +56,7 @@
     "@solana/wallet-adapter-wallets": "^0.11.0",
     "axios": "^0.26.1",
     "crc-32": "^1.2.2",
+    "dayjs": "^1.11.1",
     "qs": "^6.10.3",
     "rc-notification": "^4.5.7",
     "react-infinite-scroll-component": "^6.1.0",

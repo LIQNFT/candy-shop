@@ -1,8 +1,8 @@
 import { BN } from '@project-serum/anchor';
 import { web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import Modal from 'components/Modal';
-import Processing from 'components/Processing';
+import { Modal } from 'components/Modal';
+import { Processing } from 'components/Processing';
 import { CandyShop, getAtaForMint, WRAPPED_SOL_MINT } from '@liqnft/candy-shop-sdk';
 import React, { useContext, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';

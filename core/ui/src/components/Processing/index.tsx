@@ -1,14 +1,12 @@
 import React from 'react';
 export interface ProcessingProps {
-  text: string;
+  text?: string;
 }
-const Processing = ({ text = '' }: ProcessingProps): JSX.Element => {
+export const Processing = ({ text = '' }: ProcessingProps): JSX.Element => {
   return (
     <div className="candy-processing">
       <div className="candy-loading" />
-      <div>{text}...</div>
+      {text ? <div>{text}...</div> : null}
     </div>
   );
 };
-
-export default Processing;

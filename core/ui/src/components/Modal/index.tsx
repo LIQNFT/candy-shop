@@ -8,7 +8,7 @@ export interface ModalProps {
   width?: number;
 }
 
-const Modal: React.FC<ModalProps> = ({ children, onCancel, width = 1000 }: ModalProps) => {
+export const Modal: React.FC<ModalProps> = ({ children, onCancel, width = 1000 }: ModalProps) => {
   useEffect(() => {
     window.addEventListener('click', onCancel);
     return window.removeEventListener('click', onCancel);
@@ -36,5 +36,3 @@ const Modal: React.FC<ModalProps> = ({ children, onCancel, width = 1000 }: Modal
     </div>
   );
 };
-
-export default Modal;
