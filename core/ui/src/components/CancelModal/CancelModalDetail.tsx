@@ -10,7 +10,7 @@ import { TransactionState } from 'model';
 
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import { ErrorType, handleError } from 'utils/ErrorHandler';
+import { handleError } from 'utils/ErrorHandler';
 
 export interface CancelModalDetailProps {
   onCancel: any;
@@ -42,8 +42,8 @@ export const CancelModalDetail = ({
           onChangeStep(TransactionState.CONFIRMED);
         }, TIMEOUT_REFETCH_NFT);
       })
-      .catch(() => {
-        handleError(ErrorType.TransactionFailed);
+      .catch((err) => {
+        handleError({ error: err });
         onChangeStep(TransactionState.DISPLAY);
       });
   };

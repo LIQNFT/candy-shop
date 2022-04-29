@@ -10,7 +10,7 @@ import {
 } from '@liqnft/candy-shop-sdk';
 import React, { useContext, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import { ErrorMsgMap, ErrorType, handleError } from 'utils/ErrorHandler';
+import { handleError, ErrorType, ErrorMsgMap } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
 import { TransactionState } from '../../model';
 import BuyModalConfirmed from './BuyModalConfirmed';
@@ -78,10 +78,6 @@ export const BuyModal: React.FC<BuyModalProps> = ({
         balance = new BN('0');
       }
     }
-    if (balance.lt(new BN(order.price))) {
-      setState(TransactionState.DISPLAY);
-      return handleError(ErrorType.InsufficientBalance);
-    }
 
     return candyShop
       .buy(
@@ -100,7 +96,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       })
       .catch((err) => {
         console.log({ err });
-        handleError(ErrorType.TransactionFailed);
+        handleError({ error: err });
         setState(TransactionState.DISPLAY);
       });
   };

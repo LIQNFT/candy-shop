@@ -7,13 +7,17 @@ import {
   TOKEN_PROGRAM_ID
 } from '@solana/spl-token';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { CandyShopError, CandyShopErrorType } from '../../utils';
 import { Metadata, parseMetadata } from '../../utils/parseData';
 import { AUCTION_HOUSE_PROGRAM_ID, WRAPPED_SOL_MINT } from '../constants';
 import {
   getAtaForMint,
   getAuctionHouseEscrow,
   getAuctionHouseProgramAsSigner,
-  getAuctionHouseTradeState
+  getAuctionHouseTradeState,
+  checkDelegateOnReceiptAccounts,
+  checkNftAvailability,
+  checkPaymentAccountBalance
 } from '../utils';
 import { awaitTransactionSignatureConfirmation } from './submitTx';
 
@@ -34,6 +38,10 @@ export async function buyAndExecuteSale(
   amount: anchor.BN,
   program: Program<Idl>
 ) {
+  if (counterParty.toString() === wallet.publicKey.toString()) {
+    throw new CandyShopError(CandyShopErrorType.BuyerOwnsListing);
+  }
+
   const [buyerEscrow, buyerEscrowBump] = await getAuctionHouseEscrow(
     auctionHouse,
     wallet.publicKey
@@ -51,7 +59,7 @@ export async function buyAndExecuteSale(
 
   const isNative = treasuryMint.equals(WRAPPED_SOL_MINT);
 
-  const [sellTradeState] = await getAuctionHouseTradeState(
+  const [sellTradeState, sellTradeStateBump] = await getAuctionHouseTradeState(
     auctionHouse,
     counterParty,
     tokenAccount,
@@ -78,6 +86,21 @@ export async function buyAndExecuteSale(
   const paymentAccount = isNative
     ? wallet.publicKey
     : (await getAtaForMint(treasuryMint, wallet.publicKey))[0];
+
+  await checkPaymentAccountBalance(
+    program.provider.connection,
+    paymentAccount,
+    isNative,
+    price.toNumber()
+  );
+
+  await checkNftAvailability(
+    program.provider.connection,
+    tokenAccount,
+    sellTradeState,
+    sellTradeStateBump,
+    amount.toNumber()
+  );
 
   const ix = await program.instruction.buyWithProxy(
     price,
@@ -112,7 +135,7 @@ export async function buyAndExecuteSale(
   );
 
   if (!metadataObj?.data) {
-    throw new Error('failed to get metadata account data');
+    throw new Error(CandyShopErrorType.InvalidNFTMetadata);
   }
 
   const metadataDecoded: Metadata = parseMetadata(
@@ -190,6 +213,12 @@ export async function buyAndExecuteSale(
     if (tokenMintAtaIxs) {
       allAtaIxs.push(...tokenMintAtaIxs);
     }
+
+    await checkDelegateOnReceiptAccounts(
+      program.provider.connection,
+      sellerPaymentReceiptAccount,
+      buyerReceiptTokenAccount
+    );
   }
 
   const ix2 = await program.instruction.executeSaleWithProxy(
@@ -261,7 +290,7 @@ async function compileAtaCreationIxs(
     const ataAccount = await getAccount(
       program.provider.connection,
       ataAddress
-    ).catch((err) => {
+    ).catch((err: Error) => {
       console.log('fetch ata error', err);
       return null;
     });
