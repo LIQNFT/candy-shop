@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import Modal from 'components/Modal';
-import Processing from 'components/Processing';
+import { Modal } from 'components/Modal';
+import { Processing } from 'components/Processing';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { TransactionState } from 'model';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';

@@ -44,7 +44,7 @@ export const Orders: React.FC<OrdersProps> = ({
 
   let defaultFilterIdentifiers = undefined;
   if (filters && defaultFilterName) {
-    let defaultFilter = filters.find((filter) => filter.name === defaultFilterName);
+    const defaultFilter = filters.find((filter) => filter.name === defaultFilterName);
     if (defaultFilter !== undefined) {
       defaultFilterIdentifiers = Array.isArray(defaultFilter.identifier)
         ? defaultFilter.identifier
@@ -118,7 +118,7 @@ export const Orders: React.FC<OrdersProps> = ({
     refetch // refetch when buy/sell/cancel nft
   ]);
 
-  let loadingView = (
+  const loadingView = (
     <div className="candy-container-list">
       {Array(LOADING_SKELETON_COUNT)
         .fill(0)
@@ -130,9 +130,9 @@ export const Orders: React.FC<OrdersProps> = ({
     </div>
   );
 
-  let emptyView = <Empty description="No orders found" />;
+  const emptyView = <Empty description="No orders found" />;
 
-  let infiniteOrderListView = (
+  const infiniteOrderListView = (
     <InfiniteOrderList
       orders={orders}
       walletConnectComponent={walletConnectComponent}

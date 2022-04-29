@@ -1,0 +1,93 @@
+@import '../../variable.less';
+
+.candy-activity {
+  padding: 20px 50px;
+  font-size: 16px;
+
+  @media @desktopS {
+    padding: 20px 15px;
+  }
+  .infinite-scroll-component {
+    overflow: unset !important;
+  }
+
+  .candy-activity-item {
+    display: grid;
+    text-align: left;
+    align-items: center;
+
+    grid-template-columns: minmax(250px, 1fr) 150px 350px 350px 200px;
+    > * {
+      padding: 8px 12px;
+      border-bottom: 1px solid @gray-light;
+      min-height: 67px;
+      display: flex;
+      align-items: center;
+    }
+
+    @media @desktopL {
+      grid-template-columns: minmax(250px, 1fr) 150px 200px 200px 150px;
+    }
+
+    img {
+      width: 50px;
+      height: 50px;
+      background-color: @gray-light;
+      object-fit: cover;
+      margin-right: 20px;
+    }
+  }
+
+  .candy-activity-header {
+    span {
+      border-bottom: 2px solid @gray-medium;
+      font-size: 14px;
+      color: #757575;
+      font-weight: 700;
+      text-align: left;
+      min-height: unset;
+    }
+  }
+
+  .candy-activity-table-container {
+    overflow: auto;
+
+    .candy-activity-name {
+      min-width: 230px;
+      display: flex;
+      align-items: center;
+
+      span {
+        font-weight: 700;
+      }
+    }
+    .candy-activity-price {
+      white-space: nowrap;
+    }
+    .candy-activity-time {
+      min-width: 135px;
+
+      .candy-activity-time-content {
+        display: flex;
+        align-items: center;
+
+        .candy-activity-time-content-link {
+          display: inline-flex;
+        }
+
+        svg {
+          margin-left: 8px;
+        }
+
+        .candy-activity-icon {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+  }
+
+  .candy-processing {
+    margin: 60px auto;
+  }
+}

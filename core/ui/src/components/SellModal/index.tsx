@@ -3,8 +3,8 @@ import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CandyShop, SingleTokenInfo, getTokenMetadataByMintAddress, NftMetadata } from '@liqnft/candy-shop-sdk';
 
-import Modal from 'components/Modal';
-import Processing from 'components/Processing';
+import { Modal } from 'components/Modal';
+import { Processing } from 'components/Processing';
 import { LiqImage } from 'components/LiqImage';
 import { NftStat } from 'components/NftStat';
 import { Tooltip } from 'components/Tooltip';

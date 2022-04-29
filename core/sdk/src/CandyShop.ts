@@ -23,7 +23,7 @@ import {
 } from './api/backend/OrderAPI';
 
 import { fetchStatsById } from './api/backend/StatsAPI';
-import { fetchTradeById } from './api/backend/TradeAPI';
+import { fetchTradeById, TradeQuery } from './api/backend/TradeAPI';
 import { CANDY_SHOP_INS_PROGRAM_ID } from './api/constants';
 import { buyAndExecuteSale } from './api/program/buyAndExecuteSale';
 import { buyAndExecuteSale as insBuyAndExecuteSale } from './api/program/InsBuyAndExecuteSale';
@@ -356,10 +356,12 @@ export class CandyShop {
     return fetchStatsById(axiosInstance, this._candyShopAddress.toString());
   }
   /**
-   * Fetch transastions made through this Candy Shop
+   * Fetch transactions made through this Candy Shop
+   *
+   * * @param {number[]} identifiers optional list of identifiers to apply to query string
    */
-  public async transactions(): Promise<Trade[]> {
-    return fetchTradeById(axiosInstance, this._candyShopAddress.toString());
+  public async transactions(queryDto: TradeQuery): Promise<ListBase<Trade>> {
+    return fetchTradeById(axiosInstance, this._candyShopAddress.toString(), queryDto);
   }
   /**
    * Fetch information on the specified nft
@@ -405,14 +407,14 @@ export class CandyShop {
     return fetchOrdersByStoreIdAndWalletAddress(axiosInstance, this._candyShopAddress.toString(), walletAddress);
   }
   /**
-   * Fetch list of whilisted NFTs for this Candy Shop
+   * Fetch list of whitelisted NFTs for this Candy Shop
    */
   public async shopWlNfts(): Promise<ListBase<WhitelistNft>> {
     console.log('CandyShop: performing shopWlNfts');
     return fetchShopWhitelistNftByShopId(axiosInstance, this._candyShopAddress.toString());
   }
   /**
-   * Fetch active orders assosiated withh specified mint address
+   * Fetch active orders associated with specified mint address
    *
    * @param {string} mintAddress base 58 encoded mint key string
    */
