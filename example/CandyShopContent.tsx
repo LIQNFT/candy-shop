@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from 'react';
-
+import React, { useMemo, useState } from 'react';
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { web3 } from '@project-serum/anchor';
-
 import { CandyShop } from '../core/sdk/.';
-import { Orders, Stat, OrderDetail, Sell, Activity } from '../core/ui/.';
-
+import { Orders, Stat, OrderDetail, Sell, Activity, OrderDefaultFilter } from '../core/ui/.';
 import { CANDY_SHOP_PROGRAM_ID, CREATOR_ADDRESS, TREASURY_MINT } from './constant/publicKey';
 
 import 'antd/dist/antd.min.css';
@@ -17,27 +14,20 @@ interface CandyShopContentProps {
 
 export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) => {
   const [treasuryMint] = useState(new web3.PublicKey(TREASURY_MINT));
-  const [candyShop, setCandyShop] = useState<CandyShop>();
 
   const wallet = useAnchorWallet();
 
-  useEffect(() => {
-    if (!treasuryMint || !network) return;
-
-    setCandyShop(
-      new CandyShop(
-        new web3.PublicKey(CREATOR_ADDRESS),
-        treasuryMint,
-        new web3.PublicKey(CANDY_SHOP_PROGRAM_ID),
-        network,
-        {
-          mainnetConnectionUrl: 'https://ssc-dao.genesysgo.net/'
-        }
-      )
+  const candyShop = useMemo(() => {
+    return new CandyShop(
+      new web3.PublicKey(CREATOR_ADDRESS),
+      treasuryMint,
+      new web3.PublicKey(CANDY_SHOP_PROGRAM_ID),
+      network,
+      {
+        mainnetConnectionUrl: 'https://ssc-dao.genesysgo.net/'
+      }
     );
-  }, [treasuryMint, network]);
-
-  if (!candyShop) return null;
+  }, [network, treasuryMint]);
 
   return (
     <div style={{ paddingBottom: 50, textAlign: 'center' }}>
@@ -59,14 +49,14 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
         <Orders
           wallet={wallet}
           walletConnectComponent={<WalletMultiButton />}
-          filters={FILTERS}
           candyShop={candyShop}
+          filters={FILTERS}
         />
       </div>
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Order Detail</h1>
       <OrderDetail
-        tokenMint={'EVdLAk8GeWRsj2HpyBujG1pJPip5gjkPcZ76QinsHHtJ'}
+        tokenMint={'CKon3nX3K3xFAzrp44kxW3RCvMTAU4ChcTswxaYt1BWU'}
         backUrl={'/'}
         walletConnectComponent={<WalletMultiButton />}
         wallet={wallet}
@@ -84,6 +74,7 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
 
 const FILTERS = [
   { name: 'Puppies', identifier: 2036309415 },
-  { name: 'Smilies', identifier: -38328789 },
-  { name: 'Puppies + Smilies', identifier: [-38328789, 2036309415] }
+  { name: 'Shibas', identifier: 1235887132 },
+  { name: 'Puppies + Shibas', identifier: [1235887132, 2036309415] },
+  { name: 'Purple Puppies', identifier: 2036309415, attribute: { backgrounds: 'gradient_purple' } }
 ];

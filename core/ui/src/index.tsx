@@ -6,5 +6,5 @@ export { Sell } from './public/Sell';
 export { Stat } from './public/Stat';
 export { Activity } from './public/Activity';
 
-export { TransactionState } from './model';
+export { TransactionState, OrderDefaultFilter } from './model';
 export { CandyContext, CandyShopDataValidator } from './public/Context';

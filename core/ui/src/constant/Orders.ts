@@ -33,3 +33,38 @@ export const SORT_OPTIONS: { value: OrderSortBy; label: string }[] = [
     label: 'Price: High → Low'
   }
 ];
+
+export const FILTER_ATTRIBUTES_MOCK = [
+  {
+    name: 'Material',
+    options: [
+      { label: '18k Silver', value: 1 },
+      { label: '18k Gold 18k Silver 18k Silver', value: 0 }
+    ],
+    placeholder: 'Select Material'
+  },
+  {
+    name: 'Background',
+    options: [
+      { label: '18k Gold 18k Silver', value: 0 },
+      { label: '18k Silver', value: 1 }
+    ],
+    placeholder: 'Select Material'
+  },
+  {
+    name: 'Skin',
+    options: [
+      { label: '18k Gold', value: 0 },
+      { label: '18k Silver', value: 1 }
+    ],
+    placeholder: 'Select Material'
+  },
+  {
+    name: 'Accessories',
+    options: [
+      { label: '18k Gold', value: 0 },
+      { label: '18k Silver', value: 1 }
+    ],
+    placeholder: 'Select Material'
+  }
+];

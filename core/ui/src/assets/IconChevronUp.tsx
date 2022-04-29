@@ -1,6 +1,8 @@
 import React from 'react';
 
-const IconChevronUp = () => {
+
+
+const IconChevronUp:React.FC = () => {
   return (
     <svg
       width="16"

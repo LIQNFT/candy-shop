@@ -13,19 +13,36 @@ export type OrdersFilterQuery = {
   sortBy?: SortBy;
   offset?: number;
   limit?: number;
+  identifiers?: number[];
+  sellerAddress?: string;
+  attribute?: { [key: string]: string };
+  candyShopAddress?: string;
 };
 
 export async function fetchOrdersByStoreId(
   axiosInstance: AxiosInstance,
   storeId: string,
-  ordersFilterQuery: OrdersFilterQuery,
-  identifiers?: number[],
-  sellerAddress?: string
+  ordersFilterQuery: OrdersFilterQuery
 ): Promise<ListBase<Order>> {
-  console.log(
-    `CandyShop: fetching orders from ${storeId}, query=${JSON.stringify(ordersFilterQuery)}, identifiers=${identifiers}`
-  );
-  const { sortBy, offset, limit } = ordersFilterQuery;
+  const {
+    sortBy,
+    offset,
+    limit,
+    identifiers,
+    sellerAddress,
+    candyShopAddress,
+    attribute: attributeQuery
+  } = ordersFilterQuery;
+  let attribute: any = undefined;
+  if (attributeQuery) {
+    const entries = Object.entries(attributeQuery);
+    attribute = {
+      trait_type: entries[0][0],
+      value: entries[0][1]
+    };
+  }
+
+  console.log(`CandyShop: fetching orders from ${storeId}, query=${JSON.stringify(ordersFilterQuery)}`);
 
   const queryObject = {} as any;
   if (sortBy) {
@@ -47,17 +64,23 @@ export async function fetchOrdersByStoreId(
           side: 1,
           status: 0,
           identifier,
-          walletAddress: sellerAddress
+          walletAddress: sellerAddress,
+          candyShopAddress,
+          attribute // attribute is exited when having identifier
         })}`,
       ''
     );
   } else {
-    filterString = `&filterArr[]=${JSON.stringify({ side: 1, status: 0, walletAddress: sellerAddress })}`;
+    filterString = `&filterArr[]=${JSON.stringify({
+      side: 1,
+      status: 0,
+      walletAddress: sellerAddress,
+      candyShopAddress
+    })}`;
   }
 
   let queryString = qs.stringify(queryObject);
   queryString += filterString;
-
   return axiosInstance.get<ListBase<Order>>(`/order/${storeId}?${queryString}`).then((response) => response.data);
 }
 

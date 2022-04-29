@@ -47,22 +47,9 @@ export function fetchNFTByMintAddress(mintAddressStr: string): Promise<Nft> {
 
 export function fetchOrdersByShopAddress(
   candyShopAddress: web3.PublicKey,
-  ordersFilterQuery: OrdersFilterQuery,
-  identifiers?: number[],
-  sellerAddress?: string
+  ordersFilterQuery: OrdersFilterQuery
 ): Promise<ListBase<Order>> {
-  const { sortBy, offset, limit } = ordersFilterQuery;
-  return fetchOrdersByStoreId(
-    axiosInstance,
-    candyShopAddress.toString(),
-    {
-      sortBy,
-      offset,
-      limit
-    },
-    identifiers,
-    sellerAddress
-  );
+  return fetchOrdersByStoreId(axiosInstance, candyShopAddress.toString(), ordersFilterQuery);
 }
 
 export function fetchOrdersByShopAndWalletAddress(
