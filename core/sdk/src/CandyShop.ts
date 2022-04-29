@@ -349,6 +349,7 @@ export class CandyShop {
       wallet,
       tokenAccount,
       tokenMint,
+      this._treasuryMint,
       auctionHouseAuthority,
       authorityBump,
       auctionHouse,

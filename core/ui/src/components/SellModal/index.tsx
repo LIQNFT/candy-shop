@@ -15,8 +15,7 @@ import { NftStat } from 'components/NftStat';
 import { Tooltip } from 'components/Tooltip';
 
 import IconTick from 'assets/IconTick';
-import { ErrorMsgMap } from 'utils/ErrorHandler';
-import { ErrorType, handleError } from 'utils/ErrorHandler';
+import { handleError, ErrorType, ErrorMsgMap } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
 import { TransactionState } from 'model';
 import { CandyShop as CandyShopResponse } from 'solana-candy-shop-schema/dist';
@@ -71,6 +70,7 @@ export const SellModal: React.FC<SellModalProps> = ({
 
     const price = formState.price * candyShop.baseUnitsPerCurrency;
 
+    console.log(candyShop);
     return candyShop
       .sell(
         new web3.PublicKey(nft.tokenAccountAddress),
@@ -89,7 +89,7 @@ export const SellModal: React.FC<SellModalProps> = ({
       })
       .catch((err) => {
         console.log('SellModal: error= ', err);
-        handleError(ErrorType.TransactionFailed);
+        handleError({ error: err });
         setState(TransactionState.DISPLAY);
       });
   };

@@ -1,7 +1,8 @@
 import * as anchor from '@project-serum/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID
+  TOKEN_PROGRAM_ID,
+  getAccount
 } from '@solana/spl-token';
 import {
   AUCTION_HOUSE,
@@ -12,6 +13,8 @@ import {
   TREASURY
 } from './constants';
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
+import { CandyShopError, CandyShopErrorType } from '../utils/error';
+import { safeAwait } from '../utils';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new anchor.web3.PublicKey(METADATA_PROGRAM_ID);
@@ -143,7 +146,9 @@ export const getAtaForMint = async (
   );
 };
 
-export async function getMetadataAccount(tokenMint: anchor.web3.PublicKey) {
+export const getMetadataAccount = async (
+  tokenMint: anchor.web3.PublicKey
+): Promise<[anchor.web3.PublicKey, number]> => {
   return anchor.web3.PublicKey.findProgramAddress(
     [
       Buffer.from('metadata'),
@@ -152,4 +157,82 @@ export async function getMetadataAccount(tokenMint: anchor.web3.PublicKey) {
     ],
     metadataProgramId
   );
-}
+};
+
+export const checkNftAvailability = async (
+  connection: anchor.web3.Connection,
+  tokenAccount: anchor.web3.PublicKey,
+  sellTradeState: anchor.web3.PublicKey,
+  sellTradeStateBump: number,
+  amount: number
+) => {
+  const [programAsSigner] = await getAuctionHouseProgramAsSigner();
+  const tokenAccountInfo = await getAccount(connection, tokenAccount);
+  const sellTradeStateInfo = await connection.getAccountInfo(sellTradeState);
+
+  if (
+    !tokenAccountInfo.delegate ||
+    tokenAccountInfo.delegate.toString() !== programAsSigner.toString() ||
+    Number(tokenAccountInfo.amount) < amount ||
+    sellTradeStateInfo?.data[0] != sellTradeStateBump
+  ) {
+    throw new CandyShopError(CandyShopErrorType.NFTUnavailable);
+  }
+};
+
+export const checkPaymentAccountBalance = async (
+  connection: anchor.web3.Connection,
+  paymentAccount: anchor.web3.PublicKey,
+  isNative: boolean,
+  price: number
+) => {
+  // If isNative = true then payment account = calling user's pubkey
+  // i.e. connection.getAccountInfo(paymentAccount) will not return null
+  let paymentAccountBalance: number | undefined;
+
+  if (isNative) {
+    const info = await connection.getAccountInfo(paymentAccount);
+    paymentAccountBalance = info?.lamports;
+  } else {
+    const accountBalance = await safeAwait(
+      connection.getTokenAccountBalance(paymentAccount)
+    );
+
+    if (accountBalance.error) {
+      console.log(
+        'checkPaymentAccountBalance: getTokenAccountBalance error= ',
+        accountBalance.error
+      );
+      paymentAccountBalance = undefined;
+    } else {
+      paymentAccountBalance = accountBalance.result;
+    }
+  }
+
+  if (!paymentAccountBalance || paymentAccountBalance < price) {
+    throw new CandyShopError(CandyShopErrorType.InsufficientBalance);
+  }
+};
+
+export const checkDelegateOnReceiptAccounts = async (
+  connection: anchor.web3.Connection,
+  sellerPaymentReceiptAccount: anchor.web3.PublicKey,
+  buyerReceiptTokenAccount: anchor.web3.PublicKey
+) => {
+  const sellerPaymentReceiptAccountInfo = await getAccount(
+    connection,
+    sellerPaymentReceiptAccount
+  );
+  const buyerReceiptTokenAccountInfo = await getAccount(
+    connection,
+    buyerReceiptTokenAccount
+  );
+
+  if (sellerPaymentReceiptAccountInfo.delegate !== null) {
+    throw new CandyShopError(CandyShopErrorType.SellerATACannotHaveDelegate);
+  }
+
+  if (buyerReceiptTokenAccountInfo.delegate !== null) {
+    throw new CandyShopError(CandyShopErrorType.BuyerATACannotHaveDelegate);
+  }
+};

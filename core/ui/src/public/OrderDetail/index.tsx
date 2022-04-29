@@ -9,8 +9,7 @@ import { LiqImage } from 'components/LiqImage';
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
 import BuyModalConfirmed from 'components/BuyModal/BuyModalConfirmed';
-
-import { ErrorType, handleError } from 'utils/ErrorHandler';
+import { handleError } from 'utils/ErrorHandler';
 import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { TransactionState } from 'model';
 import './style.less';
@@ -105,7 +104,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
         })
         .catch((err) => {
           console.log({ err });
-          handleError(ErrorType.TransactionFailed);
+          handleError({ error: err });
           setState(TransactionState.DISPLAY);
         });
     }
