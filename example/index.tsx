@@ -18,8 +18,18 @@ import { CandyShopContent } from './CandyShopContent';
 import { TORUS_WALLET_CLIENT_ID } from './constant/clientId';
 import { CandyShopDataValidator } from '../core/ui';
 
+function getParameterByName(name, url = window.location.href) {
+  name = name.replace(/[\[\]]/g, '\\$&');
+  var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+    results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, ' ')) as web3.Cluster;
+}
+
 const App = () => {
-  const network = WalletAdapterNetwork.Devnet;
+  // mainnet-beta: localhost:1234?network=mainnet-beta
+  const network = getParameterByName('network') || WalletAdapterNetwork.Devnet;
 
   const endpoint = useMemo(() => web3.clusterApiUrl(network), [network]);
 

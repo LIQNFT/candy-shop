@@ -14,35 +14,41 @@ interface DropdownProps {
   selectedItem?: DropdownItem;
   items: DropdownItem[];
   onSelectItem?: (item: DropdownItem) => void;
+  defaultValue?: DropdownItem;
+  placeholder?: string;
 }
 
-export const Dropdown: React.FunctionComponent<DropdownProps> = ({ selectedItem, items, onSelectItem }) => {
+export const Dropdown: React.FC<DropdownProps> = ({ selectedItem, items, onSelectItem, defaultValue, placeholder }) => {
   const dropdownRef = useRef(null);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [currentlySelectedItem, setCurrentlySelectedItem] = useState(
-    selectedItem || (items.length > 0 ? items[0] : null)
-  );
+  const [currentlySelectedItem, setCurrentlySelectedItem] = useState(defaultValue || selectedItem);
 
   useClickOutside(dropdownRef, () => {
     setIsMenuOpen(false);
   });
 
+  const onClickItem = (item: any) => () => {
+    setCurrentlySelectedItem(item);
+    onSelectItem && onSelectItem(item);
+  };
+
   return (
     <div className="candy-dropdown" ref={dropdownRef} onClick={() => setIsMenuOpen((isOpen) => !isOpen)}>
-      <div className="candy-dropdown-flex">
-        <div className={`candy-dropdown-label candy-dropdown-label--${isMenuOpen ? 'purple' : 'black'}`}>
-          {currentlySelectedItem?.label}
-        </div>
-        {isMenuOpen ? (
-          <div className="candy-dropdown-icon">
-            <IconChevronUp />
+      <div className={`candy-dropdown-flex ${currentlySelectedItem?.label ? '' : 'candy-dropdown-flex-placeholder'}`}>
+        {currentlySelectedItem?.label ? (
+          <div
+            className={`candy-line-limit-1 candy-dropdown-label candy-dropdown-label--${
+              isMenuOpen ? 'purple' : 'black'
+            }`}
+            title={currentlySelectedItem.label}
+          >
+            {currentlySelectedItem.label}
           </div>
         ) : (
-          <div className="candy-dropdown-icon">
-            <IconChevronDown />
-          </div>
+          <div>{placeholder}</div>
         )}
+        <div className="candy-dropdown-icon">{isMenuOpen ? <IconChevronUp /> : <IconChevronDown />}</div>
       </div>
       {isMenuOpen ? (
         <div className="candy-dropdown-menu">
@@ -50,12 +56,11 @@ export const Dropdown: React.FunctionComponent<DropdownProps> = ({ selectedItem,
             <div
               className={index < items.length - 1 ? 'menu-middle-item' : 'menu-last-item'}
               key={index}
-              onClick={() => {
-                setCurrentlySelectedItem(item);
-                onSelectItem && onSelectItem(item);
-              }}
+              onClick={onClickItem(item)}
             >
-              <div className="candy-dropdown-label">{item.label}</div>
+              <div className="candy-line-limit-1 candy-dropdown-label" title={item.label}>
+                {item.label}
+              </div>
             </div>
           ))}
         </div>
