@@ -1,5 +1,5 @@
 # Candy Shop
-## Solana NFT Marketplace JavaScript Library (In Beta)
+### Solana NFT Marketplace JS Library (In Beta)
 
 **Contents**
 
