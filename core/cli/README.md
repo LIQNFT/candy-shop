@@ -19,6 +19,7 @@ ts-node src/cli.ts buy -e devnet -k <keypair>.json -s <Seller> -ta <TokenAccount
 ```
 
 help
+
 ```
 ts-node src/cli.ts --help
 ```
