@@ -1,6 +1,7 @@
-# Candy Shop (IN BETA) 
+# Candy Shop: Solana NFT Marketplace JavaScript Library
+### In Beta
 
-**Table of contents**
+**Contents**
 
 * [Intro](#intro)
 * [Key Features](#key-features)
@@ -12,6 +13,7 @@
 * [Embedded UI Usages](#embedded-ui-usages)
 * [Solana Transaction Size Limit](#%EF%B8%8F-solana-transaction-size-limit-%EF%B8%8F)
 * [Contribute to Candy Shop](#contribute-to-candy-shop)
+
 ## Intro
 Candy Shop is a JavaScript library that allows DAOs, NFT projects and anyone to create an NFT marketplace on Solana in minutes!
 
