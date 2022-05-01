@@ -9,7 +9,6 @@ export const useUnmountTimeout = (): {
     const timeout = timeoutRef.current;
 
     return () => {
-      console.log('CLEAR TIMEOUT WHEN COMPONENT UNMOUNT');
       if (timeout) clearTimeout(timeout);
     };
   }, []);

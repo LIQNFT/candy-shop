@@ -111,7 +111,7 @@ export class CandyShop {
       connectionConfig: settings?.connectionConfig
     };
     this._baseUnitsPerCurrency = Math.pow(10, this._settings.currencyDecimals);
-
+    console.log('CandyShop constructor: init CandyShop=', this);
     configBaseUrl(env);
   }
   /**
