@@ -1,6 +1,6 @@
 {
   "name": "@liqnft/candy-shop-sdk",
-  "version": "0.4.20",
+  "version": "0.4.24",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
