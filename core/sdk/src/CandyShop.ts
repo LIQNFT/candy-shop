@@ -43,7 +43,9 @@ import { CandyShopBuyParams, CandyShopCancelParams, CandyShopSellParams, CandySh
 const DEFAULT_CURRENCY_SYMBOL = 'SOL';
 const DEFAULT_CURRENCY_DECIMALS = 9;
 const DEFAULT_PRICE_DECIMALS = 3;
+const DEFAULT_PRICE_DECIMALS_MIN = 0;
 const DEFAULT_VOLUME_DECIMALS = 1;
+const DEFAULT_VOLUME_DECIMALS_MIN = 0;
 const DEFAULT_MAINNET_CONNECTION_URL = 'https://ssc-dao.genesysgo.net/';
 let staticNodeWallet: any = null;
 
@@ -86,7 +88,9 @@ export class CandyShop {
       currencySymbol: settings?.currencySymbol ?? DEFAULT_CURRENCY_SYMBOL,
       currencyDecimals: settings?.currencyDecimals ?? DEFAULT_CURRENCY_DECIMALS,
       priceDecimals: settings?.priceDecimals ?? DEFAULT_PRICE_DECIMALS,
+      priceDecimalsMin: settings?.priceDecimalsMin ?? DEFAULT_PRICE_DECIMALS_MIN,
       volumeDecimals: settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
+      volumeDecimalsMin: settings?.volumeDecimalsMin ?? DEFAULT_VOLUME_DECIMALS_MIN,
       mainnetConnectionUrl: settings?.mainnetConnectionUrl ?? DEFAULT_MAINNET_CONNECTION_URL,
       connectionConfig: settings?.connectionConfig
     };
@@ -168,9 +172,18 @@ export class CandyShop {
     return this._settings.priceDecimals;
   }
 
+  get priceDecimalsMin(): number {
+    return this._settings.priceDecimalsMin;
+  }
+
   get volumeDecimals(): number {
     return this._settings.volumeDecimals;
   }
+
+  get volumeDecimalsMin(): number {
+    return this._settings.volumeDecimalsMin;
+  }
+
   /**
    * Executes Candy Shop __Buy__ and __ExecuteSale__ actions
    *

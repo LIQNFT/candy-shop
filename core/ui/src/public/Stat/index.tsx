@@ -16,7 +16,7 @@ export const Stat = ({ candyShop, title, description, style }: StatProps): JSX.E
 
   const floorPrice = stat?.floorPrice
     ? (Number(stat.floorPrice) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-        minimumFractionDigits: candyShop.priceDecimals,
+        minimumFractionDigits: candyShop.priceDecimalsMin,
         maximumFractionDigits: candyShop.priceDecimals
       })
     : null;
@@ -30,7 +30,7 @@ export const Stat = ({ candyShop, title, description, style }: StatProps): JSX.E
 
   const totalVolume = stat?.totalVolume
     ? (Number(stat.totalVolume) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-        minimumFractionDigits: candyShop.volumeDecimals,
+        minimumFractionDigits: candyShop.volumeDecimalsMin,
         maximumFractionDigits: candyShop.volumeDecimals
       })
     : 0;

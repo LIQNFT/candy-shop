@@ -32,10 +32,10 @@ const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
     if (!order?.price) return null;
 
     return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-      minimumFractionDigits: candyShop.priceDecimals,
+      minimumFractionDigits: candyShop.priceDecimalsMin,
       maximumFractionDigits: candyShop.priceDecimals
     });
-  }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimals, order?.price]);
+  }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimalsMin, candyShop.priceDecimals, order?.price]);
 
   const onConfirm = () => {
     onClose();

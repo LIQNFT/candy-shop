@@ -26,7 +26,7 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, candyShop, walletCo
     if (!order?.price) return null;
 
     return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-      minimumFractionDigits: candyShop.priceDecimals,
+      minimumFractionDigits: candyShop.priceDecimalsMin,
       maximumFractionDigits: candyShop.priceDecimals
     });
   }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimals, order?.price]);

@@ -16,9 +16,13 @@ export interface CandyShopSettings {
   currencySymbol: string;
   /** Shop transaction currency decimals (default is 9 for SOL) */
   currencyDecimals: number;
-  /** Number of decimals to display for price numbers (default is 3) */
+  /** Number of min decimals to display for price numbers (default is 0) */
+  priceDecimalsMin: number;
+  /** Number of max decimals to display for price numbers (default is 3) */
   priceDecimals: number;
-  /** Number of decimals to display for volume numbers (default is 1) */
+  /** Number of min decimals to display for volume numbers (default is 0) */
+  volumeDecimalsMin: number;
+  /** Number of max decimals to display for volume numbers (default is 1) */
   volumeDecimals: number;
   /** Rpc connection endpoint */
   mainnetConnectionUrl: string;
