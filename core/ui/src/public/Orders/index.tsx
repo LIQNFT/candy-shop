@@ -113,6 +113,32 @@ export const Orders: React.FC<OrdersProps> = ({
     refetch // refetch when buy/sell/cancel nft
   ]);
 
+  let loadingView = (
+    <div className="candy-container-list">
+      {Array(LOADING_SKELETON_COUNT)
+        .fill(0)
+        .map((_, key) => (
+          <div key={key}>
+            <Skeleton />
+          </div>
+        ))}
+    </div>
+  );
+
+  let emptyView = <Empty description="No orders found" />;
+
+  let infiniteOrderListView = (
+    <InfiniteOrderList
+      orders={orders}
+      walletConnectComponent={walletConnectComponent}
+      wallet={wallet}
+      candyShop={candyShop}
+      url={url}
+      hasNextPage={hasNextPage}
+      loadNextPage={loadNextPage(startIndex, ORDER_FETCH_LIMIT)}
+    />
+  );
+
   if (filters) {
     return (
       <div className="candy-orders-container" style={style}>
@@ -131,6 +157,7 @@ export const Orders: React.FC<OrdersProps> = ({
                 <li
                   onClick={() => {
                     setFilterIdentifiers(undefined);
+                    setFilterName(undefined);
                   }}
                   key={'All'}
                   className={!filterIdentifiers ? 'selected' : undefined}
@@ -160,29 +187,11 @@ export const Orders: React.FC<OrdersProps> = ({
               </ul>
             </div>
             <div className="candy-orders-content">
-              {loading ? (
-                <div className="candy-container-list">
-                  {Array(LOADING_SKELETON_COUNT)
-                    .fill(0)
-                    .map((_, key) => (
-                      <div key={key}>
-                        <Skeleton />
-                      </div>
-                    ))}
-                </div>
-              ) : orders.length ? (
-                <InfiniteOrderList
-                  orders={orders}
-                  walletConnectComponent={walletConnectComponent}
-                  wallet={wallet}
-                  candyShop={candyShop}
-                  url={url}
-                  hasNextPage={hasNextPage}
-                  loadNextPage={loadNextPage(startIndex, ORDER_FETCH_LIMIT)}
-                />
-              ) : (
-                <Empty description="No orders found" />
-              )}
+              {loading
+                ? loadingView
+                : orders.length
+                ? infiniteOrderListView
+                : emptyView}
             </div>
           </div>
         </div>
@@ -201,29 +210,11 @@ export const Orders: React.FC<OrdersProps> = ({
               onSelectItem={(item) => setSortedByOption(item)}
             />
           </div>
-          {loading ? (
-            <div className="candy-container-list">
-              {Array(LOADING_SKELETON_COUNT)
-                .fill(0)
-                .map((_, key) => (
-                  <div key={key}>
-                    <Skeleton />
-                  </div>
-                ))}
-            </div>
-          ) : !loading && !orders.length ? (
-            <Empty description="No orders found" />
-          ) : (
-            <InfiniteOrderList
-              orders={orders}
-              walletConnectComponent={walletConnectComponent}
-              wallet={wallet}
-              candyShop={candyShop}
-              url={url}
-              hasNextPage={hasNextPage}
-              loadNextPage={() => loadNextPage(startIndex, ORDER_FETCH_LIMIT)}
-            />
-          )}
+          {loading
+            ? loadingView
+            : orders.length
+            ? infiniteOrderListView
+            : emptyView}
         </div>
       </div>
     </>
