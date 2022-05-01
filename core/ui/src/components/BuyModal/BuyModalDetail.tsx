@@ -44,9 +44,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   const orderPrice = useMemo(() => {
     if (!order?.price) return null;
 
-    return (
-      Number(order.price) / candyShop.baseUnitsPerCurrency
-    ).toLocaleString(undefined, {
+    return (Number(order.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
       minimumFractionDigits: candyShop.priceDecimals,
       maximumFractionDigits: candyShop.priceDecimals
     });
@@ -55,28 +53,19 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   return (
     <>
       <div className="candy-buy-modal-thumbnail">
-        <LiqImage
-          src={order?.nftImageLink || ''}
-          alt={order?.name}
-          fit="contain"
-        />
+        <LiqImage src={order?.nftImageLink || ''} alt={order?.name} fit="contain" />
       </div>
       <div className="candy-buy-modal-container">
         <div className="candy-title">{order?.name}</div>
         <div className="candy-buy-modal-control">
           <div>
             <div className="candy-label">PRICE</div>
-            <div className="candy-price">
-              {orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}
-            </div>
+            <div className="candy-price">{orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}</div>
           </div>
           {!walletPublicKey ? (
             walletConnectComponent
           ) : (
-            <button
-              className="candy-button candy-buy-modal-button"
-              onClick={buy}
-            >
+            <button className="candy-button candy-buy-modal-button" onClick={buy}>
               Buy Now
             </button>
           )}
@@ -87,15 +76,8 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
             <div className="candy-value">{order?.nftDescription}</div>
           </div>
         )}
-        <NftStat
-          owner={order.walletAddress}
-          tokenMint={order.tokenMint}
-          edition={order.edition}
-        />
-        <NftAttributes
-          loading={loadingNftInfo}
-          attributes={nftInfo?.attributes}
-        />
+        <NftStat owner={order.walletAddress} tokenMint={order.tokenMint} edition={order.edition} />
+        <NftAttributes loading={loadingNftInfo} attributes={nftInfo?.attributes} />
       </div>
     </>
   );

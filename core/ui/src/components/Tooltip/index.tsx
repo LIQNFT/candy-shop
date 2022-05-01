@@ -8,11 +8,7 @@ export interface TooltipProps {
   className?: string;
 }
 
-export const Tooltip: React.FC<TooltipProps> = ({
-  children,
-  inner,
-  className
-}) => {
+export const Tooltip: React.FC<TooltipProps> = ({ children, inner, className }) => {
   return (
     <div className={`candy-tooltip ${className || ''}`}>
       <div className="candy-tooltip-label">{children}</div>

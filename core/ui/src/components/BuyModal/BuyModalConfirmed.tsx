@@ -31,9 +31,7 @@ const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
   const orderPrice = useMemo(() => {
     if (!order?.price) return null;
 
-    return (
-      Number(order?.price) / candyShop.baseUnitsPerCurrency
-    ).toLocaleString(undefined, {
+    return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
       minimumFractionDigits: candyShop.priceDecimals,
       maximumFractionDigits: candyShop.priceDecimals
     });
@@ -76,11 +74,7 @@ const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
         </div>
         <div className="candy-buy-modal-confirmed-item">
           <div className="candy-label">TO</div>
-          <div className="candy-value">
-            {walletAddress && (
-              <ExplorerLink type="address" address={walletAddress} />
-            )}
-          </div>
+          <div className="candy-value">{walletAddress && <ExplorerLink type="address" address={walletAddress} />}</div>
         </div>
         <div className="candy-buy-modal-confirmed-item">
           <div className="candy-label">TRANSACTION HASH</div>

@@ -12,11 +12,7 @@ function programCommand(name: string) {
       'Solana cluster env name',
       'devnet' //mainnet-beta, testnet, devnet
     )
-    .requiredOption(
-      '-k, --keypair <path>',
-      `Solana wallet location`,
-      '--keypair not provided'
-    );
+    .requiredOption('-k, --keypair <path>', `Solana wallet location`, '--keypair not provided');
 }
 
 programCommand('sell')
@@ -28,15 +24,7 @@ programCommand('sell')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let {
-      keypair,
-      env,
-      tokenAccount,
-      tokenAccountMint,
-      treasuryMint,
-      price,
-      shopCreator
-    } = cmd.opts();
+    let { keypair, env, tokenAccount, tokenAccountMint, treasuryMint, price, shopCreator } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -66,15 +54,7 @@ programCommand('cancel')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let {
-      keypair,
-      env,
-      tokenAccount,
-      tokenAccountMint,
-      treasuryMint,
-      price,
-      shopCreator
-    } = cmd.opts();
+    let { keypair, env, tokenAccount, tokenAccountMint, treasuryMint, price, shopCreator } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -105,16 +85,7 @@ programCommand('buy')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let {
-      keypair,
-      env,
-      seller,
-      tokenAccount,
-      tokenAccountMint,
-      treasuryMint,
-      shopCreator,
-      price
-    } = cmd.opts();
+    let { keypair, env, seller, tokenAccount, tokenAccountMint, treasuryMint, shopCreator, price } = cmd.opts();
 
     const wallet = loadKey(keypair);
 

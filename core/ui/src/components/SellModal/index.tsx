@@ -1,12 +1,7 @@
 import React, { useCallback, useState, useEffect, useContext } from 'react';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import {
-  CandyShop,
-  SingleTokenInfo,
-  getTokenMetadataByMintAddress,
-  NftMetadata
-} from '@liqnft/candy-shop-sdk';
+import { CandyShop, SingleTokenInfo, getTokenMetadataByMintAddress, NftMetadata } from '@liqnft/candy-shop-sdk';
 
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
@@ -32,13 +27,7 @@ export interface SellModalProps {
   shop: CandyShopResponse;
 }
 
-export const SellModal: React.FC<SellModalProps> = ({
-  onCancel: onUnSelectItem,
-  nft,
-  candyShop,
-  wallet,
-  shop
-}) => {
+export const SellModal: React.FC<SellModalProps> = ({ onCancel: onUnSelectItem, nft, candyShop, wallet, shop }) => {
   const [formState, setFormState] = useState<{ price: number | undefined }>({
     price: undefined
   });
@@ -55,10 +44,7 @@ export const SellModal: React.FC<SellModalProps> = ({
     setState(TransactionState.PROCESSING);
 
     if (!wallet) {
-      notification(
-        ErrorMsgMap[ErrorType.InvalidWallet],
-        NotificationType.Error
-      );
+      notification(ErrorMsgMap[ErrorType.InvalidWallet], NotificationType.Error);
       return;
     }
 
@@ -79,10 +65,7 @@ export const SellModal: React.FC<SellModalProps> = ({
         wallet
       )
       .then((txHash) => {
-        console.log(
-          'SellModal: Place sell order with transaction hash= ',
-          txHash
-        );
+        console.log('SellModal: Place sell order with transaction hash= ', txHash);
         timeoutRef.current = setTimeout(() => {
           setState(TransactionState.CONFIRMED);
         }, TIMEOUT_REFETCH_NFT);
@@ -109,8 +92,7 @@ export const SellModal: React.FC<SellModalProps> = ({
 
   const onCancel = useCallback(() => {
     onUnSelectItem();
-    if (state === TransactionState.CONFIRMED)
-      setTimeout(() => window.location.reload(), 3_000);
+    if (state === TransactionState.CONFIRMED) setTimeout(() => window.location.reload(), 3_000);
   }, [state, onUnSelectItem]);
 
   useEffect(() => {
@@ -147,23 +129,12 @@ export const SellModal: React.FC<SellModalProps> = ({
             <div className="candy-sell-modal-title">Sell</div>
             <div className="candy-sell-modal-content">
               <div className="candy-sell-modal-img">
-                <LiqImage
-                  src={nft?.nftImage}
-                  alt={nft?.metadata?.data?.name}
-                  fit="contain"
-                />
+                <LiqImage src={nft?.nftImage} alt={nft?.metadata?.data?.name} fit="contain" />
               </div>
               <div>
-                <div className="candy-sell-modal-nft-name">
-                  {nft?.metadata?.data?.name}
-                </div>
-                <div className="candy-sell-modal-symbol">
-                  {nft?.metadata?.data?.symbol}
-                </div>
-                <NftStat
-                  tokenMint={nft.tokenMintAddress}
-                  edition={nft.edition}
-                />
+                <div className="candy-sell-modal-nft-name">{nft?.metadata?.data?.name}</div>
+                <div className="candy-sell-modal-symbol">{nft?.metadata?.data?.symbol}</div>
+                <NftStat tokenMint={nft.tokenMintAddress} edition={nft.edition} />
               </div>
             </div>
             <div className="candy-sell-modal-hr"></div>
@@ -189,39 +160,23 @@ export const SellModal: React.FC<SellModalProps> = ({
                   <div className="candy-loading candy-sell-modal-loading" />
                 ) : (
                   <div className="candy-sell-modal-fees-right">
-                    <Tooltip
-                      inner="Payable to marketplace"
-                      className="candy-tooltip-right"
-                    >
-                      {transactionFee !== undefined && !isNaN(transactionFee)
-                        ? transactionFee.toFixed(1) + '%'
-                        : 'n/a'}
+                    <Tooltip inner="Payable to marketplace" className="candy-tooltip-right">
+                      {transactionFee !== undefined && !isNaN(transactionFee) ? transactionFee.toFixed(1) + '%' : 'n/a'}
                     </Tooltip>
-                    <Tooltip
-                      inner="Payable to NFT creators"
-                      className="candy-tooltip-right"
-                    >
-                      {royalties !== undefined && !isNaN(royalties)
-                        ? royalties.toFixed(1) + '%'
-                        : 'n/a'}
+                    <Tooltip inner="Payable to NFT creators" className="candy-tooltip-right">
+                      {royalties !== undefined && !isNaN(royalties) ? royalties.toFixed(1) + '%' : 'n/a'}
                     </Tooltip>
                   </div>
                 )}
               </div>
 
-              <button
-                className="candy-sell-modal-button candy-button"
-                onClick={sell}
-                disabled={disableListedBtn}
-              >
+              <button className="candy-sell-modal-button candy-button" onClick={sell} disabled={disableListedBtn}>
                 List for Sale
               </button>
             </form>
           </div>
         )}
-        {state === TransactionState.PROCESSING && (
-          <Processing text="Listing your NFT" />
-        )}
+        {state === TransactionState.PROCESSING && <Processing text="Listing your NFT" />}
         {state === TransactionState.CONFIRMED && (
           <>
             <div className="candy-sell-modal-title">
@@ -232,10 +187,7 @@ export const SellModal: React.FC<SellModalProps> = ({
                 <LiqImage src={nft?.nftImage} alt="NFT image" fit="contain" />
               </div>
               <div className="candy-sell-modal-listed">
-                <span style={{ fontWeight: 'bold' }}>
-                  {nft?.metadata?.data?.name}
-                </span>{' '}
-                is now listed for sale
+                <span style={{ fontWeight: 'bold' }}>{nft?.metadata?.data?.name}</span> is now listed for sale
               </div>
             </div>
             <div className="candy-sell-modal-hr"></div>

@@ -37,25 +37,20 @@ export async function cancelOrder(
     amount.toNumber()
   );
 
-  const txHash = await program.rpc.cancelWithProxy(
-    price,
-    amount,
-    authorityBump,
-    {
-      accounts: {
-        wallet: wallet.publicKey,
-        tokenAccount,
-        tokenMint: tokenAccountMint,
-        authority,
-        auctionHouse,
-        auctionHouseFeeAccount: feeAccount,
-        tradeState,
-        candyShop,
-        ahProgram: AUCTION_HOUSE_PROGRAM_ID,
-        tokenProgram: TOKEN_PROGRAM_ID
-      }
+  const txHash = await program.rpc.cancelWithProxy(price, amount, authorityBump, {
+    accounts: {
+      wallet: wallet.publicKey,
+      tokenAccount,
+      tokenMint: tokenAccountMint,
+      authority,
+      auctionHouse,
+      auctionHouseFeeAccount: feeAccount,
+      tradeState,
+      candyShop,
+      ahProgram: AUCTION_HOUSE_PROGRAM_ID,
+      tokenProgram: TOKEN_PROGRAM_ID
     }
-  );
+  });
 
   console.log('sell order cancelled');
 

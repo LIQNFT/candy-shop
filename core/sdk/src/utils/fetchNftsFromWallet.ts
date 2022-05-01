@@ -1,11 +1,7 @@
 import * as anchor from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { sleepPromise } from './promiseUtils';
-import {
-  SingleTokenInfo,
-  singleTokenInfoPromise,
-  SingleTokenInfoPromiseParam
-} from './fetchMetadata';
+import { SingleTokenInfo, singleTokenInfoPromise, SingleTokenInfoPromiseParam } from './fetchMetadata';
 import { web3 } from '@project-serum/anchor';
 
 // The endpoint we're using has request limitation.
@@ -37,25 +33,17 @@ export const fetchNftsFromWallet = async (
   identifiers: string[],
   fetchNFTBatchParam?: FetchNFTBatchParam
 ): Promise<SingleTokenInfo[]> => {
-  const validTokenAccounts = await getValidTokenAccounts(
-    connection,
-    walletAddress
-  );
-  const singleTokenInfoPromiseParams = validTokenAccounts.map(
-    (tokenAccountAddress) => {
-      const param: SingleTokenInfoPromiseParam = {
-        connection: connection,
-        identifiers: identifiers,
-        tokenAccountAddress: tokenAccountAddress
-      };
-      return param;
-    }
-  );
+  const validTokenAccounts = await getValidTokenAccounts(connection, walletAddress);
+  const singleTokenInfoPromiseParams = validTokenAccounts.map((tokenAccountAddress) => {
+    const param: SingleTokenInfoPromiseParam = {
+      connection: connection,
+      identifiers: identifiers,
+      tokenAccountAddress: tokenAccountAddress
+    };
+    return param;
+  });
 
-  console.log(
-    'fetchNftsFromWallet: singleTokenInfoPromiseParams=',
-    singleTokenInfoPromiseParams
-  );
+  console.log('fetchNftsFromWallet: singleTokenInfoPromiseParams=', singleTokenInfoPromiseParams);
 
   return fetchDataArrayInBatches(
     singleTokenInfoPromiseParams,
@@ -67,9 +55,7 @@ export const fetchNftsFromWallet = async (
 
 const fetchDataArrayInBatches = async (
   array: SingleTokenInfoPromiseParam[],
-  singleTokenInfoPromise: (
-    param: SingleTokenInfoPromiseParam
-  ) => Promise<SingleTokenInfo | null>,
+  singleTokenInfoPromise: (param: SingleTokenInfoPromiseParam) => Promise<SingleTokenInfo | null>,
   batchCallback?: (batchTokenInfos: SingleTokenInfo[]) => void,
   batchSize?: number
 ): Promise<SingleTokenInfo[]> => {
@@ -83,16 +69,10 @@ const fetchDataArrayInBatches = async (
   let count = 0;
   while (count < array.length) {
     const batch = array.slice(count, count + validBatchSize);
-    const promises = batch.map((param: SingleTokenInfoPromiseParam) =>
-      singleTokenInfoPromise(param)
-    );
+    const promises = batch.map((param: SingleTokenInfoPromiseParam) => singleTokenInfoPromise(param));
     const tokenInfoBatch = await Promise.all(promises);
-    console.log(
-      `fetchDataArrayInBatches: The batch ${batchNum} have been all resolved.`
-    );
-    const validTokenInfoBatch = tokenInfoBatch.filter(
-      (res) => res !== null
-    ) as SingleTokenInfo[];
+    console.log(`fetchDataArrayInBatches: The batch ${batchNum} have been all resolved.`);
+    const validTokenInfoBatch = tokenInfoBatch.filter((res) => res !== null) as SingleTokenInfo[];
     // Only provide the batch result when batchCallback is specified.
     if (batchCallback) {
       batchCallback(validTokenInfoBatch);
@@ -105,15 +85,9 @@ const fetchDataArrayInBatches = async (
   return aggregated;
 };
 
-const getValidTokenAccounts = async (
-  connection: anchor.web3.Connection,
-  walletAddress: anchor.web3.PublicKey
-) => {
+const getValidTokenAccounts = async (connection: anchor.web3.Connection, walletAddress: anchor.web3.PublicKey) => {
   // Filter out invalid token which is not NFT.
-  const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
-    walletAddress,
-    { programId: TOKEN_PROGRAM_ID }
-  );
+  const tokenAccounts = await connection.getParsedTokenAccountsByOwner(walletAddress, { programId: TOKEN_PROGRAM_ID });
   return tokenAccounts.value
     .filter((account) => {
       const tokenAmount = account.account.data.parsed.info.tokenAmount;

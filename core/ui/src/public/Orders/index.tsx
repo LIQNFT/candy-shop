@@ -6,11 +6,7 @@ import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { InfiniteOrderList } from 'components/InfiniteOrderList';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CandyContext } from 'public/Context';
-import {
-  ORDER_FETCH_LIMIT,
-  LOADING_SKELETON_COUNT,
-  SORT_OPTIONS
-} from 'constant/Orders';
+import { ORDER_FETCH_LIMIT, LOADING_SKELETON_COUNT, SORT_OPTIONS } from 'constant/Orders';
 
 import './index.less';
 
@@ -46,10 +42,7 @@ export const Orders: React.FC<OrdersProps> = ({
   const { refetch } = useContext(CandyContext);
 
   const getUniqueIdentifiers = useCallback(() => {
-    const uniqueIdentifiers = [
-      ...(identifiers || []),
-      ...(filterIdentifiers || [])
-    ];
+    const uniqueIdentifiers = [...(identifiers || []), ...(filterIdentifiers || [])];
 
     return [...new Set(uniqueIdentifiers)];
   }, [filterIdentifiers, identifiers]);
@@ -165,9 +158,7 @@ export const Orders: React.FC<OrdersProps> = ({
                   All
                 </li>
                 {filters.map((filter) => {
-                  const filterArr = Array.isArray(filter.identifier)
-                    ? filter.identifier
-                    : [filter.identifier];
+                  const filterArr = Array.isArray(filter.identifier) ? filter.identifier : [filter.identifier];
 
                   return (
                     <li
@@ -176,9 +167,7 @@ export const Orders: React.FC<OrdersProps> = ({
                         setFilterName(filter.name);
                       }}
                       key={filter.name}
-                      className={
-                        filterName === filter.name ? 'selected' : undefined
-                      }
+                      className={filterName === filter.name ? 'selected' : undefined}
                     >
                       {filter.name}
                     </li>
@@ -187,11 +176,7 @@ export const Orders: React.FC<OrdersProps> = ({
               </ul>
             </div>
             <div className="candy-orders-content">
-              {loading
-                ? loadingView
-                : orders.length
-                ? infiniteOrderListView
-                : emptyView}
+              {loading ? loadingView : orders.length ? infiniteOrderListView : emptyView}
             </div>
           </div>
         </div>
@@ -210,11 +195,7 @@ export const Orders: React.FC<OrdersProps> = ({
               onSelectItem={(item) => setSortedByOption(item)}
             />
           </div>
-          {loading
-            ? loadingView
-            : orders.length
-            ? infiniteOrderListView
-            : emptyView}
+          {loading ? loadingView : orders.length ? infiniteOrderListView : emptyView}
         </div>
       </div>
     </>

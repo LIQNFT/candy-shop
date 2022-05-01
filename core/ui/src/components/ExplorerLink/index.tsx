@@ -14,10 +14,7 @@ export const ExplorerLink = (props: {
 }): JSX.Element | null => {
   const { type } = props;
 
-  const address =
-    typeof props.address === 'string'
-      ? props.address
-      : props.address?.toBase58();
+  const address = typeof props.address === 'string' ? props.address : props.address?.toBase58();
 
   if (!address) {
     return null;

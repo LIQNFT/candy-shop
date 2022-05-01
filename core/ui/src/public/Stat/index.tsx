@@ -10,23 +10,15 @@ export interface StatProps {
   style?: { [key: string]: string | number } | undefined;
 }
 
-export const Stat = ({
-  candyShop,
-  title,
-  description,
-  style
-}: StatProps): JSX.Element => {
+export const Stat = ({ candyShop, title, description, style }: StatProps): JSX.Element => {
   const [stat, setStat] = useState<any>([]);
   const { refetch } = useContext(CandyContext);
 
   const floorPrice = stat?.floorPrice
-    ? (Number(stat.floorPrice) / candyShop.baseUnitsPerCurrency).toLocaleString(
-        undefined,
-        {
-          minimumFractionDigits: candyShop.priceDecimals,
-          maximumFractionDigits: candyShop.priceDecimals
-        }
-      )
+    ? (Number(stat.floorPrice) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
+        minimumFractionDigits: candyShop.priceDecimals,
+        maximumFractionDigits: candyShop.priceDecimals
+      })
     : null;
 
   const totalListed = stat?.totalListed
@@ -37,9 +29,7 @@ export const Stat = ({
     : 0;
 
   const totalVolume = stat?.totalVolume
-    ? (
-        Number(stat.totalVolume) / candyShop.baseUnitsPerCurrency
-      ).toLocaleString(undefined, {
+    ? (Number(stat.totalVolume) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
         minimumFractionDigits: candyShop.volumeDecimals,
         maximumFractionDigits: candyShop.volumeDecimals
       })
@@ -64,17 +54,13 @@ export const Stat = ({
         <div className="candy-stat-component-container">
           <div>
             <div className="candy-stat-component-title">{title}</div>
-            <div className="candy-stat-component-description">
-              {description}
-            </div>
+            <div className="candy-stat-component-description">{description}</div>
           </div>
           <div className="candy-stat-component-table">
             <div className="candy-stat-component-item">
               <div className="candy-label">FLOOR PRICE</div>
               <div className="candy-value-lg">
-                {floorPrice === null
-                  ? 'N/A'
-                  : `${floorPrice} ${candyShop.currencySymbol}`}
+                {floorPrice === null ? 'N/A' : `${floorPrice} ${candyShop.currencySymbol}`}
               </div>
             </div>
             <div className="candy-stat-component-item">

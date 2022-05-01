@@ -31,22 +31,15 @@ export interface SingleTokenInfoPromiseParam {
   identifiers: string[];
 }
 
-export const singleTokenInfoPromise = async (
-  param: SingleTokenInfoPromiseParam
-): Promise<SingleTokenInfo | null> => {
+export const singleTokenInfoPromise = async (param: SingleTokenInfoPromiseParam): Promise<SingleTokenInfo | null> => {
   const connection = param.connection;
   const tokenAccountAddress = param.tokenAccountAddress;
   const identifiers = param.identifiers;
 
-  const tokenAccount = await getAccount(
-    connection,
-    new web3.PublicKey(tokenAccountAddress)
-  );
+  const tokenAccount = await getAccount(connection, new web3.PublicKey(tokenAccountAddress));
   const tokenInfo = await getNFTMetadataAccountInfo(connection, tokenAccount);
   if (!tokenInfo) {
-    console.log(
-      `singleTokenInfoPromise: tokenAccount ${tokenAccountAddress} does not have metadata`
-    );
+    console.log(`singleTokenInfoPromise: tokenAccount ${tokenAccountAddress} does not have metadata`);
     return null;
   }
 
@@ -76,44 +69,26 @@ const getNFTMetadataAccountInfo = async (
   tokenAccount: Account
 ): Promise<Metadata | undefined> => {
   const [nftMetadataPublicKey] = await web3.PublicKey.findProgramAddress(
-    [
-      Buffer.from('metadata'),
-      MetadataProgramPubkey.toBuffer(),
-      tokenAccount.mint.toBuffer()
-    ],
+    [Buffer.from('metadata'), MetadataProgramPubkey.toBuffer(), tokenAccount.mint.toBuffer()],
     MetadataProgramPubkey
   );
-  const nftMetadataAccountInfo = await safeAwait(
-    connection.getAccountInfo(nftMetadataPublicKey)
-  );
+  const nftMetadataAccountInfo = await safeAwait(connection.getAccountInfo(nftMetadataPublicKey));
   if (nftMetadataAccountInfo.error) {
     // TODO: handle the error correctly
     console.log('rate limited');
   }
 
-  const tokenInfo = nftMetadataAccountInfo.result
-    ? parseMetadata(nftMetadataAccountInfo.result.data)
-    : undefined;
+  const tokenInfo = nftMetadataAccountInfo.result ? parseMetadata(nftMetadataAccountInfo.result.data) : undefined;
   return tokenInfo;
 };
 
-const getNFTEditionInfo = async (
-  connection: web3.Connection,
-  tokenAccount: Account
-): Promise<any> => {
+const getNFTEditionInfo = async (connection: web3.Connection, tokenAccount: Account): Promise<any> => {
   const [nftEditionPublicKey] = await web3.PublicKey.findProgramAddress(
-    [
-      Buffer.from('metadata'),
-      MetadataProgramPubkey.toBuffer(),
-      tokenAccount.mint.toBuffer(),
-      Buffer.from('edition')
-    ],
+    [Buffer.from('metadata'), MetadataProgramPubkey.toBuffer(), tokenAccount.mint.toBuffer(), Buffer.from('edition')],
     MetadataProgramPubkey
   );
 
-  const nftEditionAccountInfo = await safeAwait(
-    connection.getAccountInfo(nftEditionPublicKey)
-  );
+  const nftEditionAccountInfo = await safeAwait(connection.getAccountInfo(nftEditionPublicKey));
   if (nftEditionAccountInfo.error) {
     // TODO: handle the error correctly
     console.log('rate limited');
@@ -125,15 +100,10 @@ const getNFTEditionInfo = async (
   return editionInfo;
 };
 
-const fetchMetadataInfoByUri = async (
-  nftUri: string
-): Promise<NFTMetadataInfo | null> => {
+const fetchMetadataInfoByUri = async (nftUri: string): Promise<NFTMetadataInfo | null> => {
   const res = await safeAwait(axios.get(nftUri));
   if (res.error) {
-    console.log(
-      'singleTokenInfoPromise: Failed to fetch uri data, error=',
-      res.error
-    );
+    console.log('singleTokenInfoPromise: Failed to fetch uri data, error=', res.error);
     return null;
   }
   const nftUriData = res.result.data as any;

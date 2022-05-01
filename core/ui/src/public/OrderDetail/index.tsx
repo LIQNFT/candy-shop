@@ -34,26 +34,19 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   const [order, setOrder] = useState<OrderSchema>();
   const [nftInfo, setNftInfo] = useState<Nft>();
 
-  const [state, setState] = useState<TransactionState>(
-    TransactionState.DISPLAY
-  );
+  const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
   const [hash, setHash] = useState('');
 
   const orderPrice = useMemo(() => {
     if (!order?.price) return null;
 
-    return (
-      Number(order?.price) / candyShop.baseUnitsPerCurrency
-    ).toLocaleString(undefined, {
+    return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
       minimumFractionDigits: candyShop.priceDecimals,
       maximumFractionDigits: candyShop.priceDecimals
     });
   }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimals, order?.price]);
 
-  const isUserListing =
-    wallet?.publicKey &&
-    order &&
-    order.walletAddress === wallet.publicKey.toString();
+  const isUserListing = wallet?.publicKey && order && order.walletAddress === wallet.publicKey.toString();
 
   useEffect(() => {
     if (!order) {
@@ -114,29 +107,20 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
     window.location.href = backUrl;
   };
 
-  if (loadingOrder)
-    return <div className="candy-loading" style={{ margin: '100px auto' }} />;
+  if (loadingOrder) return <div className="candy-loading" style={{ margin: '100px auto' }} />;
 
   return (
     <div className="candy-order-detail">
       <div className="candy-container">
         <div className="candy-order-detail-left">
-          <LiqImage
-            src={order?.nftImageLink || ''}
-            alt={order?.name}
-            fit="contain"
-          />
+          <LiqImage src={order?.nftImageLink || ''} alt={order?.name} fit="contain" />
         </div>
         <div className="candy-order-detail-right">
-          {isUserListing && (
-            <div className="candy-status-tag-inline">Your Listing</div>
-          )}
+          {isUserListing && <div className="candy-status-tag-inline">Your Listing</div>}
           <div className="candy-order-detail-title">{order?.name}</div>
           <div className="candy-stat">
             <div className="candy-label">PRICE</div>
-            <div className="candy-price">
-              {orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}
-            </div>
+            <div className="candy-price">{orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}</div>
           </div>
           <div className="candy-stat">
             <div className="candy-label">DESCRIPTION</div>
@@ -162,17 +146,11 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
             <div>
               <div className="candy-label">OWNER</div>
               <div className="candy-value">
-                <ExplorerLink
-                  type="address"
-                  address={order?.walletAddress || ''}
-                />
+                <ExplorerLink type="address" address={order?.walletAddress || ''} />
               </div>
             </div>
           </div>
-          <NftAttributes
-            loading={loadingNftInfo}
-            attributes={nftInfo?.attributes}
-          />
+          <NftAttributes loading={loadingNftInfo} attributes={nftInfo?.attributes} />
 
           {!wallet ? (
             walletConnectComponent
@@ -180,20 +158,14 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
             <button
               className="candy-button"
               onClick={buy}
-              disabled={
-                state === TransactionState.PROCESSING ||
-                state === TransactionState.CONFIRMED
-              }
+              disabled={state === TransactionState.PROCESSING || state === TransactionState.CONFIRMED}
             >
               Buy Now
             </button>
           )}
         </div>
         {state === TransactionState.PROCESSING && (
-          <Modal
-            onCancel={() => setState(TransactionState.DISPLAY)}
-            width={600}
-          >
+          <Modal onCancel={() => setState(TransactionState.DISPLAY)} width={600}>
             <div className="buy-modal">
               <Processing text="Processing purchase" />
             </div>

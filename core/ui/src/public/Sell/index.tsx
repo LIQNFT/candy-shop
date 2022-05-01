@@ -13,12 +13,7 @@ import {
   CandyShop as CandyShopResponse,
   SingleBase
 } from 'solana-candy-shop-schema/dist';
-import {
-  CandyShop,
-  FetchNFTBatchParam,
-  fetchNftsFromWallet,
-  SingleTokenInfo
-} from '@liqnft/candy-shop-sdk';
+import { CandyShop, FetchNFTBatchParam, fetchNftsFromWallet, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
 import { CandyContext } from 'public/Context';
 import { useCallback } from 'react';
 import { useRef } from 'react';
@@ -40,21 +35,12 @@ enum LoadStatus {
  * React component that allows user to put an NFT for sale
  */
 
-export const Sell: React.FC<SellProps> = ({
-  wallet,
-  candyShop,
-  walletConnectComponent,
-  style
-}) => {
+export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComponent, style }) => {
   const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
   const [sellOrders, setSellOrders] = useState<OrderSchema[]>();
   const [walletPublicKey, setWalletPublicKey] = useState<web3.PublicKey>();
-  const [loadingNFTStatus, setNFTLoadingStatus] = useState<LoadStatus>(
-    LoadStatus.ToLoad
-  );
-  const [orderLoading, setOrderLoading] = useState<LoadStatus>(
-    LoadStatus.ToLoad
-  );
+  const [loadingNFTStatus, setNFTLoadingStatus] = useState<LoadStatus>(LoadStatus.ToLoad);
+  const [orderLoading, setOrderLoading] = useState<LoadStatus>(LoadStatus.ToLoad);
   const [shopLoading, setShopLoading] = useState<LoadStatus>(LoadStatus.ToLoad);
   const [shop, setShop] = useState<CandyShopResponse>();
 
@@ -90,18 +76,12 @@ export const Sell: React.FC<SellProps> = ({
     return candyShop
       .shopWlNfts()
       .then((nfts: ListBase<WhitelistNft>) =>
-        nfts.result.reduce(
-          (arr: string[], item: WhitelistNft) => arr.concat(item.identifier),
-          []
-        )
+        nfts.result.reduce((arr: string[], item: WhitelistNft) => arr.concat(item.identifier), [])
       );
   }, [candyShop]);
 
   const getUserNFTFromBatch = useCallback((batchNFTs: SingleTokenInfo[]) => {
-    console.log(
-      'getUserNFTBatchResult: amount of valid batch NFTs=',
-      batchNFTs.length
-    );
+    console.log('getUserNFTBatchResult: amount of valid batch NFTs=', batchNFTs.length);
     const userNFTs = allNFTs.current.concat(batchNFTs);
     allNFTs.current = userNFTs;
     setNfts(userNFTs);
@@ -115,12 +95,7 @@ export const Sell: React.FC<SellProps> = ({
         batchCallback: getUserNFTFromBatch,
         batchSize: 8
       };
-      const userNFTs = fetchNftsFromWallet(
-        candyShop.connection(),
-        walletPublicKey,
-        identifiers,
-        fetchBatchParam
-      );
+      const userNFTs = fetchNftsFromWallet(candyShop.connection(), walletPublicKey, identifiers, fetchBatchParam);
       return userNFTs;
     },
     [candyShop, getShopIdentifiers, getUserNFTFromBatch]
@@ -135,9 +110,7 @@ export const Sell: React.FC<SellProps> = ({
       setNFTLoadingStatus(LoadStatus.Loading);
       progressiveLoadUserNFTs(walletPublicKey)
         .then((allUserNFTs: SingleTokenInfo[]) => {
-          console.log(
-            `getUserNFTs success, total amount of user NFTs= ${allUserNFTs.length}`
-          );
+          console.log(`getUserNFTs success, total amount of user NFTs= ${allUserNFTs.length}`);
         })
         .catch((error: any) => {
           console.log('getUserNFTs failed, error=', error);
@@ -181,9 +154,7 @@ export const Sell: React.FC<SellProps> = ({
   }
 
   const loading =
-    loadingNFTStatus === LoadStatus.ToLoad ||
-    orderLoading !== LoadStatus.Loaded ||
-    shopLoading !== LoadStatus.Loaded;
+    loadingNFTStatus === LoadStatus.ToLoad || orderLoading !== LoadStatus.Loaded || shopLoading !== LoadStatus.Loaded;
 
   return (
     <div style={style} className="candy-sell-component">
@@ -214,9 +185,7 @@ export const Sell: React.FC<SellProps> = ({
             ))}
           </div>
         )}
-        {loadingNFTStatus === LoadStatus.Loaded && nfts.length === 0 && (
-          <Empty description="No NFTs found" />
-        )}
+        {loadingNFTStatus === LoadStatus.Loaded && nfts.length === 0 && <Empty description="No NFTs found" />}
       </div>
     </div>
   );

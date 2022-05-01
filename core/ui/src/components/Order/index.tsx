@@ -19,21 +19,13 @@ export interface OrderProps {
   url?: string;
 }
 
-export const Order: React.FC<OrderProps> = ({
-  order,
-  wallet,
-  candyShop,
-  walletConnectComponent,
-  url
-}) => {
+export const Order: React.FC<OrderProps> = ({ order, wallet, candyShop, walletConnectComponent, url }) => {
   const [selection, setSelection] = useState<OrderSchema>();
 
   const orderPrice = useMemo(() => {
     if (!order?.price) return null;
 
-    return (
-      Number(order?.price) / candyShop.baseUnitsPerCurrency
-    ).toLocaleString(undefined, {
+    return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
       minimumFractionDigits: candyShop.priceDecimals,
       maximumFractionDigits: candyShop.priceDecimals
     });
@@ -51,8 +43,7 @@ export const Order: React.FC<OrderProps> = ({
     }
   };
 
-  const isUserListing =
-    wallet?.publicKey && order.walletAddress === wallet.publicKey.toString();
+  const isUserListing = wallet?.publicKey && order.walletAddress === wallet.publicKey.toString();
 
   return (
     <>
@@ -89,12 +80,7 @@ export const Order: React.FC<OrderProps> = ({
       )}
 
       {selection && isUserListing && wallet ? (
-        <CancelModal
-          onClose={onClose}
-          candyShop={candyShop}
-          order={selection}
-          wallet={wallet}
-        />
+        <CancelModal onClose={onClose} candyShop={candyShop} order={selection} wallet={wallet} />
       ) : null}
     </>
   );

@@ -6,10 +6,7 @@ import { LiqImage } from 'components/LiqImage';
 import { SellModal } from 'components/SellModal';
 
 import { CandyShop, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
-import {
-  Order as OrderSchema,
-  CandyShop as CandyShopResponse
-} from 'solana-candy-shop-schema/dist';
+import { Order as OrderSchema, CandyShop as CandyShopResponse } from 'solana-candy-shop-schema/dist';
 
 import './index.less';
 
@@ -21,13 +18,7 @@ export interface NftProps {
   shop: CandyShopResponse;
 }
 
-export const Nft = ({
-  nft,
-  candyShop,
-  wallet,
-  sellDetail,
-  shop
-}: NftProps): JSX.Element => {
+export const Nft = ({ nft, candyShop, wallet, sellDetail, shop }: NftProps): JSX.Element => {
   const [selection, setSelection] = useState<SingleTokenInfo | undefined>();
 
   const onClose = () => {
@@ -59,22 +50,11 @@ export const Nft = ({
       </div>
 
       {selection && !isSellItem && (
-        <SellModal
-          onCancel={onClose}
-          nft={selection}
-          candyShop={candyShop}
-          wallet={wallet}
-          shop={shop}
-        />
+        <SellModal onCancel={onClose} nft={selection} candyShop={candyShop} wallet={wallet} shop={shop} />
       )}
 
       {selection && sellDetail ? (
-        <CancelModal
-          onClose={onClose}
-          candyShop={candyShop}
-          order={sellDetail}
-          wallet={wallet}
-        />
+        <CancelModal onClose={onClose} candyShop={candyShop} order={sellDetail} wallet={wallet} />
       ) : null}
     </>
   );

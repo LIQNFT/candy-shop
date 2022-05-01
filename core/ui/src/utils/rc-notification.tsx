@@ -29,12 +29,8 @@ export const notification = (content: string, type: NotificationType): void => {
           {type === NotificationType.Error && <IconError />}
         </div>
         <div className="candy-right">
-          {type === NotificationType.Success && (
-            <div className="title">Success</div>
-          )}
-          {type === NotificationType.Error && (
-            <div className="title">Error</div>
-          )}
+          {type === NotificationType.Success && <div className="title">Success</div>}
+          {type === NotificationType.Error && <div className="title">Error</div>}
           <div className="desc">{content}</div>
         </div>
       </div>

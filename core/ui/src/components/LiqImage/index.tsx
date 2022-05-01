@@ -8,12 +8,7 @@ interface LiqImageProps {
   style?: { [key: string]: string | number } | undefined;
 }
 
-export const LiqImage: React.FC<LiqImageProps> = ({
-  src,
-  alt,
-  fit = 'cover',
-  style = {}
-}) => {
+export const LiqImage: React.FC<LiqImageProps> = ({ src, alt, fit = 'cover', style = {} }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [width, setWidth] = useState<number>();
@@ -35,8 +30,7 @@ export const LiqImage: React.FC<LiqImageProps> = ({
 
   const combinedStyle = { ...baseStyle, ...style };
 
-  const onElementResize = () =>
-    setWidth(ref.current ? ref.current.offsetWidth : 0);
+  const onElementResize = () => setWidth(ref.current ? ref.current.offsetWidth : 0);
 
   useEffect(() => {
     onElementResize();
@@ -54,9 +48,7 @@ export const LiqImage: React.FC<LiqImageProps> = ({
           src={src}
           width="100%"
           height="100%"
-          style={
-            loaded ? { display: 'block', objectFit: fit } : { display: 'none' }
-          }
+          style={loaded ? { display: 'block', objectFit: fit } : { display: 'none' }}
           onLoad={() => setLoaded(true)}
         />
       ) : (
@@ -65,9 +57,7 @@ export const LiqImage: React.FC<LiqImageProps> = ({
           src={imgDefault}
           alt="NFT image"
           width="100%"
-          style={
-            loaded ? { display: 'block', objectFit: fit } : { display: 'none' }
-          }
+          style={loaded ? { display: 'block', objectFit: fit } : { display: 'none' }}
           onLoad={() => setLoaded(true)}
         />
       )}

@@ -51,9 +51,7 @@ export async function fetchOrdersByStoreId(
   let queryString = qs.stringify(queryObject);
   queryString += filterString;
 
-  return axiosInstance
-    .get<ListBase<Order>>(`/order/${storeId}?${queryString}`)
-    .then((response) => response.data);
+  return axiosInstance.get<ListBase<Order>>(`/order/${storeId}?${queryString}`).then((response) => response.data);
 }
 
 /**
@@ -64,9 +62,7 @@ export async function fetchOrderByTokenMint(
   axiosInstance: AxiosInstance,
   mintAddress: string
 ): Promise<SingleBase<Order>> {
-  return axiosInstance
-    .get<SingleBase<Order>>(`/order/mint/${mintAddress}`)
-    .then((response) => response.data);
+  return axiosInstance.get<SingleBase<Order>>(`/order/mint/${mintAddress}`).then((response) => response.data);
 }
 
 export async function fetchOrderByTokenMintAndShopId(
@@ -92,13 +88,11 @@ export async function fetchOrdersByStoreIdAndWalletAddress(
   while (resCount === null || resCount == limit) {
     const page: Order[] = await axiosInstance
       .get<ListBase<Order>>(
-        `/order/${storeId}?offset=${offset}&limit=${limit}&filterArr[]=${JSON.stringify(
-          {
-            side: 1,
-            status: 0,
-            walletAddress
-          }
-        )}`
+        `/order/${storeId}?offset=${offset}&limit=${limit}&filterArr[]=${JSON.stringify({
+          side: 1,
+          status: 0,
+          walletAddress
+        })}`
       )
       .then((response) => response.data?.result);
     resCount = page.length;

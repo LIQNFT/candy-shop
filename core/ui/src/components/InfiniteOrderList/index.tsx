@@ -9,10 +9,7 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 interface InfiniteOrderListProps {
   orders: Order[];
   wallet: AnchorWallet | undefined;
-  walletConnectComponent: React.ReactElement<
-    any,
-    string | React.JSXElementConstructor<any>
-  >;
+  walletConnectComponent: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
   candyShop: CandyShop;
   url?: string;
   hasNextPage: boolean;

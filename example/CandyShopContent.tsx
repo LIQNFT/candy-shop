@@ -7,11 +7,7 @@ import { web3 } from '@project-serum/anchor';
 import { CandyShop } from '../core/sdk/.';
 import { Orders, Stat, OrderDetail, Sell } from '../core/ui/.';
 
-import {
-  CANDY_SHOP_PROGRAM_ID,
-  CREATOR_ADDRESS,
-  TREASURY_MINT
-} from './constant/publicKey';
+import { CANDY_SHOP_PROGRAM_ID, CREATOR_ADDRESS, TREASURY_MINT } from './constant/publicKey';
 
 import 'antd/dist/antd.min.css';
 
@@ -19,9 +15,7 @@ interface CandyShopContentProps {
   network: web3.Cluster;
 }
 
-export const CandyShopContent: React.FC<CandyShopContentProps> = ({
-  network
-}) => {
+export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) => {
   const [candyShop, setCandyShop] = useState<CandyShop>();
   const [treasuryMint] = useState(new web3.PublicKey(TREASURY_MINT));
 
@@ -69,9 +63,7 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({
         />
       </div>
 
-      <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>
-        Order Detail
-      </h1>
+      <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Order Detail</h1>
       <OrderDetail
         tokenMint={'EVdLAk8GeWRsj2HpyBujG1pJPip5gjkPcZ76QinsHHtJ'}
         backUrl={'/'}
@@ -80,14 +72,8 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({
         wallet={wallet}
       />
 
-      <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>
-        Sell
-      </h1>
-      <Sell
-        wallet={wallet}
-        candyShop={candyShop}
-        walletConnectComponent={<WalletMultiButton />}
-      />
+      <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Sell</h1>
+      <Sell wallet={wallet} candyShop={candyShop} walletConnectComponent={<WalletMultiButton />} />
     </div>
   );
 };

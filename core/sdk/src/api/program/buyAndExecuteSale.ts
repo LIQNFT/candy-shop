@@ -42,10 +42,7 @@ export async function buyAndExecuteSale(
     throw new CandyShopError(CandyShopErrorType.BuyerOwnsListing);
   }
 
-  const [buyerEscrow, buyerEscrowBump] = await getAuctionHouseEscrow(
-    auctionHouse,
-    wallet.publicKey
-  );
+  const [buyerEscrow, buyerEscrowBump] = await getAuctionHouseEscrow(auctionHouse, wallet.publicKey);
 
   const [buyTradeState, buyTradeStateBump] = await getAuctionHouseTradeState(
     auctionHouse,
@@ -78,21 +75,13 @@ export async function buyAndExecuteSale(
     amount,
     new anchor.BN(0)
   );
-  const [programAsSigner, programAsSignerBump] =
-    await getAuctionHouseProgramAsSigner();
+  const [programAsSigner, programAsSignerBump] = await getAuctionHouseProgramAsSigner();
 
   const transaction = new web3.Transaction();
 
-  const paymentAccount = isNative
-    ? wallet.publicKey
-    : (await getAtaForMint(treasuryMint, wallet.publicKey))[0];
+  const paymentAccount = isNative ? wallet.publicKey : (await getAtaForMint(treasuryMint, wallet.publicKey))[0];
 
-  await checkPaymentAccountBalance(
-    program.provider.connection,
-    paymentAccount,
-    isNative,
-    price.toNumber()
-  );
+  await checkPaymentAccountBalance(program.provider.connection, paymentAccount, isNative, price.toNumber());
 
   await checkNftAvailability(
     program.provider.connection,
@@ -102,45 +91,34 @@ export async function buyAndExecuteSale(
     amount.toNumber()
   );
 
-  const ix = await program.instruction.buyWithProxy(
-    price,
-    amount,
-    buyTradeStateBump,
-    buyerEscrowBump,
-    authorityBump,
-    {
-      accounts: {
-        wallet: wallet.publicKey,
-        paymentAccount,
-        transferAuthority: wallet.publicKey,
-        treasuryMint,
-        tokenAccount,
-        metadata,
-        escrowPaymentAccount: buyerEscrow,
-        authority,
-        auctionHouse,
-        auctionHouseFeeAccount: feeAccount,
-        buyerTradeState: buyTradeState,
-        candyShop,
-        ahProgram: AUCTION_HOUSE_PROGRAM_ID,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        systemProgram: web3.SystemProgram.programId,
-        rent: web3.SYSVAR_RENT_PUBKEY
-      }
+  const ix = await program.instruction.buyWithProxy(price, amount, buyTradeStateBump, buyerEscrowBump, authorityBump, {
+    accounts: {
+      wallet: wallet.publicKey,
+      paymentAccount,
+      transferAuthority: wallet.publicKey,
+      treasuryMint,
+      tokenAccount,
+      metadata,
+      escrowPaymentAccount: buyerEscrow,
+      authority,
+      auctionHouse,
+      auctionHouseFeeAccount: feeAccount,
+      buyerTradeState: buyTradeState,
+      candyShop,
+      ahProgram: AUCTION_HOUSE_PROGRAM_ID,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      systemProgram: web3.SystemProgram.programId,
+      rent: web3.SYSVAR_RENT_PUBKEY
     }
-  );
+  });
 
-  const metadataObj = await program.provider.connection.getAccountInfo(
-    metadata
-  );
+  const metadataObj = await program.provider.connection.getAccountInfo(metadata);
 
   if (!metadataObj?.data) {
     throw new Error(CandyShopErrorType.InvalidNFTMetadata);
   }
 
-  const metadataDecoded: Metadata = parseMetadata(
-    Buffer.from(metadataObj.data)
-  );
+  const metadataDecoded: Metadata = parseMetadata(Buffer.from(metadataObj.data));
 
   const remainingAccounts = [] as Array<{
     pubkey: web3.PublicKey;
@@ -153,9 +131,7 @@ export async function buyAndExecuteSale(
   if (metadataDecoded != null) {
     if (metadataDecoded.data && metadataDecoded.data.creators) {
       for (let i = 0; i < metadataDecoded.data.creators.length; i++) {
-        const creatorPublicKey = new anchor.web3.PublicKey(
-          metadataDecoded.data.creators[i].address
-        );
+        const creatorPublicKey = new anchor.web3.PublicKey(metadataDecoded.data.creators[i].address);
         remainingAccounts.push({
           pubkey: creatorPublicKey,
           isWritable: true,
@@ -163,9 +139,7 @@ export async function buyAndExecuteSale(
         });
 
         if (!isNative) {
-          const ataAddress = (
-            await getAtaForMint(treasuryMint, creatorPublicKey)
-          )[0];
+          const ataAddress = (await getAtaForMint(treasuryMint, creatorPublicKey))[0];
           remainingAccounts.push({
             pubkey: ataAddress,
             isWritable: true,
@@ -177,9 +151,7 @@ export async function buyAndExecuteSale(
     }
   }
 
-  const sellerPaymentReceiptAccount = isNative
-    ? counterParty
-    : (await getAtaForMint(treasuryMint, counterParty))[0];
+  const sellerPaymentReceiptAccount = isNative ? counterParty : (await getAtaForMint(treasuryMint, counterParty))[0];
 
   if (!isNative) {
     accountsRequireAta.push(counterParty);
@@ -187,19 +159,12 @@ export async function buyAndExecuteSale(
 
   const allAtaIxs = [];
 
-  const treasuyMintAtaIxs = await compileAtaCreationIxs(
-    wallet.publicKey,
-    accountsRequireAta,
-    treasuryMint,
-    program
-  );
+  const treasuyMintAtaIxs = await compileAtaCreationIxs(wallet.publicKey, accountsRequireAta, treasuryMint, program);
   if (treasuyMintAtaIxs) {
     allAtaIxs.push(...treasuyMintAtaIxs);
   }
 
-  const buyerReceiptTokenAccount = (
-    await getAtaForMint(tokenAccountMint, wallet.publicKey)
-  )[0];
+  const buyerReceiptTokenAccount = (await getAtaForMint(tokenAccountMint, wallet.publicKey))[0];
 
   // for SOL as treausy shop we dont need this, as the ix has enough budget to complete execution
   // but use for non-SOL as treasury shop to save the execution budget of executeSaleWithProxy
@@ -283,14 +248,9 @@ async function compileAtaCreationIxs(
 ): Promise<web3.TransactionInstruction[] | null> {
   const ix: web3.TransactionInstruction[] = [];
   for (const addr of addresses) {
-    const ataAddress = (
-      await getAtaForMint(mint, new anchor.web3.PublicKey(addr))
-    )[0];
+    const ataAddress = (await getAtaForMint(mint, new anchor.web3.PublicKey(addr)))[0];
 
-    const ataAccount = await getAccount(
-      program.provider.connection,
-      ataAddress
-    ).catch((err: Error) => {
+    const ataAccount = await getAccount(program.provider.connection, ataAddress).catch((err: Error) => {
       console.log('fetch ata error', err);
       return null;
     });
@@ -315,9 +275,7 @@ async function sendTx(
   transaction: web3.Transaction,
   program: Program
 ): Promise<string> {
-  const recentBlockhash = await program.provider.connection.getLatestBlockhash(
-    'finalized'
-  );
+  const recentBlockhash = await program.provider.connection.getLatestBlockhash('finalized');
   transaction.recentBlockhash = recentBlockhash.blockhash;
   transaction.feePayer = wallet.publicKey;
 
@@ -331,9 +289,6 @@ async function sendTx(
           });
           return transaction;
         })();
-  const txHash = await awaitTransactionSignatureConfirmation(
-    program.provider.connection,
-    signedTx.serialize()
-  );
+  const txHash = await awaitTransactionSignatureConfirmation(program.provider.connection, signedTx.serialize());
   return txHash;
 }
