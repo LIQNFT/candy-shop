@@ -18,15 +18,8 @@ export interface CancelModalProps {
   wallet: AnchorWallet;
 }
 
-export const CancelModal: React.FC<CancelModalProps> = ({
-  order,
-  onClose: onUnSelectItem,
-  candyShop,
-  wallet
-}) => {
-  const [state, setState] = useState<TransactionState>(
-    TransactionState.DISPLAY
-  );
+export const CancelModal: React.FC<CancelModalProps> = ({ order, onClose: onUnSelectItem, candyShop, wallet }) => {
+  const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
 
   const { setRefetch } = useContext(CandyActionContext);
 
@@ -41,10 +34,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
   };
 
   return (
-    <Modal
-      onCancel={onCloseModal}
-      width={state !== TransactionState.DISPLAY ? 600 : 1000}
-    >
+    <Modal onCancel={onCloseModal} width={state !== TransactionState.DISPLAY ? 600 : 1000}>
       {state === TransactionState.DISPLAY && wallet && (
         <CancelModalDetail
           onCancel={onUnSelectItem}
@@ -54,12 +44,8 @@ export const CancelModal: React.FC<CancelModalProps> = ({
           wallet={wallet}
         />
       )}
-      {state === TransactionState.PROCESSING && (
-        <Processing text="Canceling your sale" />
-      )}
-      {state === TransactionState.CONFIRMED && (
-        <CancelModalConfirm order={order} onCancel={onCloseModal} />
-      )}
+      {state === TransactionState.PROCESSING && <Processing text="Canceling your sale" />}
+      {state === TransactionState.CONFIRMED && <CancelModalConfirm order={order} onCancel={onCloseModal} />}
     </Modal>
   );
 };

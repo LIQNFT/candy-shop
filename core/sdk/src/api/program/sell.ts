@@ -3,10 +3,7 @@ import { web3 } from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
-import {
-  getAuctionHouseProgramAsSigner,
-  getAuctionHouseTradeState
-} from '../utils';
+import { getAuctionHouseProgramAsSigner, getAuctionHouseTradeState } from '../utils';
 
 export async function sellNft(
   wallet: AnchorWallet | web3.Keypair,
@@ -42,8 +39,7 @@ export async function sellNft(
     amount,
     new anchor.BN(0)
   );
-  const [programAsSigner, programAsSignerBump] =
-    await getAuctionHouseProgramAsSigner();
+  const [programAsSigner, programAsSignerBump] = await getAuctionHouseProgramAsSigner();
 
   const txHash = await program.rpc.sellWithProxy(
     price,

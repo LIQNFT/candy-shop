@@ -38,16 +38,13 @@ export async function awaitTransactionSignatureConfirmation(
         (async () => {
           try {
             if (txid === null) return;
-            const signatureStatuses = await connection.getSignatureStatuses([
-              txid
-            ]);
+            const signatureStatuses = await connection.getSignatureStatuses([txid]);
 
             status = signatureStatuses && signatureStatuses.value[0];
             console.log('status', status);
 
             if (!done) {
-              const parsedStatus =
-                status === null ? null : status.confirmationStatus;
+              const parsedStatus = status === null ? null : status.confirmationStatus;
               console.debug(`txid ${txid} parsedStatus ${parsedStatus}`);
 
               if (!status) {
@@ -66,11 +63,7 @@ export async function awaitTransactionSignatureConfirmation(
             }
           } catch (e: any) {
             if (!done) {
-              console.debug(
-                'REST connection error: txid %s %s',
-                txid,
-                e.toString()
-              );
+              console.debug('REST connection error: txid %s %s', txid, e.toString());
             }
           }
         })();

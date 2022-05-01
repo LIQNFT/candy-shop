@@ -1,17 +1,6 @@
 import * as anchor from '@project-serum/anchor';
-import {
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
-  getAccount
-} from '@solana/spl-token';
-import {
-  AUCTION_HOUSE,
-  AUCTION_HOUSE_PROGRAM_ID,
-  AUTHORITY,
-  CANDY_STORE,
-  FEE_PAYER,
-  TREASURY
-} from './constants';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID, getAccount } from '@solana/spl-token';
+import { AUCTION_HOUSE, AUCTION_HOUSE_PROGRAM_ID, AUTHORITY, CANDY_STORE, FEE_PAYER, TREASURY } from './constants';
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
 import { CandyShopError, CandyShopErrorType } from '../utils/error';
 import { safeAwait } from '../utils';
@@ -35,12 +24,7 @@ export const getAuctionHouseAuthority = async (
   marketProgramId: anchor.web3.PublicKey
 ): Promise<[anchor.web3.PublicKey, number]> => {
   return anchor.web3.PublicKey.findProgramAddress(
-    [
-      Buffer.from(CANDY_STORE),
-      creator.toBuffer(),
-      treasuryMint.toBuffer(),
-      Buffer.from(AUTHORITY)
-    ],
+    [Buffer.from(CANDY_STORE), creator.toBuffer(), treasuryMint.toBuffer(), Buffer.from(AUTHORITY)],
     marketProgramId
   );
 };
@@ -67,9 +51,7 @@ export const getCandyShopSync = (
   );
 };
 
-export const getAuctionHouseProgramAsSigner = (): Promise<
-  [anchor.web3.PublicKey, number]
-> => {
+export const getAuctionHouseProgramAsSigner = (): Promise<[anchor.web3.PublicKey, number]> => {
   return anchor.web3.PublicKey.findProgramAddress(
     [Buffer.from(AUCTION_HOUSE), Buffer.from('signer')],
     AUCTION_HOUSE_PROGRAM_ID
@@ -104,11 +86,7 @@ export const getAuctionHouseFeeAcct = async (
   auctionHouse: anchor.web3.PublicKey
 ): Promise<[anchor.web3.PublicKey, number]> => {
   return anchor.web3.PublicKey.findProgramAddress(
-    [
-      Buffer.from(AUCTION_HOUSE),
-      auctionHouse.toBuffer(),
-      Buffer.from(FEE_PAYER)
-    ],
+    [Buffer.from(AUCTION_HOUSE), auctionHouse.toBuffer(), Buffer.from(FEE_PAYER)],
     AUCTION_HOUSE_PROGRAM_ID
   );
 };
@@ -117,11 +95,7 @@ export const getAuctionHouseTreasuryAcct = async (
   auctionHouse: anchor.web3.PublicKey
 ): Promise<[anchor.web3.PublicKey, number]> => {
   return anchor.web3.PublicKey.findProgramAddress(
-    [
-      Buffer.from(AUCTION_HOUSE),
-      auctionHouse.toBuffer(),
-      Buffer.from(TREASURY)
-    ],
+    [Buffer.from(AUCTION_HOUSE), auctionHouse.toBuffer(), Buffer.from(TREASURY)],
     AUCTION_HOUSE_PROGRAM_ID
   );
 };
@@ -150,11 +124,7 @@ export const getMetadataAccount = async (
   tokenMint: anchor.web3.PublicKey
 ): Promise<[anchor.web3.PublicKey, number]> => {
   return anchor.web3.PublicKey.findProgramAddress(
-    [
-      Buffer.from('metadata'),
-      metadataProgramId.toBuffer(),
-      tokenMint.toBuffer()
-    ],
+    [Buffer.from('metadata'), metadataProgramId.toBuffer(), tokenMint.toBuffer()],
     metadataProgramId
   );
 };
@@ -194,15 +164,10 @@ export const checkPaymentAccountBalance = async (
     const info = await connection.getAccountInfo(paymentAccount);
     paymentAccountBalance = info?.lamports;
   } else {
-    const accountBalance = await safeAwait(
-      connection.getTokenAccountBalance(paymentAccount)
-    );
+    const accountBalance = await safeAwait(connection.getTokenAccountBalance(paymentAccount));
 
     if (accountBalance.error) {
-      console.log(
-        'checkPaymentAccountBalance: getTokenAccountBalance error= ',
-        accountBalance.error
-      );
+      console.log('checkPaymentAccountBalance: getTokenAccountBalance error= ', accountBalance.error);
       paymentAccountBalance = undefined;
     } else {
       paymentAccountBalance = accountBalance.result;
@@ -219,14 +184,8 @@ export const checkDelegateOnReceiptAccounts = async (
   sellerPaymentReceiptAccount: anchor.web3.PublicKey,
   buyerReceiptTokenAccount: anchor.web3.PublicKey
 ) => {
-  const sellerPaymentReceiptAccountInfo = await getAccount(
-    connection,
-    sellerPaymentReceiptAccount
-  );
-  const buyerReceiptTokenAccountInfo = await getAccount(
-    connection,
-    buyerReceiptTokenAccount
-  );
+  const sellerPaymentReceiptAccountInfo = await getAccount(connection, sellerPaymentReceiptAccount);
+  const buyerReceiptTokenAccountInfo = await getAccount(connection, buyerReceiptTokenAccount);
 
   if (sellerPaymentReceiptAccountInfo.delegate !== null) {
     throw new CandyShopError(CandyShopErrorType.SellerATACannotHaveDelegate);

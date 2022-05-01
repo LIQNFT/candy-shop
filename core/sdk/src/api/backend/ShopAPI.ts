@@ -7,16 +7,9 @@ export async function fetchShopWhitelistNftByShopId(
   axiosInstance: AxiosInstance,
   shopId: string
 ): Promise<ListBase<WhitelistNft>> {
-  return axiosInstance
-    .get<ListBase<WhitelistNft>>(`/shop/wlNfts/${shopId}`)
-    .then((response) => response.data);
+  return axiosInstance.get<ListBase<WhitelistNft>>(`/shop/wlNfts/${shopId}`).then((response) => response.data);
 }
 
-export async function fetchShopByShopId(
-  axiosInstance: AxiosInstance,
-  shopId: string
-): Promise<SingleBase<CandyShop>> {
-  return axiosInstance
-    .get<SingleBase<CandyShop>>(`/shop/id/${shopId}`)
-    .then((response) => response.data);
+export async function fetchShopByShopId(axiosInstance: AxiosInstance, shopId: string): Promise<SingleBase<CandyShop>> {
+  return axiosInstance.get<SingleBase<CandyShop>>(`/shop/id/${shopId}`).then((response) => response.data);
 }

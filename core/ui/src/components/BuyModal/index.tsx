@@ -3,11 +3,7 @@ import { web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import Modal from 'components/Modal';
 import Processing from 'components/Processing';
-import {
-  CandyShop,
-  getAtaForMint,
-  WRAPPED_SOL_MINT
-} from '@liqnft/candy-shop-sdk';
+import { CandyShop, getAtaForMint, WRAPPED_SOL_MINT } from '@liqnft/candy-shop-sdk';
 import React, { useContext, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { handleError, ErrorType, ErrorMsgMap } from 'utils/ErrorHandler';
@@ -29,16 +25,8 @@ export interface BuyModalProps {
   walletConnectComponent: React.ReactElement;
 }
 
-export const BuyModal: React.FC<BuyModalProps> = ({
-  order,
-  onClose,
-  wallet,
-  candyShop,
-  walletConnectComponent
-}) => {
-  const [state, setState] = useState<TransactionState>(
-    TransactionState.DISPLAY
-  );
+export const BuyModal: React.FC<BuyModalProps> = ({ order, onClose, wallet, candyShop, walletConnectComponent }) => {
+  const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
   const [hash, setHash] = useState(''); // txHash
 
   const { setRefetch } = useContext(CandyActionContext);
@@ -47,10 +35,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
 
   const buy = async () => {
     if (!wallet) {
-      notification(
-        ErrorMsgMap[ErrorType.InvalidWallet],
-        NotificationType.Error
-      );
+      notification(ErrorMsgMap[ErrorType.InvalidWallet], NotificationType.Error);
       return;
     }
     setState(TransactionState.PROCESSING);
@@ -61,10 +46,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
     if (candyShop.treasuryMint.equals(WRAPPED_SOL_MINT)) {
       const account = await connection.getAccountInfo(wallet.publicKey);
       if (!account) {
-        notification(
-          ErrorMsgMap[ErrorType.GetAccountInfoFailed],
-          NotificationType.Error
-        );
+        notification(ErrorMsgMap[ErrorType.GetAccountInfoFailed], NotificationType.Error);
         return;
       }
       balance = new BN(account.lamports.toString());
@@ -109,10 +91,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   };
 
   return (
-    <Modal
-      onCancel={closeModal}
-      width={state !== TransactionState.DISPLAY ? 600 : 1000}
-    >
+    <Modal onCancel={closeModal} width={state !== TransactionState.DISPLAY ? 600 : 1000}>
       <div className="candy-buy-modal">
         {state === TransactionState.DISPLAY && (
           <BuyModalDetail
@@ -123,9 +102,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             candyShop={candyShop}
           />
         )}
-        {state === TransactionState.PROCESSING && (
-          <Processing text="Processing purchase" />
-        )}
+        {state === TransactionState.PROCESSING && <Processing text="Processing purchase" />}
         {state === TransactionState.CONFIRMED && wallet && (
           <BuyModalConfirmed
             walletPublicKey={wallet.publicKey}

@@ -16,11 +16,7 @@ interface DropdownProps {
   onSelectItem?: (item: DropdownItem) => void;
 }
 
-export const Dropdown: React.FunctionComponent<DropdownProps> = ({
-  selectedItem,
-  items,
-  onSelectItem
-}) => {
+export const Dropdown: React.FunctionComponent<DropdownProps> = ({ selectedItem, items, onSelectItem }) => {
   const dropdownRef = useRef(null);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,17 +29,9 @@ export const Dropdown: React.FunctionComponent<DropdownProps> = ({
   });
 
   return (
-    <div
-      className="candy-dropdown"
-      ref={dropdownRef}
-      onClick={() => setIsMenuOpen((isOpen) => !isOpen)}
-    >
+    <div className="candy-dropdown" ref={dropdownRef} onClick={() => setIsMenuOpen((isOpen) => !isOpen)}>
       <div className="candy-dropdown-flex">
-        <div
-          className={`candy-dropdown-label candy-dropdown-label--${
-            isMenuOpen ? 'purple' : 'black'
-          }`}
-        >
+        <div className={`candy-dropdown-label candy-dropdown-label--${isMenuOpen ? 'purple' : 'black'}`}>
           {currentlySelectedItem?.label}
         </div>
         {isMenuOpen ? (
@@ -60,9 +48,7 @@ export const Dropdown: React.FunctionComponent<DropdownProps> = ({
         <div className="candy-dropdown-menu">
           {items.map((item, index) => (
             <div
-              className={
-                index < items.length - 1 ? 'menu-middle-item' : 'menu-last-item'
-              }
+              className={index < items.length - 1 ? 'menu-middle-item' : 'menu-last-item'}
               key={index}
               onClick={() => {
                 setCurrentlySelectedItem(item);

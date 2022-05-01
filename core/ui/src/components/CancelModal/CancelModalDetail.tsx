@@ -20,23 +20,13 @@ export interface CancelModalDetailProps {
   wallet: AnchorWallet;
 }
 
-export const CancelModalDetail = ({
-  candyShop,
-  order,
-  onChangeStep,
-  wallet
-}: CancelModalDetailProps): JSX.Element => {
+export const CancelModalDetail = ({ candyShop, order, onChangeStep, wallet }: CancelModalDetailProps): JSX.Element => {
   const timeoutRef = useUnmountTimeout();
 
   const cancel = async () => {
     onChangeStep(TransactionState.PROCESSING);
     candyShop
-      .cancel(
-        new web3.PublicKey(order.tokenAccount),
-        new web3.PublicKey(order.tokenMint),
-        new BN(order.price),
-        wallet
-      )
+      .cancel(new web3.PublicKey(order.tokenAccount), new web3.PublicKey(order.tokenMint), new BN(order.price), wallet)
       .then(() => {
         timeoutRef.current = setTimeout(() => {
           onChangeStep(TransactionState.CONFIRMED);
@@ -51,9 +41,7 @@ export const CancelModalDetail = ({
   const orderPrice = useMemo(() => {
     if (!order?.price) return null;
 
-    return (
-      Number(order?.price) / candyShop.baseUnitsPerCurrency
-    ).toLocaleString(undefined, {
+    return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
       minimumFractionDigits: candyShop.priceDecimals,
       maximumFractionDigits: candyShop.priceDecimals
     });
@@ -70,14 +58,9 @@ export const CancelModalDetail = ({
         <div className="candy-cancel-modal-control">
           <div>
             <div className="candy-label">PRICE</div>
-            <div className="candy-price">
-              {orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}
-            </div>
+            <div className="candy-price">{orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}</div>
           </div>
-          <button
-            className="candy-button candy-cancel-modal-button"
-            onClick={cancel}
-          >
+          <button className="candy-button candy-cancel-modal-button" onClick={cancel}>
             {buttonContent}
           </button>
         </div>

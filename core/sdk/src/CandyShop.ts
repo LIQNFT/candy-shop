@@ -14,10 +14,7 @@ import {
 } from 'solana-candy-shop-schema/dist';
 
 import { fetchNftByMint } from './api/backend/NftAPI';
-import {
-  fetchShopWhitelistNftByShopId,
-  fetchShopByShopId
-} from './api/backend/ShopAPI';
+import { fetchShopWhitelistNftByShopId, fetchShopByShopId } from './api/backend/ShopAPI';
 import {
   fetchOrderByTokenMintAndShopId,
   fetchOrdersByStoreId,
@@ -92,11 +89,7 @@ export class CandyShop {
     env: web3.Cluster,
     settings?: Partial<CandyShopSettings>
   ) {
-    this._candyShopAddress = getCandyShopSync(
-      candyShopCreatorAddress,
-      treasuryMint,
-      candyShopProgramId
-    )[0];
+    this._candyShopAddress = getCandyShopSync(candyShopCreatorAddress, treasuryMint, candyShopProgramId)[0];
     this._candyShopCreatorAddress = candyShopCreatorAddress;
     this._treasuryMint = treasuryMint;
     this._programId = candyShopProgramId;
@@ -106,8 +99,7 @@ export class CandyShop {
       currencyDecimals: settings?.currencyDecimals ?? DEFAULT_CURRENCY_DECIMALS,
       priceDecimals: settings?.priceDecimals ?? DEFAULT_PRICE_DECIMALS,
       volumeDecimals: settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
-      mainnetConnectionUrl:
-        settings?.mainnetConnectionUrl ?? DEFAULT_MAINNET_CONNECTION_URL,
+      mainnetConnectionUrl: settings?.mainnetConnectionUrl ?? DEFAULT_MAINNET_CONNECTION_URL,
       connectionConfig: settings?.connectionConfig
     };
     this._baseUnitsPerCurrency = Math.pow(10, this._settings.currencyDecimals);
@@ -140,10 +132,7 @@ export class CandyShop {
       wallet instanceof web3.Keypair ? getNodeWallet(wallet) : wallet,
       options
     );
-    console.log(
-      'CandyShop init: fetching idl for programId',
-      this._programId.toString()
-    );
+    console.log('CandyShop init: fetching idl for programId', this._programId.toString());
 
     const idl = await Program.fetchIdl(this._programId, provider);
     if (idl) {
@@ -204,17 +193,13 @@ export class CandyShop {
       price
     });
     const program = await this.getStaticProgram(wallet);
-    const [auctionHouseAuthority, authorityBump] =
-      await getAuctionHouseAuthority(
-        this._candyShopCreatorAddress,
-        this._treasuryMint,
-        this._programId
-      );
-
-    const [auctionHouse] = await getAuctionHouse(
-      auctionHouseAuthority,
-      this._treasuryMint
+    const [auctionHouseAuthority, authorityBump] = await getAuctionHouseAuthority(
+      this._candyShopCreatorAddress,
+      this._treasuryMint,
+      this._programId
     );
+
+    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
     const [feeAccount] = await getAuctionHouseFeeAcct(auctionHouse);
     const [treasuryAccount] = await getAuctionHouseTreasuryAcct(auctionHouse);
 
@@ -275,17 +260,13 @@ export class CandyShop {
       price
     });
     const program = await this.getStaticProgram(wallet);
-    const [auctionHouseAuthority, authorityBump] =
-      await getAuctionHouseAuthority(
-        this._candyShopCreatorAddress,
-        this._treasuryMint,
-        this._programId
-      );
-
-    const [auctionHouse] = await getAuctionHouse(
-      auctionHouseAuthority,
-      this._treasuryMint
+    const [auctionHouseAuthority, authorityBump] = await getAuctionHouseAuthority(
+      this._candyShopCreatorAddress,
+      this._treasuryMint,
+      this._programId
     );
+
+    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
 
     const [feeAccount] = await getAuctionHouseFeeAcct(auctionHouse);
 
@@ -321,17 +302,13 @@ export class CandyShop {
       price
     });
     const program = await this.getStaticProgram(wallet);
-    const [auctionHouseAuthority, authorityBump] =
-      await getAuctionHouseAuthority(
-        this._candyShopCreatorAddress,
-        this._treasuryMint,
-        this._programId
-      );
-
-    const [auctionHouse] = await getAuctionHouse(
-      auctionHouseAuthority,
-      this._treasuryMint
+    const [auctionHouseAuthority, authorityBump] = await getAuctionHouseAuthority(
+      this._candyShopCreatorAddress,
+      this._treasuryMint,
+      this._programId
     );
+
+    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
 
     const [feeAccount] = await getAuctionHouseFeeAcct(auctionHouse);
 
@@ -378,10 +355,7 @@ export class CandyShop {
     return fetchNftByMint(axiosInstance, mint);
   }
 
-  async orders(
-    ordersFilterQuery: OrdersFilterQuery,
-    identifiers?: number[]
-  ): Promise<ListBase<Order>> {
+  async orders(ordersFilterQuery: OrdersFilterQuery, identifiers?: number[]): Promise<ListBase<Order>> {
     console.log('CandyShop: performing orders', {
       identifiers,
       ordersFilterQuery
@@ -399,38 +373,23 @@ export class CandyShop {
     );
   }
 
-  public async activeOrdersByWalletAddress(
-    walletAddress: string
-  ): Promise<Order[]> {
+  public async activeOrdersByWalletAddress(walletAddress: string): Promise<Order[]> {
     console.log('CandyShop: performing activeOrdersByWalletAddress', {
       walletAddress
     });
-    return fetchOrdersByStoreIdAndWalletAddress(
-      axiosInstance,
-      this._candyShopAddress.toString(),
-      walletAddress
-    );
+    return fetchOrdersByStoreIdAndWalletAddress(axiosInstance, this._candyShopAddress.toString(), walletAddress);
   }
 
   public async shopWlNfts(): Promise<ListBase<WhitelistNft>> {
     console.log('CandyShop: performing shopWlNfts');
-    return fetchShopWhitelistNftByShopId(
-      axiosInstance,
-      this._candyShopAddress.toString()
-    );
+    return fetchShopWhitelistNftByShopId(axiosInstance, this._candyShopAddress.toString());
   }
 
-  public async activeOrderByMintAddress(
-    mintAddress: string
-  ): Promise<SingleBase<Order>> {
+  public async activeOrderByMintAddress(mintAddress: string): Promise<SingleBase<Order>> {
     console.log('CandyShop: performing activeOrderByMintAddress', {
       mintAddress
     });
-    return fetchOrderByTokenMintAndShopId(
-      axiosInstance,
-      mintAddress,
-      this._candyShopAddress.toString()
-    );
+    return fetchOrderByTokenMintAndShopId(axiosInstance, mintAddress, this._candyShopAddress.toString());
   }
 
   public async fetchShopByShopId(): Promise<SingleBase<CandyShopResponse>> {
@@ -440,8 +399,7 @@ export class CandyShop {
 
 function getNodeWallet(wallet: web3.Keypair) {
   if (!staticNodeWallet) {
-    const NodeWallet =
-      require('@project-serum/anchor/dist/cjs/nodewallet').default;
+    const NodeWallet = require('@project-serum/anchor/dist/cjs/nodewallet').default;
     staticNodeWallet = new NodeWallet(wallet);
   }
   return staticNodeWallet;

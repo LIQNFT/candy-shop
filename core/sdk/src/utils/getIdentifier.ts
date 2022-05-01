@@ -23,16 +23,10 @@ export const getTokenMetadataByMintAddress = async function (
   connection: web3.Connection
 ): Promise<NftMetadata> {
   const [newEditionMetadata] = await web3.PublicKey.findProgramAddress(
-    [
-      Buffer.from('metadata'),
-      metadataProgramId.toBuffer(),
-      new web3.PublicKey(mintAddress).toBuffer()
-    ],
+    [Buffer.from('metadata'), metadataProgramId.toBuffer(), new web3.PublicKey(mintAddress).toBuffer()],
     metadataProgramId
   );
-  const newEditionMetadataAccountInfo = await connection.getAccountInfo(
-    newEditionMetadata
-  );
+  const newEditionMetadataAccountInfo = await connection.getAccountInfo(newEditionMetadata);
   const metadata = parseMetadata(newEditionMetadataAccountInfo!.data).data;
 
   return {
@@ -48,13 +42,9 @@ export const getTokenMetadataByMintAddress = async function (
   };
 };
 
-export const getIdentifier = async (
-  mintAddress: string,
-  connection: web3.Connection
-): Promise<void> => {
+export const getIdentifier = async (mintAddress: string, connection: web3.Connection): Promise<void> => {
   try {
-    const { symbol, creators, metadataAddress } =
-      await getTokenMetadataByMintAddress(mintAddress, connection);
+    const { symbol, creators, metadataAddress } = await getTokenMetadataByMintAddress(mintAddress, connection);
     const str = symbol + JSON.stringify(creators);
     const identifier = crc32.str(str);
     console.log('metadata', metadataAddress);

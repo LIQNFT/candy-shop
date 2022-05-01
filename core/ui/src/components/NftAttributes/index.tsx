@@ -5,10 +5,7 @@ interface NftAttributesProps {
   loading: boolean;
 }
 
-export const NftAttributes: React.FunctionComponent<NftAttributesProps> = ({
-  attributes,
-  loading
-}) => {
+export const NftAttributes: React.FunctionComponent<NftAttributesProps> = ({ attributes, loading }) => {
   return (
     <div className="candy-stat">
       <div className="candy-label">ATTRIBUTES</div>

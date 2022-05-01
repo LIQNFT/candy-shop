@@ -9,11 +9,7 @@ export class Creator {
   verified: boolean;
   share: number;
 
-  constructor(args: {
-    address: web3.PublicKey;
-    verified: boolean;
-    share: number;
-  }) {
+  constructor(args: { address: web3.PublicKey; verified: boolean; share: number }) {
     this.address = args.address;
     this.verified = args.verified;
     this.share = args.share;
@@ -187,11 +183,7 @@ export const parseMasterEditionV2 = (buffer: Buffer) => {
 };
 
 export const parseMetadata = (buffer: Buffer): Metadata => {
-  const metadata = deserializeUnchecked(
-    METADATA_SCHEMA,
-    Metadata,
-    buffer
-  ) as Metadata;
+  const metadata = deserializeUnchecked(METADATA_SCHEMA, Metadata, buffer) as Metadata;
   metadata.data.name = metadata.data.name.replace(METADATA_REPLACE, '');
   metadata.data.uri = metadata.data.uri.replace(METADATA_REPLACE, '');
   metadata.data.symbol = metadata.data.symbol.replace(METADATA_REPLACE, '');
@@ -199,11 +191,7 @@ export const parseMetadata = (buffer: Buffer): Metadata => {
 };
 
 export const parseEditionMarker = (buffer: Buffer): EditionMarker => {
-  const editionMarker = deserializeUnchecked(
-    METADATA_SCHEMA,
-    EditionMarker,
-    buffer
-  ) as EditionMarker;
+  const editionMarker = deserializeUnchecked(METADATA_SCHEMA, EditionMarker, buffer) as EditionMarker;
   return editionMarker;
 };
 

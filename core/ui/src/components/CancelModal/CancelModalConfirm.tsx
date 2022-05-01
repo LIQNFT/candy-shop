@@ -9,10 +9,7 @@ export interface CancelModalConfirmProps {
   onCancel: (...args: any) => void;
 }
 
-export const CancelModalConfirm = ({
-  order,
-  onCancel
-}: CancelModalConfirmProps): JSX.Element => {
+export const CancelModalConfirm = ({ order, onCancel }: CancelModalConfirmProps): JSX.Element => {
   return (
     <div className="candy-cancel-modal-confirm-container">
       <div className="candy-cancel-modal-confirm-title">
@@ -23,8 +20,7 @@ export const CancelModalConfirm = ({
           <LiqImage src={order.nftImageLink} alt={order.name} fit="contain" />
         </div>
         <div className="candy-cancel-modal-confirm-content-text">
-          <span style={{ fontWeight: 'bold' }}>{order.name}</span> is no longer
-          listed for sale
+          <span style={{ fontWeight: 'bold' }}>{order.name}</span> is no longer listed for sale
         </div>
       </div>
       <div className="candy-cancel-modal-confirm-success">

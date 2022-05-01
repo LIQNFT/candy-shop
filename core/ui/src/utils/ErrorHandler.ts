@@ -8,8 +8,7 @@ export enum ErrorType {
 
 export const ErrorMsgMap = {
   [ErrorType.InvalidWallet]: 'Invalid wallet, please connect the wallet.',
-  [ErrorType.GetAccountInfoFailed]:
-    'Get Account Information failed. Please try again later.'
+  [ErrorType.GetAccountInfoFailed]: 'Get Account Information failed. Please try again later.'
 };
 
 export interface ErrorData {

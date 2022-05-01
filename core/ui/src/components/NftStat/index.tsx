@@ -7,11 +7,7 @@ export interface NftStatProps {
   owner?: string;
 }
 
-export const NftStat: React.FC<NftStatProps> = ({
-  tokenMint,
-  edition,
-  owner
-}) => {
+export const NftStat: React.FC<NftStatProps> = ({ tokenMint, edition, owner }) => {
   return (
     <div className="candy-stat-horizontal">
       <div>

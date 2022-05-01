@@ -20,18 +20,14 @@ interface CandyProviderProps {
   children: ReactElement;
 }
 
-export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({
-  children
-}) => {
+export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children }) => {
   const [refetch, setRefetch] = useReducer((s) => s + 1, 0);
   const actions = useMemo(() => ({ setRefetch }), []);
 
   console.log('REVALIDATE NFT', refetch);
   return (
     <CandyContext.Provider value={{ refetch }}>
-      <CandyActionContext.Provider value={actions}>
-        {children}
-      </CandyActionContext.Provider>
+      <CandyActionContext.Provider value={actions}>{children}</CandyActionContext.Provider>
     </CandyContext.Provider>
   );
 };
