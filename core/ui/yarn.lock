@@ -1262,10 +1262,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-6.10.0.tgz#c012c1ecc1a0e53d50e6af381618dca5268461c1"
   integrity sha512-lLseUPEhSFUXYTKj6q7s2O3s2vW2ebgA11vMAlKodXGf5AFw4zUoEbTz9CoFOC9jS6xY4Qr8BmRnxP/odT4Uuw==
 
-"@liqnft/candy-shop-sdk@0.4.20":
-  version "0.4.20"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-sdk/-/candy-shop-sdk-0.4.20.tgz#e29a6a6e53413cdcbc0dadd2b512a16757e4634d"
-  integrity sha512-fG66EIRJZwnA+nJdmNeWhXQbGIrs9filbN9jiqUgXnNqVzQp8RUPlLURuDN57MzW6JFPtS6J1Yzj91349zXHoQ==
+"@liqnft/candy-shop-sdk@0.4.22":
+  version "0.4.22"
+  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-sdk/-/candy-shop-sdk-0.4.22.tgz#35b44b4881fa9a63cc685bf22bb61a74be7edbd4"
+  integrity sha512-snN3GxCqb5MiwytUvGsZ/BttAlg59nVJXWK9+Rjd4setl6VPpTTyGt8Vm+Hx2SsqZ/s6ORx1RxiKWTuLpjAeYg==
   dependencies:
     "@project-serum/anchor" "^0.23.0"
     "@solana/spl-token" "^0.2.0"
