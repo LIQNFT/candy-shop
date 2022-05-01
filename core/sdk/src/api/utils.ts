@@ -1,73 +1,80 @@
-import * as anchor from '@project-serum/anchor';
-import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID, getAccount } from '@solana/spl-token';
+import { web3, BN, Program } from '@project-serum/anchor';
+import {
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
+  getAccount,
+  createAssociatedTokenAccountInstruction
+} from '@solana/spl-token';
 import { AUCTION_HOUSE, AUCTION_HOUSE_PROGRAM_ID, AUTHORITY, CANDY_STORE, FEE_PAYER, TREASURY } from './constants';
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
 import { CandyShopError, CandyShopErrorType } from '../utils/error';
 import { safeAwait } from '../utils';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { awaitTransactionSignatureConfirmation } from '.';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
-const metadataProgramId = new anchor.web3.PublicKey(METADATA_PROGRAM_ID);
+const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);
 
 export const getAuctionHouse = async (
-  authority: anchor.web3.PublicKey,
-  treasuryMint: anchor.web3.PublicKey
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return anchor.web3.PublicKey.findProgramAddress(
+  authority: web3.PublicKey,
+  treasuryMint: web3.PublicKey
+): Promise<[web3.PublicKey, number]> => {
+  return web3.PublicKey.findProgramAddress(
     [Buffer.from(AUCTION_HOUSE), authority.toBuffer(), treasuryMint.toBuffer()],
     AUCTION_HOUSE_PROGRAM_ID
   );
 };
 
 export const getAuctionHouseAuthority = async (
-  creator: anchor.web3.PublicKey,
-  treasuryMint: anchor.web3.PublicKey,
-  marketProgramId: anchor.web3.PublicKey
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return anchor.web3.PublicKey.findProgramAddress(
+  creator: web3.PublicKey,
+  treasuryMint: web3.PublicKey,
+  marketProgramId: web3.PublicKey
+): Promise<[web3.PublicKey, number]> => {
+  return web3.PublicKey.findProgramAddress(
     [Buffer.from(CANDY_STORE), creator.toBuffer(), treasuryMint.toBuffer(), Buffer.from(AUTHORITY)],
     marketProgramId
   );
 };
 
 export const getCandyShop = async (
-  creator: anchor.web3.PublicKey,
-  treasuryMint: anchor.web3.PublicKey,
-  marketProgramId: anchor.web3.PublicKey
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return anchor.web3.PublicKey.findProgramAddress(
+  creator: web3.PublicKey,
+  treasuryMint: web3.PublicKey,
+  marketProgramId: web3.PublicKey
+): Promise<[web3.PublicKey, number]> => {
+  return web3.PublicKey.findProgramAddress(
     [Buffer.from(CANDY_STORE), creator.toBuffer(), treasuryMint.toBuffer()],
     marketProgramId
   );
 };
 
 export const getCandyShopSync = (
-  creator: anchor.web3.PublicKey,
-  treasuryMint: anchor.web3.PublicKey,
-  marketProgramId: anchor.web3.PublicKey
-): [anchor.web3.PublicKey, number] => {
+  creator: web3.PublicKey,
+  treasuryMint: web3.PublicKey,
+  marketProgramId: web3.PublicKey
+): [web3.PublicKey, number] => {
   return findProgramAddressSync(
     [Buffer.from(CANDY_STORE), creator.toBuffer(), treasuryMint.toBuffer()],
     marketProgramId
   );
 };
 
-export const getAuctionHouseProgramAsSigner = (): Promise<[anchor.web3.PublicKey, number]> => {
-  return anchor.web3.PublicKey.findProgramAddress(
+export const getAuctionHouseProgramAsSigner = (): Promise<[web3.PublicKey, number]> => {
+  return web3.PublicKey.findProgramAddress(
     [Buffer.from(AUCTION_HOUSE), Buffer.from('signer')],
     AUCTION_HOUSE_PROGRAM_ID
   );
 };
 
 export const getAuctionHouseTradeState = async (
-  auctionHouse: anchor.web3.PublicKey,
-  wallet: anchor.web3.PublicKey,
-  tokenAccount: anchor.web3.PublicKey,
-  treasuryMint: anchor.web3.PublicKey,
-  tokenMint: anchor.web3.PublicKey,
-  tokenSize: anchor.BN,
-  buyPrice: anchor.BN
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return anchor.web3.PublicKey.findProgramAddress(
+  auctionHouse: web3.PublicKey,
+  wallet: web3.PublicKey,
+  tokenAccount: web3.PublicKey,
+  treasuryMint: web3.PublicKey,
+  tokenMint: web3.PublicKey,
+  tokenSize: BN,
+  buyPrice: BN
+): Promise<[web3.PublicKey, number]> => {
+  return web3.PublicKey.findProgramAddress(
     [
       Buffer.from(AUCTION_HOUSE),
       wallet.toBuffer(),
@@ -82,57 +89,59 @@ export const getAuctionHouseTradeState = async (
   );
 };
 
-export const getAuctionHouseFeeAcct = async (
-  auctionHouse: anchor.web3.PublicKey
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return anchor.web3.PublicKey.findProgramAddress(
+export const getAuctionHouseFeeAcct = async (auctionHouse: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
+  return web3.PublicKey.findProgramAddress(
     [Buffer.from(AUCTION_HOUSE), auctionHouse.toBuffer(), Buffer.from(FEE_PAYER)],
     AUCTION_HOUSE_PROGRAM_ID
   );
 };
 
-export const getAuctionHouseTreasuryAcct = async (
-  auctionHouse: anchor.web3.PublicKey
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return anchor.web3.PublicKey.findProgramAddress(
+export const getAuctionHouseTreasuryAcct = async (auctionHouse: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
+  return web3.PublicKey.findProgramAddress(
     [Buffer.from(AUCTION_HOUSE), auctionHouse.toBuffer(), Buffer.from(TREASURY)],
     AUCTION_HOUSE_PROGRAM_ID
   );
 };
 
 export const getAuctionHouseEscrow = async (
-  auctionHouse: anchor.web3.PublicKey,
-  wallet: anchor.web3.PublicKey
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return anchor.web3.PublicKey.findProgramAddress(
+  auctionHouse: web3.PublicKey,
+  wallet: web3.PublicKey
+): Promise<[web3.PublicKey, number]> => {
+  return web3.PublicKey.findProgramAddress(
     [Buffer.from(AUCTION_HOUSE), auctionHouse.toBuffer(), wallet.toBuffer()],
     AUCTION_HOUSE_PROGRAM_ID
   );
 };
 
-export const getAtaForMint = async (
-  mint: anchor.web3.PublicKey,
-  buyer: anchor.web3.PublicKey
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return anchor.web3.PublicKey.findProgramAddress(
+export const getAtaForMint = async (mint: web3.PublicKey, buyer: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
+  return web3.PublicKey.findProgramAddress(
     [buyer.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mint.toBuffer()],
     ASSOCIATED_TOKEN_PROGRAM_ID
   );
 };
 
-export const getMetadataAccount = async (
-  tokenMint: anchor.web3.PublicKey
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return anchor.web3.PublicKey.findProgramAddress(
+export const getMetadataAccount = async (tokenMint: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
+  return web3.PublicKey.findProgramAddress(
     [Buffer.from('metadata'), metadataProgramId.toBuffer(), tokenMint.toBuffer()],
     metadataProgramId
   );
 };
 
+export const getSignedTx = async (wallet: AnchorWallet | web3.Keypair, transaction: web3.Transaction) => {
+  if ('signTransaction' in wallet) {
+    return wallet.signTransaction(transaction);
+  }
+  transaction.sign({
+    publicKey: wallet.publicKey,
+    secretKey: wallet.secretKey
+  });
+  return transaction;
+};
+
 export const checkNftAvailability = async (
-  connection: anchor.web3.Connection,
-  tokenAccount: anchor.web3.PublicKey,
-  sellTradeState: anchor.web3.PublicKey,
+  connection: web3.Connection,
+  tokenAccount: web3.PublicKey,
+  sellTradeState: web3.PublicKey,
   sellTradeStateBump: number,
   amount: number
 ) => {
@@ -151,8 +160,8 @@ export const checkNftAvailability = async (
 };
 
 export const checkPaymentAccountBalance = async (
-  connection: anchor.web3.Connection,
-  paymentAccount: anchor.web3.PublicKey,
+  connection: web3.Connection,
+  paymentAccount: web3.PublicKey,
   isNative: boolean,
   price: number
 ) => {
@@ -180,9 +189,9 @@ export const checkPaymentAccountBalance = async (
 };
 
 export const checkDelegateOnReceiptAccounts = async (
-  connection: anchor.web3.Connection,
-  sellerPaymentReceiptAccount: anchor.web3.PublicKey,
-  buyerReceiptTokenAccount: anchor.web3.PublicKey
+  connection: web3.Connection,
+  sellerPaymentReceiptAccount: web3.PublicKey,
+  buyerReceiptTokenAccount: web3.PublicKey
 ) => {
   const sellerPaymentReceiptAccountInfo = await getAccount(connection, sellerPaymentReceiptAccount);
   const buyerReceiptTokenAccountInfo = await getAccount(connection, buyerReceiptTokenAccount);
@@ -194,4 +203,50 @@ export const checkDelegateOnReceiptAccounts = async (
   if (buyerReceiptTokenAccountInfo.delegate !== null) {
     throw new CandyShopError(CandyShopErrorType.BuyerATACannotHaveDelegate);
   }
+};
+
+export const compileAtaCreationIxs = async (
+  payer: web3.PublicKey,
+  addresses: web3.PublicKey[],
+  mint: web3.PublicKey,
+  program: Program
+): Promise<web3.TransactionInstruction[] | null> => {
+  const ix: web3.TransactionInstruction[] = [];
+  for (const addr of addresses) {
+    const ataAddress = (await getAtaForMint(mint, new web3.PublicKey(addr)))[0];
+
+    const ataAccountRes = await safeAwait(getAccount(program.provider.connection, ataAddress));
+
+    const ataAccount = ataAccountRes.result;
+
+    if (!ataAccount || !ataAccount.isInitialized) {
+      ix.push(
+        createAssociatedTokenAccountInstruction(
+          payer,
+          ataAddress,
+          addr,
+          mint,
+          TOKEN_PROGRAM_ID,
+          ASSOCIATED_TOKEN_PROGRAM_ID
+        )
+      );
+    }
+  }
+  return ix;
+};
+
+export const sendTx = async (
+  wallet: AnchorWallet | web3.Keypair,
+  transaction: web3.Transaction,
+  program: Program
+): Promise<string> => {
+  const recentBlockhash = await program.provider.connection.getLatestBlockhash('finalized');
+  transaction.recentBlockhash = recentBlockhash.blockhash;
+  transaction.feePayer = wallet.publicKey;
+
+  const signedTx = await getSignedTx(wallet, transaction);
+
+  const txHash = await awaitTransactionSignatureConfirmation(program.provider.connection, signedTx.serialize());
+
+  return txHash;
 };

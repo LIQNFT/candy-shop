@@ -1,12 +1,7 @@
 import * as anchor from '@project-serum/anchor';
-import { Idl, Program, web3 } from '@project-serum/anchor';
-import {
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  createAssociatedTokenAccountInstruction,
-  getAccount,
-  TOKEN_PROGRAM_ID
-} from '@solana/spl-token';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { web3 } from '@project-serum/anchor';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { BuyAndExecuteSaleTransactionParams } from '../model';
 import { CandyShopError, CandyShopErrorType } from '../../utils';
 import { Metadata, parseMetadata } from '../../utils/parseData';
 import { AUCTION_HOUSE_PROGRAM_ID, WRAPPED_SOL_MINT } from '../constants';
@@ -17,27 +12,30 @@ import {
   getAuctionHouseTradeState,
   checkDelegateOnReceiptAccounts,
   checkNftAvailability,
-  checkPaymentAccountBalance
+  checkPaymentAccountBalance,
+  sendTx,
+  compileAtaCreationIxs
 } from '../utils';
-import { awaitTransactionSignatureConfirmation } from './submitTx';
 
-export async function buyAndExecuteSale(
-  wallet: AnchorWallet | web3.Keypair,
-  counterParty: web3.PublicKey,
-  tokenAccount: web3.PublicKey,
-  tokenAccountMint: web3.PublicKey,
-  treasuryMint: web3.PublicKey,
-  auctionHouseTreasury: web3.PublicKey,
-  metadata: web3.PublicKey,
-  authority: web3.PublicKey,
-  authorityBump: number,
-  auctionHouse: web3.PublicKey,
-  feeAccount: web3.PublicKey,
-  candyShop: web3.PublicKey,
-  price: anchor.BN,
-  amount: anchor.BN,
-  program: Program<Idl>
-) {
+export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionParams) {
+  const {
+    wallet,
+    counterParty,
+    tokenAccount,
+    tokenAccountMint,
+    treasuryMint,
+    auctionHouseTreasury,
+    metadata,
+    authority,
+    authorityBump,
+    auctionHouse,
+    feeAccount,
+    candyShop,
+    price,
+    amount,
+    program
+  } = params;
+
   if (counterParty.toString() === wallet.publicKey.toString()) {
     throw new CandyShopError(CandyShopErrorType.BuyerOwnsListing);
   }
@@ -128,25 +126,24 @@ export async function buyAndExecuteSale(
 
   const accountsRequireAta = [] as Array<web3.PublicKey>;
 
-  if (metadataDecoded != null) {
-    if (metadataDecoded.data && metadataDecoded.data.creators) {
-      for (let i = 0; i < metadataDecoded.data.creators.length; i++) {
-        const creatorPublicKey = new anchor.web3.PublicKey(metadataDecoded.data.creators[i].address);
+  if (metadataDecoded && metadataDecoded.data && metadataDecoded.data.creators) {
+    for (let creator of metadataDecoded.data.creators) {
+      const creatorPublicKey = new anchor.web3.PublicKey(creator.address);
+
+      remainingAccounts.push({
+        pubkey: creatorPublicKey,
+        isWritable: true,
+        isSigner: false
+      });
+
+      if (!isNative) {
+        const ataAddress = (await getAtaForMint(treasuryMint, creatorPublicKey))[0];
         remainingAccounts.push({
-          pubkey: creatorPublicKey,
+          pubkey: ataAddress,
           isWritable: true,
           isSigner: false
         });
-
-        if (!isNative) {
-          const ataAddress = (await getAtaForMint(treasuryMint, creatorPublicKey))[0];
-          remainingAccounts.push({
-            pubkey: ataAddress,
-            isWritable: true,
-            isSigner: false
-          });
-          accountsRequireAta.push(creatorPublicKey);
-        }
+        accountsRequireAta.push(creatorPublicKey);
       }
     }
   }
@@ -238,57 +235,4 @@ export async function buyAndExecuteSale(
 
   console.log('sale executed');
   return buyAndExecuteTx;
-}
-
-async function compileAtaCreationIxs(
-  payer: web3.PublicKey,
-  addresses: web3.PublicKey[],
-  mint: web3.PublicKey,
-  program: Program
-): Promise<web3.TransactionInstruction[] | null> {
-  const ix: web3.TransactionInstruction[] = [];
-  for (const addr of addresses) {
-    const ataAddress = (await getAtaForMint(mint, new anchor.web3.PublicKey(addr)))[0];
-
-    const ataAccount = await getAccount(program.provider.connection, ataAddress).catch((err: Error) => {
-      console.log('fetch ata error', err);
-      return null;
-    });
-    if (!ataAccount || !ataAccount.isInitialized) {
-      ix.push(
-        createAssociatedTokenAccountInstruction(
-          payer,
-          ataAddress,
-          addr,
-          mint,
-          TOKEN_PROGRAM_ID,
-          ASSOCIATED_TOKEN_PROGRAM_ID
-        )
-      );
-    }
-  }
-  return ix;
-}
-
-async function sendTx(
-  wallet: AnchorWallet | web3.Keypair,
-  transaction: web3.Transaction,
-  program: Program
-): Promise<string> {
-  const recentBlockhash = await program.provider.connection.getLatestBlockhash('finalized');
-  transaction.recentBlockhash = recentBlockhash.blockhash;
-  transaction.feePayer = wallet.publicKey;
-
-  const signedTx =
-    'signTransaction' in wallet
-      ? await wallet.signTransaction(transaction)
-      : await (async () => {
-          await transaction.sign({
-            publicKey: wallet.publicKey,
-            secretKey: wallet.secretKey
-          });
-          return transaction;
-        })();
-  const txHash = await awaitTransactionSignatureConfirmation(program.provider.connection, signedTx.serialize());
-  return txHash;
 }

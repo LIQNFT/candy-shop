@@ -26,7 +26,12 @@ export const CancelModalDetail = ({ candyShop, order, onChangeStep, wallet }: Ca
   const cancel = async () => {
     onChangeStep(TransactionState.PROCESSING);
     candyShop
-      .cancel(new web3.PublicKey(order.tokenAccount), new web3.PublicKey(order.tokenMint), new BN(order.price), wallet)
+      .cancel({
+        tokenAccount: new web3.PublicKey(order.tokenAccount),
+        tokenMint: new web3.PublicKey(order.tokenMint),
+        price: new BN(order.price),
+        wallet
+      })
       .then(() => {
         timeoutRef.current = setTimeout(() => {
           onChangeStep(TransactionState.CONFIRMED);

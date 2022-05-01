@@ -83,13 +83,13 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
     if (order && wallet) {
       setState(TransactionState.PROCESSING);
       return candyShop
-        .buy(
-          new web3.PublicKey(order.walletAddress),
-          new web3.PublicKey(order.tokenAccount),
-          new web3.PublicKey(order.tokenMint),
-          new BN(order.price),
+        .buy({
+          seller: new web3.PublicKey(order.walletAddress),
+          tokenAccount: new web3.PublicKey(order.tokenAccount),
+          tokenMint: new web3.PublicKey(order.tokenMint),
+          price: new BN(order.price),
           wallet
-        )
+        })
         .then((txHash) => {
           setHash(txHash);
           console.log('Buy made with transaction hash', txHash);
