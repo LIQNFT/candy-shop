@@ -6,6 +6,7 @@
 
 - [Intro](#intro)
 - [Key Features](#key-features)
+- [Releases](#releases)
 - [Invoke Your Candy Shop](#invoke-your-candy-shop)
 - [Install Candy Shop](#install-candyshop)
   - [How to use CandyShop](#how-to-use-candyshop)
@@ -45,6 +46,12 @@ Candy Shop provides an easy to integrate marketplace protocol & toolset with a f
 - **Transparency.**
   - Candy Shop is an open source and on-chain protocol, providing your community with full transparency on what is happening behind the scene for your marketplace.
 
+## Releases
+
+Please refer to the tag notes for latest release. 
+- https://github.com/LIQNFT/candy-shop/tags
+
+Branch `master` contains the latest changes and might not be ready for production uses.
 ## Invoke Your Candy Shop
 
 Create your Candy Shop [here](https://candy.liqnft.com/my-shop).
@@ -67,10 +74,6 @@ or
 ```bash
 yarn add @liqnft/candy-shop
 ```
-
-## Releases
-
-Please refer to the tags for the releases. Branch `master` contains the latest changes and might not be ready for production uses.
 
 ### How to use CandyShop
 
@@ -224,22 +227,23 @@ import { OrderDetail } from '@liqnft/candy-shop';
 
 For Candy Shops that use a SPL token as the payment currency, if any NFT's are listed on it that have 4 creators or more, users trying to buy those NFT's will not be able to successfully do so. This is because in this case, the Solana transaction size becomes too large, exceeding the current Solana transaction size limit. Workarounds for this issue are actively being looked into.
 
-# Contribute to Candy Shop
+## Contribute to Candy Shop
 
 We're welcoming to receive any contribution for candy-shop! Feel free to open a PR can request LIQNFT team to review.
 
 Following is some set up you might need to know before building up together.
 
-## Prerequisite
+### Prerequisite
 
 Install Node (above 14.17.x), NPM, Yarn
 
-## Launch example
+### Launch example
 
 Installing & Building all required packages by `setup.sh`
 
+Use `setup.sh` in root folder.
 ```bash
-// run chmod when executing it first time
+# run chmod when executing it first time
 chmod 755 setup.sh
 ./setup.sh
 ```
@@ -250,7 +254,7 @@ In root folder, hosting dist from example at `localhost:1234`
 yarn start
 ```
 
-## Clean node_modules for clean building
+### Clean node_modules for clean building
 
 In root folder
 
@@ -258,7 +262,46 @@ In root folder
 yarn clean:all
 ```
 
-## Formatting
+We also have individual clean up scripts provided in root's package.json.
+### Symbolic link between ui and sdk
+
+Currently, `core/ui` depends on the published package from `core/sdk`, if development both locally, we need to use symbolic link to let `core/ui` use the live changes from `core/sdk`.
+
+Use `workspace_symbolic_link.sh` in root folder.
+- Make sure you've built the `core/sdk` before linking.
+```bash
+# run chmod when executing it first time
+chmod 755 workspace_symbolic_link.sh
+./workspace_symbolic_link.sh
+```
+
+It should show yarn link success in terminal.
+```bash
+success Using linked package for "@liqnft/candy-shop-sdk".
+```
+
+#### How to reflect the changes after linked
+
+Always build sdk at first.
+
+1. In `core/sdk`
+
+```bash
+yarn build
+```
+2. In `core/ui`
+
+```bash
+yarn build
+```
+3. In root folder
+```bash
+yarn build
+```
+
+If you're using `yarn start` in root folder while development, it will automatically detect the changes from `core/ui` once you performed the `yarn build` under the `core/ui`.
+
+### Formatting
 
 In root folder
 
@@ -266,7 +309,7 @@ In root folder
 yarn format:fix
 ```
 
-## Branch Naming
+### Branch Naming
 
 To help reviewers differentiate the PR, define your dev branch with module name like following.
 
@@ -282,7 +325,7 @@ e.g. `core/ui/update-button-styles`, `core/refactor-backend-api`, etc.
 | chore | Changes to the build process or auxiliary tools and libraries  
 | doc | Documentation only changes
 
-## Commit Message
+### Commit Message
 
 e.g.
 
@@ -292,7 +335,7 @@ e.g.
 Descriptive message to record what will change.
 ```
 
-### Internal folks
+#### Internal Folks
 
 Include the JIRA Ticket ID in top of your commit message as possible as you can.
 
