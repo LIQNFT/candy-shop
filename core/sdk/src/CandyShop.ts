@@ -1,4 +1,4 @@
-import { BN, Program, Provider, web3 } from '@project-serum/anchor';
+import { BN, Idl, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import axiosInstance, { configBaseUrl } from './config';
 
@@ -38,6 +38,7 @@ import {
   getCandyShopSync,
   getMetadataAccount
 } from './api/utils';
+import { CandyShopBuyParams, CandyShopCancelParams, CandyShopSellParams, CandyShopSettings } from './CandyShopModel';
 
 const DEFAULT_CURRENCY_SYMBOL = 'SOL';
 const DEFAULT_CURRENCY_DECIMALS = 9;
@@ -45,21 +46,6 @@ const DEFAULT_PRICE_DECIMALS = 3;
 const DEFAULT_VOLUME_DECIMALS = 1;
 const DEFAULT_MAINNET_CONNECTION_URL = 'https://ssc-dao.genesysgo.net/';
 let staticNodeWallet: any = null;
-
-/**
- * @field currencySymbol your shop transaction currency symbol (default is SOL)
- * @field currencyDecimals your shop transaction currency decimals (default is 9 for SOL)
- * @field priceDecimals number of decimals to display for price numbers (default is 3)
- * @field volumeDecimals number of decimals to display for volume numbers (default is 1)
- */
-export type CandyShopSettings = {
-  currencySymbol: string;
-  currencyDecimals: number;
-  priceDecimals: number;
-  volumeDecimals: number;
-  mainnetConnectionUrl: string;
-  connectionConfig: object | undefined;
-};
 
 /**
  * @class CandyShop
@@ -75,6 +61,8 @@ export class CandyShop {
   private _program: Program | undefined;
 
   /**
+   * Initiate the CandyShop object
+   *
    * @constructor
    * @param candyShopCreatorAddress creator address (i.e. your wallet address)
    * @param treasuryMint treasury mint (i.e. currency to buy and sell with)
@@ -107,7 +95,7 @@ export class CandyShop {
     configBaseUrl(env);
   }
   /**
-   * Initiate the CandyShop object
+   * Get JSON rpc connection
    */
   public connection(): web3.Connection {
     const options = Provider.defaultOptions();
@@ -121,7 +109,12 @@ export class CandyShop {
     );
   }
 
-  async getStaticProgram(wallet: AnchorWallet | web3.Keypair): Promise<any> {
+  /**
+   * Gets anchor Program object for Candy Shop program
+   *
+   * @param {AnchorWallet | web3.Keypair} wallet Wallet or keypair of connected user
+   */
+  async getStaticProgram(wallet: AnchorWallet | web3.Keypair): Promise<Program<Idl>> {
     if (this._program) return this._program;
 
     const options = Provider.defaultOptions();
@@ -178,14 +171,14 @@ export class CandyShop {
   get volumeDecimals(): number {
     return this._settings.volumeDecimals;
   }
+  /**
+   * Executes Candy Shop __Buy__ and __ExecuteSale__ actions
+   *
+   * @param {CandyShopBuyParams} params required parameters for buy action
+   */
+  public async buy(params: CandyShopBuyParams): Promise<string> {
+    const { seller, tokenAccount, tokenMint, price, wallet } = params;
 
-  public async buy(
-    seller: web3.PublicKey,
-    tokenAccount: web3.PublicKey,
-    tokenMint: web3.PublicKey,
-    price: BN,
-    wallet: AnchorWallet | web3.Keypair
-  ): Promise<string> {
     console.log('CandyShop: performing buy', {
       seller: seller.toString(),
       tokenAccount: tokenAccount.toString(),
@@ -208,52 +201,53 @@ export class CandyShop {
     let txHash;
 
     if (this._programId.equals(CANDY_SHOP_INS_PROGRAM_ID)) {
-      txHash = await insBuyAndExecuteSale(
+      txHash = await insBuyAndExecuteSale({
         wallet,
-        seller,
+        counterParty: seller,
         tokenAccount,
-        tokenMint,
-        this._treasuryMint,
-        treasuryAccount,
+        tokenAccountMint: tokenMint,
+        treasuryMint: this._treasuryMint,
+        auctionHouseTreasury: treasuryAccount,
         metadata,
-        auctionHouseAuthority,
+        authority: auctionHouseAuthority,
         authorityBump,
         auctionHouse,
         feeAccount,
-        this._candyShopAddress,
+        candyShop: this._candyShopAddress,
         price,
-        new BN(1),
+        amount: new BN(1),
         program
-      );
+      });
     } else {
-      txHash = await buyAndExecuteSale(
+      txHash = await buyAndExecuteSale({
         wallet,
-        seller,
+        counterParty: seller,
         tokenAccount,
-        tokenMint,
-        this._treasuryMint,
-        treasuryAccount,
+        tokenAccountMint: tokenMint,
+        treasuryMint: this._treasuryMint,
+        auctionHouseTreasury: treasuryAccount,
         metadata,
-        auctionHouseAuthority,
+        authority: auctionHouseAuthority,
         authorityBump,
         auctionHouse,
         feeAccount,
-        this._candyShopAddress,
+        candyShop: this._candyShopAddress,
         price,
-        new BN(1),
+        amount: new BN(1),
         program
-      );
+      });
     }
 
     return txHash;
   }
+  /**
+   * Executes Candy Shop __Sell__ action
+   *
+   * @param {CandyShopSellParams} params required parameters for sell action
+   */
+  public async sell(params: CandyShopSellParams): Promise<string> {
+    const { tokenAccount, tokenMint, price, wallet } = params;
 
-  public async sell(
-    tokenAccount: web3.PublicKey,
-    tokenMint: web3.PublicKey,
-    price: BN,
-    wallet: AnchorWallet | web3.Keypair
-  ): Promise<string> {
     console.log('CandyShop: performing sell', {
       tokenMint: tokenMint.toString(),
       tokenAccount: tokenAccount.toString(),
@@ -272,30 +266,31 @@ export class CandyShop {
 
     const [metadata] = await getMetadataAccount(tokenMint);
 
-    const txHash = await sellNft(
+    const txHash = await sellNft({
       wallet,
       tokenAccount,
-      tokenMint,
-      this._treasuryMint,
+      tokenAccountMint: tokenMint,
+      treasuryMint: this._treasuryMint,
       metadata,
-      auctionHouseAuthority,
+      authority: auctionHouseAuthority,
       authorityBump,
       auctionHouse,
       feeAccount,
-      this._candyShopAddress,
+      candyShop: this._candyShopAddress,
       price,
-      new BN(1),
+      amount: new BN(1),
       program
-    );
+    });
     return txHash;
   }
+  /**
+   * Executes Candy Shop __Cancel__ action
+   *
+   * @param {CandyShopCancelParams} params required parameters for cancel action
+   */
+  async cancel(params: CandyShopCancelParams): Promise<string> {
+    const { tokenAccount, tokenMint, price, wallet } = params;
 
-  async cancel(
-    tokenAccount: web3.PublicKey,
-    tokenMint: web3.PublicKey,
-    price: BN,
-    wallet: AnchorWallet | web3.Keypair
-  ): Promise<string> {
     console.log('CandyShop: performing cancel', {
       tokenAccount: tokenAccount.toString(),
       tokenMint: tokenMint.toString(),
@@ -322,39 +317,52 @@ export class CandyShop {
       price
     );
 
-    const txHash = await cancelOrder(
+    const txHash = await cancelOrder({
       wallet,
       tokenAccount,
-      tokenMint,
-      this._treasuryMint,
-      auctionHouseAuthority,
+      tokenAccountMint: tokenMint,
+      treasuryMint: this._treasuryMint,
+      authority: auctionHouseAuthority,
       authorityBump,
       auctionHouse,
       feeAccount,
       tradeState,
-      this._candyShopAddress,
+      candyShop: this._candyShopAddress,
       price,
-      new BN(1),
+      amount: new BN(1),
       program
-    );
+    });
 
     return txHash;
   }
-
+  /**
+   * Fetch stats associated with this Candy Shop
+   */
   public async stats(): Promise<ShopStats> {
     console.log('CandyShop: performing stats');
     return fetchStatsById(axiosInstance, this._candyShopAddress.toString());
   }
-
+  /**
+   * Fetch transastions made through this Candy Shop
+   */
   public async transactions(): Promise<Trade[]> {
     return fetchTradeById(axiosInstance, this._candyShopAddress.toString());
   }
-
+  /**
+   * Fetch information on the specified nft
+   *
+   * @param {string} mint base 58 encoded mint key string
+   */
   public async nftInfo(mint: string): Promise<Nft> {
     console.log('CandyShop: performing nftInfo', { mint });
     return fetchNftByMint(axiosInstance, mint);
   }
-
+  /**
+   * Fetch orders matching specified filters
+   *
+   * @param {OrdersFilterQuery} ordersFilterQuery filters to apply to search
+   * @param {number[]} [identifiers] optional list of identifiers to apply to query string
+   */
   async orders(ordersFilterQuery: OrdersFilterQuery, identifiers?: number[]): Promise<ListBase<Order>> {
     console.log('CandyShop: performing orders', {
       identifiers,
@@ -372,31 +380,49 @@ export class CandyShop {
       identifiers
     );
   }
-
+  /**
+   * Fetch active orders created by specified wallet address
+   *
+   * @param {string} walletAddress base 58 encoded public key string
+   */
   public async activeOrdersByWalletAddress(walletAddress: string): Promise<Order[]> {
     console.log('CandyShop: performing activeOrdersByWalletAddress', {
       walletAddress
     });
     return fetchOrdersByStoreIdAndWalletAddress(axiosInstance, this._candyShopAddress.toString(), walletAddress);
   }
-
+  /**
+   * Fetch list of whilisted NFTs for this Candy Shop
+   */
   public async shopWlNfts(): Promise<ListBase<WhitelistNft>> {
     console.log('CandyShop: performing shopWlNfts');
     return fetchShopWhitelistNftByShopId(axiosInstance, this._candyShopAddress.toString());
   }
-
+  /**
+   * Fetch active orders assosiated withh specified mint address
+   *
+   * @param {string} mintAddress base 58 encoded mint key string
+   */
   public async activeOrderByMintAddress(mintAddress: string): Promise<SingleBase<Order>> {
     console.log('CandyShop: performing activeOrderByMintAddress', {
       mintAddress
     });
     return fetchOrderByTokenMintAndShopId(axiosInstance, mintAddress, this._candyShopAddress.toString());
   }
-
+  /**
+   * Fetch the data for Candy Shop with this Shop's public key
+   */
   public async fetchShopByShopId(): Promise<SingleBase<CandyShopResponse>> {
     return fetchShopByShopId(axiosInstance, this._candyShopAddress.toString());
   }
 }
 
+/**
+ * Get NodeWallet from specified keypair
+ *
+ * @param {Keypair} wallet keypair wallet will be created for
+ * @returns
+ */
 function getNodeWallet(wallet: web3.Keypair) {
   if (!staticNodeWallet) {
     const NodeWallet = require('@project-serum/anchor/dist/cjs/nodewallet').default;

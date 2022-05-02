@@ -58,12 +58,12 @@ export const SellModal: React.FC<SellModalProps> = ({ onCancel: onUnSelectItem, 
 
     console.log(candyShop);
     return candyShop
-      .sell(
-        new web3.PublicKey(nft.tokenAccountAddress),
-        new web3.PublicKey(nft.tokenMintAddress),
-        new BN(price),
+      .sell({
+        tokenAccount: new web3.PublicKey(nft.tokenAccountAddress),
+        tokenMint: new web3.PublicKey(nft.tokenMintAddress),
+        price: new BN(price),
         wallet
-      )
+      })
       .then((txHash) => {
         console.log('SellModal: Place sell order with transaction hash= ', txHash);
         timeoutRef.current = setTimeout(() => {

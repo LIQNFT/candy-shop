@@ -1,25 +1,26 @@
 import * as anchor from '@project-serum/anchor';
-import { web3 } from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { SellTransactionParams } from '../model';
 import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 import { getAuctionHouseProgramAsSigner, getAuctionHouseTradeState } from '../utils';
 
-export async function sellNft(
-  wallet: AnchorWallet | web3.Keypair,
-  tokenAccount: anchor.web3.PublicKey,
-  tokenAccountMint: anchor.web3.PublicKey,
-  treasuryMint: anchor.web3.PublicKey,
-  metadata: anchor.web3.PublicKey,
-  authority: anchor.web3.PublicKey,
-  authorityBump: number,
-  auctionHouse: anchor.web3.PublicKey,
-  feeAccount: anchor.web3.PublicKey,
-  candyShop: anchor.web3.PublicKey,
-  price: anchor.BN,
-  amount: anchor.BN,
-  program: anchor.Program
-): Promise<string> {
+export async function sellNft(params: SellTransactionParams): Promise<string> {
+  const {
+    wallet,
+    tokenAccount,
+    tokenAccountMint,
+    treasuryMint,
+    metadata,
+    authority,
+    authorityBump,
+    auctionHouse,
+    feeAccount,
+    candyShop,
+    price,
+    amount,
+    program
+  } = params;
+
   const [tradeState, tradeStateBump] = await getAuctionHouseTradeState(
     auctionHouse,
     wallet.publicKey,

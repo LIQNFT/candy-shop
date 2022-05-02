@@ -38,16 +38,37 @@ describe('e2e token flow', function () {
 
     const candyShop = new CandyShop(CREATOR_ADDRESS, TREASURY_MINT, CANDY_SHOP_PROGRAM_ID, 'devnet');
 
-    const sellTxHash = await candyShop.sell(TOKEN_ACCOUNT, TOKEN_MINT, PRICE, user1);
+    const sellTxHash = await candyShop.sell({
+      tokenAccount: TOKEN_ACCOUNT,
+      tokenMint: TOKEN_MINT,
+      price: PRICE,
+      wallet: user1
+    });
     console.log('sellTxHash ', sellTxHash);
 
-    const cancelTxHash = await candyShop.cancel(TOKEN_ACCOUNT, TOKEN_MINT, PRICE, user1);
+    const cancelTxHash = await candyShop.cancel({
+      tokenAccount: TOKEN_ACCOUNT,
+      tokenMint: TOKEN_MINT,
+      price: PRICE,
+      wallet: user1
+    });
     console.log('cancelTxHash ', cancelTxHash);
 
-    const sellTxHash2 = await candyShop.sell(TOKEN_ACCOUNT, TOKEN_MINT, PRICE, user1);
+    const sellTxHash2 = await candyShop.sell({
+      tokenAccount: TOKEN_ACCOUNT,
+      tokenMint: TOKEN_MINT,
+      price: PRICE,
+      wallet: user1
+    });
     console.log('sellTxHash2 ', sellTxHash2);
 
-    const buyTxHash = await candyShop.buy(user1.publicKey, TOKEN_ACCOUNT, TOKEN_MINT, PRICE, user2);
+    const buyTxHash = await candyShop.buy({
+      seller: user1.publicKey,
+      tokenAccount: TOKEN_ACCOUNT,
+      tokenMint: TOKEN_MINT,
+      price: PRICE,
+      wallet: user2
+    });
     console.log('buyTxHash ', buyTxHash);
 
     const user1Ata = await getAssociatedTokenAddress(TOKEN_MINT, user1.publicKey);

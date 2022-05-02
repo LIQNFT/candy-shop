@@ -1,25 +1,25 @@
-import * as anchor from '@project-serum/anchor';
-import { Idl, Program, web3 } from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { getAuctionHouseTradeState, checkNftAvailability } from '../utils';
 import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
+import { CancelTransactionParams } from '../model';
 
-export async function cancelOrder(
-  wallet: AnchorWallet | web3.Keypair,
-  tokenAccount: web3.PublicKey,
-  tokenAccountMint: web3.PublicKey,
-  treasuryMint: web3.PublicKey,
-  authority: web3.PublicKey,
-  authorityBump: number,
-  auctionHouse: web3.PublicKey,
-  feeAccount: web3.PublicKey,
-  tradeState: web3.PublicKey,
-  candyShop: web3.PublicKey,
-  price: anchor.BN,
-  amount: anchor.BN,
-  program: Program<Idl>
-) {
+export async function cancelOrder(params: CancelTransactionParams) {
+  const {
+    wallet,
+    tokenAccount,
+    tokenAccountMint,
+    treasuryMint,
+    authority,
+    authorityBump,
+    auctionHouse,
+    feeAccount,
+    tradeState,
+    candyShop,
+    price,
+    amount,
+    program
+  } = params;
+
   const [sellTradeState, sellTradeStateBump] = await getAuctionHouseTradeState(
     auctionHouse,
     wallet.publicKey,
