@@ -154,12 +154,15 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
   }
 
   const loading =
-    loadingNFTStatus === LoadStatus.ToLoad || orderLoading !== LoadStatus.Loaded || shopLoading !== LoadStatus.Loaded;
+    loadingNFTStatus === LoadStatus.ToLoad ||
+    orderLoading !== LoadStatus.Loaded ||
+    shopLoading !== LoadStatus.Loaded ||
+    !shop;
 
   return (
     <div style={style} className="candy-sell-component">
       <div className="candy-container">
-        {(loading || nfts.length === 0) && (
+        {loading ? (
           <div className="candy-container-list">
             {Array(4)
               .fill(0)
@@ -169,8 +172,9 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
                 </div>
               ))}
           </div>
-        )}
-        {!loading && shop && (
+        ) : nfts.length === 0 ? (
+          <Empty description="No NFTs found" />
+        ) : (
           <div className="candy-container-list">
             {nfts.map((item) => (
               <div key={item.tokenAccountAddress}>
@@ -185,7 +189,6 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
             ))}
           </div>
         )}
-        {loadingNFTStatus === LoadStatus.Loaded && nfts.length === 0 && <Empty description="No NFTs found" />}
       </div>
     </div>
   );
