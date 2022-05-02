@@ -56,15 +56,12 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, candyShop, walletCo
           style={{ borderTopRightRadius: 14, borderTopLeftRadius: 14 }}
         />
         <div className="candy-order-info">
-          <div className="candy-order-name-container">
-            <div className="name">{order?.name}</div>
-            <div className="ticker candy-line-limit-1">{order?.ticker}</div>
+          <div className="candy-order-name candy-line-limit-1">
+            {`${order?.name}${order?.edition !== 0 ? ` #${order?.edition}` : ''}`}
           </div>
-          <div className="candy-order-price-container">
-            <div className="text">Price</div>
-            <div className="price candy-line-limit-1">
-              {orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}
-            </div>
+          <div className="candy-order-ticker candy-line-limit-1">{order?.ticker}</div>
+          <div className="candy-order-price candy-line-limit-1">
+            {orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}
           </div>
         </div>
       </div>
