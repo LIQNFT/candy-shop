@@ -1,0 +1,43 @@
+name: Build
+
+on: 
+  push:
+    branches:
+    - master
+    paths-ignore:
+    - '**/*.md'
+    - '*.sh'
+
+jobs:
+  Build:
+    name: CI - Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['14.17.x']
+    steps:
+      # Checks out a copy of your repository on the ubuntu-latest machine
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      # Set up required dev env
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      
+      # Building
+      - name: Install dependencies
+        run: npm install --global yarn && yarn
+      - name: Install and Link core/sdk
+        working-directory: ./core/sdk
+        run: |
+          yarn && yarn build
+          yarn link
+      - name: Install and Link core/ui to core/sdk
+        working-directory: ./core/ui
+        run: |
+          yarn link @liqnft/candy-shop-sdk
+          yarn && yarn build
+      - name: Build example
+        run: yarn build
