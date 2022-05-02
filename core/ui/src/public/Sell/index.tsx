@@ -47,6 +47,7 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
   const { refetch } = useContext(CandyContext);
   // global array for concat batches.
   const allNFTs = useRef<SingleTokenInfo[]>([]);
+  const firstBatchNFTLoaded = useRef<boolean>(false);
 
   useEffect(() => {
     if (!candyShop || !walletPublicKey) return;
@@ -81,6 +82,9 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
   }, [candyShop]);
 
   const getUserNFTFromBatch = useCallback((batchNFTs: SingleTokenInfo[]) => {
+    if (!firstBatchNFTLoaded.current) {
+      firstBatchNFTLoaded.current = true;
+    }
     console.log('getUserNFTBatchResult: amount of valid batch NFTs=', batchNFTs.length);
     const userNFTs = allNFTs.current.concat(batchNFTs);
     allNFTs.current = userNFTs;
@@ -154,15 +158,12 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
   }
 
   const loading =
-    loadingNFTStatus === LoadStatus.ToLoad ||
-    orderLoading !== LoadStatus.Loaded ||
-    shopLoading !== LoadStatus.Loaded ||
-    !shop;
+    !firstBatchNFTLoaded.current || orderLoading !== LoadStatus.Loaded || shopLoading !== LoadStatus.Loaded;
 
   return (
     <div style={style} className="candy-sell-component">
       <div className="candy-container">
-        {loading ? (
+        {loading && (
           <div className="candy-container-list">
             {Array(4)
               .fill(0)
@@ -172,22 +173,26 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
                 </div>
               ))}
           </div>
-        ) : nfts.length === 0 ? (
-          <Empty description="No NFTs found" />
-        ) : (
-          <div className="candy-container-list">
-            {nfts.map((item) => (
-              <div key={item.tokenAccountAddress}>
-                <Nft
-                  nft={item}
-                  candyShop={candyShop}
-                  wallet={wallet}
-                  sellDetail={hashSellOrders[item.tokenMintAddress]}
-                  shop={shop}
-                />
+        )}
+        {!loading && (
+          <>
+            {nfts.length > 0 && shop && (
+              <div className="candy-container-list">
+                {nfts.map((item) => (
+                  <div key={item.tokenAccountAddress}>
+                    <Nft
+                      nft={item}
+                      candyShop={candyShop}
+                      wallet={wallet}
+                      sellDetail={hashSellOrders[item.tokenMintAddress]}
+                      shop={shop}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            )}
+            {nfts.length === 0 && <Empty description="No NFTs found" />}
+          </>
         )}
       </div>
     </div>
