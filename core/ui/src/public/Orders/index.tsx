@@ -18,6 +18,7 @@ interface OrdersProps {
   identifiers?: number[];
   filters?: Array<{ name: string; identifier: number | Array<number> }>;
   style?: { [key: string]: string | number } | undefined;
+  defaultFilterName?: string;
 }
 
 /**
@@ -30,16 +31,27 @@ export const Orders: React.FC<OrdersProps> = ({
   url,
   identifiers,
   filters,
-  style
+  style,
+  defaultFilterName
 }) => {
   const [sortedByOption, setSortedByOption] = useState(SORT_OPTIONS[0]);
   const [orders, setOrders] = useState<any[]>([]);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [loading, setLoading] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
-  const [filterIdentifiers, setFilterIdentifiers] = useState<number[]>();
-  const [filterName, setFilterName] = useState<string | undefined>(undefined);
+  const [filterName, setFilterName] = useState<string | undefined>(defaultFilterName);
   const { refetch } = useContext(CandyContext);
+
+  let defaultFilterIdentifiers = undefined;
+  if (filters && defaultFilterName) {
+    let defaultFilter = filters.find((filter) => filter.name === defaultFilterName);
+    if (defaultFilter !== undefined) {
+      defaultFilterIdentifiers = Array.isArray(defaultFilter.identifier)
+        ? defaultFilter.identifier
+        : [defaultFilter.identifier];
+    }
+  }
+  const [filterIdentifiers, setFilterIdentifiers] = useState<number[] | undefined>(defaultFilterIdentifiers);
 
   const getUniqueIdentifiers = useCallback(() => {
     const uniqueIdentifiers = [...(identifiers || []), ...(filterIdentifiers || [])];
