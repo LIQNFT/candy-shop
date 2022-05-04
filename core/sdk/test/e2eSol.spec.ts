@@ -67,7 +67,7 @@ describe('e2e sol flow', function () {
       tokenAccount: TOKEN_ACCOUNT,
       tokenMint: TOKEN_MINT,
       price: PRICE,
-      wallet: user1
+      wallet: user2
     });
     console.log('buyTxHash ', buyTxHash);
 
