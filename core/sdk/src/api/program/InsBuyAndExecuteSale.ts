@@ -91,8 +91,9 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     amount.toNumber()
   );
 
-  const ix = await program.instruction.buyWithProxy(price, amount, buyTradeStateBump, buyerEscrowBump, authorityBump, {
-    accounts: {
+  const ix = await program.methods
+    .buyWithProxy(price, amount, buyTradeStateBump, buyerEscrowBump, authorityBump)
+    .accounts({
       wallet: wallet.publicKey,
       paymentAccount,
       transferAuthority: wallet.publicKey,
@@ -109,8 +110,8 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
       tokenProgram: TOKEN_PROGRAM_ID,
       systemProgram: web3.SystemProgram.programId,
       rent: web3.SYSVAR_RENT_PUBKEY
-    }
-  });
+    })
+    .instruction();
 
   const metadataObj = await program.provider.connection.getAccountInfo(metadata);
 
@@ -220,44 +221,36 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     }
   }
 
-  const ix2 = await program.instruction.executeSaleWithProxy(
-    price,
-    amount,
-    buyerEscrowBump,
-    freeTradeStateBump,
-    programAsSignerBump,
-    authorityBump,
-    true,
-    {
-      accounts: {
-        buyer: wallet.publicKey,
-        seller: counterParty,
-        tokenAccount,
-        tokenMint: tokenAccountMint,
-        metadata,
-        treasuryMint,
-        escrowPaymentAccount: buyerEscrow,
-        sellerPaymentReceiptAccount,
-        buyerReceiptTokenAccount,
-        authority,
-        auctionHouse,
-        auctionHouseFeeAccount: feeAccount,
-        auctionHouseTreasury,
-        buyerTradeState: buyTradeState,
-        sellerTradeState: sellTradeState,
-        freeTradeState: freeTradeState,
-        candyShop,
-        treasuryWithdrawalDestination: authority,
-        ahProgram: AUCTION_HOUSE_PROGRAM_ID,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        systemProgram: web3.SystemProgram.programId,
-        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-        programAsSigner: programAsSigner,
-        rent: web3.SYSVAR_RENT_PUBKEY
-      },
-      remainingAccounts
-    }
-  );
+  const ix2 = await program.methods
+    .executeSaleWithProxy(price, amount, buyerEscrowBump, freeTradeStateBump, programAsSignerBump, authorityBump, true)
+    .accounts({
+      buyer: wallet.publicKey,
+      seller: counterParty,
+      tokenAccount,
+      tokenMint: tokenAccountMint,
+      metadata,
+      treasuryMint,
+      escrowPaymentAccount: buyerEscrow,
+      sellerPaymentReceiptAccount,
+      buyerReceiptTokenAccount,
+      authority,
+      auctionHouse,
+      auctionHouseFeeAccount: feeAccount,
+      auctionHouseTreasury,
+      buyerTradeState: buyTradeState,
+      sellerTradeState: sellTradeState,
+      freeTradeState: freeTradeState,
+      candyShop,
+      ahProgram: AUCTION_HOUSE_PROGRAM_ID,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      systemProgram: web3.SystemProgram.programId,
+      associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      programAsSigner: programAsSigner,
+      rent: web3.SYSVAR_RENT_PUBKEY
+    })
+    .remainingAccounts(remainingAccounts)
+    .instruction();
+
   transaction.add(ix);
   transaction.add(ix2);
 

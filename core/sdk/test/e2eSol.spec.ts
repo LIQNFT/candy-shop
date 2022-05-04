@@ -26,6 +26,7 @@ const TOKEN_MINT = new web3.PublicKey('cZk2AVKbNWdNqZJxbsx85Pb1trQtWhADvqfn8AqEL
 const PRICE = new BN('100000000');
 
 describe('e2e sol flow', function () {
+  const connection = new web3.Connection(web3.clusterApiUrl('devnet'));
   let user1: web3.Keypair, user2: web3.Keypair;
 
   before(async function () {
@@ -45,6 +46,7 @@ describe('e2e sol flow', function () {
       wallet: user1
     });
     console.log('sellTxHash ', sellTxHash);
+    await connection.confirmTransaction(sellTxHash);
 
     const cancelTxHash = await candyShop.cancel({
       tokenAccount: TOKEN_ACCOUNT,
@@ -67,7 +69,7 @@ describe('e2e sol flow', function () {
       tokenAccount: TOKEN_ACCOUNT,
       tokenMint: TOKEN_MINT,
       price: PRICE,
-      wallet: user1
+      wallet: user2
     });
     console.log('buyTxHash ', buyTxHash);
 
@@ -75,7 +77,6 @@ describe('e2e sol flow', function () {
     const user2Ata = await getAssociatedTokenAddress(TOKEN_MINT, user2.publicKey);
 
     const instructions = [createTransferInstruction(user2Ata, user1Ata, user2.publicKey, 1)];
-    const connection = new web3.Connection(web3.clusterApiUrl('devnet'));
     const transaction = new web3.Transaction().add(...instructions);
     transaction.feePayer = user2.publicKey;
     transaction.recentBlockhash = (await connection.getLatestBlockhash('finalized')).blockhash;
