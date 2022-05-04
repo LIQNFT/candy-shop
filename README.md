@@ -1,5 +1,9 @@
 # Candy Shop
 
+[![Stars](https://img.shields.io/github/stars/LIQNFT/candy-shop?style=social&label=Star)](https://github.com/LIQNFT/candy-shop/stargazers)
+[![Forks](https://img.shields.io/github/forks/LIQNFT/candy-shop?style=social&label=Forks&color=blueviolet)](https://github.com/LIQNFT/candy-shop/network/members)
+[![Release](https://img.shields.io/github/v/tag/LIQNFT/candy-shop?style=flat&label=Release&color=blueviolet)](https://github.com/LIQNFT/candy-shop/network/members)
+
 ### Solana NFT Marketplace JS Library (In Beta)
 
 **Contents**
@@ -315,13 +319,13 @@ To help reviewers differentiate the PR, define your dev branch with module name 
 
 branch: **module/descriptive-short-sentence** (lowercase)
 
-e.g. `core/ui/update-button-styles`, `core/refactor-backend-api`, etc.
+e.g. `ui/update-button-styles`, `core/refactor-backend-api`, etc.
 | Branch Type | Purpose  
 | ---------| -------------------------------------------------------------------------
-| core | Changes made for files across in src/core  
-| core/sdk | Change made for files particularly for src/core sdk  
-| core/ui | Change made for files particularly for src/core/ui  
-| core/cli | Change made for files particularly for src/core/cli  
+| core | Changes made for files across in `src/core`  
+| sdk | Changes particularly for `src/core/sdk`  
+| ui | Changes particularly for `src/core/ui`  
+| cli | Changes particularly for `src/core/cli`  
 | chore | Changes to the build process or auxiliary tools and libraries  
 | doc | Documentation only changes
 
@@ -330,7 +334,13 @@ e.g. `core/ui/update-button-styles`, `core/refactor-backend-api`, etc.
 e.g.
 
 ```
-[core/ui] update button styles
+[ui] update button styles
+
+Descriptive message to record what will change.
+```
+
+```
+[sdk] update api
 
 Descriptive message to record what will change.
 ```
@@ -342,7 +352,7 @@ Include the JIRA Ticket ID in top of your commit message as possible as you can.
 e.g.
 
 ```
-[core/ui] update button styles
+[ui] update button styles
 
 [LIQ-XXX]
 Descriptive message to record what will change.
