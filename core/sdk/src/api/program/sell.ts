@@ -42,32 +42,25 @@ export async function sellNft(params: SellTransactionParams): Promise<string> {
   );
   const [programAsSigner, programAsSignerBump] = await getAuctionHouseProgramAsSigner();
 
-  const txHash = await program.rpc.sellWithProxy(
-    price,
-    amount,
-    tradeStateBump,
-    freeTradeStateBump,
-    programAsSignerBump,
-    authorityBump,
-    {
-      accounts: {
-        wallet: wallet.publicKey,
-        tokenAccount,
-        metadata,
-        authority,
-        auctionHouse,
-        auctionHouseFeeAccount: feeAccount,
-        sellerTradeState: tradeState,
-        freeSellerTradeState: freeTradeState,
-        candyShop,
-        ahProgram: AUCTION_HOUSE_PROGRAM_ID,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        systemProgram: anchor.web3.SystemProgram.programId,
-        programAsSigner,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY
-      }
-    }
-  );
+  const txHash = await program.methods
+    .sellWithProxy(price, amount, tradeStateBump, freeTradeStateBump, programAsSignerBump, authorityBump)
+    .accounts({
+      wallet: wallet.publicKey,
+      tokenAccount,
+      metadata,
+      authority,
+      auctionHouse,
+      auctionHouseFeeAccount: feeAccount,
+      sellerTradeState: tradeState,
+      freeSellerTradeState: freeTradeState,
+      candyShop,
+      ahProgram: AUCTION_HOUSE_PROGRAM_ID,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      systemProgram: anchor.web3.SystemProgram.programId,
+      programAsSigner,
+      rent: anchor.web3.SYSVAR_RENT_PUBKEY
+    })
+    .rpc();
 
   console.log('sell order placed');
 
