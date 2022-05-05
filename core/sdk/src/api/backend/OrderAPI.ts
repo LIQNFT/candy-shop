@@ -1,4 +1,4 @@
-import { ListBase, Order, SingleBase } from 'solana-candy-shop-schema/dist';
+import { ListBase, Order, Side, SingleBase, Status } from 'solana-candy-shop-schema/dist';
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
 
@@ -41,8 +41,8 @@ export async function fetchOrdersByStoreId(
       (aggregated, identifier) =>
         aggregated +
         `&filterArr[]=${JSON.stringify({
-          side: 1,
-          status: 0,
+          side: Side.SELL,
+          status: Status.OPEN,
           identifier
         })}`,
       ''
@@ -92,8 +92,35 @@ export async function fetchOrdersByStoreIdAndWalletAddress(
     const page: Order[] = await axiosInstance
       .get<ListBase<Order>>(
         `/order/${storeId}?offset=${offset}&limit=${limit}&filterArr[]=${JSON.stringify({
-          side: 1,
-          status: 0,
+          side: Side.SELL,
+          status: Status.OPEN,
+          walletAddress
+        })}`
+      )
+      .then((response) => response.data?.result);
+    resCount = page.length;
+    offset = offset + limit;
+    orders = orders.concat(page);
+  }
+
+  return orders;
+}
+
+export async function fetchOrdersByWalletAddress(
+  axiosInstance: AxiosInstance,
+  walletAddress: string
+): Promise<Order[]> {
+  // handles pagination internally
+  const limit = 10;
+  let offset = 0;
+  let resCount = null;
+  let orders: Order[] = [];
+  while (resCount === null || resCount == limit) {
+    const page: Order[] = await axiosInstance
+      .get<ListBase<Order>>(
+        `/order?offset=${offset}&limit=${limit}&filterArr[]=${JSON.stringify({
+          side: Side.SELL,
+          status: Status.OPEN,
           walletAddress
         })}`
       )

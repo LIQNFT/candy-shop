@@ -1,6 +1,6 @@
 import { BN, Idl, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { configBaseUrl } from './config';
+import axiosInstance, { configBaseUrl } from './config';
 
 import {
   ListBase,
@@ -13,7 +13,7 @@ import {
   CandyShop as CandyShopResponse
 } from 'solana-candy-shop-schema/dist';
 
-import { OrdersFilterQuery, TradeQuery } from './api/backend';
+import { OrdersFilterQuery, TradeQuery, fetchOrdersByWalletAddress } from './api/backend';
 
 import { CANDY_SHOP_INS_PROGRAM_ID } from './api/constants';
 import { buyAndExecuteSale } from './api/program/buyAndExecuteSale';
@@ -369,7 +369,18 @@ export class CandyShop {
     return fetchOrdersByShopAndWalletAddress(this._candyShopAddress, walletAddress);
   }
   /**
-   * Fetch list of whitelisted NFTs for this Candy Shop
+   * Fetch global active orders created by specified wallet address
+   *
+   * @param {string} walletAddress base 58 encoded public key string
+   */
+  public async globalActiveOrdersByWalletAddress(walletAddress: string): Promise<Order[]> {
+    console.log('CandyShop: performing globalActiveOrdersByWalletAddress', {
+      walletAddress
+    });
+    return fetchOrdersByWalletAddress(axiosInstance, walletAddress);
+  }
+  /**
+   * Fetch list of whilisted NFTs for this Candy Shop
    */
   public shopWlNfts(): Promise<ListBase<WhitelistNft>> {
     return fetchShopWhitelistNftByShopAddress(this._candyShopAddress);
