@@ -193,14 +193,17 @@ export const checkDelegateOnReceiptAccounts = async (
   sellerPaymentReceiptAccount: web3.PublicKey,
   buyerReceiptTokenAccount: web3.PublicKey
 ) => {
-  const sellerPaymentReceiptAccountInfo = await getAccount(connection, sellerPaymentReceiptAccount);
-  const buyerReceiptTokenAccountInfo = await getAccount(connection, buyerReceiptTokenAccount);
+  const sellerPaymentReceiptAccountInfoRes = await safeAwait(getAccount(connection, sellerPaymentReceiptAccount));
+  const buyerReceiptTokenAccountInfoRes = await safeAwait(getAccount(connection, buyerReceiptTokenAccount));
 
-  if (sellerPaymentReceiptAccountInfo.delegate !== null) {
+  const sellerPaymentReceiptAccountInfo = sellerPaymentReceiptAccountInfoRes.result;
+  const buyerReceiptTokenAccountInfo = buyerReceiptTokenAccountInfoRes.result;
+
+  if (sellerPaymentReceiptAccountInfo && sellerPaymentReceiptAccountInfo.delegate) {
     throw new CandyShopError(CandyShopErrorType.SellerATACannotHaveDelegate);
   }
 
-  if (buyerReceiptTokenAccountInfo.delegate !== null) {
+  if (buyerReceiptTokenAccountInfo && buyerReceiptTokenAccountInfo.delegate) {
     throw new CandyShopError(CandyShopErrorType.BuyerATACannotHaveDelegate);
   }
 };
