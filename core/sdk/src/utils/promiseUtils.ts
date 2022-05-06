@@ -7,7 +7,7 @@ export function sleepPromise(ms: number): Promise<boolean> {
 }
 
 /* Helper buddy for removing async/await try/catch litter */
-export function safeAwait<T> (promise: Promise<T>, finallyCallback?: any)  {
+export const safeAwait = <T>(promise: Promise<T>, finallyCallback?: any) => {
   return promise
     .then((data) => {
       return { result: data, error: undefined };

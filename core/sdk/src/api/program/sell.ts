@@ -1,8 +1,15 @@
 import * as anchor from '@project-serum/anchor';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { createRevokeInstruction, getAccount, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { SellTransactionParams } from '../model';
 import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
-import { getAuctionHouseProgramAsSigner, getAuctionHouseTradeState } from '../utils';
+import {
+  getAuctionHouseProgramAsSigner,
+  getAuctionHouseTradeState,
+  getAtaForMint,
+  sendTx,
+  treasuryMintIsNative
+} from '../utils';
+import { safeAwait } from '../../utils';
 
 export async function sellNft(params: SellTransactionParams): Promise<string> {
   const {
@@ -42,7 +49,22 @@ export async function sellNft(params: SellTransactionParams): Promise<string> {
   );
   const [programAsSigner, programAsSignerBump] = await getAuctionHouseProgramAsSigner();
 
-  const txHash = await program.methods
+  const transaction = new anchor.web3.Transaction();
+
+  const isNative = treasuryMintIsNative(treasuryMint);
+
+  if (!isNative) {
+    const sellerPaymentReceiptAccount = (await getAtaForMint(treasuryMint, wallet.publicKey))[0];
+    const sellerPaymentReceiptAccountInfo = (
+      await safeAwait(getAccount(program.provider.connection, sellerPaymentReceiptAccount))
+    ).result;
+
+    if (sellerPaymentReceiptAccountInfo && sellerPaymentReceiptAccountInfo.delegate) {
+      transaction.add(createRevokeInstruction(sellerPaymentReceiptAccount, wallet.publicKey));
+    }
+  }
+
+  const ix = await program.methods
     .sellWithProxy(price, amount, tradeStateBump, freeTradeStateBump, programAsSignerBump, authorityBump)
     .accounts({
       wallet: wallet.publicKey,
@@ -60,7 +82,11 @@ export async function sellNft(params: SellTransactionParams): Promise<string> {
       programAsSigner,
       rent: anchor.web3.SYSVAR_RENT_PUBKEY
     })
-    .rpc();
+    .instruction();
+
+  transaction.add(ix);
+
+  const txHash = await sendTx(wallet, transaction, program);
 
   console.log('sell order placed');
 

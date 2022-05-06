@@ -4,7 +4,7 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token
 import { BuyAndExecuteSaleTransactionParams } from '../model';
 import { CandyShopError, CandyShopErrorType } from '../../utils';
 import { Metadata, parseMetadata } from '../../utils/parseData';
-import { AUCTION_HOUSE_PROGRAM_ID, WRAPPED_SOL_MINT } from '../constants';
+import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 import {
   getAtaForMint,
   getAuctionHouseEscrow,
@@ -14,7 +14,8 @@ import {
   checkNftAvailability,
   checkPaymentAccountBalance,
   sendTx,
-  compileAtaCreationIxs
+  compileAtaCreationIxs,
+  treasuryMintIsNative
 } from '../utils';
 
 export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionParams) {
@@ -52,7 +53,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     price
   );
 
-  const isNative = treasuryMint.equals(WRAPPED_SOL_MINT);
+  const isNative = treasuryMintIsNative(treasuryMint);
 
   const [sellTradeState, sellTradeStateBump] = await getAuctionHouseTradeState(
     auctionHouse,
