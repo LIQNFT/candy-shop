@@ -5,7 +5,7 @@ import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { web3 } from '@project-serum/anchor';
 
 import { CandyShop } from '../core/sdk/.';
-import { Orders, Stat, OrderDetail, Sell, Activity } from '../core/ui/.';
+import { Orders, Stat, OrderDetail, Sell, Activity, Auction } from '../core/ui/.';
 
 import { CANDY_SHOP_PROGRAM_ID, CREATOR_ADDRESS, TREASURY_MINT } from './constant/publicKey';
 
@@ -45,6 +45,11 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
         <WalletMultiButton />
       </div>
 
+      <h1 style={{ textAlign: 'center', fontWeight: 'bold', margin: '80px 0 30px' }}></h1>
+      {/* <Auction candyShop={candyShop} wallet={wallet} walletConnectComponent={<WalletMultiButton />} /> */}
+      <Orders wallet={wallet} walletConnectComponent={<WalletMultiButton />} filters={FILTERS} candyShop={candyShop} />
+
+      {/* 
       <div style={{ marginBottom: 50 }}>
         <Stat
           title={'Marketplace'}
@@ -77,7 +82,7 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
       <Sell wallet={wallet} candyShop={candyShop} walletConnectComponent={<WalletMultiButton />} />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', margin: '80px 0 30px' }}>Activity</h1>
-      <Activity candyShop={candyShop} />
+      <Activity candyShop={candyShop} /> */}
     </div>
   );
 };
