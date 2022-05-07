@@ -18,8 +18,12 @@ export interface Auction {
   startTime: string;
   biddingPeriod: string;
   highestBid: string;
+  tickSize: string;
   buyNowPrice: string | null;
   status: AuctionStatus;
+  highestBidBuyer?: string;
+  highestBidPrice?: string;
+  userBid?: boolean;
 
   nftUri?: string;
   name: string;

@@ -1,7 +1,10 @@
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { getAuctionHouseTradeState, checkNftAvailability } from '../utils';
-import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
-import { CancelTransactionParams } from '../model';
+import {
+  AUCTION_HOUSE_PROGRAM_ID,
+  CancelTransactionParams,
+  checkNftAvailability,
+  getAuctionHouseTradeState
+} from '../..';
 
 export async function cancelOrder(params: CancelTransactionParams) {
   const {

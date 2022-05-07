@@ -1,0 +1,1749 @@
+{
+  "version": "0.0.0",
+  "name": "candy_shop",
+  "instructions": [
+    {
+      "name": "createCandyShop",
+      "accounts": [
+        {
+          "name": "treasuryMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "feeWithdrawalDestination",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasuryWithdrawalDestination",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasuryWithdrawalDestinationOwner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouse",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouseFeeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouseTreasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "candyShop",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ahProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "sellerFeeBasisPoints",
+          "type": "u16"
+        },
+        {
+          "name": "requiresSignOff",
+          "type": "bool"
+        },
+        {
+          "name": "canChangeSalePrice",
+          "type": "bool"
+        },
+        {
+          "name": "bump",
+          "type": "u8"
+        },
+        {
+          "name": "feePayerBump",
+          "type": "u8"
+        },
+        {
+          "name": "treasuryBump",
+          "type": "u8"
+        },
+        {
+          "name": "candyShopBump",
+          "type": "u8"
+        },
+        {
+          "name": "split",
+          "type": "u8"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "sellWithProxy",
+      "accounts": [
+        {
+          "name": "wallet",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "metadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouse",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouseFeeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sellerTradeState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "freeSellerTradeState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "candyShop",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "ahProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "programAsSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "price",
+          "type": "u64"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "tradeStateBump",
+          "type": "u8"
+        },
+        {
+          "name": "freeTradeStateBump",
+          "type": "u8"
+        },
+        {
+          "name": "programAsSignerBump",
+          "type": "u8"
+        },
+        {
+          "name": "authorityBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "buyWithProxy",
+      "accounts": [
+        {
+          "name": "wallet",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "paymentAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "transferAuthority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasuryMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "metadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "escrowPaymentAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouse",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouseFeeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "buyerTradeState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "candyShop",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "ahProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "price",
+          "type": "u64"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "tradeStateBump",
+          "type": "u8"
+        },
+        {
+          "name": "escrowPaymentBump",
+          "type": "u8"
+        },
+        {
+          "name": "authorityBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "executeSaleWithProxy",
+      "accounts": [
+        {
+          "name": "buyer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "seller",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "metadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasuryMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "escrowPaymentAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sellerPaymentReceiptAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "buyerReceiptTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouse",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouseFeeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouseTreasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "buyerTradeState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sellerTradeState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "freeTradeState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "candyShop",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "ahProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "programAsSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "price",
+          "type": "u64"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "escrowPaymentBump",
+          "type": "u8"
+        },
+        {
+          "name": "freeTradeStateBump",
+          "type": "u8"
+        },
+        {
+          "name": "programAsSignerBump",
+          "type": "u8"
+        },
+        {
+          "name": "authorityBump",
+          "type": "u8"
+        },
+        {
+          "name": "buySide",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "candyShopWithdrawFromTreasury",
+      "accounts": [
+        {
+          "name": "candyShop",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "candyShopCreator",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "candyShopCreatorTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liqnftTreasuryAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liqnftTreasuryTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasuryMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasuryWithdrawalDestination",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouseTreasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouse",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ahProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "candyShopBump",
+          "type": "u8"
+        },
+        {
+          "name": "authorityBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "cancelWithProxy",
+      "accounts": [
+        {
+          "name": "wallet",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouse",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouseFeeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tradeState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "candyShop",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "ahProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "price",
+          "type": "u64"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "authorityBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "createAuction",
+      "accounts": [
+        {
+          "name": "auction",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionEscrow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "wallet",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "candyShop",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "clock",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "startingBid",
+          "type": "u64"
+        },
+        {
+          "name": "startTime",
+          "type": "u64"
+        },
+        {
+          "name": "biddingPeriod",
+          "type": "u64"
+        },
+        {
+          "name": "tickSize",
+          "type": "u64"
+        },
+        {
+          "name": "buyNowPrice",
+          "type": {
+            "option": "u64"
+          }
+        }
+      ]
+    },
+    {
+      "name": "cancelAuction",
+      "accounts": [
+        {
+          "name": "auction",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionEscrow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "wallet",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "candyShop",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "clock",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "auctionBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "makeBid",
+      "accounts": [
+        {
+          "name": "wallet",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "auction",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "candyShop",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "bid",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionBidWallet",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "bidPaymentAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTreasuryAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasuryMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionEscrow",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "metadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "escrowPaymentAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouse",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouseFeeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bidTradeState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ahProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "clock",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "bidPrice",
+          "type": "u64"
+        },
+        {
+          "name": "auctionBidWalletBump",
+          "type": "u8"
+        },
+        {
+          "name": "tradeStateBump",
+          "type": "u8"
+        },
+        {
+          "name": "escrowPaymentBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "withdrawBid",
+      "accounts": [
+        {
+          "name": "wallet",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "auction",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "candyShop",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "bid",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionBidWallet",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTreasuryAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bidReceiptAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasuryMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionEscrow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "metadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "escrowPaymentAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouse",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouseFeeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bidTradeState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ahProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "clock",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "auctionBidWalletBump",
+          "type": "u8"
+        },
+        {
+          "name": "escrowReceiptBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "buyNow",
+      "accounts": [
+        {
+          "name": "wallet",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "seller",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sellerPaymentReceiptAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auction",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "candyShop",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "paymentAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "transferAuthority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "nftMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasuryMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionEscrow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "metadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "escrowPaymentAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionPaymentReceiptAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "buyerReceiptTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouse",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouseFeeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouseTreasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "buyerTradeState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionTradeState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "freeAuctionTradeState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ahProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "programAsSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "clock",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "auctionBump",
+          "type": "u8"
+        },
+        {
+          "name": "auctionTradeStateBump",
+          "type": "u8"
+        },
+        {
+          "name": "buyerTradeStateBump",
+          "type": "u8"
+        },
+        {
+          "name": "escrowPaymentBump",
+          "type": "u8"
+        },
+        {
+          "name": "freeAuctionTradeStateBump",
+          "type": "u8"
+        },
+        {
+          "name": "programAsSignerBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "settleAuction",
+      "accounts": [
+        {
+          "name": "wallet",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "buyer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auction",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "candyShop",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "bid",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionBidWallet",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bidReceiptTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasuryMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionEscrow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "metadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "escrowPaymentAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionPaymentReceiptAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouse",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouseFeeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionHouseTreasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bidTradeState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionTradeState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "freeAuctionTradeState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ahProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "programAsSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "clock",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "auctionBump",
+          "type": "u8"
+        },
+        {
+          "name": "auctionBidWalletBump",
+          "type": "u8"
+        },
+        {
+          "name": "auctionTradeStateBump",
+          "type": "u8"
+        },
+        {
+          "name": "freeAuctionTradeStateBump",
+          "type": "u8"
+        },
+        {
+          "name": "escrowPaymentBump",
+          "type": "u8"
+        },
+        {
+          "name": "programAsSignerBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "distributeAuctionProceeds",
+      "accounts": [
+        {
+          "name": "wallet",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "seller",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "buyer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "buyerReceiptTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sellerPaymentReceiptAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auction",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "candyShop",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "bid",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionBidWallet",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bidReceiptTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasuryMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "auctionPaymentReceiptAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "clock",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "auctionBump",
+          "type": "u8"
+        },
+        {
+          "name": "auctionBidWalletBump",
+          "type": "u8"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "CandyShopV1",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "key",
+            "type": {
+              "defined": "AccountType"
+            }
+          },
+          {
+            "name": "name",
+            "type": {
+              "array": ["u8", 32]
+            }
+          },
+          {
+            "name": "creator",
+            "type": "publicKey"
+          },
+          {
+            "name": "treasuryMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "split",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AuctionV1",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "key",
+            "type": {
+              "defined": "AccountType"
+            }
+          },
+          {
+            "name": "candyShop",
+            "type": "publicKey"
+          },
+          {
+            "name": "nftMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "seller",
+            "type": "publicKey"
+          },
+          {
+            "name": "startingBid",
+            "type": "u64"
+          },
+          {
+            "name": "startTime",
+            "type": "u64"
+          },
+          {
+            "name": "biddingPeriod",
+            "type": "u64"
+          },
+          {
+            "name": "tickSize",
+            "type": "u64"
+          },
+          {
+            "name": "highestBid",
+            "type": {
+              "option": {
+                "defined": "BidTuple"
+              }
+            }
+          },
+          {
+            "name": "buyNowPrice",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": "AuctionStatus"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Bid",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "key",
+            "type": {
+              "defined": "AccountType"
+            }
+          },
+          {
+            "name": "price",
+            "type": "u64"
+          },
+          {
+            "name": "buyer",
+            "type": "publicKey"
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "BidTuple",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "key",
+            "type": "publicKey"
+          },
+          {
+            "name": "price",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ErrorCode",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "InvalidFeeSplit"
+          },
+          {
+            "name": "InvalidSfbp"
+          },
+          {
+            "name": "NameTooLong"
+          },
+          {
+            "name": "NumericalOverflow"
+          },
+          {
+            "name": "BuyNowPriceTooLow"
+          },
+          {
+            "name": "InvalidStartTime"
+          },
+          {
+            "name": "InvalidTickSize"
+          },
+          {
+            "name": "NotCSCreator"
+          },
+          {
+            "name": "AuctionStarted"
+          },
+          {
+            "name": "AuctionOver"
+          },
+          {
+            "name": "AuctionNotStarted"
+          },
+          {
+            "name": "AuctionNotOver"
+          },
+          {
+            "name": "CannotCancel"
+          },
+          {
+            "name": "InvalidSeller"
+          },
+          {
+            "name": "InvalidBuyer"
+          },
+          {
+            "name": "BidTooLow"
+          },
+          {
+            "name": "BidTooHigh"
+          },
+          {
+            "name": "LeadingBid"
+          },
+          {
+            "name": "BuyNowNotEnabled"
+          },
+          {
+            "name": "NoValidBids"
+          },
+          {
+            "name": "InvalidBidAccountPassed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AccountType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "CandyShopV1"
+          },
+          {
+            "name": "AuctionV1"
+          },
+          {
+            "name": "Bid"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AuctionStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Created"
+          },
+          {
+            "name": "Started"
+          },
+          {
+            "name": "Complete"
+          }
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "address": "csa8JpYfKSZajP7JzxnJipUL3qagub1z29hLvp578iN"
+  }
+}
