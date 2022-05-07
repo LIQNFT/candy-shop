@@ -12,11 +12,6 @@
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
-
-  @media @tabletS {
-    padding-left: 15px;
-    padding-right: 15px;
-  }
 }
 
 .candy-sell-component {
@@ -25,11 +20,12 @@
 
 .candy-line-limit-1 {
   display: -webkit-box;
+  line-height: initial;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   word-break: break-word;
+  -webkit-line-clamp: 1;
 }
 
 .candy-button {
@@ -40,13 +36,41 @@
   color: #fff;
   border: 2px solid transparent;
   cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s all ease-in-out;
+
+  &.candy-button-default {
+    background-color: @gray-medium;
+
+    &:hover {
+      opacity: 0.7;
+      background: @gray-medium;
+    }
+  }
+
+  &.candy-button-outlined {
+    background-color: #fff;
+    color: @primary-color;
+    border: 1px solid @primary-color;
+
+    &:hover {
+      opacity: 0.7;
+      background: #fff;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+      background: #fff;
+    }
+  }
 
   &:hover {
     background: #9a4dff;
   }
 
   &:disabled {
-    background: @gray-medium;
+    background: @gray-medium-alt;
   }
 }
 
@@ -144,6 +168,8 @@
   flex-flow: row wrap;
   row-gap: 18px;
   column-gap: 18px;
+  margin-left: 10px;
+
   > * {
     width: calc((100% - 18px * 3) / 4);
   }
@@ -151,6 +177,10 @@
   @media @tabletM {
     row-gap: 16px;
     column-gap: 16px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: 0px;
+
     > * {
       width: 100%;
     }
@@ -195,6 +225,33 @@
     &::after {
       content: '';
       border-top: 10px solid @lnft-red;
+    }
+  }
+
+  &-gray {
+    background-color: @gray-medium-alt;
+
+    &::after {
+      content: '';
+      border-top: 10px solid @gray-medium;
+    }
+  }
+
+  &-yellow {
+    background-color: @lnft-yellow;
+
+    &::after {
+      content: '';
+      border-top: 10px solid @lnft-yellow;
+    }
+  }
+
+  &-green {
+    background: @lnft-green;
+
+    &::after {
+      content: '';
+      border-top: 10px solid @lnft-green;
     }
   }
 }
@@ -411,12 +468,30 @@
   }
 }
 
-.candy-line-limit-1 {
-  display: -webkit-box;
-  line-height: initial;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: break-word;
-  -webkit-line-clamp: 1;
+.candy-input-price {
+  width: 100%;
+  height: 40px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+
+  border-radius: 4px;
+  border: 2px solid #bdbdbd;
+
+  input {
+    border: none;
+    outline: none;
+    flex-grow: 1;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Firefox */
+    &[type='number'] {
+      -moz-appearance: textfield;
+    }
+  }
 }

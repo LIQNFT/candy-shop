@@ -1,21 +1,51 @@
-import { web3, BN, Program } from '@project-serum/anchor';
+import { web3, BN, Program, Idl, IdlTypes } from '@project-serum/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
   getAccount,
   createAssociatedTokenAccountInstruction
 } from '@solana/spl-token';
-import { AUCTION_HOUSE, AUCTION_HOUSE_PROGRAM_ID, AUTHORITY, CANDY_STORE, FEE_PAYER, TREASURY } from './constants';
+import {
+  AUCTION,
+  AUCTION_HOUSE,
+  WRAPPED_SOL_MINT,
+  AUCTION_HOUSE_PROGRAM_ID,
+  AUTHORITY,
+  BID,
+  CANDY_STORE,
+  FEE_PAYER,
+  TREASURY,
+  WALLET
+} from './constants';
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
 import { CandyShopError, CandyShopErrorType } from '../utils/error';
-import { safeAwait } from '../utils';
+import { Creator, Metadata, parseMetadata, safeAwait } from '../utils';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { awaitTransactionSignatureConfirmation, WRAPPED_SOL_MINT } from '.';
+import { awaitTransactionSignatureConfirmation } from './program';
+import { FEE_ACCOUNT_MIN_BAL } from '.';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);
 
-export const getAuctionHouse = async (
+export const getAuction = (candyShop: web3.PublicKey, mint: web3.PublicKey, marketProgramId: web3.PublicKey) => {
+  return web3.PublicKey.findProgramAddress(
+    [Buffer.from(AUCTION), candyShop.toBuffer(), mint.toBuffer()],
+    marketProgramId
+  );
+};
+
+export const getBid = (auction: web3.PublicKey, wallet: web3.PublicKey, marketProgramId: web3.PublicKey) => {
+  return web3.PublicKey.findProgramAddress([Buffer.from(BID), auction.toBuffer(), wallet.toBuffer()], marketProgramId);
+};
+
+export const getBidWallet = (auction: web3.PublicKey, wallet: web3.PublicKey, marketProgramId: web3.PublicKey) => {
+  return web3.PublicKey.findProgramAddress(
+    [Buffer.from(BID), auction.toBuffer(), wallet.toBuffer(), Buffer.from(WALLET)],
+    marketProgramId
+  );
+};
+
+export const getAuctionHouse = (
   authority: web3.PublicKey,
   treasuryMint: web3.PublicKey
 ): Promise<[web3.PublicKey, number]> => {
@@ -25,7 +55,7 @@ export const getAuctionHouse = async (
   );
 };
 
-export const getAuctionHouseAuthority = async (
+export const getAuctionHouseAuthority = (
   creator: web3.PublicKey,
   treasuryMint: web3.PublicKey,
   marketProgramId: web3.PublicKey
@@ -36,7 +66,7 @@ export const getAuctionHouseAuthority = async (
   );
 };
 
-export const getCandyShop = async (
+export const getCandyShop = (
   creator: web3.PublicKey,
   treasuryMint: web3.PublicKey,
   marketProgramId: web3.PublicKey
@@ -65,7 +95,7 @@ export const getAuctionHouseProgramAsSigner = (): Promise<[web3.PublicKey, numbe
   );
 };
 
-export const getAuctionHouseTradeState = async (
+export const getAuctionHouseTradeState = (
   auctionHouse: web3.PublicKey,
   wallet: web3.PublicKey,
   tokenAccount: web3.PublicKey,
@@ -89,21 +119,21 @@ export const getAuctionHouseTradeState = async (
   );
 };
 
-export const getAuctionHouseFeeAcct = async (auctionHouse: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
+export const getAuctionHouseFeeAcct = (auctionHouse: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
   return web3.PublicKey.findProgramAddress(
     [Buffer.from(AUCTION_HOUSE), auctionHouse.toBuffer(), Buffer.from(FEE_PAYER)],
     AUCTION_HOUSE_PROGRAM_ID
   );
 };
 
-export const getAuctionHouseTreasuryAcct = async (auctionHouse: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
+export const getAuctionHouseTreasuryAcct = (auctionHouse: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
   return web3.PublicKey.findProgramAddress(
     [Buffer.from(AUCTION_HOUSE), auctionHouse.toBuffer(), Buffer.from(TREASURY)],
     AUCTION_HOUSE_PROGRAM_ID
   );
 };
 
-export const getAuctionHouseEscrow = async (
+export const getAuctionHouseEscrow = (
   auctionHouse: web3.PublicKey,
   wallet: web3.PublicKey
 ): Promise<[web3.PublicKey, number]> => {
@@ -113,21 +143,21 @@ export const getAuctionHouseEscrow = async (
   );
 };
 
-export const getAtaForMint = async (mint: web3.PublicKey, buyer: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
+export const getAtaForMint = (mint: web3.PublicKey, buyer: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
   return web3.PublicKey.findProgramAddress(
     [buyer.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mint.toBuffer()],
     ASSOCIATED_TOKEN_PROGRAM_ID
   );
 };
 
-export const getMetadataAccount = async (tokenMint: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
+export const getMetadataAccount = (tokenMint: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
   return web3.PublicKey.findProgramAddress(
     [Buffer.from('metadata'), metadataProgramId.toBuffer(), tokenMint.toBuffer()],
     metadataProgramId
   );
 };
 
-export const getSignedTx = async (wallet: AnchorWallet | web3.Keypair, transaction: web3.Transaction) => {
+export const getSignedTx = (wallet: AnchorWallet | web3.Keypair, transaction: web3.Transaction) => {
   if ('signTransaction' in wallet) {
     return wallet.signTransaction(transaction);
   }
@@ -219,6 +249,116 @@ export const checkDelegateOnReceiptAccounts = async (
   }
 };
 
+export const getAuctionData = async (auction: web3.PublicKey, program: Program) => {
+  const auctionData = await safeAwait(program.account.auctionV1.fetch(auction));
+
+  if (auctionData.error) {
+    throw auctionData.error;
+  }
+
+  if (!auctionData) {
+    throw new CandyShopError(CandyShopErrorType.AuctionDoesNotExist);
+  }
+
+  return auctionData.result;
+};
+
+export const getBidData = async (bid: web3.PublicKey, program: Program) => {
+  const bidData = await safeAwait(program.account.bid.fetch(bid));
+
+  if (bidData.error) {
+    throw bidData.error;
+  }
+
+  if (!bidData) {
+    throw new CandyShopError(CandyShopErrorType.BidDoesNotExist);
+  }
+
+  return bidData.result;
+};
+
+export const checkCreationParams = (startTime: BN, startingBid: BN, buyNowPrice: BN | null, tickSize: BN) => {
+  if (
+    tickSize.lten(0) ||
+    startTime.ltn(Date.now() / 1000 - 60) ||
+    (buyNowPrice && buyNowPrice.lt(startingBid.add(tickSize)))
+  ) {
+    throw new CandyShopError(CandyShopErrorType.InvalidAuctionCreationParams);
+  }
+};
+
+export const checkCanCancel = async (auction: web3.PublicKey, program: Program) => {
+  const currentTime = new BN(Date.now() / 1000);
+  const auctionData = await getAuctionData(auction, program);
+  const auctionEndTime: BN = auctionData.startTime.add(auctionData.biddingPeriod);
+
+  if (
+    (currentTime.gt(auctionEndTime) && auctionData.highestBid != null) ||
+    (currentTime.gt(auctionData.startTime) && currentTime.lt(auctionEndTime))
+  ) {
+    throw new CandyShopError(CandyShopErrorType.CannotCancel);
+  }
+};
+
+export const checkBidPeriod = async (auction: web3.PublicKey, program: Program) => {
+  const currentTime = new BN(Date.now() / 1000);
+  const auctionData = await getAuctionData(auction, program);
+  const auctionEndTime: BN = auctionData.startTime.add(auctionData.biddingPeriod);
+
+  if (currentTime.lt(auctionData.startTime) || currentTime.gt(auctionEndTime)) {
+    throw new CandyShopError(CandyShopErrorType.NotWithinBidPeriod);
+  }
+};
+
+export const checkBidParams = async (auction: web3.PublicKey, bidPrice: BN, program: Program) => {
+  const auctionData = await getAuctionData(auction, program);
+
+  await checkBidPeriod(auction, program);
+
+  if (auctionData.buyNowPrice && bidPrice.gt(auctionData.buyNowPrice)) {
+    throw new CandyShopError(CandyShopErrorType.BidTooHigh);
+  }
+
+  if (
+    (auctionData.highestBid && bidPrice.lt(auctionData.highestBid.price.add(auctionData.tickSize))) ||
+    (!auctionData.highestBid && bidPrice.lt(auctionData.startingBid))
+  ) {
+    throw new CandyShopError(CandyShopErrorType.BidTooLow);
+  }
+};
+
+export const checkCanWithdraw = async (auction: web3.PublicKey, bid: web3.PublicKey, program: Program) => {
+  const auctionData = await getAuctionData(auction, program);
+
+  if (auctionData.highestBid && auctionData.highestBid.key.equals(bid)) {
+    throw new CandyShopError(CandyShopErrorType.CannotWithdraw);
+  }
+};
+
+export const checkBuyNowAvailable = async (auction: web3.PublicKey, program: Program): Promise<BN> => {
+  const auctionData = await getAuctionData(auction, program);
+
+  if (!auctionData.buyNowPrice) {
+    throw new Error(CandyShopErrorType.BuyNowUnavailable);
+  }
+
+  return auctionData.buyNowPrice;
+};
+
+export const checkSettleParams = async (auction: web3.PublicKey, program: Program) => {
+  const auctionData = await getAuctionData(auction, program);
+  const currentTime = new BN(Date.now() / 1000);
+  const auctionEndTime: BN = auctionData.startTime.add(auctionData.biddingPeriod);
+
+  if (currentTime.lt(auctionEndTime)) {
+    throw new CandyShopError(CandyShopErrorType.AuctionNotOver);
+  }
+
+  if (!auctionData.highestBid) {
+    throw new Error(CandyShopErrorType.AuctionHasNoBids);
+  }
+};
+
 export const compileAtaCreationIxs = async (
   payer: web3.PublicKey,
   addresses: web3.PublicKey[],
@@ -267,4 +407,74 @@ export const sendTx = async (
 
 export const treasuryMintIsNative = (treasuryMint: web3.PublicKey) => {
   return treasuryMint.equals(WRAPPED_SOL_MINT);
+};
+
+export const checkIfBidExists = async (bid: web3.PublicKey, connection: web3.Connection) => {
+  const bidAccount = await connection.getAccountInfo(bid);
+  if (bidAccount !== null) return true;
+  return false;
+};
+
+export const getNftCreators = async (metadata: web3.PublicKey, connection: web3.Connection) => {
+  const metadataObj = await connection.getAccountInfo(metadata);
+
+  if (!metadataObj?.data) {
+    throw new Error(CandyShopErrorType.InvalidNFTMetadata);
+  }
+
+  const metadataDecoded: Metadata = parseMetadata(Buffer.from(metadataObj.data));
+
+  if (!metadataDecoded || !metadataDecoded.data || !metadataDecoded.data.creators) {
+    throw new Error(CandyShopErrorType.InvalidNFTMetadata);
+  }
+
+  return metadataDecoded.data.creators;
+};
+
+export const getRemainigAccountsForExecuteSaleIx = async (
+  metadata: web3.PublicKey,
+  connection: web3.Connection,
+  treasuryMint: web3.PublicKey,
+  isNative: boolean
+) => {
+  const creators: Creator[] = await getNftCreators(metadata, connection);
+
+  const remainingAccounts = isNative
+    ? creators.map((c) => {
+        return {
+          pubkey: new web3.PublicKey(c.address),
+          isWritable: true,
+          isSigner: false
+        };
+      })
+    : (
+        await Promise.all(
+          creators.map(async (c) => {
+            const key = new web3.PublicKey(c.address);
+            const ataAddress = (await getAtaForMint(treasuryMint, key))[0];
+
+            return [
+              {
+                pubkey: key,
+                isWritable: true,
+                isSigner: false
+              },
+              {
+                pubkey: ataAddress,
+                isWritable: true,
+                isSigner: false
+              }
+            ];
+          })
+        )
+      ).flat();
+
+  return remainingAccounts;
+};
+
+export const checkAHFeeAccountBalance = async (feeAccount: web3.PublicKey, connection: web3.Connection) => {
+  const feeAccountInfo = await connection.getAccountInfo(feeAccount);
+  if (!feeAccountInfo || feeAccountInfo.lamports < FEE_ACCOUNT_MIN_BAL) {
+    throw new CandyShopError(CandyShopErrorType.InsufficientFeeAccountBalance);
+  }
 };

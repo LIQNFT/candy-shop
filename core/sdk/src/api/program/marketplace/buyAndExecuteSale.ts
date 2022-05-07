@@ -1,22 +1,21 @@
 import * as anchor from '@project-serum/anchor';
 import { web3 } from '@project-serum/anchor';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { BuyAndExecuteSaleTransactionParams } from '../model';
-import { CandyShopError, CandyShopErrorType } from '../../utils';
-import { Metadata, parseMetadata } from '../../utils/parseData';
-import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 import {
+  AUCTION_HOUSE_PROGRAM_ID,
+  BuyAndExecuteSaleTransactionParams,
+  checkDelegateOnReceiptAccounts,
+  checkNftAvailability,
+  checkPaymentAccountBalance,
+  compileAtaCreationIxs,
   getAtaForMint,
   getAuctionHouseEscrow,
   getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
-  checkDelegateOnReceiptAccounts,
-  checkNftAvailability,
-  checkPaymentAccountBalance,
   sendTx,
-  compileAtaCreationIxs,
   treasuryMintIsNative
-} from '../utils';
+} from '../..';
+import { CandyShopError, CandyShopErrorType, Metadata, parseMetadata } from '../../../utils';
 
 export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionParams) {
   const {
@@ -156,7 +155,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     accountsRequireAta.push(counterParty);
   }
 
-  const allAtaIxs = [];
+  const allAtaIxs: web3.TransactionInstruction[] = [];
 
   const treasuyMintAtaIxs = await compileAtaCreationIxs(wallet.publicKey, accountsRequireAta, treasuryMint, program);
   if (treasuyMintAtaIxs) {

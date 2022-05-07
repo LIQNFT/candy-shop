@@ -1,35 +1,45 @@
-import { BN, Idl, Program, Provider, web3 } from '@project-serum/anchor';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { configBaseUrl } from './config';
-
 import {
+  CandyShop as CandyShopResponse,
   ListBase,
   Nft,
   Order,
   ShopStats,
   SingleBase,
   Trade,
-  WhitelistNft,
-  CandyShop as CandyShopResponse
+  WhitelistNft
 } from '@liqnft/candy-shop-types';
-
-import { OrdersFilterQuery, TradeQuery } from './api/backend';
-import { CANDY_SHOP_INS_PROGRAM_ID } from './api/constants';
-import { buyAndExecuteSale } from './api/program/buyAndExecuteSale';
-import { buyAndExecuteSale as insBuyAndExecuteSale } from './api/program/InsBuyAndExecuteSale';
-import { cancelOrder, sellNft } from './api/program';
-
+import { BN, Idl, Program, Provider, web3 } from '@project-serum/anchor';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 import {
+  buyAndExecuteSale,
+  BuyAndExecuteSaleTransactionParams,
+  cancelAuction,
+  CancelAuctionParams,
+  cancelOrder,
+  createAuction,
+  CreateAuctionParams,
+  getAuction,
   getAuctionHouse,
   getAuctionHouseAuthority,
   getAuctionHouseFeeAcct,
   getAuctionHouseTradeState,
   getAuctionHouseTreasuryAcct,
   getCandyShopSync,
-  getMetadataAccount
-} from './api/utils';
-import { CandyShopBuyParams, CandyShopCancelParams, CandyShopSellParams, CandyShopSettings } from './CandyShopModel';
-import { BuyAndExecuteSaleTransactionParams } from './api/model';
+  getMetadataAccount,
+  insBuyAndExecuteSale,
+  sellNft,
+  bidAuction,
+  BidAuctionParams,
+  withdrawBid,
+  WithdrawBidParams,
+  settleAndDistributeProceeds,
+  SettleAndDistributeProceedParams,
+  buyNowAuction,
+  BuyNowAuctionParams
+} from './api';
+import candyShopIdl from './candy_shop.json';
+import { OrdersFilterQuery, TradeQuery } from './api/backend';
+import { CANDY_SHOP_INS_PROGRAM_ID } from './api/constants';
 import {
   fetchNFTByMintAddress,
   fetchOrderByShopAndMintAddress,
@@ -40,6 +50,22 @@ import {
   fetchStatsByShopAddress,
   fetchTradeByShopAddress
 } from './CandyShopInfoAPI';
+import {
+  CandyShopBidAuctionParams,
+  CandyShopBuyParams,
+  CandyShopCancelAuctionParams,
+  CandyShopCancelParams,
+  CandyShopCreateAuctionParams,
+  CandyShopSellParams,
+  CandyShopSettings,
+  CandyShopWithdrawAuctionBidParams,
+  CandyShopSettleAndDistributeParams,
+  CandyShopBuyNowParams
+} from './CandyShopModel';
+import { configBaseUrl } from './config';
+import { CandyShopError, CandyShopErrorType } from './utils';
+
+const Logger = 'CandyShop';
 
 const DEFAULT_CURRENCY_SYMBOL = 'SOL';
 const DEFAULT_CURRENCY_DECIMALS = 9;
@@ -130,15 +156,12 @@ export class CandyShop {
       wallet instanceof web3.Keypair ? getNodeWallet(wallet) : wallet,
       options
     );
-    console.log('CandyShop init: fetching idl for programId', this._programId.toString());
+    console.log(`${Logger}: fetching idl for programId`, this._programId.toString());
 
-    const idl = await Program.fetchIdl(this._programId, provider);
-    if (idl) {
-      this._program = new Program(idl, this._programId, provider);
-      return this._program;
-    } else {
-      throw new Error('Idl not found');
-    }
+    // Directly use the JSON file here temporarily
+    // @ts-ignore
+    this._program = new Program(candyShopIdl, this._programId, provider);
+    return this._program;
   }
 
   get currencyDecimals(): number {
@@ -205,7 +228,7 @@ export class CandyShop {
   public async buy(params: CandyShopBuyParams): Promise<string> {
     const { seller, tokenAccount, tokenMint, price, wallet } = params;
 
-    console.log('CandyShop: performing buy', {
+    console.log(`${Logger}: performing buy, `, {
       seller: seller.toString(),
       tokenAccount: tokenAccount.toString(),
       tokenMint: tokenMint.toString(),
@@ -253,7 +276,7 @@ export class CandyShop {
   public async sell(params: CandyShopSellParams): Promise<string> {
     const { tokenAccount, tokenMint, price, wallet } = params;
 
-    console.log('CandyShop: performing sell', {
+    console.log(`${Logger}: Performing sell `, {
       tokenMint: tokenMint.toString(),
       tokenAccount: tokenAccount.toString(),
       price
@@ -340,6 +363,302 @@ export class CandyShop {
 
     return txHash;
   }
+  /**
+   * Executes Candy Shop __CreateAuction__ action
+   *
+   * @param {CandyShopCreateAuctionParams} params required parameters for create auction action
+   */
+  public async createAuction(params: CandyShopCreateAuctionParams): Promise<string> {
+    const { tokenAccount, tokenMint, startingBid, startTime, biddingPeriod, buyNowPrice, wallet, tickSize } = params;
+
+    if (wallet.publicKey.toString() !== this.candyShopCreatorAddress.toString()) {
+      throw new CandyShopError(CandyShopErrorType.NonShopOwner);
+    }
+
+    console.log(`${Logger}: Performing create auction`, {
+      tokenMint: tokenMint.toString(),
+      tokenAccount: tokenAccount.toString(),
+      startingBid: startingBid.toString(),
+      startTime: startTime.toString(),
+      biddingPeriod: biddingPeriod.toString(),
+      buyNowPrice
+    });
+    const program = await this.getStaticProgram(wallet);
+
+    const [auction, auctionBump] = await getAuction(this._candyShopAddress, tokenMint, this._programId);
+
+    const auctionAccount = await program.provider.connection.getAccountInfo(auction);
+
+    if (auctionAccount?.data) {
+      throw new Error(CandyShopErrorType.AuctionExists);
+    }
+
+    const [auctionHouseAuthority] = await getAuctionHouseAuthority(
+      this._candyShopCreatorAddress,
+      this._treasuryMint,
+      this._programId
+    );
+
+    const tx = await createAuction({
+      seller: wallet,
+      auction,
+      authority: auctionHouseAuthority,
+      auctionBump,
+      candyShop: this._candyShopAddress,
+      treasuryMint: this._treasuryMint,
+      nftMint: tokenMint,
+      startingBid,
+      startTime,
+      biddingPeriod,
+      tickSize,
+      buyNowPrice,
+      program
+    } as CreateAuctionParams);
+    return tx.txId;
+  }
+
+  /**
+   * Executes Candy Shop __CancelAuction__ action
+   *
+   * @param {CandyShopCancelAuctionParams} params required parameters for cancel auction action
+   */
+  public async cancelAuction(params: CandyShopCancelAuctionParams): Promise<string> {
+    const { tokenAccount, tokenMint, wallet } = params;
+
+    if (wallet.publicKey.toString() !== this.candyShopCreatorAddress.toString()) {
+      throw new CandyShopError(CandyShopErrorType.NonShopOwner);
+    }
+
+    console.log(`${Logger}: Performing cancel auction `, {
+      tokenMint: tokenMint.toString(),
+      tokenAccount: tokenAccount.toString()
+    });
+
+    const program = await this.getStaticProgram(wallet);
+
+    const [auction, auctionBump] = await getAuction(this._candyShopAddress, tokenMint, this._programId);
+
+    const auctionAccount = await program.provider.connection.getAccountInfo(auction);
+
+    if (!auctionAccount) {
+      throw new Error(CandyShopErrorType.AuctionDoesNotExist);
+    }
+
+    const [auctionHouseAuthority] = await getAuctionHouseAuthority(
+      this._candyShopCreatorAddress,
+      this._treasuryMint,
+      this._programId
+    );
+
+    const tx = await cancelAuction({
+      seller: wallet,
+      auction,
+      authority: auctionHouseAuthority,
+      auctionBump,
+      candyShop: this._candyShopAddress,
+      treasuryMint: this._treasuryMint,
+      nftMint: tokenMint,
+      program
+    } as CancelAuctionParams);
+    return tx.txId;
+  }
+
+  /**
+   * Executes Candy Shop __MakeBid__ action
+   *
+   * @param {BidAuctionParams} params required parameters for make bid action
+   */
+  public async bidAuction(params: CandyShopBidAuctionParams): Promise<string> {
+    const { tokenAccount, tokenMint, wallet, bidPrice } = params;
+
+    console.log(`${Logger}: performing bid auction, `, {
+      bidPrice: bidPrice.toString(),
+      tokenAccount: tokenAccount.toString()
+    });
+
+    const program = await this.getStaticProgram(wallet);
+
+    const [auction] = await getAuction(this._candyShopAddress, tokenMint, this._programId);
+
+    const auctionAccount = await program.provider.connection.getAccountInfo(auction);
+
+    if (!auctionAccount) {
+      throw new Error(CandyShopErrorType.AuctionDoesNotExist);
+    }
+
+    const [auctionHouseAuthority] = await getAuctionHouseAuthority(
+      this._candyShopCreatorAddress,
+      this._treasuryMint,
+      this._programId
+    );
+
+    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
+
+    const [feeAccount] = await getAuctionHouseFeeAcct(auctionHouse);
+
+    const [metadata] = await getMetadataAccount(tokenMint);
+
+    const tx = await bidAuction({
+      auction,
+      authority: auctionHouseAuthority,
+      candyShop: this._candyShopAddress,
+      buyer: wallet,
+      treasuryMint: this._treasuryMint,
+      nftMint: tokenMint,
+      metadata,
+      auctionHouse,
+      feeAccount,
+      bidPrice,
+      program
+    } as BidAuctionParams);
+    return tx.txId;
+  }
+
+  /**
+   * Executes Candy Shop __WithdrawBid__ action
+   *
+   * @param {CandyShopWithdrawAuctionBidParams} params required parameters for withdraw bid action
+   */
+  public async withdrawAuctionBid(params: CandyShopWithdrawAuctionBidParams): Promise<string> {
+    const { tokenAccount, tokenMint, wallet } = params;
+
+    console.log(`${Logger}: Performing withdraw bid auction `, {
+      tokenAccount: tokenAccount.toString()
+    });
+
+    const program = await this.getStaticProgram(wallet);
+
+    const [auction] = await getAuction(this._candyShopAddress, tokenMint, this._programId);
+
+    const auctionAccount = await program.provider.connection.getAccountInfo(auction);
+
+    if (!auctionAccount) {
+      throw new Error(CandyShopErrorType.AuctionDoesNotExist);
+    }
+
+    const [auctionHouseAuthority] = await getAuctionHouseAuthority(
+      this._candyShopCreatorAddress,
+      this._treasuryMint,
+      this._programId
+    );
+
+    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
+
+    const [feeAccount] = await getAuctionHouseFeeAcct(auctionHouse);
+
+    const [metadata] = await getMetadataAccount(tokenMint);
+
+    const tx = await withdrawBid({
+      auction,
+      authority: auctionHouseAuthority,
+      candyShop: this._candyShopAddress,
+      buyer: wallet,
+      treasuryMint: this._treasuryMint,
+      nftMint: tokenMint,
+      metadata,
+      auctionHouse,
+      feeAccount,
+      program
+    } as WithdrawBidParams);
+    return tx.txId;
+  }
+
+  /**
+   * Executes Candy Shop __BuyNow__ action
+   *
+   * @param {CandyShopBuyNowParams} params required parameters for buy now action
+   */
+  public async buyNowAuction(params: CandyShopBuyNowParams): Promise<string> {
+    const { tokenAccount, tokenMint, wallet } = params;
+
+    console.log(`${Logger}: performing buy now auction `, {
+      tokenAccount: tokenAccount.toString()
+    });
+
+    const program = await this.getStaticProgram(wallet);
+
+    const [auction, auctionBump] = await getAuction(this._candyShopAddress, tokenMint, this._programId);
+
+    const [auctionHouseAuthority] = await getAuctionHouseAuthority(
+      this._candyShopCreatorAddress,
+      this._treasuryMint,
+      this._programId
+    );
+
+    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
+
+    const [feeAccount] = await getAuctionHouseFeeAcct(auctionHouse);
+
+    const [treasuryAccount] = await getAuctionHouseTreasuryAcct(auctionHouse);
+
+    const [metadata] = await getMetadataAccount(tokenMint);
+
+    const tx = await buyNowAuction({
+      auction,
+      auctionBump,
+      authority: auctionHouseAuthority,
+      candyShop: this._candyShopAddress,
+      buyer: wallet,
+      treasuryMint: this._treasuryMint,
+      nftMint: tokenMint,
+      metadata,
+      auctionHouse,
+      feeAccount,
+      treasuryAccount,
+      program,
+      env: this._env
+    } as BuyNowAuctionParams);
+    return tx.txId;
+  }
+
+  /**
+   * Executes Candy Shop __SettleAuction__ and __DistributeProceeds__ actions
+   *
+   * @param {CandyShopSettleAndDistributeParams} params required parameters for settle auction and distribute proceed actions
+   */
+  public async settleAndDistributeAuctionProceeds(params: CandyShopSettleAndDistributeParams): Promise<string> {
+    const { tokenAccount, tokenMint, wallet } = params;
+
+    console.log(`${Logger}: performing settle auction and distribute proceeds `, {
+      tokenAccount: tokenAccount.toString()
+    });
+
+    const program = await this.getStaticProgram(wallet);
+
+    const [auction, auctionBump] = await getAuction(this._candyShopAddress, tokenMint, this._programId);
+
+    const [auctionHouseAuthority] = await getAuctionHouseAuthority(
+      this._candyShopCreatorAddress,
+      this._treasuryMint,
+      this._programId
+    );
+
+    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
+
+    const [feeAccount] = await getAuctionHouseFeeAcct(auctionHouse);
+
+    const [treasuryAccount] = await getAuctionHouseTreasuryAcct(auctionHouse);
+
+    const [metadata] = await getMetadataAccount(tokenMint);
+
+    const tx = await settleAndDistributeProceeds({
+      auction,
+      auctionBump,
+      authority: auctionHouseAuthority,
+      candyShop: this._candyShopAddress,
+      settler: wallet,
+      treasuryMint: this._treasuryMint,
+      nftMint: tokenMint,
+      metadata,
+      auctionHouse,
+      feeAccount,
+      treasuryAccount,
+      program,
+      env: this._env
+    } as SettleAndDistributeProceedParams);
+    return tx.txId;
+  }
+
   /**
    * Fetch stats associated with this Candy Shop
    */

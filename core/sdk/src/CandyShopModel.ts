@@ -68,3 +68,64 @@ export interface CandyShopSellParams extends CandyShopActionParams {}
  * Arguments required for calling Candy Shop cancel action
  */
 export interface CandyShopCancelParams extends CandyShopActionParams {}
+
+/**
+ * General arguments required for calling Auction actions
+ *
+ * @property {PublicKey} tokenAccount
+ * @property {PublicKey} tokenMint
+ * @property {BN} price
+ * @property {AnchorWallet | Keypair} wallet
+ */
+export interface CandyShopAuctionParams {
+  /** Token account holding NFT */
+  tokenAccount: web3.PublicKey;
+  /** Mint address of NFT */
+  tokenMint: web3.PublicKey;
+  /** User wallet keypair */
+  wallet: AnchorWallet | web3.Keypair;
+}
+
+/**
+ * Arguments required for calling Candy Shop create auction action
+ */
+export interface CandyShopCreateAuctionParams extends CandyShopAuctionParams {
+  /** Starting bid for auction */
+  startingBid: BN;
+  /** Start Time for auction */
+  startTime: BN;
+  /** Bidding period for auction */
+  biddingPeriod: BN;
+  /** Minimum bid increment to outbid highest bid this auction */
+  tickSize: BN;
+  /** Buynow price for auction, nullable */
+  buyNowPrice: BN | null;
+}
+
+/**
+ * Arguments required for calling Candy Shop cancel auction action
+ */
+export interface CandyShopCancelAuctionParams extends CandyShopAuctionParams {}
+
+/**
+ * Arguments required for calling Candy Shop bid auction action
+ */
+export interface CandyShopBidAuctionParams extends CandyShopAuctionParams {
+  /** bidPrice for auction */
+  bidPrice: BN;
+}
+
+/**
+ * Arguments required for calling Candy Shop withdraw auction bid action
+ */
+export interface CandyShopWithdrawAuctionBidParams extends CandyShopAuctionParams {}
+
+/**
+ * Arguments required for calling Candy Shop the auction buy now action
+ */
+export interface CandyShopBuyNowParams extends CandyShopAuctionParams {}
+
+/**
+ * Arguments required for calling Candy Shop settle auction and distribute proceed actions
+ */
+export interface CandyShopSettleAndDistributeParams extends CandyShopAuctionParams {}
