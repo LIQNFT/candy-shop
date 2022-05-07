@@ -88,7 +88,8 @@ describe('e2e token flow', function () {
     console.log('return NFT txHash', txHash);
   });
 
-  it('revokes seller treasury ata delagate', async () => {
+  it('revokes seller treasury ata delagate', async function () {
+    this.timeout(60000);
     const randomDelegate = web3.Keypair.generate().publicKey;
     const sellerTreasuryAta = await getAssociatedTokenAddress(TREASURY_MINT, user1.publicKey);
     await approve(connection, user1, sellerTreasuryAta, randomDelegate, user1, 1);
