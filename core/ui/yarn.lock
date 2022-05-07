@@ -1276,6 +1276,11 @@
     idb "^7.0.1"
     qs "^6.10.3"
 
+"@liqnft/candy-shop-types@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.1.10.tgz#edb969f3657c4f417ba81dfca624cfbe36e91fff"
+  integrity sha512-Q57zo0Twh2bX+oHchUdEUzwgbOlU4t+x645NzBU6wRa3q2POYLxd2AaL6+K+5nbytr2LYXvNLqE/PuC2NQGnKw==
+
 "@liqnft/candy-shop-types@^0.1.4":
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.1.4.tgz#aaf240b1c4898442cf1878a11c2586b193a0deb4"

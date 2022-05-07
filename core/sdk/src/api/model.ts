@@ -1,3 +1,4 @@
+import * as anchor from '@project-serum/anchor';
 import { web3, BN, Program, Idl } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
@@ -28,4 +29,63 @@ export interface SellTransactionParams extends CandyShopTransactionParams {
 
 export interface CancelTransactionParams extends CandyShopTransactionParams {
   tradeState: web3.PublicKey;
+}
+
+export interface AuctionParams {
+  candyShop: web3.PublicKey;
+  treasuryMint: web3.PublicKey;
+  authority: web3.PublicKey;
+  auction: web3.PublicKey;
+  nftMint: web3.PublicKey;
+  program: anchor.Program<anchor.Idl>;
+}
+
+export interface CreateAuctionParams extends AuctionParams {
+  auctionBump: number;
+  seller: AnchorWallet | web3.Keypair;
+  startingBid: anchor.BN;
+  startTime: anchor.BN;
+  biddingPeriod: anchor.BN;
+  tickSize: anchor.BN;
+  buyNowPrice: anchor.BN | null;
+}
+
+export interface CancelAuctionParams extends AuctionParams {
+  auctionBump: number;
+  seller: AnchorWallet | web3.Keypair;
+}
+
+export interface BidAuctionParams extends AuctionParams {
+  buyer: AnchorWallet | web3.Keypair;
+  metadata: web3.PublicKey;
+  auctionHouse: web3.PublicKey;
+  feeAccount: web3.PublicKey;
+  bidPrice: anchor.BN;
+}
+
+export interface WithdrawBidParams extends AuctionParams {
+  buyer: AnchorWallet | web3.Keypair;
+  metadata: web3.PublicKey;
+  auctionHouse: web3.PublicKey;
+  feeAccount: web3.PublicKey;
+}
+
+export interface BuyNowAuctionParams extends AuctionParams {
+  buyer: AnchorWallet | web3.Keypair;
+  auctionBump: number;
+  metadata: web3.PublicKey;
+  auctionHouse: web3.PublicKey;
+  feeAccount: web3.PublicKey;
+  treasuryAccount: web3.PublicKey;
+  env: string;
+}
+
+export interface SettleAndDistributeProceedParams extends AuctionParams {
+  settler: AnchorWallet | web3.Keypair;
+  auctionBump: number;
+  metadata: web3.PublicKey;
+  auctionHouse: web3.PublicKey;
+  feeAccount: web3.PublicKey;
+  treasuryAccount: web3.PublicKey;
+  env: string;
 }

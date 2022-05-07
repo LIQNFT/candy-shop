@@ -115,7 +115,7 @@ export async function fetchOrdersByStoreIdAndWalletAddress(
   // handles pagination internally
   const limit = 10;
   let offset = 0;
-  let resCount = null;
+  let resCount: number | null = null;
   let orders: Order[] = [];
 
   while (resCount === null || resCount == limit) {

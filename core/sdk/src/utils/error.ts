@@ -6,7 +6,20 @@ export enum CandyShopErrorType {
   InvalidNFTMetadata = 'InvalidNFTMetadata',
   SellerATACannotHaveDelegate = 'SellerATACannotHaveDelegate',
   BuyerATACannotHaveDelegate = 'BuyerATACannotHaveDelegate',
-  TradeStateExists = 'TradeStateExists'
+  TradeStateExists = 'TradeStateExists',
+  NonShopOwner = 'NonShopOwner',
+  AuctionExists = 'AuctionExists',
+  AuctionDoesNotExist = 'AuctionDoesNotExist',
+  BidDoesNotExist = 'BidDoesNotExist',
+  InvalidAuctionCreationParams = 'InvalidAuctionCreationParams',
+  CannotCancel = 'CannotCancel',
+  BidTooHigh = 'BidTooHigh',
+  BidTooLow = 'BidTooLow',
+  NotWithinBidPeriod = 'NotWithinBidPeriod',
+  AuctionHasNoBids = 'AuctionHasNoBids',
+  CannotWithdraw = 'CannotWithdraw',
+  BuyNowUnavailable = 'BuyNowUnavailable',
+  AuctionNotOver = 'AuctionNotOver'
 }
 
 export const CandyShopErrorMsgMap = {
@@ -17,7 +30,23 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.InvalidNFTMetadata]: 'Failed to get metadata account data.',
   [CandyShopErrorType.SellerATACannotHaveDelegate]: 'Seller payment receipt account cannot have a delegate set.',
   [CandyShopErrorType.BuyerATACannotHaveDelegate]: 'Buyer receipt token account cannot have a delegate set.',
-  [CandyShopErrorType.TradeStateExists]: 'Sell Order already placed.'
+  [CandyShopErrorType.TradeStateExists]: 'Sell Order already placed.',
+  [CandyShopErrorType.NonShopOwner]: 'Only shop owner can create auction.',
+  [CandyShopErrorType.AuctionExists]: 'Auction already exists.',
+  [CandyShopErrorType.AuctionDoesNotExist]: 'Auction does not exist.',
+  [CandyShopErrorType.BidDoesNotExist]: 'Bid does not exist.',
+  [CandyShopErrorType.AuctionHasNoBids]: 'Auctions without bids cannot be settled.',
+  [CandyShopErrorType.BuyNowUnavailable]: 'Buy now is unavailabel on this auction.',
+  [CandyShopErrorType.CannotCancel]: 'This auction cannot be cancelled at this time.',
+  [CandyShopErrorType.BidTooHigh]:
+    'Bid price is higher than auction buy now price. Please call that instruction instaed.',
+  [CandyShopErrorType.BidTooLow]: 'Bid price is too low to beat current highest bid.',
+  [CandyShopErrorType.NotWithinBidPeriod]: 'Attepmted to place a bid outside of auction bid period.',
+  [CandyShopErrorType.CannotWithdraw]:
+    'This bid is currently the highest for the auction, it cannot be withdrawn at this time.',
+  [CandyShopErrorType.InvalidAuctionCreationParams]:
+    'One or more of the passed auction creation parameters are invalid.',
+  [CandyShopErrorType.AuctionNotOver]: 'Attempted to settle and auction that is not over.'
 };
 
 export class CandyShopError extends Error {
