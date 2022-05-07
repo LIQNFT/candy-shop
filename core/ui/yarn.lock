@@ -1262,17 +1262,17 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-6.10.0.tgz#c012c1ecc1a0e53d50e6af381618dca5268461c1"
   integrity sha512-lLseUPEhSFUXYTKj6q7s2O3s2vW2ebgA11vMAlKodXGf5AFw4zUoEbTz9CoFOC9jS6xY4Qr8BmRnxP/odT4Uuw==
 
-"@liqnft/candy-shop-sdk@0.4.26":
-  version "0.4.26"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-sdk/-/candy-shop-sdk-0.4.26.tgz#2067b8e33614cd02302842a2186d165efd168804"
-  integrity sha512-zEx30H2WMzjN+gChdiqNIXv9jtzvzU0nMaRHajcko74YzEy9WE4FR9iLpUDGF0+Fz7rMYEibNbs2iTQyM+kmxw==
+"@liqnft/candy-shop-sdk@0.4.27":
+  version "0.4.27"
+  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-sdk/-/candy-shop-sdk-0.4.27.tgz#b877e326a5eede3a84be42f3561e9a376acf9aa4"
+  integrity sha512-uN14Z43BeMThVdIvxfPR8U5gP3PnsYpMuBVIKl8Ky8CIkW1AFJavWn9gYEW+EpS+z0Xam5xqn5weIJ9v7Ybqaw==
   dependencies:
     "@project-serum/anchor" "^0.23.0"
     "@solana/spl-token" "^0.2.0"
     axios "^0.26.1"
     crc-32 "^1.2.2"
     qs "^6.10.3"
-    solana-candy-shop-schema "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#1e020e95ba24e0f1a70b3c593b6a112eb9cb7687"
+    solana-candy-shop-schema "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#799c8602bcf2674e92ffa5c68c79c5b880ad1648"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -6520,6 +6520,10 @@ snapdragon@^0.8.1:
 "solana-candy-shop-schema@git+https://github.com/LIQNFT/solana-candy-shop-schema.git#1e020e95ba24e0f1a70b3c593b6a112eb9cb7687":
   version "1.0.0"
   resolved "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#1e020e95ba24e0f1a70b3c593b6a112eb9cb7687"
+
+"solana-candy-shop-schema@git+https://github.com/LIQNFT/solana-candy-shop-schema.git#799c8602bcf2674e92ffa5c68c79c5b880ad1648":
+  version "1.0.0"
+  resolved "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#799c8602bcf2674e92ffa5c68c79c5b880ad1648"
 
 source-map-js@^1.0.2:
   version "1.0.2"
