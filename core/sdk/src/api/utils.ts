@@ -10,7 +10,7 @@ import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pub
 import { CandyShopError, CandyShopErrorType } from '../utils/error';
 import { safeAwait } from '../utils';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { awaitTransactionSignatureConfirmation } from '.';
+import { awaitTransactionSignatureConfirmation, WRAPPED_SOL_MINT } from '.';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);
@@ -167,7 +167,7 @@ export const checkPaymentAccountBalance = async (
 ) => {
   // If isNative = true then payment account = calling user's pubkey
   // i.e. connection.getAccountInfo(paymentAccount) will not return null
-  let paymentAccountBalance: number | undefined;
+  let paymentAccountBalance: number | undefined | null;
 
   if (isNative) {
     const info = await connection.getAccountInfo(paymentAccount);
@@ -179,7 +179,7 @@ export const checkPaymentAccountBalance = async (
       console.log('checkPaymentAccountBalance: getTokenAccountBalance error= ', accountBalance.error);
       paymentAccountBalance = undefined;
     } else {
-      paymentAccountBalance = accountBalance.result;
+      paymentAccountBalance = new BN(accountBalance.result.value.amount).toNumber();
     }
   }
 
@@ -252,4 +252,8 @@ export const sendTx = async (
   const txHash = await awaitTransactionSignatureConfirmation(program.provider.connection, signedTx.serialize());
 
   return txHash;
+};
+
+export const treasuryMintIsNative = (treasuryMint: web3.PublicKey) => {
+  return treasuryMint.equals(WRAPPED_SOL_MINT);
 };

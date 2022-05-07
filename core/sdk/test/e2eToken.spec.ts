@@ -1,5 +1,7 @@
 import { BN, web3 } from '@project-serum/anchor';
-import { createTransferInstruction, getAssociatedTokenAddress } from '@solana/spl-token';
+import { approve, createTransferInstruction, getAccount, getAssociatedTokenAddress } from '@solana/spl-token';
+import assert from 'assert';
+import { safeAwait } from '../src/utils';
 import { CandyShop } from '../src/CandyShop';
 // 3NjzSLrnFDwzxJtEzxHUTV5nGYQPHm49EfUFD9fhaDwp
 const USER_1 = new Uint8Array([
@@ -84,5 +86,47 @@ describe('e2e token flow', function () {
 
     const txHash = await connection.sendRawTransaction(transaction.serialize(), { skipPreflight: true });
     console.log('return NFT txHash', txHash);
+  });
+
+  it('revokes seller treasury ata delagate', async function () {
+    this.timeout(60000);
+    const randomDelegate = web3.Keypair.generate().publicKey;
+    const sellerTreasuryAta = await getAssociatedTokenAddress(TREASURY_MINT, user1.publicKey);
+    await approve(connection, user1, sellerTreasuryAta, randomDelegate, user1, 1);
+
+    const sellerTreasuryAtaInfo1 = (await safeAwait(getAccount(connection, sellerTreasuryAta))).result;
+
+    assert(
+      sellerTreasuryAtaInfo1 &&
+        sellerTreasuryAtaInfo1.delegate &&
+        sellerTreasuryAtaInfo1.delegate.equals(randomDelegate),
+      'Seller treasury mint ata should have delegate.'
+    );
+
+    const candyShop = new CandyShop(CREATOR_ADDRESS, TREASURY_MINT, CANDY_SHOP_PROGRAM_ID, 'devnet');
+
+    const sellTxHash = await candyShop.sell({
+      tokenAccount: TOKEN_ACCOUNT,
+      tokenMint: TOKEN_MINT,
+      price: PRICE,
+      wallet: user1
+    });
+    console.log('sellTxHash ', sellTxHash);
+    await connection.confirmTransaction(sellTxHash);
+
+    const sellerTreasuryAtaInfo2 = (await safeAwait(getAccount(connection, sellerTreasuryAta))).result;
+
+    assert(
+      sellerTreasuryAtaInfo2 && !sellerTreasuryAtaInfo2.delegate,
+      'Seller treasury mint ata delegate should have been removed.'
+    );
+
+    const cancelTxHash = await candyShop.cancel({
+      tokenAccount: TOKEN_ACCOUNT,
+      tokenMint: TOKEN_MINT,
+      price: PRICE,
+      wallet: user1
+    });
+    console.log('cancelTxHash ', cancelTxHash);
   });
 });
