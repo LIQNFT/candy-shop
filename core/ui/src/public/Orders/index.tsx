@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Dropdown } from 'components/Dropdown';
 import { Empty } from 'components/Empty';
-import { Skeleton } from 'components/Skeleton';
+
 import { InfiniteOrderList } from 'components/InfiniteOrderList';
+import { LoadingSkeleton } from 'components/LoadingSkeleton';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { ORDER_FETCH_LIMIT, LOADING_SKELETON_COUNT, SORT_OPTIONS } from 'constant/Orders';
+import { ORDER_FETCH_LIMIT, SORT_OPTIONS } from 'constant/Orders';
 import { OrdersActionsStatus } from 'constant';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { useValidateStatus } from 'hooks/useValidateStatus';
@@ -118,18 +119,6 @@ export const Orders: React.FC<OrdersProps> = ({
       });
   }, [candyShop, sortedByOption.value, updateOrderStatus, sellerAddress, identifiers, collectionFilter, shopFilter]);
 
-  const loadingView = (
-    <div className="candy-container-list">
-      {Array(LOADING_SKELETON_COUNT)
-        .fill(0)
-        .map((_, key) => (
-          <div key={key}>
-            <Skeleton />
-          </div>
-        ))}
-    </div>
-  );
-
   const emptyView = <Empty description="No orders found" />;
 
   const infiniteOrderListView = (
@@ -218,7 +207,7 @@ export const Orders: React.FC<OrdersProps> = ({
               })} */}
             </div>
             <div className="candy-orders-content">
-              {loading ? loadingView : orders.length ? infiniteOrderListView : emptyView}
+              {loading ? <LoadingSkeleton /> : orders.length ? infiniteOrderListView : emptyView}
             </div>
           </div>
         </div>
@@ -238,7 +227,7 @@ export const Orders: React.FC<OrdersProps> = ({
               defaultValue={SORT_OPTIONS[0]}
             />
           </div>
-          {loading ? loadingView : orders.length ? infiniteOrderListView : emptyView}
+          {loading ? <LoadingSkeleton /> : orders.length ? infiniteOrderListView : emptyView}
         </div>
       </div>
     </>

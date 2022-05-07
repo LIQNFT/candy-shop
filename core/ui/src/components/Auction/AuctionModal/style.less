@@ -1,0 +1,226 @@
+@import '../../../variable.less';
+
+.candy-auction-modal-detail {
+  width: 100%;
+
+  .candy-auction-modal-form-item {
+    margin-bottom: 15px;
+  }
+}
+
+.candy-auction-modal-detail-container {
+  display: flex;
+  gap: 24px;
+}
+
+.candy-auction-modal-countdown {
+  text-align: left;
+
+  .candy-countdown {
+    background: @linear-background;
+    color: #fff;
+    width: fit-content;
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+
+    &.candy-countdown-ended,
+    &.candy-countdown-not-started {
+      background: @gray-medium-alt;
+    }
+  }
+}
+
+.candy-auction-modal-prompt {
+  margin-bottom: 15px;
+  color: @gray-medium;
+  text-align: left;
+  font-size: 14px;
+  display: block;
+}
+
+.candy-auction-modal-notice {
+  color: @primary-color;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 6px 12px;
+  border: 2px solid;
+  margin: 0 50px;
+  background-color: rgba(244, 237, 254, 0.2);
+  background-color: @primary-color-light;
+  margin-bottom: 20px;
+  font-size: 14px;
+
+  .candy-button {
+    font-size: 14px;
+    padding: 4px 12px;
+  }
+}
+
+.candy-auction-modal-buy-now {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid @gray-medium-alt;
+
+  .candy-button {
+    padding: 6px 50px;
+    width: 220px;
+    align-self: flex-end;
+  }
+}
+
+.candy-auction-modal {
+  display: flex;
+  gap: 24px;
+  font-size: 16px;
+  line-height: 24px;
+  align-items: flex-start;
+
+  .candy-title {
+    margin: 20px 0;
+  }
+
+  .candy-auction-modal-thumbnail {
+    width: 340px;
+    height: 340px;
+    text-align: center;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .candy-auction-modal-container {
+    flex: 1;
+
+    .candy-auction-modal-title {
+      text-align: left;
+      font-weight: bold;
+      font-size: 24px;
+    }
+
+    .candy-auction-modal-control {
+      display: flex;
+      text-align: left;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 5px;
+      column-gap: 10px;
+
+      .candy-input-label {
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+
+      .candy-input-price {
+        height: 42px;
+      }
+
+      .candy-button {
+        padding: 8px 50px;
+        border-radius: 32px;
+        width: 220px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        svg {
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+
+  .candy-auction-modal-price {
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .candy-auction-modal-confirmed {
+    width: 100%;
+
+    &-flex {
+      display: flex;
+      flex-flow: row wrap;
+      row-gap: 24px;
+      column-gap: 16px;
+      > * {
+        width: calc((100% - 16px) / 2);
+      }
+    }
+
+    &-item {
+      text-align: left;
+    }
+
+    .candy-auction-modal-confirmed-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      padding-top: 20px;
+      padding-bottom: 20px;
+      font-weight: bold;
+      font-size: 24px;
+      line-height: 36px;
+    }
+
+    .candy-auction-modal-confirmed-container {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+
+      p {
+        margin-bottom: 4px;
+      }
+    }
+
+    .candy-auction-modal-confirmed-content {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      width: 100%;
+      flex: 1;
+
+      .candy-auction-modal-name {
+        text-align: left;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .candy-auction-modal-ticker {
+        text-align: left;
+        font-size: 14px;
+      }
+    }
+
+    .candy-auction-modal-confirmed-thumbnail {
+      width: 100px;
+      height: 100px;
+      margin-right: 20px;
+    }
+
+    hr {
+      border-bottom: 1px solid #e0e0e0;
+      margin-bottom: 24px;
+    }
+
+    .candy-button {
+      width: 100%;
+      padding: 8px 0;
+      text-align: center;
+      margin-top: 40px;
+    }
+  }
+}

@@ -1,16 +1,15 @@
 import * as anchor from '@project-serum/anchor';
 import { createRevokeInstruction, getAccount, TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { SellTransactionParams } from '../model';
-import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 import {
+  AUCTION_HOUSE_PROGRAM_ID,
+  getAtaForMint,
   getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
-  getAtaForMint,
+  SellTransactionParams,
   sendTx,
-  treasuryMintIsNative,
-  checkTradeStateExist
-} from '../utils';
-import { safeAwait } from '../../utils';
+  treasuryMintIsNative
+} from '../..';
+import { safeAwait } from '../../../utils';
 
 export async function sellNft(params: SellTransactionParams): Promise<string> {
   const {

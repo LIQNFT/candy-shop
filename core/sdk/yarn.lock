@@ -74,10 +74,10 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
-"@liqnft/candy-shop-types@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.1.4.tgz#aaf240b1c4898442cf1878a11c2586b193a0deb4"
-  integrity sha512-43ri71gEI+hVISaK3z9AVUIbtDnSBnhqReDiMS+DB5eWNRiI594RBPhDU3muypRc/Nlpc+kZDmEAUfB/axu8Pw==
+"@liqnft/candy-shop-types@0.1.12":
+  version "0.1.12"
+  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.1.12.tgz#8b9fead643da9ebb67e31747a8bade9be05832e3"
+  integrity sha512-Z+HjbbMbok6mB4EswOozs+jcUjQfBVDeVUu8Pw/UkyPf1+iltMG3Axk9mM+ea0qmtV8n5ejkMpFSMnb089EelA==
 
 "@project-serum/anchor@^0.23.0":
   version "0.23.0"

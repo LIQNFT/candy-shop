@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CancelModal } from 'components/CancelModal';
-import { LiqImage } from 'components/LiqImage';
 import { SellModal } from 'components/SellModal';
+import { Card } from 'components/Card';
 
 import { SingleTokenInfo, CandyShop } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema, CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
@@ -30,7 +30,6 @@ export const Nft = ({ nft, wallet, sellDetail, shop, candyShop }: NftProps): JSX
     setSelection(nft);
   };
 
-  const isSellItem = Boolean(sellDetail);
   const exchangeInfo = sellDetail
     ? getExchangeInfo(sellDetail, candyShop)
     : {
@@ -40,24 +39,16 @@ export const Nft = ({ nft, wallet, sellDetail, shop, candyShop }: NftProps): JSX
 
   return (
     <>
-      <div className="candy-card-border candy-nft-card" onClick={onClick}>
-        {isSellItem && <div className="candy-status-tag">Listed for Sale</div>}
+      <Card
+        name={nft?.metadata?.data?.name}
+        ticker={nft?.metadata?.data?.symbol}
+        imgUrl={nft?.nftImage}
+        label={sellDetail ? <div className="candy-status-tag">Listed for Sale</div> : undefined}
+        onClick={onClick}
+      />
 
-        <LiqImage
-          src={nft?.nftImage}
-          alt={nft?.metadata?.data?.name}
-          fit="cover"
-          style={{ borderTopRightRadius: 14, borderTopLeftRadius: 14 }}
-        />
-
-        <div className="candy-nft-info">
-          <div className="name">{nft?.metadata?.data?.name}</div>
-          <div className="ticker">{nft?.metadata?.data?.symbol}</div>
-        </div>
-      </div>
-
-      {selection && !isSellItem && (
-        <SellModal onCancel={onClose} nft={selection} wallet={wallet} shop={shop} candyShop={candyShop} />
+      {selection && !sellDetail && (
+        <SellModal onCancel={onClose} nft={selection} candyShop={candyShop} wallet={wallet} shop={shop} />
       )}
 
       {selection && sellDetail ? (

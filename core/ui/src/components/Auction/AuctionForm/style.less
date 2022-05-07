@@ -1,0 +1,158 @@
+@import '../../../variable.less';
+
+.candy-auction-form {
+  max-width: 600px;
+  margin: 0 auto;
+
+  /* Remove Arrows/Spinners Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input:focus-visible {
+    outline-color: #7522f5;
+  }
+
+  /* Firefox */
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
+  .candy-auction-form-title {
+    padding: 40px 0;
+  }
+
+  .candy-auction-form-info {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 60px;
+
+    img {
+      width: 100px;
+      max-width: 100px;
+      height: 100px;
+      margin-right: 30px;
+    }
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+
+      > p {
+        font-weight: 600;
+        font-size: 18px;
+      }
+    }
+  }
+
+  .candy-auction-nft {
+    margin-bottom: 40px;
+  }
+
+  .candy-checkbox-container {
+    margin-bottom: 15px;
+  }
+
+  .candy-auction-period {
+    text-align: left;
+    margin-bottom: 15px;
+
+    label {
+      display: block;
+    }
+
+    div {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      column-gap: 5px;
+    }
+  }
+
+  .candy-auction-radio {
+    border: 2px solid @primary-color;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    background-color: @primary-color-light;
+    color: @primary-color;
+  }
+
+  .candy-auction-radio-disable {
+    border-color: @gray-medium-alt;
+    color: #000;
+    background-color: #fff;
+  }
+
+  .candy-auction-form-item-checkbox {
+    text-align: left;
+    margin: 20px 0;
+  }
+
+  .candy-auction-form-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    margin-bottom: 15px;
+
+    input {
+      width: 100%;
+      border: 2px solid @gray-medium-alt;
+      padding: 8px 12px;
+      border-radius: 4px;
+    }
+
+    .candy-auction-form-sol {
+      position: absolute;
+      top: 37px;
+      right: 10px;
+    }
+  }
+
+  .candy-auction-form-time {
+    display: grid;
+    grid-template-columns: 1fr 5px 1fr 1fr;
+    column-gap: 5px;
+    align-items: center;
+    margin-bottom: 15px;
+
+    > input {
+      width: 100%;
+      border: 2px solid @gray-medium-alt;
+      padding: 8px 12px;
+      border-radius: 4px;
+    }
+
+    .candy-auction-time-checkbox {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 5px;
+      align-items: center;
+    }
+  }
+
+  .candy-action-form-fees {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+
+  .candy-auction-time-label {
+    display: block;
+    text-align: left;
+  }
+
+  .candy-auction-input-hidden {
+    display: block;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    border: 0;
+    pointer-events: none;
+  }
+}

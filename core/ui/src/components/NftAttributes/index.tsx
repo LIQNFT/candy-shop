@@ -12,7 +12,7 @@ export const NftAttributes: React.FunctionComponent<NftAttributesProps> = ({ att
       <div className="candy-attribute-container">
         {loading ? (
           <div className="candy-loading candy-loading-sm" />
-        ) : attributes ? (
+        ) : attributes && attributes.length > 0 ? (
           attributes.map((attribute) => (
             <div className="candy-nft-attribute" key={attribute.trait_type}>
               {attribute.trait_type}: {attribute.value}
