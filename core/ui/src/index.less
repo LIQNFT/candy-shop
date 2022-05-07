@@ -25,11 +25,12 @@
 
 .candy-line-limit-1 {
   display: -webkit-box;
+  line-height: initial;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   word-break: break-word;
+  -webkit-line-clamp: 1;
 }
 
 .candy-button {
@@ -40,6 +41,19 @@
   color: #fff;
   border: 2px solid transparent;
   cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s all ease-in-out;
+
+  &.candy-button-ghost {
+    background-color: #fff;
+    color: @primary-color;
+    border: 1px solid @primary-color;
+
+    &:hover {
+      opacity: 0.7;
+      background: #fff;
+    }
+  }
 
   &:hover {
     background: #9a4dff;
@@ -411,12 +425,30 @@
   }
 }
 
-.candy-line-limit-1 {
-  display: -webkit-box;
-  line-height: initial;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: break-word;
-  -webkit-line-clamp: 1;
+.candy-input-price {
+  width: 100%;
+  height: 40px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+
+  border-radius: 4px;
+  border: 2px solid #bdbdbd;
+
+  input {
+    border: none;
+    outline: none;
+    flex-grow: 1;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Firefox */
+    &[type='number'] {
+      -moz-appearance: textfield;
+    }
+  }
 }

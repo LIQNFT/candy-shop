@@ -1,13 +1,17 @@
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { BuyModal } from 'components/BuyModal';
-import { CancelModal } from 'components/CancelModal';
-import { LiqImage } from 'components/LiqImage';
+
 import React, { useState } from 'react';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { getExchangeInfo } from 'utils/getExchangeInfo';
 import { getPrice } from 'utils/getPrice';
+
+import { LiqImage } from 'components/LiqImage';
+import { BuyModal } from 'components/BuyModal';
+import { CancelModal } from 'components/CancelModal';
+import { AuctionModal } from 'components/AuctionModal';
+
 import './index.less';
 
 export interface OrderProps {
@@ -69,6 +73,16 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectCompon
         </div>
       </div>
 
+      {selection && (
+        <AuctionModal
+          order={selection}
+          onClose={onClose}
+          wallet={wallet}
+          candyShop={orderCandyShop}
+          walletConnectComponent={walletConnectComponent}
+        />
+      )}
+      {/* 
       {selection && !isUserListing ? (
         <BuyModal
           order={selection}
@@ -89,6 +103,8 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectCompon
           exchangeInfo={exchangeInfo}
         />
       ) : null}
+        <CancelModal onClose={onClose} candyShop={orderCandyShop} order={selection} wallet={wallet} />
+      ) : null} */}
     </>
   );
 };

@@ -1,0 +1,33 @@
+.candy-checkbox-container {
+  display: flex;
+
+  .candy-checkbox-label {
+    cursor: pointer;
+  }
+}
+
+.candy-checkbox {
+  border: 2px solid #000;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  cursor: pointer;
+
+  .candy-checkbox-input {
+    display: none;
+  }
+
+  &.candy-checkbox-disable {
+    svg {
+      opacity: 0;
+    }
+  }
+
+  svg {
+    width: 70%;
+    height: 70%;
+  }
+}
