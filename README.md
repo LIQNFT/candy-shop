@@ -1,16 +1,20 @@
 # Candy Shop
 
+[![Release](https://img.shields.io/npm/v/@liqnft/candy-shop?label=@liqnft/candy-shop&color=blueviolet)](https://github.com/LIQNFT/candy-shop/tags)
+[![Download](https://img.shields.io/npm/dm/@liqnft/candy-shop?label=Downloads&color=blueviolet)](https://www.npmjs.com/package/@liqnft/candy-shop)
+
+[![Release](https://img.shields.io/npm/v/@liqnft/candy-shop-sdk?label=@liqnft/candy-shop-sdk&color=yellow)](https://github.com/LIQNFT/candy-shop/tags)
+[![Download](https://img.shields.io/npm/dm/@liqnft/candy-shop-sdk?label=Downloads&color=yellow)](https://www.npmjs.com/package/@liqnft/candy-shop-sdk)
+
 [![Stars](https://img.shields.io/github/stars/LIQNFT/candy-shop?style=social&label=Star)](https://github.com/LIQNFT/candy-shop/stargazers)
 [![Forks](https://img.shields.io/github/forks/LIQNFT/candy-shop?style=social&label=Forks&color=blueviolet)](https://github.com/LIQNFT/candy-shop/network/members)
-[![Release](https://img.shields.io/github/v/tag/LIQNFT/candy-shop?style=flat&label=Release&color=blueviolet)](https://github.com/LIQNFT/candy-shop/network/members)
-
 ### Solana NFT Marketplace JS Library (In Beta)
 
 **Contents**
 
 - [Intro](#intro)
 - [Key Features](#key-features)
-- [Releases](#releases)
+- [Release Notes](#release-notes)
 - [Invoke Your Candy Shop](#invoke-your-candy-shop)
 - [Install Candy Shop](#install-candyshop)
   - [How to use CandyShop](#how-to-use-candyshop)
@@ -50,7 +54,7 @@ Candy Shop provides an easy to integrate marketplace protocol & toolset with a f
 - **Transparency.**
   - Candy Shop is an open source and on-chain protocol, providing your community with full transparency on what is happening behind the scene for your marketplace.
 
-## Releases
+## Release Notes
 
 Please refer to the tag notes for latest release. 
 - https://github.com/LIQNFT/candy-shop/tags
