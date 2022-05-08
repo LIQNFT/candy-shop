@@ -21,6 +21,7 @@ export async function fetchOrdersByStoreId(
   ordersFilterQuery: OrdersFilterQuery,
   identifiers?: number[]
 ): Promise<ListBase<Order>> {
+  console.log(`CandyShop: fetching orders from ${storeId}, query=${ordersFilterQuery}, identifiers=${identifiers}`);
   const { sortBy, offset, limit } = ordersFilterQuery;
 
   const queryObject = {} as any;
@@ -70,6 +71,7 @@ export async function fetchOrderByTokenMintAndShopId(
   mintAddress: string,
   shopId: string
 ): Promise<SingleBase<Order>> {
+  console.log(`CandyShop: fetching orders by shop address=${shopId}, mintAddress=${mintAddress}`);
   return axiosInstance
     .get<SingleBase<Order>>(`/order/mint/${mintAddress}/shop/${shopId}`)
     .then((response) => response.data);
@@ -80,6 +82,7 @@ export async function fetchOrdersByStoreIdAndWalletAddress(
   storeId: string,
   walletAddress: string
 ): Promise<Order[]> {
+  console.log(`CandyShop: fetching orders by shop address=${storeId}, walletAddress=${walletAddress}`);
   // handles pagination internally
   const limit = 10;
   let offset = 0;

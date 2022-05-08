@@ -7,6 +7,7 @@ export async function fetchShopWhitelistNftByShopId(
   axiosInstance: AxiosInstance,
   shopId: string
 ): Promise<ListBase<WhitelistNft>> {
+  console.log('CandyShop: fetching shop whitelist nft');
   return axiosInstance.get<ListBase<WhitelistNft>>(`/shop/wlNfts/${shopId}`).then((response) => response.data);
 }
 

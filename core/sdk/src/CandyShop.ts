@@ -1,6 +1,6 @@
 import { BN, Idl, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import axiosInstance, { configBaseUrl } from './config';
+import { configBaseUrl } from './config';
 
 import {
   ListBase,
@@ -13,22 +13,13 @@ import {
   CandyShop as CandyShopResponse
 } from 'solana-candy-shop-schema/dist';
 
-import { fetchNftByMint } from './api/backend/NftAPI';
-import { fetchShopWhitelistNftByShopId, fetchShopByShopId } from './api/backend/ShopAPI';
-import {
-  fetchOrderByTokenMintAndShopId,
-  fetchOrdersByStoreId,
-  fetchOrdersByStoreIdAndWalletAddress,
-  OrdersFilterQuery
-} from './api/backend/OrderAPI';
+import { OrdersFilterQuery, TradeQuery } from './api/backend';
 
-import { fetchStatsById } from './api/backend/StatsAPI';
-import { fetchTradeById, TradeQuery } from './api/backend/TradeAPI';
 import { CANDY_SHOP_INS_PROGRAM_ID } from './api/constants';
 import { buyAndExecuteSale } from './api/program/buyAndExecuteSale';
 import { buyAndExecuteSale as insBuyAndExecuteSale } from './api/program/InsBuyAndExecuteSale';
-import { cancelOrder } from './api/program/cancel';
-import { sellNft } from './api/program/sell';
+import { cancelOrder, sellNft } from './api/program';
+
 import {
   getAuctionHouse,
   getAuctionHouseAuthority,
@@ -39,6 +30,17 @@ import {
   getMetadataAccount
 } from './api/utils';
 import { CandyShopBuyParams, CandyShopCancelParams, CandyShopSellParams, CandyShopSettings } from './CandyShopModel';
+import { BuyAndExecuteSaleTransactionParams } from './api/model';
+import {
+  fetchNFTByMintAddress,
+  fetchOrderByShopAndMintAddress,
+  fetchOrdersByShopAddress,
+  fetchOrdersByShopAndWalletAddress,
+  fetchShopByShopAddress,
+  fetchShopWhitelistNftByShopAddress,
+  fetchStatsByShopAddress,
+  fetchTradeByShopAddress
+} from './CandyShopInfoAPI';
 
 const DEFAULT_CURRENCY_SYMBOL = 'SOL';
 const DEFAULT_CURRENCY_DECIMALS = 9;
@@ -211,45 +213,24 @@ export class CandyShop {
 
     const [metadata] = await getMetadataAccount(tokenMint);
 
-    let txHash;
-
-    if (this._programId.equals(CANDY_SHOP_INS_PROGRAM_ID)) {
-      txHash = await insBuyAndExecuteSale({
-        wallet,
-        counterParty: seller,
-        tokenAccount,
-        tokenAccountMint: tokenMint,
-        treasuryMint: this._treasuryMint,
-        auctionHouseTreasury: treasuryAccount,
-        metadata,
-        authority: auctionHouseAuthority,
-        authorityBump,
-        auctionHouse,
-        feeAccount,
-        candyShop: this._candyShopAddress,
-        price,
-        amount: new BN(1),
-        program
-      });
-    } else {
-      txHash = await buyAndExecuteSale({
-        wallet,
-        counterParty: seller,
-        tokenAccount,
-        tokenAccountMint: tokenMint,
-        treasuryMint: this._treasuryMint,
-        auctionHouseTreasury: treasuryAccount,
-        metadata,
-        authority: auctionHouseAuthority,
-        authorityBump,
-        auctionHouse,
-        feeAccount,
-        candyShop: this._candyShopAddress,
-        price,
-        amount: new BN(1),
-        program
-      });
-    }
+    const buyTxHashParams: BuyAndExecuteSaleTransactionParams = {
+      wallet,
+      counterParty: seller,
+      tokenAccount,
+      tokenAccountMint: tokenMint,
+      treasuryMint: this._treasuryMint,
+      auctionHouseTreasury: treasuryAccount,
+      metadata,
+      authority: auctionHouseAuthority,
+      authorityBump,
+      auctionHouse,
+      feeAccount,
+      candyShop: this._candyShopAddress,
+      price,
+      amount: new BN(1),
+      program
+    };
+    const txHash = await buyAndExecuteSales(this._programId, buyTxHashParams);
 
     return txHash;
   }
@@ -351,26 +332,24 @@ export class CandyShop {
   /**
    * Fetch stats associated with this Candy Shop
    */
-  public async stats(): Promise<ShopStats> {
-    console.log('CandyShop: performing stats');
-    return fetchStatsById(axiosInstance, this._candyShopAddress.toString());
+  public stats(): Promise<ShopStats> {
+    return fetchStatsByShopAddress(this._candyShopAddress);
   }
   /**
    * Fetch transactions made through this Candy Shop
    *
    * * @param {number[]} identifiers optional list of identifiers to apply to query string
    */
-  public async transactions(queryDto: TradeQuery): Promise<ListBase<Trade>> {
-    return fetchTradeById(axiosInstance, this._candyShopAddress.toString(), queryDto);
+  public transactions(queryDto: TradeQuery): Promise<ListBase<Trade>> {
+    return fetchTradeByShopAddress(this._candyShopAddress, queryDto);
   }
   /**
    * Fetch information on the specified nft
    *
    * @param {string} mint base 58 encoded mint key string
    */
-  public async nftInfo(mint: string): Promise<Nft> {
-    console.log('CandyShop: performing nftInfo', { mint });
-    return fetchNftByMint(axiosInstance, mint);
+  public nftInfo(mint: string): Promise<Nft> {
+    return fetchNFTByMintAddress(mint);
   }
   /**
    * Fetch orders matching specified filters
@@ -378,57 +357,36 @@ export class CandyShop {
    * @param {OrdersFilterQuery} ordersFilterQuery filters to apply to search
    * @param {number[]} [identifiers] optional list of identifiers to apply to query string
    */
-  async orders(ordersFilterQuery: OrdersFilterQuery, identifiers?: number[]): Promise<ListBase<Order>> {
-    console.log('CandyShop: performing orders', {
-      identifiers,
-      ordersFilterQuery
-    });
-    const { sortBy, offset, limit } = ordersFilterQuery;
-    return fetchOrdersByStoreId(
-      axiosInstance,
-      this._candyShopAddress.toString(),
-      {
-        sortBy,
-        offset,
-        limit
-      },
-      identifiers
-    );
+  public orders(ordersFilterQuery: OrdersFilterQuery, identifiers?: number[]): Promise<ListBase<Order>> {
+    return fetchOrdersByShopAddress(this._candyShopAddress, ordersFilterQuery, identifiers);
   }
   /**
    * Fetch active orders created by specified wallet address
    *
    * @param {string} walletAddress base 58 encoded public key string
    */
-  public async activeOrdersByWalletAddress(walletAddress: string): Promise<Order[]> {
-    console.log('CandyShop: performing activeOrdersByWalletAddress', {
-      walletAddress
-    });
-    return fetchOrdersByStoreIdAndWalletAddress(axiosInstance, this._candyShopAddress.toString(), walletAddress);
+  public activeOrdersByWalletAddress(walletAddress: string): Promise<Order[]> {
+    return fetchOrdersByShopAndWalletAddress(this._candyShopAddress, walletAddress);
   }
   /**
    * Fetch list of whitelisted NFTs for this Candy Shop
    */
-  public async shopWlNfts(): Promise<ListBase<WhitelistNft>> {
-    console.log('CandyShop: performing shopWlNfts');
-    return fetchShopWhitelistNftByShopId(axiosInstance, this._candyShopAddress.toString());
+  public shopWlNfts(): Promise<ListBase<WhitelistNft>> {
+    return fetchShopWhitelistNftByShopAddress(this._candyShopAddress);
   }
   /**
    * Fetch active orders associated with specified mint address
    *
    * @param {string} mintAddress base 58 encoded mint key string
    */
-  public async activeOrderByMintAddress(mintAddress: string): Promise<SingleBase<Order>> {
-    console.log('CandyShop: performing activeOrderByMintAddress', {
-      mintAddress
-    });
-    return fetchOrderByTokenMintAndShopId(axiosInstance, mintAddress, this._candyShopAddress.toString());
+  public activeOrderByMintAddress(mintAddress: string): Promise<SingleBase<Order>> {
+    return fetchOrderByShopAndMintAddress(this._candyShopAddress, mintAddress);
   }
   /**
    * Fetch the data for Candy Shop with this Shop's public key
    */
-  public async fetchShopByShopId(): Promise<SingleBase<CandyShopResponse>> {
-    return fetchShopByShopId(axiosInstance, this._candyShopAddress.toString());
+  public fetchShopByShopId(): Promise<SingleBase<CandyShopResponse>> {
+    return fetchShopByShopAddress(this._candyShopAddress);
   }
 }
 
@@ -444,4 +402,18 @@ function getNodeWallet(wallet: web3.Keypair) {
     staticNodeWallet = new NodeWallet(wallet);
   }
   return staticNodeWallet;
+}
+
+/**
+ * Get tx hash from different executions by programId
+ *
+ * @param {PublicKey} programId
+ * @param {BuyAndExecuteSaleTransactionParams} params required params for buy/sell transaction
+ * @returns
+ */
+function buyAndExecuteSales(programId: web3.PublicKey, params: BuyAndExecuteSaleTransactionParams): Promise<string> {
+  if (programId.equals(CANDY_SHOP_INS_PROGRAM_ID)) {
+    return insBuyAndExecuteSale(params);
+  }
+  return buyAndExecuteSale(params);
 }
