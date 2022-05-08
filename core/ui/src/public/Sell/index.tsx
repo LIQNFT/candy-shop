@@ -66,12 +66,12 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
   }, [candyShop, walletPublicKey]);
 
   useEffect(() => {
-    if (wallet?.publicKey) {
+    if (wallet?.publicKey && candyShop) {
       setWalletPublicKey(wallet.publicKey);
-      // refetch fetchNftsFromWallet when get new publicKey
+      // refetch fetchNftsFromWallet when get new publicKey or candyShop prop has been changed.
       setNFTLoadingStatus(LoadStatus.ToLoad);
     }
-  }, [wallet?.publicKey, refetch]);
+  }, [wallet?.publicKey, refetch, candyShop]);
 
   const getShopIdentifiers = useCallback(async (): Promise<string[]> => {
     return candyShop
@@ -111,6 +111,8 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
       return;
     }
     if (loadingNFTStatus === LoadStatus.ToLoad) {
+      allNFTs.current = [];
+      firstBatchNFTLoaded.current = false;
       setNFTLoadingStatus(LoadStatus.Loading);
       progressiveLoadUserNFTs(walletPublicKey)
         .then((allUserNFTs: SingleTokenInfo[]) => {
