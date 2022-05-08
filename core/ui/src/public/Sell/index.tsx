@@ -13,7 +13,13 @@ import {
   CandyShop as CandyShopResponse,
   SingleBase
 } from 'solana-candy-shop-schema/dist';
-import { CandyShop, FetchNFTBatchParam, fetchNftsFromWallet, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
+import {
+  CandyShop,
+  FetchNFTBatchParam,
+  fetchNftsFromWallet,
+  fetchShopByShopAddress,
+  SingleTokenInfo
+} from '@liqnft/candy-shop-sdk';
 import { CandyContext } from 'public/Context';
 import { useCallback } from 'react';
 import { useRef } from 'react';
@@ -52,8 +58,7 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
   useEffect(() => {
     if (!candyShop || !walletPublicKey) return;
     setShopLoading(LoadStatus.Loading);
-    candyShop
-      .fetchShopByShopId()
+    fetchShopByShopAddress(candyShop.candyShopAddress)
       .then((data: SingleBase<CandyShopResponse>) => {
         setShop(data.result);
       })
