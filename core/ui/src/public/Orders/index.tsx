@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Dropdown } from 'components/Dropdown';
 import { Empty } from 'components/Empty';
-
 import { InfiniteOrderList } from 'components/InfiniteOrderList';
 import { LoadingSkeleton } from 'components/LoadingSkeleton';
+import { PoweredBy } from 'components/PoweredBy';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { ORDER_FETCH_LIMIT, SORT_OPTIONS } from 'constant/Orders';
 import { OrdersActionsStatus } from 'constant';
@@ -208,6 +208,7 @@ export const Orders: React.FC<OrdersProps> = ({
             </div>
             <div className="candy-orders-content">
               {loading ? <LoadingSkeleton /> : orders.length ? infiniteOrderListView : emptyView}
+              <PoweredBy />
             </div>
           </div>
         </div>
@@ -228,6 +229,7 @@ export const Orders: React.FC<OrdersProps> = ({
             />
           </div>
           {loading ? <LoadingSkeleton /> : orders.length ? infiniteOrderListView : emptyView}
+          <PoweredBy />
         </div>
       </div>
     </>
