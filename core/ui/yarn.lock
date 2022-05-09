@@ -6517,9 +6517,9 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-"solana-candy-shop-schema@git+https://github.com/LIQNFT/solana-candy-shop-schema.git#1e020e95ba24e0f1a70b3c593b6a112eb9cb7687":
-  version "1.0.0"
-  resolved "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#1e020e95ba24e0f1a70b3c593b6a112eb9cb7687"
+"solana-candy-shop-schema@git+https://github.com/LIQNFT/solana-candy-shop-schema.git#046ce98440dc16b6f7ada33bc31c341695952ab9":
+  version "0.1.2"
+  resolved "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#046ce98440dc16b6f7ada33bc31c341695952ab9"
 
 "solana-candy-shop-schema@git+https://github.com/LIQNFT/solana-candy-shop-schema.git#799c8602bcf2674e92ffa5c68c79c5b880ad1648":
   version "1.0.0"
