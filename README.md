@@ -256,6 +256,15 @@ chmod 755 setup.sh
 ./setup.sh
 ```
 
+#### Symbolic link between ui and sdk
+
+Currently, `core/ui` depends on the published package from `core/sdk`, if development both locally, we need to use symbolic link to let `core/ui` use the live changes from `core/sdk`.
+
+Add `arg: --link-build` when executing script
+```sh
+./setup.sh --link-build
+```
+
 In root folder, hosting dist from example at `localhost:1234`
 
 ```bash
@@ -271,22 +280,7 @@ yarn clean:all
 ```
 
 We also have individual clean up scripts provided in root's package.json.
-### Symbolic link between ui and sdk
 
-Currently, `core/ui` depends on the published package from `core/sdk`, if development both locally, we need to use symbolic link to let `core/ui` use the live changes from `core/sdk`.
-
-Use `workspace_symbolic_link.sh` in root folder.
-- Make sure you've built the `core/sdk` before linking.
-```bash
-# run chmod when executing it first time
-chmod 755 workspace_symbolic_link.sh
-./workspace_symbolic_link.sh
-```
-
-It should show yarn link success in terminal.
-```bash
-success Using linked package for "@liqnft/candy-shop-sdk".
-```
 
 #### How to reflect the changes after linked
 
