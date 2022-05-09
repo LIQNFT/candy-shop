@@ -29,15 +29,16 @@ jobs:
       # Building
       - name: Install dependencies
         run: npm install --global yarn && yarn
-      - name: Install and Link core/sdk
+      - name: Install & Build & Create Link to core/sdk
         working-directory: ./core/sdk
         run: |
           yarn && yarn build
           yarn link
-      - name: Install and Link core/ui to core/sdk
+      - name: Install core/ui & Link to core/sdk
         working-directory: ./core/ui
-        run: |
-          yarn link @liqnft/candy-shop-sdk
-          yarn && yarn build
+        run: yarn && yarn link @liqnft/candy-shop-sdk
+      - name: Build core/ui
+        working-directory: ./core/ui
+        run: yarn build
       - name: Build example
         run: yarn build
