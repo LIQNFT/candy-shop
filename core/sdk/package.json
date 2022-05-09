@@ -14,7 +14,7 @@
     "axios": "^0.26.1",
     "crc-32": "^1.2.2",
     "qs": "^6.10.3",
-    "solana-candy-shop-schema": "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#799c8602bcf2674e92ffa5c68c79c5b880ad1648"
+    "solana-candy-shop-schema": "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#046ce98440dc16b6f7ada33bc31c341695952ab9"
   },
   "devDependencies": {
     "@types/expect": "^24.3.0",

@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { web3 } from '@project-serum/anchor';
 
 import { BuyModal } from 'components/BuyModal';
 import { LiqImage } from 'components/LiqImage';
@@ -18,18 +19,18 @@ export interface OrderProps {
   walletConnectComponent: React.ReactElement;
   url?: string;
 }
+const getPrice = (candyShop: CandyShop, order: OrderSchema) => {
+  if (!order?.price) return null;
+
+  return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
+    minimumFractionDigits: candyShop.priceDecimalsMin,
+    maximumFractionDigits: candyShop.priceDecimals
+  });
+};
 
 export const Order: React.FC<OrderProps> = ({ order, wallet, candyShop, walletConnectComponent, url }) => {
   const [selection, setSelection] = useState<OrderSchema>();
-
-  const orderPrice = useMemo(() => {
-    if (!order?.price) return null;
-
-    return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-      minimumFractionDigits: candyShop.priceDecimalsMin,
-      maximumFractionDigits: candyShop.priceDecimals
-    });
-  }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimals, order?.price]);
+  const [orderCandyShop, setOrderCandyShop] = useState<CandyShop>(candyShop);
 
   const onClose = () => {
     setSelection(undefined);
@@ -39,11 +40,22 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, candyShop, walletCo
     if (url) {
       window.location.href = url.replace(':tokenMint', order.tokenMint);
     } else {
+      setOrderCandyShop(
+        new CandyShop(
+          new web3.PublicKey(order.candyShopCreatorAddress),
+          new web3.PublicKey(order.treasuryMint),
+          candyShop.programId,
+          candyShop.env,
+          candyShop.settings
+        )
+      );
+
       setSelection(order);
     }
   };
 
   const isUserListing = wallet?.publicKey && order.walletAddress === wallet.publicKey.toString();
+  const orderPrice = getPrice(candyShop, order);
 
   return (
     <>
@@ -66,18 +78,18 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, candyShop, walletCo
         </div>
       </div>
 
-      {selection && !isUserListing && (
+      {selection && !isUserListing ? (
         <BuyModal
           order={selection}
           onClose={onClose}
           wallet={wallet}
-          candyShop={candyShop}
+          candyShop={orderCandyShop}
           walletConnectComponent={walletConnectComponent}
         />
-      )}
+      ) : null}
 
       {selection && isUserListing && wallet ? (
-        <CancelModal onClose={onClose} candyShop={candyShop} order={selection} wallet={wallet} />
+        <CancelModal onClose={onClose} candyShop={orderCandyShop} order={selection} wallet={wallet} />
       ) : null}
     </>
   );

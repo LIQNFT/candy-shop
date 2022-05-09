@@ -60,7 +60,7 @@
     "qs": "^6.10.3",
     "rc-notification": "^4.5.7",
     "react-infinite-scroll-component": "^6.1.0",
-    "solana-candy-shop-schema": "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#1e020e95ba24e0f1a70b3c593b6a112eb9cb7687"
+    "solana-candy-shop-schema": "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#046ce98440dc16b6f7ada33bc31c341695952ab9"
   },
   "scripts": {
     "env:dev": "env-cmd -f dev.env",

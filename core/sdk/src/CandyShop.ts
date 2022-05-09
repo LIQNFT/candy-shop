@@ -142,6 +142,14 @@ export class CandyShop {
     }
   }
 
+  get settings(): Partial<CandyShopSettings> {
+    return this._settings;
+  }
+
+  get env(): web3.Cluster {
+    return this._env;
+  }
+
   get treasuryMint(): web3.PublicKey {
     return this._treasuryMint;
   }
