@@ -1,17 +1,18 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { Dropdown } from 'components/Dropdown';
 import { Empty } from 'components/Empty';
 import { Skeleton } from 'components/Skeleton';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { InfiniteOrderList } from 'components/InfiniteOrderList';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyContext } from 'public/Context';
 import { ORDER_FETCH_LIMIT, LOADING_SKELETON_COUNT, SORT_OPTIONS } from 'constant/Orders';
+import { OrdersActionsStatus } from 'constant';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { useValidateStatus } from 'hooks/useValidateStatus';
+import { useUpdateCandyShopContext } from 'public/Context';
 
 import './index.less';
 
 interface OrdersProps {
-  candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
   wallet: AnchorWallet | undefined;
   url?: string;
@@ -19,39 +20,40 @@ interface OrdersProps {
   filters?: Array<{ name: string; identifier: number | Array<number> }>;
   style?: { [key: string]: string | number } | undefined;
   defaultFilterName?: string;
+  candyShop: CandyShop;
 }
 
 /**
  * React component that displays a list of orders
  */
 export const Orders: React.FC<OrdersProps> = ({
-  candyShop,
   walletConnectComponent,
   wallet,
   url,
   identifiers,
   filters,
   style,
-  defaultFilterName
+  defaultFilterName,
+  candyShop
 }) => {
   const [sortedByOption, setSortedByOption] = useState(SORT_OPTIONS[0]);
   const [orders, setOrders] = useState<any[]>([]);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [loading, setLoading] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
-  const [filterName, setFilterName] = useState<string | undefined>(defaultFilterName);
-  const { refetch } = useContext(CandyContext);
-
-  let defaultFilterIdentifiers = undefined;
-  if (filters && defaultFilterName) {
-    const defaultFilter = filters.find((filter) => filter.name === defaultFilterName);
-    if (defaultFilter !== undefined) {
-      defaultFilterIdentifiers = Array.isArray(defaultFilter.identifier)
-        ? defaultFilter.identifier
-        : [defaultFilter.identifier];
+  const [filterName, setFilterName] = useState<string | undefined>(undefined);
+  const [filterIdentifiers, setFilterIdentifiers] = useState<number[] | undefined>(() => {
+    if (filters && defaultFilterName) {
+      const defaultFilter = filters.find((filter) => filter.name === defaultFilterName);
+      if (defaultFilter !== undefined) {
+        return Array.isArray(defaultFilter.identifier) ? defaultFilter.identifier : [defaultFilter.identifier];
+      }
     }
-  }
-  const [filterIdentifiers, setFilterIdentifiers] = useState<number[] | undefined>(defaultFilterIdentifiers);
+  });
+  const loadingMountRef = useRef(false);
+
+  const updateOrderStatus = useValidateStatus(OrdersActionsStatus);
+  useUpdateCandyShopContext(candyShop.candyShopAddress);
 
   const getUniqueIdentifiers = useCallback(() => {
     const uniqueIdentifiers = [...(identifiers || []), ...(filterIdentifiers || [])];
@@ -85,7 +87,10 @@ export const Orders: React.FC<OrdersProps> = ({
   };
 
   useEffect(() => {
-    setLoading(true);
+    if (!loadingMountRef.current) {
+      setLoading(true);
+    }
+    loadingMountRef.current = true;
 
     candyShop
       .orders(
@@ -104,19 +109,13 @@ export const Orders: React.FC<OrdersProps> = ({
         setOrders(data.result);
       })
       .catch((err) => {
-        console.info('fetchOrdersByStoreId failed: ', err);
+        console.log('fetchOrdersByStoreId failed: ', err);
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [
-    candyShop,
-    sortedByOption,
-    filterIdentifiers,
-    identifiers,
-    getUniqueIdentifiers,
-    refetch // refetch when buy/sell/cancel nft
-  ]);
+    //updateOrderStatus to update
+  }, [candyShop, getUniqueIdentifiers, sortedByOption.value, updateOrderStatus]);
 
   const loadingView = (
     <div className="candy-container-list">
@@ -137,10 +136,10 @@ export const Orders: React.FC<OrdersProps> = ({
       orders={orders}
       walletConnectComponent={walletConnectComponent}
       wallet={wallet}
-      candyShop={candyShop}
       url={url}
       hasNextPage={hasNextPage}
       loadNextPage={loadNextPage(startIndex, ORDER_FETCH_LIMIT)}
+      candyShop={candyShop}
     />
   );
 

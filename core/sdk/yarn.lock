@@ -1464,9 +1464,9 @@ snake-case@^3.0.4:
     dot-case "^3.0.4"
     tslib "^2.0.3"
 
-"solana-candy-shop-schema@git+https://github.com/LIQNFT/solana-candy-shop-schema.git#046ce98440dc16b6f7ada33bc31c341695952ab9":
+"solana-candy-shop-schema@git+https://github.com/LIQNFT/solana-candy-shop-schema.git#cf24d5719de9c50f1901ee2c8697808d6aa5f49f":
   version "0.1.2"
-  resolved "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#046ce98440dc16b6f7ada33bc31c341695952ab9"
+  resolved "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#cf24d5719de9c50f1901ee2c8697808d6aa5f49f"
 
 source-map-support@^0.5.6:
   version "0.5.21"

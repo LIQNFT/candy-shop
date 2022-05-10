@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { web3, BN } from '@project-serum/anchor';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
 import { ExplorerLink } from 'components/ExplorerLink';
@@ -12,28 +11,29 @@ import BuyModalConfirmed from 'components/BuyModal/BuyModalConfirmed';
 import { handleError } from 'utils/ErrorHandler';
 import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { TransactionState } from 'model';
+
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 import './style.less';
 
 interface OrderDetailProps {
   tokenMint: string;
   backUrl?: string;
-  candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
   wallet: AnchorWallet | undefined;
+  candyShop: CandyShop;
 }
 
 export const OrderDetail: React.FC<OrderDetailProps> = ({
   tokenMint,
   backUrl = '/',
-  candyShop,
   walletConnectComponent,
-  wallet
+  wallet,
+  candyShop
 }) => {
   const [loadingOrder, setLoadingOrder] = useState(false);
   const [loadingNftInfo, setLoadingNftInfo] = useState(false);
   const [order, setOrder] = useState<OrderSchema>();
   const [nftInfo, setNftInfo] = useState<Nft>();
-
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
   const [hash, setHash] = useState('');
 
@@ -44,7 +44,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
       minimumFractionDigits: candyShop.priceDecimalsMin,
       maximumFractionDigits: candyShop.priceDecimals
     });
-  }, [candyShop.baseUnitsPerCurrency, candyShop.priceDecimalsMin, candyShop.priceDecimals, order?.price]);
+  }, [candyShop, order?.price]);
 
   const isUserListing = wallet?.publicKey && order && order.walletAddress === wallet.publicKey.toString();
 
@@ -58,11 +58,12 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
           setOrder(res.result);
         })
         .catch((err) => {
-          console.info('activeOrderByMintAddress failed:', err);
+          console.log('OrderDetail: activeOrderByMintAddress failed=', err);
         })
         .finally(() => {
           setLoadingOrder(false);
         });
+      return;
     }
 
     if (order && !nftInfo) {
@@ -80,7 +81,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   }, [order, candyShop, nftInfo, tokenMint]);
 
   const buy = async () => {
-    if (order && wallet) {
+    if (order && wallet && candyShop) {
       setState(TransactionState.PROCESSING);
       return candyShop
         .buy({
@@ -120,7 +121,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
           <div className="candy-order-detail-title">{order?.name}</div>
           <div className="candy-stat">
             <div className="candy-label">PRICE</div>
-            <div className="candy-price">{orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}</div>
+            <div className="candy-price">{orderPrice ? `${orderPrice} ${candyShop?.currencySymbol}` : 'N/A'}</div>
           </div>
           <div className="candy-stat">
             <div className="candy-label">DESCRIPTION</div>
@@ -171,15 +172,15 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
             </div>
           </Modal>
         )}
-        {state === TransactionState.CONFIRMED && wallet && (
+        {state === TransactionState.CONFIRMED && wallet && order && (
           <Modal onCancel={goToMarketplace} width={600}>
             <div className="buy-modal">
               <BuyModalConfirmed
                 walletPublicKey={wallet.publicKey}
                 order={order}
                 txHash={hash}
-                candyShop={candyShop}
                 onClose={goToMarketplace}
+                candyShop={candyShop}
               />
             </div>
           </Modal>

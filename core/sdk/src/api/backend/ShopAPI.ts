@@ -1,6 +1,5 @@
-import { SingleBase, WhitelistNft } from 'solana-candy-shop-schema/dist';
+import { SingleBase, WhitelistNft, ShopStatus } from 'solana-candy-shop-schema/dist';
 import { ListBase, CandyShop } from 'solana-candy-shop-schema/src/response';
-
 import { AxiosInstance } from 'axios';
 
 export async function fetchShopWhitelistNftByShopId(
@@ -13,4 +12,11 @@ export async function fetchShopWhitelistNftByShopId(
 
 export async function fetchShopByShopId(axiosInstance: AxiosInstance, shopId: string): Promise<SingleBase<CandyShop>> {
   return axiosInstance.get<SingleBase<CandyShop>>(`/shop/id/${shopId}`).then((response) => response.data);
+}
+
+export async function fetchShopStatusByShopId(
+  axiosInstance: AxiosInstance,
+  shopId: string
+): Promise<SingleBase<ShopStatus[]>> {
+  return axiosInstance.get<SingleBase<ShopStatus[]>>(`/status/${shopId}`).then((res) => res.data);
 }

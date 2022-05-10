@@ -1,7 +1,7 @@
-import React, { useCallback, useState, useEffect, useContext } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyShop, SingleTokenInfo, getTokenMetadataByMintAddress, NftMetadata } from '@liqnft/candy-shop-sdk';
+import { SingleTokenInfo, getTokenMetadataByMintAddress, NftMetadata, CandyShop } from '@liqnft/candy-shop-sdk';
 
 import { Modal } from 'components/Modal';
 import { Processing } from 'components/Processing';
@@ -14,30 +14,28 @@ import { handleError, ErrorType, ErrorMsgMap } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
 import { TransactionState } from 'model';
 import { CandyShop as CandyShopResponse } from 'solana-candy-shop-schema/dist';
-import { TIMEOUT_REFETCH_NFT } from 'constant';
-import { CandyActionContext } from 'public/Context';
+import { TIMEOUT_EXTRA_LOADING } from 'constant';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
+
 import './style.less';
 
 export interface SellModalProps {
   onCancel: () => void;
   nft: SingleTokenInfo;
-  candyShop: CandyShop;
   wallet: AnchorWallet;
   shop: CandyShopResponse;
+  candyShop: CandyShop;
 }
 
-export const SellModal: React.FC<SellModalProps> = ({ onCancel: onUnSelectItem, nft, candyShop, wallet, shop }) => {
+export const SellModal: React.FC<SellModalProps> = ({ onCancel: onUnSelectItem, nft, wallet, shop, candyShop }) => {
   const [formState, setFormState] = useState<{ price: number | undefined }>({
     price: undefined
   });
   const [state, setState] = useState(TransactionState.DISPLAY);
-  const { setRefetch } = useContext(CandyActionContext);
-
-  const timeoutRef = useUnmountTimeout();
-
   const [loading, setLoading] = useState<boolean>(true);
   const [royalties, setRoyalties] = useState<number>();
+
+  const timeoutRef = useUnmountTimeout();
 
   // List for sale and move to next step
   const sell = async () => {
@@ -68,7 +66,7 @@ export const SellModal: React.FC<SellModalProps> = ({ onCancel: onUnSelectItem, 
         console.log('SellModal: Place sell order with transaction hash= ', txHash);
         timeoutRef.current = setTimeout(() => {
           setState(TransactionState.CONFIRMED);
-        }, TIMEOUT_REFETCH_NFT);
+        }, TIMEOUT_EXTRA_LOADING);
       })
       .catch((err) => {
         console.log('SellModal: error= ', err);
@@ -92,12 +90,12 @@ export const SellModal: React.FC<SellModalProps> = ({ onCancel: onUnSelectItem, 
 
   const onCancel = useCallback(() => {
     onUnSelectItem();
-    if (state === TransactionState.CONFIRMED) setTimeout(() => window.location.reload(), 3_000);
-  }, [state, onUnSelectItem]);
+  }, [onUnSelectItem]);
 
   useEffect(() => {
-    //prettier-ignore
-    console.log('getTokenMetadataByMintAddress', { mint: nft.tokenMintAddress });
+    console.log('getTokenMetadataByMintAddress', {
+      mint: nft.tokenMintAddress
+    });
     setLoading(true);
     getTokenMetadataByMintAddress(nft.tokenMintAddress, candyShop.connection())
       .then((data: NftMetadata) => {
@@ -113,9 +111,6 @@ export const SellModal: React.FC<SellModalProps> = ({ onCancel: onUnSelectItem, 
 
   const onCloseModal = () => {
     onCancel();
-    if (state === TransactionState.CONFIRMED) {
-      setRefetch();
-    }
   };
 
   const disableListedBtn = formState.price === undefined || loading;
@@ -147,7 +142,7 @@ export const SellModal: React.FC<SellModalProps> = ({ onCancel: onUnSelectItem, 
                   type="number"
                   value={formState.price === undefined ? '' : formState.price}
                 />
-                <span>{candyShop.currencySymbol}</span>
+                <span>{candyShop?.currencySymbol}</span>
               </div>
 
               <div className="candy-sell-modal-fees">
@@ -191,13 +186,7 @@ export const SellModal: React.FC<SellModalProps> = ({ onCancel: onUnSelectItem, 
               </div>
             </div>
             <div className="candy-sell-modal-hr"></div>
-            <button
-              className="candy-sell-modal-button candy-button"
-              onClick={() => {
-                onCancel();
-                setRefetch();
-              }}
-            >
+            <button className="candy-sell-modal-button candy-button" onClick={onCancel}>
               Continue Browsing
             </button>
           </>

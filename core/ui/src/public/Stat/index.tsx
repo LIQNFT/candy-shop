@@ -1,39 +1,50 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
 import { CandyShop } from '@liqnft/candy-shop-sdk';
-import { CandyContext } from 'public/Context';
+import { useValidateStatus } from 'hooks/useValidateStatus';
+import { StatActionsStatus } from 'constant';
+
 import './index.less';
+import { useUpdateCandyShopContext } from 'public/Context';
 
 export interface StatProps {
-  candyShop: CandyShop;
   title: string | undefined;
   description: string | undefined;
   style?: { [key: string]: string | number } | undefined;
+  candyShop: CandyShop;
 }
 
-export const Stat = ({ candyShop, title, description, style }: StatProps): JSX.Element => {
-  const [stat, setStat] = useState<any>([]);
-  const { refetch } = useContext(CandyContext);
+const getFloorPrice = (candyShop: CandyShop, stat: any) => {
+  if (!stat?.floorPrice) return null;
 
-  const floorPrice = stat?.floorPrice
-    ? (Number(stat.floorPrice) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-        minimumFractionDigits: candyShop.priceDecimalsMin,
-        maximumFractionDigits: candyShop.priceDecimals
-      })
-    : null;
+  return (Number(stat.floorPrice) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
+    minimumFractionDigits: candyShop.priceDecimalsMin,
+    maximumFractionDigits: candyShop.priceDecimals
+  });
+};
 
-  const totalListed = stat?.totalListed
-    ? stat.totalListed.toLocaleString(undefined, {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      })
-    : 0;
+const getTotalListed = (stat: any) => {
+  if (!stat?.totalListed) return 0;
 
-  const totalVolume = stat?.totalVolume
-    ? (Number(stat.totalVolume) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-        minimumFractionDigits: candyShop.volumeDecimalsMin,
-        maximumFractionDigits: candyShop.volumeDecimals
-      })
-    : 0;
+  return stat.totalListed.toLocaleString(undefined, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  });
+};
+
+const getTotalVolume = (candyShop: CandyShop, stat: any) => {
+  if (!stat?.totalVolume) return 0;
+  return (Number(stat.totalVolume) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
+    minimumFractionDigits: candyShop.volumeDecimalsMin,
+    maximumFractionDigits: candyShop.volumeDecimals
+  });
+};
+
+export const Stat: React.FC<StatProps> = ({ title, description, style, candyShop }): JSX.Element => {
+  const [stat, setStat] = useState<any>();
+
+  const statUpdateStatus = useValidateStatus(StatActionsStatus);
+  useUpdateCandyShopContext(candyShop.candyShopAddress);
 
   // handle fetch data
   useEffect(() => {
@@ -43,10 +54,15 @@ export const Stat = ({ candyShop, title, description, style }: StatProps): JSX.E
         if (!data) return;
         setStat(data);
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.info('fetchOrdersByStoreId failed: ', err);
       });
-  }, [candyShop, refetch]);
+    // statUpdateStatus on polling
+  }, [candyShop, statUpdateStatus]);
+
+  const floorPrice = getFloorPrice(candyShop, stat);
+  const totalListed = getTotalListed(stat);
+  const totalVolume = getTotalVolume(candyShop, stat);
 
   return (
     <div style={style}>

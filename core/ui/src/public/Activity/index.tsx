@@ -5,11 +5,13 @@ import { Processing } from 'components/Processing';
 import { IconActivity } from 'assets/IconActivity';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import relativeTime from 'dayjs/plugin/relativeTime';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { Trade, ListBase } from 'solana-candy-shop-schema/dist';
+import { useValidateStatus } from 'hooks/useValidateStatus';
+import { ActivityActionsStatus } from 'constant';
 
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 import './style.less';
@@ -29,6 +31,8 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers }) =>
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [offset, setOffset] = useState<number>(0);
 
+  const updateActivityStatus = useValidateStatus(ActivityActionsStatus);
+
   const getTrades = useCallback(
     (offset: number, limit: number, firstLoad?: boolean) => () => {
       candyShop.transactions({ identifiers, offset, limit }).then((res: ListBase<Trade>) => {
@@ -47,6 +51,22 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers }) =>
   useEffect(() => {
     getTrades(0, LIMIT)();
   }, [getTrades]);
+
+  //update hook
+  useEffect(() => {
+    if (!updateActivityStatus) return;
+
+    candyShop.transactions({ identifiers, offset: 0, limit: 10 }).then((res: ListBase<Trade>) => {
+      console.log({ updateActivityStatus, resActivity: res });
+      setTrades((list) => {
+        // prettier-ignore
+        const newItems = res.result.filter((item) => list.findIndex((i) => i.txHashAtCreation === item.txHashAtCreation) === -1);
+
+        if (newItems.length) return [...newItems, ...list];
+        return list;
+      });
+    });
+  }, [candyShop, identifiers, updateActivityStatus]);
 
   return (
     <div className="candy-activity">

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
@@ -20,28 +20,23 @@ import {
   fetchShopByShopAddress,
   SingleTokenInfo
 } from '@liqnft/candy-shop-sdk';
-import { CandyContext } from 'public/Context';
-import { useCallback } from 'react';
-import { useRef } from 'react';
+
+import { LoadStatus, SellActionsStatus } from 'constant';
+import { useValidateStatus } from 'hooks/useValidateStatus';
+import { useUpdateCandyShopContext } from 'public/Context';
 
 interface SellProps {
   wallet: AnchorWallet | undefined;
-  candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
   style?: { [key: string]: string | number } | undefined;
-}
-
-enum LoadStatus {
-  ToLoad = 'ToLoad',
-  Loading = 'Loading',
-  Loaded = 'Loaded'
+  candyShop: CandyShop;
 }
 
 /**
  * React component that allows user to put an NFT for sale
  */
 
-export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComponent, style }) => {
+export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, style, candyShop }) => {
   const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
   const [sellOrders, setSellOrders] = useState<OrderSchema[]>();
   const [walletPublicKey, setWalletPublicKey] = useState<web3.PublicKey>();
@@ -50,13 +45,15 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
   const [shopLoading, setShopLoading] = useState<LoadStatus>(LoadStatus.ToLoad);
   const [shop, setShop] = useState<CandyShopResponse>();
 
-  const { refetch } = useContext(CandyContext);
   // global array for concat batches.
-  const allNFTs = useRef<SingleTokenInfo[]>([]);
+  const allNFTs = useRef<any>({});
   const firstBatchNFTLoaded = useRef<boolean>(false);
 
+  const sellUpdateStatus = useValidateStatus(SellActionsStatus);
+  useUpdateCandyShopContext(candyShop.candyShopAddress);
+
   useEffect(() => {
-    if (!candyShop || !walletPublicKey) return;
+    if (!walletPublicKey) return;
     setShopLoading(LoadStatus.Loading);
     fetchShopByShopAddress(candyShop.candyShopAddress)
       .then((data: SingleBase<CandyShopResponse>) => {
@@ -73,10 +70,9 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
   useEffect(() => {
     if (wallet?.publicKey && candyShop) {
       setWalletPublicKey(wallet.publicKey);
-      // refetch fetchNftsFromWallet when get new publicKey or candyShop prop has been changed.
       setNFTLoadingStatus(LoadStatus.ToLoad);
     }
-  }, [wallet?.publicKey, refetch, candyShop]);
+  }, [wallet?.publicKey, sellUpdateStatus, candyShop]);
 
   const getShopIdentifiers = useCallback(async (): Promise<string[]> => {
     return candyShop
@@ -91,9 +87,16 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
       firstBatchNFTLoaded.current = true;
     }
     console.log('getUserNFTBatchResult: amount of valid batch NFTs=', batchNFTs.length);
-    const userNFTs = allNFTs.current.concat(batchNFTs);
-    allNFTs.current = userNFTs;
-    setNfts(userNFTs);
+    allNFTs.current = Object.assign(
+      allNFTs.current,
+      batchNFTs.reduce((acc: any, item: SingleTokenInfo) => {
+        acc[item.tokenMintAddress] = item;
+        return acc;
+      }, {})
+    );
+    // const userNFTs = allNFTs.current.concat(batchNFTs);
+    // allNFTs.current = userNFTs;
+    setNfts(Object.values(allNFTs.current));
   }, []);
 
   const progressiveLoadUserNFTs = useCallback(
@@ -112,7 +115,7 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
 
   // fetch current wallet nfts when mount and when publicKey was changed.
   useEffect(() => {
-    if (!walletPublicKey || !candyShop) {
+    if (!walletPublicKey) {
       return;
     }
     if (loadingNFTStatus === LoadStatus.ToLoad) {
@@ -133,7 +136,7 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
   }, [candyShop, loadingNFTStatus, walletPublicKey, progressiveLoadUserNFTs]);
 
   useEffect(() => {
-    if (!walletPublicKey || !candyShop) {
+    if (!walletPublicKey) {
       return;
     }
     setOrderLoading(LoadStatus.Loading);
@@ -145,7 +148,7 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
       .finally(() => {
         setOrderLoading(LoadStatus.Loaded);
       });
-  }, [candyShop, walletPublicKey, refetch]);
+  }, [candyShop, walletPublicKey, sellUpdateStatus]);
 
   const hashSellOrders: any = useMemo(() => {
     return (
@@ -189,10 +192,10 @@ export const Sell: React.FC<SellProps> = ({ wallet, candyShop, walletConnectComp
                   <div key={item.tokenAccountAddress}>
                     <Nft
                       nft={item}
-                      candyShop={candyShop}
                       wallet={wallet}
                       sellDetail={hashSellOrders[item.tokenMintAddress]}
                       shop={shop}
+                      candyShop={candyShop}
                     />
                   </div>
                 ))}

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { web3 } from '@project-serum/anchor';
 
@@ -9,15 +8,16 @@ import { LiqImage } from 'components/LiqImage';
 import { CancelModal } from 'components/CancelModal';
 
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 
 import './index.less';
 
 export interface OrderProps {
   order: OrderSchema;
   wallet: AnchorWallet | undefined;
-  candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
   url?: string;
+  candyShop: CandyShop;
 }
 const getPrice = (candyShop: CandyShop, order: OrderSchema) => {
   if (!order?.price) return null;
@@ -28,7 +28,7 @@ const getPrice = (candyShop: CandyShop, order: OrderSchema) => {
   });
 };
 
-export const Order: React.FC<OrderProps> = ({ order, wallet, candyShop, walletConnectComponent, url }) => {
+export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectComponent, url, candyShop }) => {
   const [selection, setSelection] = useState<OrderSchema>();
   const [orderCandyShop, setOrderCandyShop] = useState<CandyShop>(candyShop);
 
