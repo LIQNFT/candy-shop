@@ -53,7 +53,7 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers }) =>
       <div className="candy-activity-table-container" id="candy-activity-scroll-target">
         <div className="candy-activity-header candy-activity-item">
           <span>NAME</span>
-          <span>AMOUNT</span>
+          <span>PRICE</span>
           <span>FROM</span>
           <span>TO</span>
           <span>TIME</span>
