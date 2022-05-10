@@ -49,7 +49,8 @@ export function fetchNFTByMintAddress(mintAddressStr: string): Promise<Nft> {
 export function fetchOrdersByShopAddress(
   candyShopAddress: web3.PublicKey,
   ordersFilterQuery: OrdersFilterQuery,
-  identifiers?: number[]
+  identifiers?: number[],
+  sellerAddress?: string
 ): Promise<ListBase<Order>> {
   const { sortBy, offset, limit } = ordersFilterQuery;
   return fetchOrdersByStoreId(
@@ -60,7 +61,8 @@ export function fetchOrdersByShopAddress(
       offset,
       limit
     },
-    identifiers
+    identifiers,
+    sellerAddress
   );
 }
 

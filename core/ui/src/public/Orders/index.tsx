@@ -22,6 +22,7 @@ interface OrdersProps {
   defaultFilterName?: string;
   candyShop: CandyShop;
   exchangeInfoMap?: Map<string, ShopExchangeInfo>;
+  sellerAddress?: string;
 }
 
 /**
@@ -36,7 +37,8 @@ export const Orders: React.FC<OrdersProps> = ({
   style,
   defaultFilterName,
   candyShop,
-  exchangeInfoMap
+  exchangeInfoMap,
+  sellerAddress
 }) => {
   const [sortedByOption, setSortedByOption] = useState(SORT_OPTIONS[0]);
   const [orders, setOrders] = useState<any[]>([]);
@@ -72,7 +74,8 @@ export const Orders: React.FC<OrdersProps> = ({
           offset: startIndex,
           limit
         },
-        getUniqueIdentifiers()
+        getUniqueIdentifiers(),
+        sellerAddress
       )
       .then((data: any) => {
         if (!data.result) return;
@@ -102,7 +105,8 @@ export const Orders: React.FC<OrdersProps> = ({
           offset: 0,
           limit: ORDER_FETCH_LIMIT
         },
-        getUniqueIdentifiers()
+        getUniqueIdentifiers(),
+        sellerAddress
       )
       .then((data: any) => {
         if (!data.result) return;
@@ -117,8 +121,7 @@ export const Orders: React.FC<OrdersProps> = ({
       .finally(() => {
         setLoading(false);
       });
-    //updateOrderStatus to update
-  }, [candyShop, getUniqueIdentifiers, sortedByOption.value, updateOrderStatus]);
+  }, [sellerAddress, candyShop, getUniqueIdentifiers, sortedByOption.value, updateOrderStatus]);
 
   const loadingView = (
     <div className="candy-container-list">
