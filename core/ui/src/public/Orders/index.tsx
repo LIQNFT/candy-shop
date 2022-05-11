@@ -1,15 +1,15 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Dropdown } from 'components/Dropdown';
 import { Empty } from 'components/Empty';
-import { Skeleton } from 'components/Skeleton';
 import { InfiniteOrderList } from 'components/InfiniteOrderList';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { ORDER_FETCH_LIMIT, LOADING_SKELETON_COUNT, SORT_OPTIONS } from 'constant/Orders';
+import { Skeleton } from 'components/Skeleton';
 import { OrdersActionsStatus } from 'constant';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { LOADING_SKELETON_COUNT, ORDER_FETCH_LIMIT, SORT_OPTIONS } from 'constant/Orders';
 import { useValidateStatus } from 'hooks/useValidateStatus';
+import { ShopExchangeInfo } from 'model';
 import { useUpdateCandyShopContext } from 'public/Context';
-
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './index.less';
 
 interface OrdersProps {
@@ -21,6 +21,7 @@ interface OrdersProps {
   style?: { [key: string]: string | number } | undefined;
   defaultFilterName?: string;
   candyShop: CandyShop;
+  exchangeInfoMap?: Map<string, ShopExchangeInfo>;
 }
 
 /**
@@ -34,10 +35,12 @@ export const Orders: React.FC<OrdersProps> = ({
   filters,
   style,
   defaultFilterName,
-  candyShop
+  candyShop,
+  exchangeInfoMap
 }) => {
   const [sortedByOption, setSortedByOption] = useState(SORT_OPTIONS[0]);
   const [orders, setOrders] = useState<any[]>([]);
+
   const [hasNextPage, setHasNextPage] = useState(true);
   const [loading, setLoading] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
@@ -140,6 +143,7 @@ export const Orders: React.FC<OrdersProps> = ({
       hasNextPage={hasNextPage}
       loadNextPage={loadNextPage(startIndex, ORDER_FETCH_LIMIT)}
       candyShop={candyShop}
+      exchangeInfoMap={exchangeInfoMap}
     />
   );
 

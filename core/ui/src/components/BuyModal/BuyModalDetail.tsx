@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { web3 } from '@project-serum/anchor';
-
-import { LiqImage } from 'components/LiqImage';
-import { NftStat } from 'components/NftStat';
-import { NftAttributes } from 'components/NftAttributes';
-
-import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { web3 } from '@project-serum/anchor';
+import { LiqImage } from 'components/LiqImage';
+import { NftAttributes } from 'components/NftAttributes';
+import { NftStat } from 'components/NftStat';
+import { ShopExchangeInfo } from 'model';
+import React, { useEffect, useState } from 'react';
+import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { getPrice } from 'utils/getPrice';
 
 export interface BuyModalDetailProps {
   order: OrderSchema;
@@ -14,6 +14,7 @@ export interface BuyModalDetailProps {
   walletPublicKey: web3.PublicKey | undefined;
   walletConnectComponent: React.ReactElement;
   candyShop: CandyShop;
+  shopExchangeInfo: ShopExchangeInfo;
 }
 
 const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
@@ -21,7 +22,8 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   buy,
   walletPublicKey,
   walletConnectComponent,
-  candyShop
+  candyShop,
+  shopExchangeInfo
 }) => {
   const [loadingNftInfo, setLoadingNftInfo] = useState(false);
   const [nftInfo, setNftInfo] = useState<Nft | null>(null);
@@ -39,14 +41,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
       });
   }, [order.tokenMint, candyShop]);
 
-  const orderPrice = useMemo(() => {
-    if (!order?.price) return null;
-
-    return (Number(order.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-      minimumFractionDigits: candyShop.priceDecimalsMin,
-      maximumFractionDigits: candyShop.priceDecimals
-    });
-  }, [candyShop, order?.price]);
+  const orderPrice = getPrice(candyShop, order, shopExchangeInfo);
 
   return (
     <>
@@ -58,7 +53,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
         <div className="candy-buy-modal-control">
           <div>
             <div className="candy-label">PRICE</div>
-            <div className="candy-price">{orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}</div>
+            <div className="candy-price">{orderPrice ? `${orderPrice} ${shopExchangeInfo.symbol}` : 'N/A'}</div>
           </div>
           {!walletPublicKey ? (
             walletConnectComponent

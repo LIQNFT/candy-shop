@@ -1,21 +1,18 @@
-import React, { useState } from 'react';
-import { web3, BN } from '@project-serum/anchor';
+import { CandyShop, getAtaForMint, WRAPPED_SOL_MINT } from '@liqnft/candy-shop-sdk';
+import { BN, web3 } from '@project-serum/anchor';
+import { getAccount } from '@solana/spl-token';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Modal } from 'components/Modal';
 import { Processing } from 'components/Processing';
-import { getAccount } from '@solana/spl-token';
-
+import { TIMEOUT_EXTRA_LOADING } from 'constant';
+import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
+import { ShopExchangeInfo, TransactionState } from 'model';
+import React, { useState } from 'react';
+import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { ErrorMsgMap, ErrorType, handleError } from 'utils/ErrorHandler';
+import { notification, NotificationType } from 'utils/rc-notification';
 import BuyModalConfirmed from './BuyModalConfirmed';
 import BuyModalDetail from './BuyModalDetail';
-
-import { TransactionState } from 'model';
-import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
-import { CandyShop, getAtaForMint, WRAPPED_SOL_MINT } from '@liqnft/candy-shop-sdk';
-import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import { handleError, ErrorType, ErrorMsgMap } from 'utils/ErrorHandler';
-import { notification, NotificationType } from 'utils/rc-notification';
-import { TIMEOUT_EXTRA_LOADING } from 'constant';
-
 import './style.less';
 
 export interface BuyModalProps {
@@ -24,9 +21,17 @@ export interface BuyModalProps {
   wallet: AnchorWallet | undefined;
   walletConnectComponent: React.ReactElement;
   candyShop: CandyShop;
+  shopExchangeInfo: ShopExchangeInfo;
 }
 
-export const BuyModal: React.FC<BuyModalProps> = ({ order, onClose, wallet, walletConnectComponent, candyShop }) => {
+export const BuyModal: React.FC<BuyModalProps> = ({
+  order,
+  onClose,
+  wallet,
+  walletConnectComponent,
+  candyShop,
+  shopExchangeInfo
+}) => {
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
   const [hash, setHash] = useState(''); // txHash
 
@@ -57,6 +62,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({ order, onClose, wallet, wall
         balance = new BN(account.amount.toString());
       } catch (err) {
         balance = new BN('0');
+        console.log(balance);
       }
     }
 
@@ -92,6 +98,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({ order, onClose, wallet, wall
             walletPublicKey={wallet?.publicKey}
             walletConnectComponent={walletConnectComponent}
             candyShop={candyShop}
+            shopExchangeInfo={shopExchangeInfo}
           />
         )}
         {state === TransactionState.PROCESSING && <Processing text="Processing purchase" />}
@@ -102,6 +109,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({ order, onClose, wallet, wall
             txHash={hash}
             onClose={onClose}
             candyShop={candyShop}
+            shopExchangeInfo={shopExchangeInfo}
           />
         )}
       </div>

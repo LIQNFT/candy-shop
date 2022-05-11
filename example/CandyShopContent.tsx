@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from 'react';
-
+import { web3 } from '@project-serum/anchor';
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
-import { web3 } from '@project-serum/anchor';
-
-import { CandyShop } from '../core/sdk/.';
-import { Orders, Stat, OrderDetail, Sell, Activity } from '../core/ui/.';
-
-import { CANDY_SHOP_PROGRAM_ID, CREATOR_ADDRESS, TREASURY_MINT } from './constant/publicKey';
-
 import 'antd/dist/antd.min.css';
+import React, { useEffect, useState } from 'react';
+import { CandyShop, fetchShopByCreatorAddress } from '../core/sdk/.';
+import { Activity, defaultExchangeInfo, OrderDetail, Orders, Sell, Stat } from '../core/ui/.';
+import { ShopExchangeInfo } from '../core/ui/dist/model';
+import { CANDY_SHOP_PROGRAM_ID, CREATOR_ADDRESS, TREASURY_MINT } from './constant/publicKey';
 
 interface CandyShopContentProps {
   network: web3.Cluster;
@@ -21,9 +18,12 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
 
   const wallet = useAnchorWallet();
 
+  const [exchangeInfoMap, setExchangeInfoMap] = useState<Map<string, ShopExchangeInfo>>(
+    new Map([[TREASURY_MINT, defaultExchangeInfo]])
+  );
+
   useEffect(() => {
     if (!treasuryMint || !network) return;
-
     setCandyShop(
       new CandyShop(
         new web3.PublicKey(CREATOR_ADDRESS),
@@ -36,6 +36,21 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
       )
     );
   }, [treasuryMint, network]);
+
+  useEffect(() => {
+    fetchShopByCreatorAddress(new web3.PublicKey(CREATOR_ADDRESS)).then((data) => {
+      if (!data.success) return;
+      const newExchangeInfoMap: Map<string, ShopExchangeInfo> = new Map();
+      data.result.forEach((shop) => {
+        newExchangeInfoMap.set(shop.treasuryMint, {
+          symbol: shop.symbol,
+          decimals: shop.decimals,
+          logoURI: shop.logoURI
+        });
+      });
+      setExchangeInfoMap((prevMap) => new Map([...prevMap, ...newExchangeInfoMap]));
+    });
+  }, [fetchShopByCreatorAddress]);
 
   if (!candyShop) return null;
 
@@ -61,6 +76,7 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
           walletConnectComponent={<WalletMultiButton />}
           filters={FILTERS}
           candyShop={candyShop}
+          exchangeInfoMap={exchangeInfoMap}
         />
       </div>
 

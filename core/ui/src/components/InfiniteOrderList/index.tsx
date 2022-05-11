@@ -5,6 +5,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { Skeleton } from 'components/Skeleton';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { ShopExchangeInfo } from 'model';
 
 interface InfiniteOrderListProps {
   orders: Order[];
@@ -14,6 +15,7 @@ interface InfiniteOrderListProps {
   hasNextPage: boolean;
   loadNextPage: () => void;
   candyShop: CandyShop;
+  exchangeInfoMap?: Map<string, ShopExchangeInfo>;
 }
 
 export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
@@ -23,7 +25,8 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
   url,
   hasNextPage,
   loadNextPage,
-  candyShop
+  candyShop,
+  exchangeInfoMap
 }) => {
   return (
     <InfiniteScroll
@@ -51,6 +54,7 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
               wallet={wallet}
               url={url}
               candyShop={candyShop}
+              exchangeInfoMap={exchangeInfoMap}
             />
           </div>
         ))}

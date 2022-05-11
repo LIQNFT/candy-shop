@@ -1,13 +1,13 @@
-import React from 'react';
-
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { web3 } from '@project-serum/anchor';
-import { formatDate } from 'utils/format';
-import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import IconTick from 'assets/IconTick';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { LiqImage } from 'components/LiqImage';
-import IconTick from 'assets/IconTick';
-
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { ShopExchangeInfo } from 'model';
+import React from 'react';
+import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { formatDate } from 'utils/format';
+import { getPrice } from 'utils/getPrice';
 
 interface BuyModalConfirmedProps {
   order: OrderSchema;
@@ -15,27 +15,20 @@ interface BuyModalConfirmedProps {
   walletPublicKey: web3.PublicKey | undefined;
   onClose: () => void;
   candyShop: CandyShop;
+  shopExchangeInfo: ShopExchangeInfo;
 }
-
-const getPrice = (candyShop: CandyShop, order: OrderSchema) => {
-  if (!order?.price) return null;
-
-  return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-    minimumFractionDigits: candyShop.priceDecimalsMin,
-    maximumFractionDigits: candyShop.priceDecimals
-  });
-};
 
 const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
   order,
   txHash,
   walletPublicKey,
   onClose,
-  candyShop
+  candyShop,
+  shopExchangeInfo
 }) => {
   const walletAddress = walletPublicKey?.toBase58();
 
-  const orderPrice = getPrice(candyShop, order);
+  const orderPrice = getPrice(candyShop, order, shopExchangeInfo);
 
   return (
     <div className="candy-buy-modal-confirmed">
@@ -54,7 +47,7 @@ const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
           </div>
           <div>
             <div className="candy-buy-modal-price">
-              {orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}
+              {orderPrice ? `${orderPrice} ${shopExchangeInfo.symbol}` : 'N/A'}
             </div>
           </div>
         </div>

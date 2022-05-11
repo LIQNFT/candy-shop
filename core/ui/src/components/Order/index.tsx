@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
-
-import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { web3 } from '@project-serum/anchor';
-
-import { BuyModal } from 'components/BuyModal';
-import { LiqImage } from 'components/LiqImage';
-import { CancelModal } from 'components/CancelModal';
-
-import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
-
+import { web3 } from '@project-serum/anchor';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { BuyModal } from 'components/BuyModal';
+import { CancelModal } from 'components/CancelModal';
+import { LiqImage } from 'components/LiqImage';
+import { defaultExchangeInfo } from 'constant/Order';
+import { ShopExchangeInfo } from 'model';
+import React, { useMemo, useState } from 'react';
+import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { getPrice } from 'utils/getPrice';
 import './index.less';
 
 export interface OrderProps {
@@ -18,17 +17,17 @@ export interface OrderProps {
   walletConnectComponent: React.ReactElement;
   url?: string;
   candyShop: CandyShop;
+  exchangeInfoMap?: Map<string, ShopExchangeInfo>;
 }
-const getPrice = (candyShop: CandyShop, order: OrderSchema) => {
-  if (!order?.price) return null;
 
-  return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-    minimumFractionDigits: candyShop.priceDecimalsMin,
-    maximumFractionDigits: candyShop.priceDecimals
-  });
-};
-
-export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectComponent, url, candyShop }) => {
+export const Order: React.FC<OrderProps> = ({
+  order,
+  wallet,
+  walletConnectComponent,
+  url,
+  candyShop,
+  exchangeInfoMap
+}) => {
   const [selection, setSelection] = useState<OrderSchema>();
   const [orderCandyShop, setOrderCandyShop] = useState<CandyShop>(candyShop);
 
@@ -54,8 +53,22 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectCompon
     }
   };
 
+  const shopExchangeInfo = useMemo<ShopExchangeInfo>(() => {
+    if (!exchangeInfoMap || !exchangeInfoMap.has(order.treasuryMint)) {
+      return defaultExchangeInfo;
+    }
+
+    return {
+      symbol: exchangeInfoMap.get(order.treasuryMint)?.symbol || 'SOL',
+      decimals: exchangeInfoMap.get(order.treasuryMint)?.decimals || 9,
+      logoURI:
+        exchangeInfoMap.get(order.treasuryMint)?.logoURI ||
+        'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'
+    };
+  }, [exchangeInfoMap, order]);
+
   const isUserListing = wallet?.publicKey && order.walletAddress === wallet.publicKey.toString();
-  const orderPrice = getPrice(candyShop, order);
+  const orderPrice = getPrice(candyShop, order, shopExchangeInfo);
 
   return (
     <>
@@ -73,23 +86,30 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectCompon
           </div>
           <div className="candy-order-ticker candy-line-limit-1">{order?.ticker}</div>
           <div className="candy-order-price candy-line-limit-1">
-            {orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}
+            {orderPrice ? `${orderPrice} ${shopExchangeInfo.symbol}` : 'N/A'}
           </div>
         </div>
       </div>
 
-      {selection && !isUserListing ? (
+      {!isUserListing && selection && wallet ? (
         <BuyModal
           order={selection}
           onClose={onClose}
           wallet={wallet}
           candyShop={orderCandyShop}
           walletConnectComponent={walletConnectComponent}
+          shopExchangeInfo={shopExchangeInfo}
         />
       ) : null}
 
-      {selection && isUserListing && wallet ? (
-        <CancelModal onClose={onClose} candyShop={orderCandyShop} order={selection} wallet={wallet} />
+      {isUserListing && selection && wallet ? (
+        <CancelModal
+          onClose={onClose}
+          candyShop={orderCandyShop}
+          order={selection}
+          wallet={wallet}
+          shopExchangeInfo={shopExchangeInfo}
+        />
       ) : null}
     </>
   );

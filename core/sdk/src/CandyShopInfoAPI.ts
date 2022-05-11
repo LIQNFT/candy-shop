@@ -21,6 +21,7 @@ import {
   fetchOrdersByStoreId,
   fetchOrdersByStoreIdAndWalletAddress,
   fetchShopByShopId,
+  fetchShopByCreatorId,
   fetchShopWhitelistNftByShopId,
   fetchStatsById,
   fetchTradeById,
@@ -83,6 +84,12 @@ export function fetchOrderByShopAndMintAddress(
 
 export function fetchShopByShopAddress(candyShopAddress: web3.PublicKey): Promise<SingleBase<CandyShopResponse>> {
   return fetchShopByShopId(axiosInstance, candyShopAddress.toString());
+}
+
+export function fetchShopByCreatorAddress(
+  candyShopCreatorAddress: web3.PublicKey
+): Promise<SingleBase<CandyShopResponse[]>> {
+  return fetchShopByCreatorId(axiosInstance, candyShopCreatorAddress.toString());
 }
 
 export function fetchShopStatusByShopAddress(candyShopAddress: web3.PublicKey): Promise<SingleBase<ShopStatus[]>> {

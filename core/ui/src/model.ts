@@ -3,3 +3,9 @@ export enum TransactionState {
   PROCESSING,
   CONFIRMED
 }
+
+export interface ShopExchangeInfo {
+  symbol: string;
+  decimals: number;
+  logoURI: string;
+}
