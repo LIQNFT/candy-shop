@@ -153,7 +153,9 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
   const hashSellOrders: any = useMemo(() => {
     return (
       sellOrders?.reduce((acc: any, item: OrderSchema) => {
-        acc[item.tokenMint] = item;
+        if (item) {
+          acc[item.tokenMint] = item;
+        }
         return acc;
       }, {}) || {}
     );

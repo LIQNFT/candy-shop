@@ -101,7 +101,7 @@ export async function fetchOrdersByStoreIdAndWalletAddress(
         })}`
       )
       .then((response) => response.data?.result);
-    resCount = page.length;
+    resCount = page?.length || 0;
     offset = offset + limit;
     orders = orders.concat(page);
   }

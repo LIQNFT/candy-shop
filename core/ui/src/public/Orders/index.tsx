@@ -9,6 +9,9 @@ import { OrdersActionsStatus } from 'constant';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { useUpdateCandyShopContext } from 'public/Context';
+import axios from 'axios';
+import { Transaction } from '@solana/web3.js';
+import { awaitTransactionSignatureConfirmation } from '@liqnft/candy-shop-sdk';
 
 import './index.less';
 
@@ -22,6 +25,9 @@ interface OrdersProps {
   defaultFilterName?: string;
   candyShop: CandyShop;
 }
+
+const USDC_ADDRESS = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+const SOL_ADDRESS = 'So11111111111111111111111111111111111111112';
 
 /**
  * React component that displays a list of orders
@@ -117,6 +123,70 @@ export const Orders: React.FC<OrdersProps> = ({
     //updateOrderStatus to update
   }, [candyShop, getUniqueIdentifiers, sortedByOption.value, updateOrderStatus]);
 
+  useEffect(() => {
+    if (!wallet?.publicKey || !wallet?.signTransaction) return;
+    (async () => {
+      // get route map
+      // const indexedRouteMapResult = await axios
+      //   .get('https://quote-api.jup.ag/v1/indexed-route-map')
+      //   .catch((err) => console.log({ err }));
+
+      // if (!indexedRouteMapResult) return;
+
+      // const { indexedRouteMap = {}, mintKeys = [] } = indexedRouteMapResult.data;
+
+      // const routeMap = Object.keys(indexedRouteMap).reduce((routeMap, key) => {
+      //   routeMap.set(
+      //     mintKeys[Number(key)],
+      //     indexedRouteMap[key].map((index: number) => mintKeys[index])
+      //   );
+      //   return routeMap;
+      // }, new Map<string, string[]>());
+
+      // const isSwappable = routeMap.get(USDC_ADDRESS)?.includes(SOL_ADDRESS);
+      const isSwappable = true;
+
+      if (isSwappable) {
+        const tx = await axios.get(
+          `https://quote-api.jup.ag/v1/quote?inputMint=${SOL_ADDRESS}&outputMint=${USDC_ADDRESS}&amount=${
+            1 * 10 ** 9
+          }&slippage=0.5`
+        );
+
+        const routes = tx.data;
+        console.log({ routes });
+
+        const transactions = await axios
+          .post(
+            'https://quote-api.jup.ag/v1/swap',
+            { route: routes.data[0], userPublicKey: wallet.publicKey.toString() },
+            { headers: { 'Content-Type': 'application/json' } }
+          )
+          .then((res) => Object.values(res.data))
+          .catch((err) => console.log(err));
+
+        console.log({ transactions });
+        // const connection = candyShop.connection();
+        transactions?.filter(Boolean).forEach(async (serializedTransaction: any) => {
+          try {
+            // get transaction object from serialized transaction
+            const transaction = Transaction.from(Buffer.from(serializedTransaction, 'base64'));
+
+            console.log({ serializedTransaction });
+            const signedTx = await wallet.signTransaction(transaction);
+
+            // const connection = (await candyShop.getStaticProgram(wallet)).provider.connection;
+            const txHash = await awaitTransactionSignatureConfirmation(candyShop.connection(), signedTx.serialize());
+            console.log({ txHash });
+            console.log(`https://solscan.io/txHash/${txHash}`);
+          } catch (err) {
+            console.log(err);
+          }
+        });
+      }
+    })();
+  }, [candyShop, wallet?.publicKey]);
+
   const loadingView = (
     <div className="candy-container-list">
       {Array(LOADING_SKELETON_COUNT)
@@ -211,4 +281,29 @@ export const Orders: React.FC<OrdersProps> = ({
       </div>
     </>
   );
+};
+
+const getPossiblePairsTokenInfo = ({
+  tokens,
+  routeMap,
+  inputToken
+}: {
+  tokens: any[];
+  routeMap: Map<string, string[]>;
+  inputToken?: any;
+}) => {
+  try {
+    const possiblePairs = routeMap.get(inputToken.address);
+    const possiblePairsTokenInfo: { [key: string]: any | undefined } = {};
+    possiblePairs &&
+      possiblePairs.forEach((address) => {
+        possiblePairsTokenInfo[address] = tokens.find((t) => {
+          return t.address == address;
+        });
+      });
+
+    return possiblePairsTokenInfo;
+  } catch (error) {
+    throw error;
+  }
 };

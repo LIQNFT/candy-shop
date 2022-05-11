@@ -35,15 +35,24 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers }) =>
 
   const getTrades = useCallback(
     (offset: number, limit: number, firstLoad?: boolean) => () => {
-      candyShop.transactions({ identifiers, offset, limit }).then((res: ListBase<Trade>) => {
-        const { result, offset, totalCount, count } = res;
-        const hasMore = offset + count < Number(totalCount);
-        if (hasMore) {
-          setOffset(offset + count + 1);
-        }
-        setHasMore(hasMore);
-        setTrades((list) => (firstLoad ? result : [...list, ...result]));
-      });
+      candyShop
+        .transactions({ identifiers, offset, limit })
+        .then((res: ListBase<Trade>) => {
+          const { result, offset, totalCount, count } = res;
+          if (result?.length) {
+            const hasMore = offset + count < Number(totalCount);
+            if (hasMore) {
+              setOffset(offset + count + 1);
+            }
+            setHasMore(hasMore);
+            setTrades((list) => (firstLoad ? result : [...list, ...result]));
+          } else {
+            setHasMore(false);
+          }
+        })
+        .catch((err: any) => {
+          console.log('candyShop transaction failed, error=', err);
+        });
     },
     [candyShop, identifiers]
   );
@@ -56,16 +65,21 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers }) =>
   useEffect(() => {
     if (!updateActivityStatus) return;
 
-    candyShop.transactions({ identifiers, offset: 0, limit: 10 }).then((res: ListBase<Trade>) => {
-      console.log({ updateActivityStatus, resActivity: res });
-      setTrades((list) => {
-        // prettier-ignore
-        const newItems = res.result.filter((item) => list.findIndex((i) => i.txHashAtCreation === item.txHashAtCreation) === -1);
+    candyShop
+      .transactions({ identifiers, offset: 0, limit: 10 })
+      .then((res: ListBase<Trade>) => {
+        console.log({ updateActivityStatus, resActivity: res });
+        setTrades((list) => {
+          // prettier-ignore
+          const newItems = res.result.filter((item) => list.findIndex((i) => i.txHashAtCreation === item.txHashAtCreation) === -1);
 
-        if (newItems.length) return [...newItems, ...list];
-        return list;
+          if (newItems.length) return [...newItems, ...list];
+          return list;
+        });
+      })
+      .then((err: any) => {
+        console.log('candyShop transaction failed, error=', err);
       });
-    });
   }, [candyShop, identifiers, updateActivityStatus]);
 
   return (

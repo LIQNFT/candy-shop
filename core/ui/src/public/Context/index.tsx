@@ -34,7 +34,7 @@ export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children 
     const pollingAction = () => {
       fetchShopStatusByShopAddress(candyShopAddress)
         .then((res: SingleBase<ShopStatus[]>) => {
-          res.result.forEach((result) => {
+          res.result?.forEach((result) => {
             const prevTimestamp = localStorage.getItem(result.type);
             const resTimestamp = JSON.stringify(result.timestamp);
             const isShopRefreshed = prevTimestamp !== resTimestamp;

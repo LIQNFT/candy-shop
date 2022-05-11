@@ -26,9 +26,9 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
 
     setCandyShop(
       new CandyShop(
-        new web3.PublicKey(CREATOR_ADDRESS),
-        treasuryMint,
-        new web3.PublicKey(CANDY_SHOP_PROGRAM_ID),
+        new web3.PublicKey('31kxUz7wkaQhTs266pPmcKeAMtQSpohZJ8gL9joR4eXe'),
+        new web3.PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
+        new web3.PublicKey('csa8JpYfKSZajP7JzxnJipUL3qagub1z29hLvp578iN'),
         network,
         {
           mainnetConnectionUrl: 'https://ssc-dao.genesysgo.net/'
@@ -46,13 +46,13 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
       </div>
 
       <div style={{ marginBottom: 50 }}>
-        <Stat
+        {/* <Stat
           title={'Marketplace'}
           description={
             'Candy Shop is an open source on-chain protocol that empowers DAOs, NFT projects and anyone interested in creating an NFT marketplace to do so within minutes!'
           }
           candyShop={candyShop}
-        />
+        /> */}
       </div>
 
       <div>
@@ -65,13 +65,13 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
       </div>
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Order Detail</h1>
-      <OrderDetail
+      {/* <OrderDetail
         tokenMint={'EVdLAk8GeWRsj2HpyBujG1pJPip5gjkPcZ76QinsHHtJ'}
         backUrl={'/'}
         walletConnectComponent={<WalletMultiButton />}
         wallet={wallet}
         candyShop={candyShop}
-      />
+      /> */}
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Sell</h1>
       <Sell wallet={wallet} candyShop={candyShop} walletConnectComponent={<WalletMultiButton />} />
