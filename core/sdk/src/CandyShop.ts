@@ -368,8 +368,12 @@ export class CandyShop {
    * @param {OrdersFilterQuery} ordersFilterQuery filters to apply to search
    * @param {number[]} [identifiers] optional list of identifiers to apply to query string
    */
-  public orders(ordersFilterQuery: OrdersFilterQuery, identifiers?: number[]): Promise<ListBase<Order>> {
-    return fetchOrdersByShopAddress(this._candyShopAddress, ordersFilterQuery, identifiers);
+  public orders(
+    ordersFilterQuery: OrdersFilterQuery,
+    identifiers?: number[],
+    sellerAddress?: string
+  ): Promise<ListBase<Order>> {
+    return fetchOrdersByShopAddress(this._candyShopAddress, ordersFilterQuery, identifiers, sellerAddress);
   }
   /**
    * Fetch active orders created by specified wallet address
