@@ -9,6 +9,7 @@ import { SingleTokenInfo, CandyShop } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema, CandyShop as CandyShopResponse } from 'solana-candy-shop-schema/dist';
 
 import './index.less';
+import { getExchangeInfo } from 'utils/getExchangeInfo';
 
 export interface NftProps {
   nft: SingleTokenInfo;
@@ -30,6 +31,12 @@ export const Nft = ({ nft, wallet, sellDetail, shop, candyShop }: NftProps): JSX
   };
 
   const isSellItem = Boolean(sellDetail);
+  const exchangeInfo = sellDetail
+    ? getExchangeInfo(sellDetail, candyShop)
+    : {
+        symbol: candyShop.currencySymbol,
+        decimals: candyShop.currencyDecimals
+      };
 
   return (
     <>
@@ -54,7 +61,13 @@ export const Nft = ({ nft, wallet, sellDetail, shop, candyShop }: NftProps): JSX
       )}
 
       {selection && sellDetail ? (
-        <CancelModal onClose={onClose} order={sellDetail} wallet={wallet} candyShop={candyShop} />
+        <CancelModal
+          onClose={onClose}
+          order={sellDetail}
+          wallet={wallet}
+          candyShop={candyShop}
+          exchangeInfo={exchangeInfo}
+        />
       ) : null}
     </>
   );

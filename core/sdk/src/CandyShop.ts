@@ -141,6 +141,10 @@ export class CandyShop {
     }
   }
 
+  get currencyDecimals(): number {
+    return this._settings.currencyDecimals;
+  }
+
   get settings(): Partial<CandyShopSettings> {
     return this._settings;
   }

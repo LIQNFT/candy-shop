@@ -5,12 +5,13 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { LiqImage } from 'components/LiqImage';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { TIMEOUT_EXTRA_LOADING } from 'constant';
-import { TransactionState } from 'model';
+import { ShopExchangeInfo, TransactionState } from 'model';
 
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { ErrorType, handleError } from 'utils/ErrorHandler';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { getPrice } from 'utils/getPrice';
 
 export interface CancelModalDetailProps {
   onCancel: any;
@@ -18,9 +19,16 @@ export interface CancelModalDetailProps {
   onChangeStep: (state: TransactionState) => void;
   wallet: AnchorWallet;
   candyShop: CandyShop;
+  exchangeInfo: ShopExchangeInfo;
 }
 
-export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({ order, onChangeStep, wallet, candyShop }) => {
+export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
+  order,
+  onChangeStep,
+  wallet,
+  candyShop,
+  exchangeInfo
+}) => {
   const timeoutRef = useUnmountTimeout();
 
   const cancel = async () => {
@@ -43,14 +51,7 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({ order, onC
       });
   };
 
-  const orderPrice = useMemo(() => {
-    if (!order?.price) return null;
-
-    return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-      minimumFractionDigits: candyShop.priceDecimalsMin,
-      maximumFractionDigits: candyShop.priceDecimals
-    });
-  }, [candyShop, order?.price]);
+  const orderPrice = getPrice(candyShop, order, exchangeInfo);
 
   return (
     <div className="candy-cancel-modal">
@@ -63,7 +64,7 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({ order, onC
         <div className="candy-cancel-modal-control">
           <div>
             <div className="candy-label">PRICE</div>
-            <div className="candy-price">{orderPrice ? `${orderPrice} ${candyShop?.currencySymbol}` : 'N/A'}</div>
+            <div className="candy-price">{orderPrice ? `${orderPrice} ${exchangeInfo.symbol}` : 'N/A'}</div>
           </div>
           <button className="candy-button candy-cancel-modal-button" onClick={cancel}>
             {buttonContent}

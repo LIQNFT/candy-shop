@@ -8,7 +8,7 @@ import { getAccount } from '@solana/spl-token';
 import BuyModalConfirmed from './BuyModalConfirmed';
 import BuyModalDetail from './BuyModalDetail';
 
-import { TransactionState } from 'model';
+import { ShopExchangeInfo, TransactionState } from 'model';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 import { CandyShop, getAtaForMint, WRAPPED_SOL_MINT } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
@@ -24,9 +24,17 @@ export interface BuyModalProps {
   wallet: AnchorWallet | undefined;
   walletConnectComponent: React.ReactElement;
   candyShop: CandyShop;
+  exchangeInfo: ShopExchangeInfo;
 }
 
-export const BuyModal: React.FC<BuyModalProps> = ({ order, onClose, wallet, walletConnectComponent, candyShop }) => {
+export const BuyModal: React.FC<BuyModalProps> = ({
+  order,
+  onClose,
+  wallet,
+  walletConnectComponent,
+  candyShop,
+  exchangeInfo
+}) => {
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
   const [hash, setHash] = useState(''); // txHash
 
@@ -92,6 +100,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({ order, onClose, wallet, wall
             walletPublicKey={wallet?.publicKey}
             walletConnectComponent={walletConnectComponent}
             candyShop={candyShop}
+            exchangeInfo={exchangeInfo}
           />
         )}
         {state === TransactionState.PROCESSING && <Processing text="Processing purchase" />}
@@ -102,6 +111,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({ order, onClose, wallet, wall
             txHash={hash}
             onClose={onClose}
             candyShop={candyShop}
+            exchangeInfo={exchangeInfo}
           />
         )}
       </div>

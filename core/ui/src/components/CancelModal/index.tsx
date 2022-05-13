@@ -4,7 +4,7 @@ import { Modal } from 'components/Modal';
 import { Processing } from 'components/Processing';
 
 import { CandyShop } from '@liqnft/candy-shop-sdk';
-import { TransactionState } from 'model';
+import { ShopExchangeInfo, TransactionState } from 'model';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { CancelModalConfirm } from './CancelModalConfirm';
 import { CancelModalDetail } from './CancelModalDetail';
@@ -16,9 +16,16 @@ export interface CancelModalProps {
   onClose: any;
   wallet: AnchorWallet;
   candyShop: CandyShop;
+  exchangeInfo: ShopExchangeInfo;
 }
 
-export const CancelModal: React.FC<CancelModalProps> = ({ order, onClose: onUnSelectItem, wallet, candyShop }) => {
+export const CancelModal: React.FC<CancelModalProps> = ({
+  order,
+  onClose: onUnSelectItem,
+  wallet,
+  candyShop,
+  exchangeInfo
+}) => {
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
 
   // Handle change step
@@ -37,6 +44,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({ order, onClose: onUnSe
           onChangeStep={onChangeStep}
           wallet={wallet}
           candyShop={candyShop}
+          exchangeInfo={exchangeInfo}
         />
       )}
       {state === TransactionState.PROCESSING && <Processing text="Canceling your sale" />}

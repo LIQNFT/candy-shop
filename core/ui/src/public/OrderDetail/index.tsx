@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { web3, BN } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
@@ -14,6 +14,8 @@ import { TransactionState } from 'model';
 
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import './style.less';
+import { getExchangeInfo } from 'utils/getExchangeInfo';
+import { getPrice } from 'utils/getPrice';
 
 interface OrderDetailProps {
   tokenMint: string;
@@ -37,15 +39,13 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
   const [hash, setHash] = useState('');
 
-  const orderPrice = useMemo(() => {
-    if (!order?.price) return null;
-
-    return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-      minimumFractionDigits: candyShop.priceDecimalsMin,
-      maximumFractionDigits: candyShop.priceDecimals
-    });
-  }, [candyShop, order?.price]);
-
+  const exchangeInfo = order
+    ? getExchangeInfo(order, candyShop)
+    : {
+        symbol: candyShop.currencySymbol,
+        decimals: candyShop.currencyDecimals
+      };
+  const orderPrice = getPrice(candyShop, order, exchangeInfo);
   const isUserListing = wallet?.publicKey && order && order.walletAddress === wallet.publicKey.toString();
 
   useEffect(() => {
@@ -121,7 +121,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
           <div className="candy-order-detail-title">{order?.name}</div>
           <div className="candy-stat">
             <div className="candy-label">PRICE</div>
-            <div className="candy-price">{orderPrice ? `${orderPrice} ${candyShop?.currencySymbol}` : 'N/A'}</div>
+            <div className="candy-price">{orderPrice ? `${orderPrice} ${exchangeInfo.symbol}` : 'N/A'}</div>
           </div>
           <div className="candy-stat">
             <div className="candy-label">DESCRIPTION</div>
@@ -181,6 +181,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
                 txHash={hash}
                 onClose={goToMarketplace}
                 candyShop={candyShop}
+                exchangeInfo={exchangeInfo}
               />
             </div>
           </Modal>

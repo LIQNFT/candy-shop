@@ -1,15 +1,13 @@
-import React, { useState } from 'react';
-
-import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { web3 } from '@project-serum/anchor';
-
-import { BuyModal } from 'components/BuyModal';
-import { LiqImage } from 'components/LiqImage';
-import { CancelModal } from 'components/CancelModal';
-
-import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
-
+import { web3 } from '@project-serum/anchor';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { BuyModal } from 'components/BuyModal';
+import { CancelModal } from 'components/CancelModal';
+import { LiqImage } from 'components/LiqImage';
+import React, { useState } from 'react';
+import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { getExchangeInfo } from 'utils/getExchangeInfo';
+import { getPrice } from 'utils/getPrice';
 import './index.less';
 
 export interface OrderProps {
@@ -19,14 +17,6 @@ export interface OrderProps {
   url?: string;
   candyShop: CandyShop;
 }
-const getPrice = (candyShop: CandyShop, order: OrderSchema) => {
-  if (!order?.price) return null;
-
-  return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-    minimumFractionDigits: candyShop.priceDecimalsMin,
-    maximumFractionDigits: candyShop.priceDecimals
-  });
-};
 
 export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectComponent, url, candyShop }) => {
   const [selection, setSelection] = useState<OrderSchema>();
@@ -54,8 +44,9 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectCompon
     }
   };
 
+  const exchangeInfo = getExchangeInfo(order, candyShop);
+  const orderPrice = getPrice(candyShop, order, exchangeInfo);
   const isUserListing = wallet?.publicKey && order.walletAddress === wallet.publicKey.toString();
-  const orderPrice = getPrice(candyShop, order);
 
   return (
     <>
@@ -73,7 +64,7 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectCompon
           </div>
           <div className="candy-order-ticker candy-line-limit-1">{order?.ticker}</div>
           <div className="candy-order-price candy-line-limit-1">
-            {orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}
+            {orderPrice ? `${orderPrice} ${exchangeInfo.symbol}` : 'N/A'}
           </div>
         </div>
       </div>
@@ -85,11 +76,18 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectCompon
           wallet={wallet}
           candyShop={orderCandyShop}
           walletConnectComponent={walletConnectComponent}
+          exchangeInfo={exchangeInfo}
         />
       ) : null}
 
       {selection && isUserListing && wallet ? (
-        <CancelModal onClose={onClose} candyShop={orderCandyShop} order={selection} wallet={wallet} />
+        <CancelModal
+          onClose={onClose}
+          candyShop={orderCandyShop}
+          order={selection}
+          wallet={wallet}
+          exchangeInfo={exchangeInfo}
+        />
       ) : null}
     </>
   );
