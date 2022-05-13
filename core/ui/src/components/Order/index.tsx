@@ -4,6 +4,7 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { BuyModal } from 'components/BuyModal';
 import { CancelModal } from 'components/CancelModal';
 import { LiqImage } from 'components/LiqImage';
+import { defaultExchangeInfo, TREASURY_MINT } from 'constant/Order';
 import { ShopExchangeInfo } from 'model';
 import React, { useMemo, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
@@ -53,6 +54,10 @@ export const Order: React.FC<OrderProps> = ({
   };
 
   const shopExchangeInfo = useMemo<ShopExchangeInfo | null>(() => {
+    if (order.treasuryMint === TREASURY_MINT) {
+      return defaultExchangeInfo;
+    }
+
     if (!exchangeInfoMap || !exchangeInfoMap.has(order.treasuryMint)) {
       return null;
     }

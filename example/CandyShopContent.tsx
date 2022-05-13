@@ -79,7 +79,6 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
           walletConnectComponent={<WalletMultiButton />}
           filters={FILTERS}
           candyShop={candyShop}
-          exchangeInfoMap={exchangeInfoMap}
           sellerAddress={'3ftivZofYPfWuRYwgWaSbinB9XVFYSVYmB65mjmKCqoe'}
         />
       </div>
