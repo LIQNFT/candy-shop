@@ -8,6 +8,8 @@ import { LiqImage } from 'components/LiqImage';
 import IconTick from 'assets/IconTick';
 
 import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { ShopExchangeInfo } from 'model';
+import { getPrice } from 'utils/getPrice';
 
 interface BuyModalConfirmedProps {
   order: OrderSchema;
@@ -15,27 +17,20 @@ interface BuyModalConfirmedProps {
   walletPublicKey: web3.PublicKey | undefined;
   onClose: () => void;
   candyShop: CandyShop;
+  exchangeInfo: ShopExchangeInfo;
 }
-
-const getPrice = (candyShop: CandyShop, order: OrderSchema) => {
-  if (!order?.price) return null;
-
-  return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-    minimumFractionDigits: candyShop.priceDecimalsMin,
-    maximumFractionDigits: candyShop.priceDecimals
-  });
-};
 
 const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
   order,
   txHash,
   walletPublicKey,
   onClose,
-  candyShop
+  candyShop,
+  exchangeInfo
 }) => {
   const walletAddress = walletPublicKey?.toBase58();
 
-  const orderPrice = getPrice(candyShop, order);
+  const orderPrice = getPrice(candyShop, order, exchangeInfo);
 
   return (
     <div className="candy-buy-modal-confirmed">
@@ -53,9 +48,7 @@ const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
             <div className="candy-buy-modal-ticker">{order?.ticker}</div>
           </div>
           <div>
-            <div className="candy-buy-modal-price">
-              {orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}
-            </div>
+            <div className="candy-buy-modal-price">{orderPrice ? `${orderPrice} ${exchangeInfo.symbol}` : 'N/A'}</div>
           </div>
         </div>
       </div>

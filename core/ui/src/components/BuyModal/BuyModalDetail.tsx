@@ -7,6 +7,8 @@ import { NftAttributes } from 'components/NftAttributes';
 
 import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { ShopExchangeInfo } from 'model';
+import { getPrice } from 'utils/getPrice';
 
 export interface BuyModalDetailProps {
   order: OrderSchema;
@@ -14,6 +16,7 @@ export interface BuyModalDetailProps {
   walletPublicKey: web3.PublicKey | undefined;
   walletConnectComponent: React.ReactElement;
   candyShop: CandyShop;
+  exchangeInfo: ShopExchangeInfo;
 }
 
 const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
@@ -21,7 +24,8 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   buy,
   walletPublicKey,
   walletConnectComponent,
-  candyShop
+  candyShop,
+  exchangeInfo
 }) => {
   const [loadingNftInfo, setLoadingNftInfo] = useState(false);
   const [nftInfo, setNftInfo] = useState<Nft | null>(null);
@@ -39,14 +43,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
       });
   }, [order.tokenMint, candyShop]);
 
-  const orderPrice = useMemo(() => {
-    if (!order?.price) return null;
-
-    return (Number(order.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-      minimumFractionDigits: candyShop.priceDecimalsMin,
-      maximumFractionDigits: candyShop.priceDecimals
-    });
-  }, [candyShop, order?.price]);
+  const orderPrice = getPrice(candyShop, order, exchangeInfo);
 
   return (
     <>
@@ -58,7 +55,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
         <div className="candy-buy-modal-control">
           <div>
             <div className="candy-label">PRICE</div>
-            <div className="candy-price">{orderPrice ? `${orderPrice} ${candyShop.currencySymbol}` : 'N/A'}</div>
+            <div className="candy-price">{orderPrice ? `${orderPrice} ${exchangeInfo.symbol}` : 'N/A'}</div>
           </div>
           {!walletPublicKey ? (
             walletConnectComponent
