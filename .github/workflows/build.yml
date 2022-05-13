@@ -1,21 +1,33 @@
 name: Build
 
-on: 
-  push:
-    branches:
-    - master
-    paths-ignore:
-    - '**/*.md'
-    - '*.sh'
+on:
+  workflow_dispatch:
+    inputs:
+      branchType:
+        description: 'Branch Type'     
+        required: true
+        type: choice
+        options:
+          - Dev branch check
+          - Master branch check
 
 jobs:
+  Log:
+    name: CI - PreLog
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Branch Type: $BRANCH_TYPE"
+        env:
+          BRANCH_TYPE: ${{ github.event.inputs.branchType }}
+
   Build:
     name: CI - Build
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: ['14.17.x']
-    steps:
+    steps:       
       # Checks out a copy of your repository on the ubuntu-latest machine
       - name: Checkout code
         uses: actions/checkout@v2
