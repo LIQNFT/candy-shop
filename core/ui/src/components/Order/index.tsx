@@ -91,7 +91,7 @@ export const Order: React.FC<OrderProps> = ({
         </div>
       </div>
 
-      {!isUserListing && selection && wallet ? (
+      {!isUserListing && selection ? (
         <BuyModal
           order={selection}
           onClose={onClose}
