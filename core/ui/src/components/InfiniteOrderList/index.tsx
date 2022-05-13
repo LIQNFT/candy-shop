@@ -47,16 +47,14 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
     >
       <div className="candy-container-list">
         {orders.map((order) => (
-          <div key={order.tokenMint}>
-            <OrderComponent
-              order={order}
-              walletConnectComponent={walletConnectComponent}
-              wallet={wallet}
-              url={url}
-              candyShop={candyShop}
-              exchangeInfoMap={exchangeInfoMap}
-            />
-          </div>
+          <OrderComponent
+            order={order}
+            walletConnectComponent={walletConnectComponent}
+            wallet={wallet}
+            url={url}
+            candyShop={candyShop}
+            exchangeInfoMap={exchangeInfoMap}
+          />
         ))}
       </div>
     </InfiniteScroll>

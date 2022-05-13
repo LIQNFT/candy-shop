@@ -4,7 +4,6 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { BuyModal } from 'components/BuyModal';
 import { CancelModal } from 'components/CancelModal';
 import { LiqImage } from 'components/LiqImage';
-import { defaultExchangeInfo } from 'constant/Order';
 import { ShopExchangeInfo } from 'model';
 import React, { useMemo, useState } from 'react';
 import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
@@ -53,9 +52,9 @@ export const Order: React.FC<OrderProps> = ({
     }
   };
 
-  const shopExchangeInfo = useMemo<ShopExchangeInfo>(() => {
+  const shopExchangeInfo = useMemo<ShopExchangeInfo | null>(() => {
     if (!exchangeInfoMap || !exchangeInfoMap.has(order.treasuryMint)) {
-      return defaultExchangeInfo;
+      return null;
     }
 
     return {
@@ -66,6 +65,8 @@ export const Order: React.FC<OrderProps> = ({
         'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'
     };
   }, [exchangeInfoMap, order]);
+
+  if (!shopExchangeInfo) return null;
 
   const isUserListing = wallet?.publicKey && order.walletAddress === wallet.publicKey.toString();
   const orderPrice = getPrice(candyShop, order, shopExchangeInfo);
