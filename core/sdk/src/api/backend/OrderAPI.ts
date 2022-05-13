@@ -19,7 +19,8 @@ export async function fetchOrdersByStoreId(
   axiosInstance: AxiosInstance,
   storeId: string,
   ordersFilterQuery: OrdersFilterQuery,
-  identifiers?: number[]
+  identifiers?: number[],
+  sellerAddress?: string
 ): Promise<ListBase<Order>> {
   console.log(
     `CandyShop: fetching orders from ${storeId}, query=${JSON.stringify(ordersFilterQuery)}, identifiers=${identifiers}`
@@ -38,17 +39,20 @@ export async function fetchOrdersByStoreId(
   }
 
   let filterString = '';
-  if (identifiers) {
+  if (identifiers && identifiers.length !== 0) {
     filterString = identifiers.reduce(
       (aggregated, identifier) =>
         aggregated +
         `&filterArr[]=${JSON.stringify({
           side: 1,
           status: 0,
-          identifier
+          identifier,
+          walletAddress: sellerAddress
         })}`,
       ''
     );
+  } else {
+    filterString = `&filterArr[]=${JSON.stringify({ side: 1, status: 0, walletAddress: sellerAddress })}`;
   }
 
   let queryString = qs.stringify(queryObject);
