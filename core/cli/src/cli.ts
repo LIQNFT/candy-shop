@@ -12,6 +12,7 @@ function programCommand(name: string) {
       'Solana cluster env name',
       'devnet' //mainnet-beta, testnet, devnet
     )
+    .option('-r, --rpc-url <string>')
     .requiredOption('-k, --keypair <path>', `Solana wallet location`, '--keypair not provided');
 }
 
@@ -23,7 +24,7 @@ programCommand('sellMany')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator } = cmd.opts();
+    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl } = cmd.opts();
 
     let wallet = loadKey(keypair);
 
@@ -31,7 +32,10 @@ programCommand('sellMany')
       new anchor.web3.PublicKey(shopCreator),
       new anchor.web3.PublicKey(treasuryMint),
       CANDY_SHOP_PROGRAM_ID,
-      env
+      env,
+      {
+        mainnetConnectionUrl: rpcUrl
+      }
     );
 
     let tokenMints = loadTokenAccountMints(tokenAccountMintList);
@@ -61,7 +65,7 @@ programCommand('cancelMany')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator } = cmd.opts();
+    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl } = cmd.opts();
 
     let wallet = loadKey(keypair);
 
@@ -69,7 +73,10 @@ programCommand('cancelMany')
       new anchor.web3.PublicKey(shopCreator),
       new anchor.web3.PublicKey(treasuryMint),
       CANDY_SHOP_PROGRAM_ID,
-      env
+      env,
+      {
+        mainnetConnectionUrl: rpcUrl
+      }
     );
 
     let tokenMints = loadTokenAccountMints(tokenAccountMintList);
@@ -99,7 +106,7 @@ programCommand('sell')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -107,7 +114,10 @@ programCommand('sell')
       new anchor.web3.PublicKey(shopCreator),
       new anchor.web3.PublicKey(treasuryMint),
       CANDY_SHOP_PROGRAM_ID,
-      env
+      env,
+      {
+        mainnetConnectionUrl: rpcUrl
+      }
     );
 
     let tokenAccount = await findAssociatedTokenAddress(
@@ -133,7 +143,7 @@ programCommand('cancel')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -141,7 +151,10 @@ programCommand('cancel')
       new anchor.web3.PublicKey(shopCreator),
       new anchor.web3.PublicKey(treasuryMint),
       CANDY_SHOP_PROGRAM_ID,
-      env
+      env,
+      {
+        mainnetConnectionUrl: rpcUrl
+      }
     );
 
     let tokenAccount = await findAssociatedTokenAddress(
@@ -169,7 +182,7 @@ programCommand('buy')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, seller, tokenAccount, tokenAccountMint, treasuryMint, shopCreator, price } = cmd.opts();
+    let { keypair, env, seller, tokenAccount, tokenAccountMint, treasuryMint, shopCreator, price, rpcUrl } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -177,7 +190,10 @@ programCommand('buy')
       new anchor.web3.PublicKey(shopCreator),
       new anchor.web3.PublicKey(treasuryMint),
       CANDY_SHOP_PROGRAM_ID,
-      env
+      env,
+      {
+        mainnetConnectionUrl: rpcUrl
+      }
     );
 
     const txHash = await candyShop.buy({
