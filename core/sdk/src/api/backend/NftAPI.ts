@@ -1,4 +1,4 @@
-import { SingleBase, Nft } from 'solana-candy-shop-schema/dist';
+import { SingleBase, Nft } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 
 export async function fetchNftByMint(axiosInstance: AxiosInstance, mint: string): Promise<Nft> {

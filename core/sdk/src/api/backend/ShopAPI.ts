@@ -1,5 +1,4 @@
-import { SingleBase, WhitelistNft, ShopStatus } from 'solana-candy-shop-schema/dist';
-import { ListBase, CandyShop } from 'solana-candy-shop-schema/src/response';
+import { SingleBase, WhitelistNft, ShopStatus, CandyShop, ListBase } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 
 export async function fetchShopWhitelistNftByShopId(

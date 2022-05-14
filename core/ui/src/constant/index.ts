@@ -1,4 +1,4 @@
-import { ShopStatusType } from 'solana-candy-shop-schema';
+import { ShopStatusType } from '@liqnft/candy-shop-types';
 
 export enum LoadStatus {
   ToLoad = 'ToLoad',

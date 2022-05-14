@@ -1,7 +1,7 @@
 import { POLLING_TIMEOUT } from 'constant';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 import { useEffect, useReducer, useRef } from 'react';
-import { ShopStatusType } from 'solana-candy-shop-schema';
+import { ShopStatusType } from '@liqnft/candy-shop-types';
 import { getLocalStorage } from 'utils/getLocalStorage';
 
 export const useValidateStatus = (actions: ShopStatusType[]): number => {

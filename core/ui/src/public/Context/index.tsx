@@ -1,7 +1,7 @@
 import React, { createContext, ReactElement, useEffect, useState, Dispatch, SetStateAction, useContext } from 'react';
 
 import { fetchShopStatusByShopAddress } from '@liqnft/candy-shop-sdk';
-import { SingleBase, ShopStatus } from 'solana-candy-shop-schema/dist';
+import { SingleBase, ShopStatus } from '@liqnft/candy-shop-types';
 import { web3 } from '@project-serum/anchor';
 
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';

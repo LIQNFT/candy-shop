@@ -2,7 +2,7 @@ import React from 'react';
 
 import { web3 } from '@project-serum/anchor';
 import { formatDate } from 'utils/format';
-import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { LiqImage } from 'components/LiqImage';
 import IconTick from 'assets/IconTick';

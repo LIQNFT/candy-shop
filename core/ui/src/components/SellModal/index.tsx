@@ -13,7 +13,7 @@ import IconTick from 'assets/IconTick';
 import { handleError, ErrorType, ErrorMsgMap } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
 import { TransactionState } from 'model';
-import { CandyShop as CandyShopResponse } from 'solana-candy-shop-schema/dist';
+import { CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
 import { TIMEOUT_EXTRA_LOADING } from 'constant';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 

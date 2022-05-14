@@ -11,7 +11,7 @@ import BuyModalDetail from './BuyModalDetail';
 import { ShopExchangeInfo, TransactionState } from 'model';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 import { CandyShop, getAtaForMint, WRAPPED_SOL_MINT } from '@liqnft/candy-shop-sdk';
-import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { handleError, ErrorType, ErrorMsgMap } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
 import { TIMEOUT_EXTRA_LOADING } from 'constant';

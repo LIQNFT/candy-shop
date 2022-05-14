@@ -12,7 +12,7 @@ import {
   ListBase,
   CandyShop as CandyShopResponse,
   SingleBase
-} from 'solana-candy-shop-schema/dist';
+} from '@liqnft/candy-shop-types';
 import {
   CandyShop,
   FetchNFTBatchParam,

@@ -11,7 +11,7 @@ import {
   Trade,
   WhitelistNft,
   CandyShop as CandyShopResponse
-} from 'solana-candy-shop-schema/dist';
+} from '@liqnft/candy-shop-types';
 
 import { OrdersFilterQuery, TradeQuery } from './api/backend';
 import { CANDY_SHOP_INS_PROGRAM_ID } from './api/constants';

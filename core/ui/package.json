@@ -1,6 +1,6 @@
 {
   "name": "@liqnft/candy-shop",
-  "version": "0.4.39",
+  "version": "0.4.21",
   "description": "Your own decentralized and escrowless marketplace in minutes",
   "main": "dist/index.es.js",
   "module": "dist/index.cjs.js",
@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "@liqnft/candy-shop-sdk": "0.4.27",
+    "@liqnft/candy-shop-types": "^0.1.4",
     "@project-serum/anchor": "^0.23.0",
     "@solana/spl-token": "^0.2.0",
     "@solana/wallet-adapter-react": "^0.15.0",
@@ -59,8 +60,7 @@
     "dayjs": "^1.11.1",
     "qs": "^6.10.3",
     "rc-notification": "^4.5.7",
-    "react-infinite-scroll-component": "^6.1.0",
-    "solana-candy-shop-schema": "git+https://github.com/LIQNFT/solana-candy-shop-schema.git#2fc7b3570d68a6d2ea2e42b5aac9601170e537e6"
+    "react-infinite-scroll-component": "^6.1.0"
   },
   "scripts": {
     "env:dev": "env-cmd -f dev.env",

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Order as OrderComponent } from 'components/Order';
-import { Order } from 'solana-candy-shop-schema/dist';
+import { Order } from '@liqnft/candy-shop-types';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Skeleton } from 'components/Skeleton';
 import { AnchorWallet } from '@solana/wallet-adapter-react';

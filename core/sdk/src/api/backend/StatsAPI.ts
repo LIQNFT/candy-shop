@@ -1,4 +1,4 @@
-import { NftStats, ShopStats, SingleBase } from 'solana-candy-shop-schema/dist';
+import { NftStats, ShopStats, SingleBase } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 
 export async function fetchStatsById(axiosInstance: AxiosInstance, storeId: string): Promise<ShopStats> {

@@ -9,7 +9,7 @@ import { Modal } from 'components/Modal';
 import { Processing } from 'components/Processing';
 import BuyModalConfirmed from 'components/BuyModal/BuyModalConfirmed';
 import { handleError } from 'utils/ErrorHandler';
-import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { Nft, Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { TransactionState } from 'model';
 
 import { CandyShop } from '@liqnft/candy-shop-sdk';
