@@ -10,6 +10,7 @@ import fs from 'fs';
 let sdk = JSON.parse(fs.readFileSync('./core/sdk/package.json').toString());
 let cli = JSON.parse(fs.readFileSync('./core/cli/package.json').toString());
 let ui = JSON.parse(fs.readFileSync('./core/ui/package.json').toString());
+let types = JSON.parse(fs.readFileSync('./core/types/package.json').toString());
 
 function bumpVersion(version: string, bump: string): string {
   let [major, minor, patch] = version.split('.').map(Number);
@@ -52,9 +53,17 @@ process.argv.slice(2).forEach((val) => {
     let newVersion = bumpVersion(ui.version, bump);
     ui.version = newVersion;
   }
+
+  if (name === 'types') {
+    let newVersion = bumpVersion(types.version, bump);
+    types.version = newVersion;
+    ui.dependencies['@liqnft/candy-shop-types'] = newVersion;
+    sdk.dependencies['@liqnft/candy-shop-types'] = newVersion;
+  }
 });
 
 // Update files
 writeFile('./core/sdk/package.json', sdk);
 writeFile('./core/cli/package.json', cli);
 writeFile('./core/ui/package.json', ui);
+writeFile('./core/types/package.json', types);

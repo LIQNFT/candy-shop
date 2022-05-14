@@ -1,0 +1,15 @@
+{
+  "name": "@liqnft/candy-shop-types",
+  "version": "0.1.4",
+  "main": "dist/index.js",
+  "author": "RustySol",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "tslint": "^6.1.3",
+    "tslint-config-airbnb": "^5.11.2",
+    "typescript": "^4.6.2"
+  }
+}
