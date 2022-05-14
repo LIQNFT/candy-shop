@@ -24,7 +24,7 @@
 - [Embedded UI Usages](#embedded-ui-usages)
   - [Refresh CandyShop by React Context](#refresh-candyshop-by-react-context)
 - [Solana Transaction Size Limit](#%EF%B8%8F-solana-transaction-size-limit-%EF%B8%8F)
-- [Contribute to Candy Shop](#contribute-to-candy-shop)
+- [Contribute to Candy Shop](https://github.com/LIQNFT/candy-shop/wiki/Contribute-to-Candy-Shop)
 
 ## Intro
 
@@ -90,16 +90,6 @@ yarn add @liqnft/candy-shop
 ### How to use CandyShop
 
 **Refer to `/example` folder to instantiate `CandyShop`**
-
-[CandyShopDataValidator](#refresh-candyshop-by-react-context) is a contextAPI store to revalidate content of Embedded UIs when any transactions occurred in current CandyShop.
-
-```ts
-import { Sell } from '@liqnft/candy-shop';
-
-<CandyShopDataValidator>
-  <CandyShopContent network={network} />
-</CandyShopDataValidator>;
-```
 
 Create a new CandyShop instance
 
@@ -180,7 +170,15 @@ We provide a few built-in UI to speed up building your market place without craf
 
 ### Refresh CandyShop by React Context
 
-CandyShopDataValidator Context helps Embedded UI component to have latest shop status when any transactions occurred in current CandyShop by checking the candy-shop database state in certain interval.
+`CandyShopDataValidator`  is a contextAPI store to revalidate content that helps Embedded UI component to have latest shop status when any transactions occurred in current CandyShop by checking the candy-shop database state in certain interval.
+
+```ts
+import { Sell } from '@liqnft/candy-shop';
+
+<CandyShopDataValidator>
+  <CandyShopContent network={network} />
+</CandyShopDataValidator>;
+```
 
 Check [here](https://github.com/LIQNFT/candy-shop/blob/master/core/ui/src/public/Context/index.tsx) to get more details
 
@@ -276,128 +274,3 @@ import { OrderDetail } from '@liqnft/candy-shop';
 ## ⚠️ Solana Transaction Size Limit ⚠️
 
 For Candy Shops that use a SPL token as the payment currency, if any NFT's are listed on it that have 4 creators or more, users trying to buy those NFT's will not be able to successfully do so. This is because in this case, the Solana transaction size becomes too large, exceeding the current Solana transaction size limit. Workarounds for this issue are actively being looked into.
-
-## Contribute to Candy Shop
-
-We're welcoming to receive any contribution for candy-shop! Feel free to open a PR can request LIQNFT team to review.
-
-Following is some set up you might need to know before building up together.
-
-### Prerequisite
-
-Install Node (above 14.17.x), NPM, Yarn
-
-### Launch example
-
-Installing & Building all required packages by `setup.sh`
-
-Use `setup.sh` in root folder.
-
-```bash
-# run chmod when executing it first time
-chmod 755 setup.sh
-./setup.sh
-```
-
-#### Symbolic link between ui and sdk
-
-Currently, `core/ui` depends on the published package from `core/sdk`, if development both locally, we need to use symbolic link to let `core/ui` use the live changes from `core/sdk`.
-
-Add `arg: --link-build` when executing script
-
-```sh
-./setup.sh --link-build
-```
-
-In root folder, hosting dist from example at `localhost:1234`
-
-```bash
-yarn start
-```
-
-### Clean node_modules for clean building
-
-In root folder
-
-```bash
-yarn clean:all
-```
-
-We also have individual clean up scripts provided in root's package.json.
-
-#### How to reflect the changes after linked
-
-Always build sdk at first.
-
-1. In `core/sdk`
-
-```bash
-yarn build
-```
-
-2. In `core/ui`
-
-```bash
-yarn build
-```
-
-3. In root folder
-
-```bash
-yarn build
-```
-
-If you're using `yarn start` in root folder while development, it will automatically detect the changes from `core/ui` once you performed the `yarn build` under the `core/ui`.
-
-### Formatting
-
-In root folder
-
-```bash
-yarn format:fix
-```
-
-### Branch Naming
-
-To help reviewers differentiate the PR, define your dev branch with module name like following.
-
-branch: **module/descriptive-short-sentence** (lowercase)
-
-e.g. `ui/update-button-styles`, `core/refactor-backend-api`, etc.
-| Branch Type | Purpose  
-| ---------| -------------------------------------------------------------------------
-| core | Changes made for files across in `src/core`  
-| sdk | Changes particularly for `src/core/sdk`  
-| ui | Changes particularly for `src/core/ui`  
-| cli | Changes particularly for `src/core/cli`  
-| chore | Changes to the build process or auxiliary tools and libraries  
-| doc | Documentation only changes
-
-### Commit Message
-
-e.g.
-
-```
-[ui] update button styles
-
-Descriptive message to record what will change.
-```
-
-```
-[sdk] update api
-
-Descriptive message to record what will change.
-```
-
-#### Internal Folks
-
-Include the JIRA Ticket ID in top of your commit message as possible as you can.
-
-e.g.
-
-```
-[ui] update button styles
-
-[LIQ-XXX]
-Descriptive message to record what will change.
-```

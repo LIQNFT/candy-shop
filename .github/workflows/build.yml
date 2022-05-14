@@ -1,6 +1,14 @@
-name: Build
+name: CandyShop Build CI
 
 on:
+  # Still auto execute while push to master
+  push:
+    branches:
+    - master
+    paths-ignore:
+    - '**/*.md'
+    - '*.sh'
+  # Manual trigger
   workflow_dispatch:
     inputs:
       branchType:
@@ -12,15 +20,6 @@ on:
           - Master branch check
 
 jobs:
-  Log:
-    name: CI - PreLog
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "Branch Type: $BRANCH_TYPE"
-        env:
-          BRANCH_TYPE: ${{ github.event.inputs.branchType }}
-
   Build:
     name: CI - Build
     runs-on: ubuntu-latest
@@ -31,6 +30,13 @@ jobs:
       # Checks out a copy of your repository on the ubuntu-latest machine
       - name: Checkout code
         uses: actions/checkout@v2
+      
+      - name: Target Branch
+        run: |
+          echo "Check: $BRANCH_TYPE"
+          echo -e "Trigger Branch: \033[33m${GITHUB_REF#refs/heads/}\033[m"
+        env:
+          BRANCH_TYPE: ${{ github.event.inputs.branchType }}
       
       # Set up required dev env
       - name: Install Node.js ${{ matrix.node-version }}
