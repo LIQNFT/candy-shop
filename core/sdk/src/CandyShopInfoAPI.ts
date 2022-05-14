@@ -14,7 +14,7 @@ import {
   WhitelistNft,
   CandyShop as CandyShopResponse,
   ShopStatus
-} from 'solana-candy-shop-schema/dist';
+} from '@liqnft/candy-shop-types';
 import {
   fetchNftByMint,
   fetchOrderByTokenMintAndShopId,

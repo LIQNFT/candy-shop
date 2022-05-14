@@ -1,6 +1,6 @@
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { ShopExchangeInfo } from 'model';
-import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 
 export const getPrice: any = (candyShop: CandyShop, order: OrderSchema, exchangeInfo: ShopExchangeInfo) => {
   if (!order?.price || !exchangeInfo) return null;

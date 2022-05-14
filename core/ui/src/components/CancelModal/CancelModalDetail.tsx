@@ -1,16 +1,14 @@
-import React, { useMemo } from 'react';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-
-import { LiqImage } from 'components/LiqImage';
 import { ExplorerLink } from 'components/ExplorerLink';
+import { LiqImage } from 'components/LiqImage';
 import { TIMEOUT_EXTRA_LOADING } from 'constant';
-import { ShopExchangeInfo, TransactionState } from 'model';
-
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
-import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
-import { ErrorType, handleError } from 'utils/ErrorHandler';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { ShopExchangeInfo, TransactionState } from 'model';
+import React from 'react';
+import { handleError } from 'utils/ErrorHandler';
 import { getPrice } from 'utils/getPrice';
 
 export interface CancelModalDetailProps {

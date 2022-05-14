@@ -2,7 +2,7 @@ import React from 'react';
 
 import IconTick from 'assets/IconTick';
 import { LiqImage } from '../LiqImage';
-import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 
 export interface CancelModalConfirmProps {
   order: OrderSchema;

@@ -5,7 +5,7 @@ import { BuyModal } from 'components/BuyModal';
 import { CancelModal } from 'components/CancelModal';
 import { LiqImage } from 'components/LiqImage';
 import React, { useState } from 'react';
-import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { getExchangeInfo } from 'utils/getExchangeInfo';
 import { getPrice } from 'utils/getPrice';
 import './index.less';

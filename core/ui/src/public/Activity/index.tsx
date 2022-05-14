@@ -6,7 +6,7 @@ import { IconActivity } from 'assets/IconActivity';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { CandyShop } from '@liqnft/candy-shop-sdk';
-import { Trade, ListBase } from 'solana-candy-shop-schema/dist';
+import { Trade, ListBase } from '@liqnft/candy-shop-types';
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { ActivityActionsStatus } from 'constant';
 

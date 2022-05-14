@@ -6,7 +6,7 @@ import { LiqImage } from 'components/LiqImage';
 import { SellModal } from 'components/SellModal';
 
 import { SingleTokenInfo, CandyShop } from '@liqnft/candy-shop-sdk';
-import { Order as OrderSchema, CandyShop as CandyShopResponse } from 'solana-candy-shop-schema/dist';
+import { Order as OrderSchema, CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
 
 import './index.less';
 import { getExchangeInfo } from 'utils/getExchangeInfo';
