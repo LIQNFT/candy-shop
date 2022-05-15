@@ -138,6 +138,17 @@ export const getSignedTx = async (wallet: AnchorWallet | web3.Keypair, transacti
   return transaction;
 };
 
+export const checkTradeStateExist = async (
+  connection: web3.Connection,
+  sellTradeState: web3.PublicKey,
+  sellTradeStateBump: number
+) => {
+  const sellTradeStateInfo = await connection.getAccountInfo(sellTradeState);
+  if (sellTradeStateInfo?.data[0] != sellTradeStateBump) {
+    throw new CandyShopError(CandyShopErrorType.NFTUnavailable);
+  }
+};
+
 export const checkNftAvailability = async (
   connection: web3.Connection,
   tokenAccount: web3.PublicKey,

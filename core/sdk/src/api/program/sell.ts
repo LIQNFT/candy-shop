@@ -7,7 +7,8 @@ import {
   getAuctionHouseTradeState,
   getAtaForMint,
   sendTx,
-  treasuryMintIsNative
+  treasuryMintIsNative,
+  checkTradeStateExist
 } from '../utils';
 import { safeAwait } from '../../utils';
 
@@ -47,6 +48,9 @@ export async function sellNft(params: SellTransactionParams): Promise<string> {
     amount,
     new anchor.BN(0)
   );
+
+  await checkTradeStateExist(program.provider.connection, tradeState, tradeStateBump);
+
   const [programAsSigner, programAsSignerBump] = await getAuctionHouseProgramAsSigner();
 
   const transaction = new anchor.web3.Transaction();
