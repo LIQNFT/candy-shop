@@ -3,7 +3,7 @@ import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { web3 } from '@project-serum/anchor';
 import { CandyShop } from '../core/sdk/.';
-import { Orders, Stat, OrderDetail, Sell, Activity, OrderDefaultFilter } from '../core/ui/.';
+import { Orders, Stat, OrderDetail, Sell, Activity } from '../core/ui/.';
 import { CANDY_SHOP_PROGRAM_ID, CREATOR_ADDRESS, TREASURY_MINT } from './constant/publicKey';
 
 import 'antd/dist/antd.min.css';
@@ -64,7 +64,12 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
       />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Sell</h1>
-      <Sell wallet={wallet} candyShop={candyShop} walletConnectComponent={<WalletMultiButton />} />
+      <Sell
+        wallet={wallet}
+        candyShop={candyShop}
+        walletConnectComponent={<WalletMultiButton />}
+        enableCacheNFT={true}
+      />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', margin: '80px 0 30px' }}>Activity</h1>
       <Activity candyShop={candyShop} />

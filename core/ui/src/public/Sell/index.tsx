@@ -14,6 +14,7 @@ import {
   SingleBase
 } from '@liqnft/candy-shop-types';
 import {
+  CacheNFTParam,
   CandyShop,
   FetchNFTBatchParam,
   fetchNftsFromWallet,
@@ -25,18 +26,20 @@ import { LoadStatus, SellActionsStatus } from 'constant';
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { useUpdateCandyShopContext } from 'public/Context';
 
+const Logger = 'CandyShopUI/Sell';
+
 interface SellProps {
   wallet: AnchorWallet | undefined;
   walletConnectComponent: React.ReactElement;
-  style?: { [key: string]: string | number } | undefined;
   candyShop: CandyShop;
+  style?: { [key: string]: string | number } | undefined;
+  enableCacheNFT?: boolean;
 }
 
 /**
- * React component that allows user to put an NFT for sale
+ * React component that allows user to put wallet's NFT for sale
  */
-
-export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, style, candyShop }) => {
+export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, style, candyShop, enableCacheNFT }) => {
   const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
   const [sellOrders, setSellOrders] = useState<OrderSchema[]>();
   const [walletPublicKey, setWalletPublicKey] = useState<web3.PublicKey>();
@@ -60,7 +63,7 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
         setShop(data.result);
       })
       .catch((error: any) => {
-        console.log('CandyShop: Sell failed to get shop detail, error=', error);
+        console.log(`${Logger}: Sell failed to get shop detail, error=`, error);
       })
       .finally(() => {
         setShopLoading(LoadStatus.Loaded);
@@ -86,7 +89,6 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
     if (!firstBatchNFTLoaded.current) {
       firstBatchNFTLoaded.current = true;
     }
-    console.log('getUserNFTBatchResult: amount of valid batch NFTs=', batchNFTs.length);
     allNFTs.current = Object.assign(
       allNFTs.current,
       batchNFTs.reduce((acc: any, item: SingleTokenInfo) => {
@@ -107,10 +109,21 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
         batchCallback: getUserNFTFromBatch,
         batchSize: 8
       };
-      const userNFTs = fetchNftsFromWallet(candyShop.connection(), walletPublicKey, identifiers, fetchBatchParam);
+      // Enable cache nft, store nft token in IDB and get nft token from IDB.
+      // CandyShopSDK will always keep up-to-date status from chain in IDB once fetchNFT is called.
+      const cacheNFTParam: CacheNFTParam = {
+        enable: enableCacheNFT ?? false
+      };
+      const userNFTs = fetchNftsFromWallet(
+        candyShop.connection(),
+        walletPublicKey,
+        identifiers,
+        fetchBatchParam,
+        cacheNFTParam
+      );
       return userNFTs;
     },
-    [candyShop, getShopIdentifiers, getUserNFTFromBatch]
+    [candyShop, getShopIdentifiers, getUserNFTFromBatch, enableCacheNFT]
   );
 
   // fetch current wallet nfts when mount and when publicKey was changed.
@@ -124,10 +137,10 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
       setNFTLoadingStatus(LoadStatus.Loading);
       progressiveLoadUserNFTs(walletPublicKey)
         .then((allUserNFTs: SingleTokenInfo[]) => {
-          console.log(`getUserNFTs success, total amount of user NFTs= ${allUserNFTs.length}`);
+          console.log(`${Logger}: getUserNFTs success, total amount of user NFTs= ${allUserNFTs.length}`);
         })
         .catch((error: any) => {
-          console.log('getUserNFTs failed, error=', error);
+          console.log(`${Logger}: getUserNFTs failed, error=`, error);
         })
         .finally(() => {
           setNFTLoadingStatus(LoadStatus.Loaded);

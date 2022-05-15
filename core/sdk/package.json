@@ -15,6 +15,7 @@
     "@solana/wallet-adapter-react": "^0.15.4",
     "axios": "^0.26.1",
     "crc-32": "^1.2.2",
+    "idb": "^7.0.1",
     "qs": "^6.10.3"
   },
   "devDependencies": {
