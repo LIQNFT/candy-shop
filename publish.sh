@@ -16,7 +16,7 @@ then
     yarn
     yarn build
 
-    echo -e "\033[33mPublish core/ui\033[m"
+    echo -e "\033[33mPublish core/types\033[m"
     npm publish
 fi
 
