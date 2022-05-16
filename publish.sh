@@ -23,6 +23,7 @@ fi
 if [[ "$*" == *"sdk"* ]]
 then
     echo -e "\033[33mClean build core/sdk\033[m"
+    cd $SCRIPTPATH
     cd core/sdk
     rm -rf node_modules
     yarn unlink @liqnft/candy-shop-types

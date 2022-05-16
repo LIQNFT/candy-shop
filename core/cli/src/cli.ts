@@ -5,6 +5,8 @@ import { CANDY_SHOP_PROGRAM_ID, loadKey, loadTokenAccountMints, findAssociatedTo
 
 const CMD = new Command();
 
+CMD.description('CLI for interacting with Candy Shop');
+
 function programCommand(name: string) {
   return CMD.command(name)
     .requiredOption(
@@ -12,15 +14,16 @@ function programCommand(name: string) {
       'Solana cluster env name',
       'devnet' //mainnet-beta, testnet, devnet
     )
-    .option('-r, --rpc-url <string>')
-    .requiredOption('-k, --keypair <path>', `Solana wallet location`, '--keypair not provided');
+    .option('-r, --rpc-url <string>', '(optional) Solana mainnet RPC url')
+    .requiredOption('-k, --keypair <path>', 'path to Solana wallet keypair');
 }
 
 programCommand('sellMany')
-  .requiredOption('-tam, --token-account-mint-list <path>')
-  .requiredOption('-tm, --treasury-mint <string>')
-  .requiredOption('-sc, --shop-creator <string>')
-  .requiredOption('-p, --price <string>')
+  .description('list many NFTs for sale')
+  .requiredOption('-tam, --token-account-mint-list <path>', 'path to JSON file with array of NFT token mint addresses')
+  .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
+  .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
+  .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
     console.log(name);
 
@@ -58,10 +61,11 @@ programCommand('sellMany')
   });
 
 programCommand('cancelMany')
-  .requiredOption('-tam, --token-account-mint-list <path>')
-  .requiredOption('-tm, --treasury-mint <string>')
-  .requiredOption('-sc, --shop-creator <string>')
-  .requiredOption('-p, --price <string>')
+  .description('cancel many NFT listings')
+  .requiredOption('-tam, --token-account-mint-list <path>', 'path to JSON file with array of NFT token mint addresses')
+  .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
+  .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
+  .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
     console.log(name);
 
@@ -99,10 +103,11 @@ programCommand('cancelMany')
   });
 
 programCommand('sell')
-  .requiredOption('-tam, --token-account-mint <string>')
-  .requiredOption('-tm, --treasury-mint <string>')
-  .requiredOption('-sc, --shop-creator <string>')
-  .requiredOption('-p, --price <string>')
+  .description('list one NFT for sale')
+  .requiredOption('-tam, --token-account-mint <string>', 'NFT token mint address')
+  .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
+  .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
+  .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
     console.log(name);
 
@@ -136,10 +141,11 @@ programCommand('sell')
   });
 
 programCommand('cancel')
-  .requiredOption('-tam, --token-account-mint <string>')
-  .requiredOption('-tm, --treasury-mint <string>')
-  .requiredOption('-sc, --shop-creator <string>')
-  .requiredOption('-p, --price <string>')
+  .description('cancel one NFT listing')
+  .requiredOption('-tam, --token-account-mint <string>', 'NFT token mint address')
+  .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
+  .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
+  .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
     console.log(name);
 
@@ -173,12 +179,13 @@ programCommand('cancel')
   });
 
 programCommand('buy')
-  .requiredOption('-s, --seller <string>')
-  .requiredOption('-ta, --token-account <string>')
-  .requiredOption('-tam, --token-account-mint <string>')
-  .requiredOption('-tm, --treasury-mint <string>')
-  .requiredOption('-sc, --shop-creator <string>')
-  .requiredOption('-p, --price <string>')
+  .description('buy a listed NFT')
+  .requiredOption('-s, --seller <string>', 'seller wallet address')
+  .requiredOption('-ta, --token-account <string>', 'seller NFT token account address')
+  .requiredOption('-tam, --token-account-mint <string>', 'NFT token mint address')
+  .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
+  .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
+  .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
     console.log(name);
 

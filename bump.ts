@@ -4,7 +4,7 @@ import fs from 'fs';
  * Increments version of core/sdk and core/ui
  * Usage: ts-node bump.ts {module}={bumpType} where module = sdk, ui & bumpType = major, minor, patch
  * e.g. ts-node bump.ts ui=patch
- * e.g. ts-node bump.ts sdk=patch ui=patch
+ * e.g. ts-node bump.ts types=major sdk=patch ui=patch
  */
 
 let sdk = JSON.parse(fs.readFileSync('./core/sdk/package.json').toString());
