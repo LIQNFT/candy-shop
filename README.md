@@ -185,28 +185,22 @@ Check [here](https://github.com/LIQNFT/candy-shop/blob/master/core/ui/src/public
 ```ts
 import { fetchShopStatusByShopAddress } from '@liqnft/candy-shop-sdk';
 
-const POLLING_SHOP_TIMEOUT = 3_000;
+const POLLING_SHOP_INTERVAL = 3_000;
 
 const CandyShopDataValidator: React.FC<any> = () => {
-  useEffect(() => {
-    let timeout;
-    const pollingAction = () => {
-      fetchShopStatusByShopAddress(CANDY_SHOP_ADDRESS)
+  const polling = useCallback((candyShopAddress: web3.PublicKey) => {
+     fetchShopStatusByShopAddress(candyShopAddress)
         .then((res: any) => {
           // internal logic to trigger component update content
         })
         .catch((err: any) => {
           // handle error API
         });
-    };
-    const polling = () => {
-      pollingAction();
-      timeout = setTimeout(polling, POLLING_SHOP_TIMEOUT);
-    };
-    timeout = setTimeout(polling, POLLING_SHOP_TIMEOUT);
-
-    return () => clearTimeout(timeout);
-  }, []);
+  }, [])
+  useInterval(() => {
+    if (!candyShopAddress) return;
+    polling(candyShopAddress);
+  }, candyShopAddress ? POLLING_SHOP_INTERVAL : null);
 };
 ```
 

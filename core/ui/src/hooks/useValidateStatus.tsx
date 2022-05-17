@@ -1,8 +1,8 @@
-import { POLLING_TIMEOUT } from 'constant';
-import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
-import { useEffect, useReducer, useRef } from 'react';
 import { ShopStatusType } from '@liqnft/candy-shop-types';
+import { POLLING_INTERVAL } from 'constant';
+import { useCallback, useReducer, useRef } from 'react';
 import { getLocalStorage } from 'utils/getLocalStorage';
+import { useInterval } from './useInterval';
 
 export const useValidateStatus = (actions: ShopStatusType[]): number => {
   const [orderStatus, updateOrderStatus] = useReducer((s) => s + 1, 0);
@@ -13,27 +13,23 @@ export const useValidateStatus = (actions: ShopStatusType[]): number => {
     }, {})
   );
 
-  const timeoutRef = useUnmountTimeout();
-
-  useEffect(() => {
-    const polling = () => {
-      let isUpdated = false;
-      actions.forEach((action) => {
-        const localValue = getLocalStorage(action);
-        if (compareRef.current[action] !== localValue) {
-          isUpdated = true;
-          compareRef.current[action] = localValue;
-        }
-      });
-
-      if (isUpdated) {
-        updateOrderStatus();
+  const polling = useCallback(() => {
+    let isUpdated = false;
+    actions.forEach((action) => {
+      const localValue = getLocalStorage(action);
+      if (compareRef.current[action] !== localValue) {
+        isUpdated = true;
+        compareRef.current[action] = localValue;
       }
-      timeoutRef.current = setTimeout(polling, POLLING_TIMEOUT);
-    };
+    });
 
-    timeoutRef.current = setTimeout(polling, POLLING_TIMEOUT);
-  }, [actions, timeoutRef]);
+    if (isUpdated) {
+      updateOrderStatus();
+    }
+  }, [actions]);
+  useInterval(() => {
+    polling();
+  }, POLLING_INTERVAL);
 
   return orderStatus;
 };
