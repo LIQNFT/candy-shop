@@ -144,8 +144,8 @@ export const checkTradeStateExist = async (
   sellTradeStateBump: number
 ) => {
   const sellTradeStateInfo = await connection.getAccountInfo(sellTradeState);
-  if (sellTradeStateInfo?.data[0] != sellTradeStateBump) {
-    throw new CandyShopError(CandyShopErrorType.NFTUnavailable);
+  if (sellTradeStateInfo?.data[0] === sellTradeStateBump) {
+    throw new CandyShopError(CandyShopErrorType.TradeStateExists);
   }
 };
 
