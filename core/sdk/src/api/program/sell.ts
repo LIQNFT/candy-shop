@@ -49,7 +49,8 @@ export async function sellNft(params: SellTransactionParams): Promise<string> {
     new anchor.BN(0)
   );
 
-  await checkTradeStateExist(program.provider.connection, tradeState, tradeStateBump);
+  // TODO: re-enable it when the indexer is back on track. For now disable it to allow users to sell same NFT > 1 time
+  // await checkTradeStateExist(program.provider.connection, tradeState, tradeStateBump);
 
   const [programAsSigner, programAsSignerBump] = await getAuctionHouseProgramAsSigner();
 
