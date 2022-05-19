@@ -1,37 +1,37 @@
-// TODO
 import * as anchor from '@project-serum/anchor';
-import { Keypair, PublicKey, sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
-import { getAtaForMint, getAuction, getAuctionHouseAuthority, getCandyShop } from '../..';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { Keypair, PublicKey, Transaction } from '@solana/web3.js';
+import { getAtaForMint, getAuction, getAuctionHouseAuthority, getCandyShop, sendTx } from '../..';
 
 export const createAuction = async (
-  csCreatorKeypair: Keypair,
+  wallet: AnchorWallet | Keypair,
   treasuryMint: PublicKey,
   nftMint: PublicKey,
   startingBid: anchor.BN,
   startTime: anchor.BN,
-  biddingPerid: anchor.BN,
+  biddingPeriod: anchor.BN,
   buyNowPrice: anchor.BN | null,
   program: anchor.Program
 ) => {
-  const [candyShop] = await getCandyShop(csCreatorKeypair.publicKey, treasuryMint, program.programId);
+  const [candyShop] = await getCandyShop(wallet.publicKey, treasuryMint, program.programId);
 
   const [auction, auctionBump] = await getAuction(candyShop, nftMint, program.programId);
 
   const [auctionEscrow] = await getAtaForMint(nftMint, auction);
 
-  const [tokenAccount] = await getAtaForMint(nftMint, csCreatorKeypair.publicKey);
+  const [tokenAccount] = await getAtaForMint(nftMint, wallet.publicKey);
 
-  const [authority] = await getAuctionHouseAuthority(csCreatorKeypair.publicKey, treasuryMint, program.programId);
+  const [authority] = await getAuctionHouseAuthority(wallet.publicKey, treasuryMint, program.programId);
 
   const transaction = new Transaction();
 
   const ix = await program.methods
-    .createAuction(startingBid, startTime, biddingPerid, buyNowPrice)
+    .createAuction(startingBid, startTime, biddingPeriod, buyNowPrice)
     .accounts({
       auction,
       auctionEscrow,
       tokenAccount,
-      wallet: csCreatorKeypair.publicKey,
+      wallet: wallet.publicKey,
       nftMint,
       candyShop,
       authority
@@ -39,7 +39,7 @@ export const createAuction = async (
     .instruction();
 
   transaction.add(ix);
-  const txId = await sendAndConfirmTransaction(program.provider.connection, transaction, [csCreatorKeypair]);
+  const txId = await sendTx(wallet, transaction, program);
   console.log('Auction created');
 
   return {

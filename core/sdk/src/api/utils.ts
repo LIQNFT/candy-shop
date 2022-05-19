@@ -12,7 +12,9 @@ import {
   CANDY_STORE,
   FEE_PAYER,
   TREASURY,
-  AUCTION
+  AUCTION,
+  BID,
+  WALLET
 } from './constants';
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
 import { CandyShopError, CandyShopErrorType } from '../utils/error';
@@ -282,4 +284,19 @@ export const sendTx = async (
 
 export const treasuryMintIsNative = (treasuryMint: web3.PublicKey) => {
   return treasuryMint.equals(WRAPPED_SOL_MINT);
+};
+
+export const getBid = async (auction: web3.PublicKey, wallet: web3.PublicKey, marketProgramId: web3.PublicKey) => {
+  return web3.PublicKey.findProgramAddress([Buffer.from(BID), auction.toBuffer(), wallet.toBuffer()], marketProgramId);
+};
+
+export const getBidWallet = async (
+  auction: web3.PublicKey,
+  wallet: web3.PublicKey,
+  marketProgramId: web3.PublicKey
+) => {
+  return web3.PublicKey.findProgramAddress(
+    [Buffer.from(BID), auction.toBuffer(), wallet.toBuffer(), Buffer.from(WALLET)],
+    marketProgramId
+  );
 };

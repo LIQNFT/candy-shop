@@ -1,8 +1,10 @@
+import * as anchor from '@project-serum/anchor';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { CandyShop, SingleTokenInfo, fetchNftsFromWallet } from '@liqnft/candy-shop-sdk';
+import { CandyShop, SingleTokenInfo, fetchNftsFromWallet, createAuction } from '@liqnft/candy-shop-sdk';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
-import { Order, WhitelistNft, ListBase } from 'solana-candy-shop-schema/dist';
+import { Order, WhitelistNft, ListBase } from '@liqnft/candy-shop-types';
 import { LOADING_SKELETON_COUNT } from 'constant/Orders';
 
 import { Empty } from 'components/Empty';
@@ -30,7 +32,7 @@ enum StageEnum {
 }
 
 export const Auction: React.FC<AuctionProps> = ({ candyShop, wallet, walletConnectComponent }) => {
-  const [selected, setSelected] = useState<any>();
+  const [selected, setSelected] = useState<SingleTokenInfo>();
   const [stage, setStage] = useState<StageEnum>(StageEnum.SELECT);
   const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
   const [ownedNfts, setOwnedNfts] = useState<{ [key: string]: Order }>({});
@@ -115,8 +117,37 @@ export const Auction: React.FC<AuctionProps> = ({ candyShop, wallet, walletConne
     return false;
   };
 
-  const onCreateAuction = () => {
-    //
+  const onCreateAuction = async () => {
+    // wallet: AnchorWallet | Keypair,
+    // treasuryMint: PublicKey,
+    // nftMint: PublicKey,
+    // startingBid: anchor.BN,
+    // startTime: anchor.BN,
+    // biddingPeriod: anchor.BN,
+    // buyNowPrice: anchor.BN | null,
+    // program: anchor.Program
+    if (!wallet || !selected) return;
+
+    const treasuryMint = candyShop.treasuryMint;
+    const nftMint = new web3.PublicKey(selected.tokenMintAddress);
+    const startingBid = new anchor.BN(0.1 * LAMPORTS_PER_SOL);
+    const startTime = new anchor.BN(Date.now() / 1000);
+    const biddingPeriod = new anchor.BN(15);
+    const buyNowPrice = null;
+    const program = await candyShop.getStaticProgram(wallet);
+
+    const res = await createAuction(
+      wallet,
+      treasuryMint,
+      nftMint,
+      startingBid,
+      startTime,
+      biddingPeriod,
+      buyNowPrice,
+      program
+    );
+
+    console.log(res);
   };
 
   const onNext = () => {
@@ -159,6 +190,10 @@ export const Auction: React.FC<AuctionProps> = ({ candyShop, wallet, walletConne
           <button disabled={checkDisableBtn()} className="candy-button candy-auction-button" onClick={onNext}>
             Next
           </button>
+
+          {/* <button disabled={checkDisableBtn()} className="candy-button candy-auction-button" onClick={onCreateAuction}>
+            Create Auction
+          </button> */}
         </>
       ) : stage === StageEnum.FORM ? (
         <AuctionForm onSubmit={() => setStage(StageEnum.CONFIRM)} />
