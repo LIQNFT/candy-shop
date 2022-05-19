@@ -40,7 +40,7 @@ export const createAuction = async (
 
   transaction.add(ix);
   const txId = await sendTx(wallet, transaction, program);
-  console.log('Auction created');
+  console.log('Auction created with txId ==', txId);
 
   return {
     auction,

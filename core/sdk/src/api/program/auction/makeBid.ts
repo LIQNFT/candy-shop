@@ -88,7 +88,7 @@ export const makeBid = async (
   transaction.add(requestExtraCompute(400000), ix);
 
   const txId = await sendTx(wallet, transaction, program);
-  console.log('Bid made');
+  console.log('Bid made with txId ==', txId);
 
   return {
     escrowPaymentAccount,

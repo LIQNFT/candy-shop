@@ -37,7 +37,7 @@ export const cancelAuction = async (
 
   transaction.add(ix);
   const txId = await sendTx(wallet, transaction, program);
-  console.log('Auction cancelled');
+  console.log('Auction cancelled with txId ==', txId);
 
   return {
     auction,
