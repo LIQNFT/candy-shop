@@ -10,6 +10,7 @@ export const CANDY_SHOP_INS_PROGRAM_ID = new web3.PublicKey('cseLFQDeAfo96uQhA6M
 
 export const CANDY_SHOP_PROGRAM_ID = new web3.PublicKey('csa8JpYfKSZajP7JzxnJipUL3qagub1z29hLvp578iN');
 
+export const AUCTION = 'auction';
 export const AUCTION_HOUSE = 'auction_house';
 
 export const FEE_PAYER = 'fee_payer';

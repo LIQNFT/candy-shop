@@ -5,7 +5,15 @@ import {
   getAccount,
   createAssociatedTokenAccountInstruction
 } from '@solana/spl-token';
-import { AUCTION_HOUSE, AUCTION_HOUSE_PROGRAM_ID, AUTHORITY, CANDY_STORE, FEE_PAYER, TREASURY } from './constants';
+import {
+  AUCTION_HOUSE,
+  AUCTION_HOUSE_PROGRAM_ID,
+  AUTHORITY,
+  CANDY_STORE,
+  FEE_PAYER,
+  TREASURY,
+  AUCTION
+} from './constants';
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
 import { CandyShopError, CandyShopErrorType } from '../utils/error';
 import { safeAwait } from '../utils';
@@ -14,6 +22,13 @@ import { awaitTransactionSignatureConfirmation, WRAPPED_SOL_MINT } from '.';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);
+
+export const getAuction = async (candyShop: web3.PublicKey, mint: web3.PublicKey, marketProgramId: web3.PublicKey) => {
+  return web3.PublicKey.findProgramAddress(
+    [Buffer.from(AUCTION), candyShop.toBuffer(), mint.toBuffer()],
+    marketProgramId
+  );
+};
 
 export const getAuctionHouse = async (
   authority: web3.PublicKey,
