@@ -14,7 +14,8 @@
     "api": "^4.2.0",
     "axios": "^0.26.0",
     "components": "^0.1.0",
-    "react-app-polyfill": "^1.0.0"
+    "react-app-polyfill": "^1.0.0",
+    "react-router-dom": "^5.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.8",

@@ -192,8 +192,7 @@ export const Auction: React.FC<AuctionProps> = ({ candyShop, wallet, walletConne
 
   return (
     <div className="candy-auction">
-      <div className="candy-title">Creat Auction</div>
-
+      <div className="candy-title">Create Auction</div>
       <div className="candy-auction-content">
         <div className="candy-auction-content-step">
           <div className="candy-auction-step-connector" />

@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { web3 } from '@project-serum/anchor';
@@ -9,11 +10,11 @@ import { CANDY_SHOP_PROGRAM_ID, CREATOR_ADDRESS, TREASURY_MINT } from './constan
 
 import 'antd/dist/antd.min.css';
 
-interface CandyShopContentProps {
+interface MarketplaceExampleProps {
   network: web3.Cluster;
 }
 
-export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) => {
+export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ network }) => {
   const [treasuryMint] = useState(new web3.PublicKey(TREASURY_MINT));
 
   const wallet = useAnchorWallet();
@@ -32,15 +33,23 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
 
   return (
     <div style={{ paddingBottom: 50, textAlign: 'center' }}>
-      <div style={{ textAlign: 'center', paddingBottom: 30 }}>
+      <div
+        style={{
+          padding: '10px 10px 50px 20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
+        <div>
+          <span style={{ paddingRight: 20, fontWeight: 'bold' }}>Marketplace Example</span>
+          <Link style={{ paddingRight: 20 }} to="/auction">
+            Auction Example
+          </Link>
+        </div>
         <WalletMultiButton />
       </div>
 
-      <h1 style={{ textAlign: 'center', fontWeight: 'bold', margin: '80px 0 30px' }}></h1>
-      {/* <Auction candyShop={candyShop} wallet={wallet} walletConnectComponent={<WalletMultiButton />} /> */}
-      <Orders wallet={wallet} walletConnectComponent={<WalletMultiButton />} filters={FILTERS} candyShop={candyShop} />
-
-      {/*
       <div style={{ marginBottom: 50 }}>
         <Stat
           title={'Marketplace'}
@@ -51,14 +60,7 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
         />
       </div>
 
-      <div>
-        <Orders
-          wallet={wallet}
-          walletConnectComponent={<WalletMultiButton />}
-          candyShop={candyShop}
-          filters={FILTERS}
-        />
-      </div>
+      <Orders wallet={wallet} walletConnectComponent={<WalletMultiButton />} candyShop={candyShop} filters={FILTERS} />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Order Detail</h1>
       <OrderDetail
@@ -78,7 +80,7 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
       />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', margin: '80px 0 30px' }}>Activity</h1>
-      <Activity candyShop={candyShop} /> */}
+      <Activity candyShop={candyShop} />
     </div>
   );
 };
