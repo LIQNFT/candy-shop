@@ -10,9 +10,10 @@ import {
   getBid,
   getBidWallet,
   getCandyShop,
-  sendTx
+  sendTx,
+  treasuryMintIsNative
 } from '../..';
-import { AUCTION_HOUSE_PROGRAM_ID, WRAPPED_SOL_MINT } from '../../constants';
+import { AUCTION_HOUSE_PROGRAM_ID } from '../../constants';
 import { BidAuctionParams } from '../../model';
 
 export const bidAuction = async ({
@@ -32,7 +33,7 @@ export const bidAuction = async ({
 
   const [bidWallet, bidWalletBump] = await getBidWallet(auction, buyer.publicKey, program.programId);
 
-  const isNative = treasuryMint.equals(WRAPPED_SOL_MINT);
+  const isNative = treasuryMintIsNative(treasuryMint);
 
   const bidPaymentAccount = isNative ? bidWallet : (await getAtaForMint(treasuryMint, bidWallet))[0];
 
