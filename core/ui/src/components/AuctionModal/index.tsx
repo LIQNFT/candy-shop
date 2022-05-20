@@ -15,7 +15,7 @@ import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
 import './style.less';
 
 export interface AuctionModalProps {
-  order: OrderSchema;
+  order: OrderSchema | any;
   onClose: () => void;
   wallet: AnchorWallet | undefined;
   walletConnectComponent: React.ReactElement;

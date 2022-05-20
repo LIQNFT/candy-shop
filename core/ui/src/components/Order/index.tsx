@@ -10,7 +10,6 @@ import { getPrice } from 'utils/getPrice';
 import { LiqImage } from 'components/LiqImage';
 import { BuyModal } from 'components/BuyModal';
 import { CancelModal } from 'components/CancelModal';
-import { AuctionModal } from 'components/AuctionModal';
 
 import './index.less';
 
@@ -73,16 +72,6 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectCompon
         </div>
       </div>
 
-      {selection && (
-        <AuctionModal
-          order={selection}
-          onClose={onClose}
-          wallet={wallet}
-          candyShop={orderCandyShop}
-          walletConnectComponent={walletConnectComponent}
-        />
-      )}
-      {/* 
       {selection && !isUserListing ? (
         <BuyModal
           order={selection}
@@ -103,8 +92,6 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectCompon
           exchangeInfo={exchangeInfo}
         />
       ) : null}
-        <CancelModal onClose={onClose} candyShop={orderCandyShop} order={selection} wallet={wallet} />
-      ) : null} */}
     </>
   );
 };

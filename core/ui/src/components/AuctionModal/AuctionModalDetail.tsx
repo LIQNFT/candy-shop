@@ -5,7 +5,7 @@ import { LiqImage } from 'components/LiqImage';
 import { NftStat } from 'components/NftStat';
 // import { NftAttributes } from 'components/NftAttributes';
 
-import { Nft, Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import dayjs from 'dayjs';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
