@@ -1,3 +1,4 @@
+import * as anchor from '@project-serum/anchor';
 import { web3, BN, Program, Idl } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
@@ -28,4 +29,28 @@ export interface SellTransactionParams extends CandyShopTransactionParams {
 
 export interface CancelTransactionParams extends CandyShopTransactionParams {
   tradeState: web3.PublicKey;
+}
+
+export interface AuctionParams {
+  wallet: AnchorWallet | web3.Keypair;
+  treasuryMint: web3.PublicKey;
+  nftMint: web3.PublicKey;
+  program: anchor.Program;
+}
+
+export interface CreateAuctionParams extends AuctionParams {
+  startingBid: anchor.BN;
+  startTime: anchor.BN;
+  biddingPeriod: anchor.BN;
+  buyNowPrice: anchor.BN | null;
+}
+
+export interface CancelAuctionParams extends AuctionParams {}
+
+export interface BidAuctionParams extends AuctionParams {
+  buyer: AnchorWallet | web3.Keypair;
+  metadata: web3.PublicKey;
+  auctionHouse: web3.PublicKey;
+  feeAccount: web3.PublicKey;
+  bidPrice: anchor.BN;
 }

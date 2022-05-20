@@ -1,27 +1,26 @@
-import * as anchor from '@project-serum/anchor';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { Keypair, PublicKey, Transaction } from '@solana/web3.js';
+import { Transaction } from '@solana/web3.js';
 import { getAtaForMint, getAuction, getAuctionHouseAuthority, getCandyShop, sendTx } from '../..';
+import { CreateAuctionParams } from '../../model';
 
-export const createAuction = async (
-  wallet: AnchorWallet | Keypair,
-  treasuryMint: PublicKey,
-  nftMint: PublicKey,
-  startingBid: anchor.BN,
-  startTime: anchor.BN,
-  biddingPeriod: anchor.BN,
-  buyNowPrice: anchor.BN | null,
-  program: anchor.Program
-) => {
+export const createAuction = async ({
+  wallet,
+  treasuryMint,
+  nftMint,
+  startingBid,
+  startTime,
+  biddingPeriod,
+  buyNowPrice,
+  program
+}: CreateAuctionParams) => {
   const [candyShop] = await getCandyShop(wallet.publicKey, treasuryMint, program.programId);
 
   const [auction, auctionBump] = await getAuction(candyShop, nftMint, program.programId);
 
-  const [auctionEscrow] = await getAtaForMint(nftMint, auction);
-
-  const [tokenAccount] = await getAtaForMint(nftMint, wallet.publicKey);
-
-  const [authority] = await getAuctionHouseAuthority(wallet.publicKey, treasuryMint, program.programId);
+  const [[auctionEscrow], [tokenAccount], [authority]] = await Promise.all([
+    getAtaForMint(nftMint, auction),
+    getAtaForMint(nftMint, wallet.publicKey),
+    getAuctionHouseAuthority(wallet.publicKey, treasuryMint, program.programId)
+  ]);
 
   const transaction = new Transaction();
 

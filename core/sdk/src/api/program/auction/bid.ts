@@ -1,7 +1,6 @@
 import * as anchor from '@project-serum/anchor';
 import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { Keypair, PublicKey, SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
+import { SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
 import {
   getAtaForMint,
   getAuction,
@@ -13,49 +12,45 @@ import {
   getCandyShop,
   sendTx
 } from '../..';
-import { WRAPPED_SOL_MINT, AUCTION_HOUSE_PROGRAM_ID } from '../../constants';
-import { requestExtraCompute } from './requestExtraCompute';
+import { AUCTION_HOUSE_PROGRAM_ID, WRAPPED_SOL_MINT } from '../../constants';
+import { BidAuctionParams } from '../../model';
 
-export const bid = async (
-  wallet: AnchorWallet | Keypair,
-  buyer: Keypair,
-  treasuryMint: PublicKey,
-  nftMint: PublicKey,
-  metadata: PublicKey,
-  auctionHouse: PublicKey,
-  feeAccount: PublicKey,
-  bidPrice: anchor.BN,
-  program: anchor.Program
-) => {
-  const isNative = treasuryMint.equals(WRAPPED_SOL_MINT);
-
+export const bidAuction = async ({
+  wallet,
+  buyer,
+  treasuryMint,
+  nftMint,
+  metadata,
+  auctionHouse,
+  feeAccount,
+  bidPrice,
+  program
+}: BidAuctionParams) => {
   const [candyShop] = await getCandyShop(wallet.publicKey, treasuryMint, program.programId);
 
   const [auction] = await getAuction(candyShop, nftMint, program.programId);
 
-  const [auctionEscrow] = await getAtaForMint(nftMint, auction);
-
-  const [authority] = await getAuctionHouseAuthority(wallet.publicKey, treasuryMint, program.programId);
-
-  const [bid] = await getBid(auction, buyer.publicKey, program.programId);
-
   const [bidWallet, bidWalletBump] = await getBidWallet(auction, buyer.publicKey, program.programId);
 
-  const [userTreasuryAta] = await getAtaForMint(treasuryMint, buyer.publicKey);
+  const isNative = treasuryMint.equals(WRAPPED_SOL_MINT);
 
   const bidPaymentAccount = isNative ? bidWallet : (await getAtaForMint(treasuryMint, bidWallet))[0];
 
-  const [escrowPaymentAccount, escrowPaymentAccountBump] = await getAuctionHouseEscrow(auctionHouse, bidWallet);
+  const [auctionEscrow] = await getAtaForMint(nftMint, auction);
 
-  const [bidTradeState, bidTradeStateBump] = await getAuctionHouseTradeState(
-    auctionHouse,
-    bidWallet,
-    auctionEscrow,
-    treasuryMint,
-    nftMint,
-    new anchor.BN(1),
-    bidPrice
-  );
+  const [
+    [authority],
+    [bid],
+    [userTreasuryAta],
+    [escrowPaymentAccount, escrowPaymentAccountBump],
+    [bidTradeState, bidTradeStateBump]
+  ] = await Promise.all([
+    getAuctionHouseAuthority(wallet.publicKey, treasuryMint, program.programId),
+    getBid(auction, buyer.publicKey, program.programId),
+    getAtaForMint(treasuryMint, buyer.publicKey),
+    getAuctionHouseEscrow(auctionHouse, bidWallet),
+    getAuctionHouseTradeState(auctionHouse, bidWallet, auctionEscrow, treasuryMint, nftMint, new anchor.BN(1), bidPrice)
+  ]);
 
   const transaction = new Transaction();
 
@@ -85,9 +80,8 @@ export const bid = async (
     })
     .instruction();
 
-  transaction.add(requestExtraCompute(400000), ix);
-
-  const txId = await sendTx(wallet, transaction, program);
+  transaction.add(ix);
+  const txId = await sendTx(buyer, transaction, program);
   console.log('Bid made with txId ==', txId);
 
   return {

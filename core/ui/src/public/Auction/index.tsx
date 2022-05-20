@@ -118,14 +118,6 @@ export const Auction: React.FC<AuctionProps> = ({ candyShop, wallet, walletConne
   };
 
   const onCreateAuction = async () => {
-    // wallet: AnchorWallet | Keypair,
-    // treasuryMint: PublicKey,
-    // nftMint: PublicKey,
-    // startingBid: anchor.BN,
-    // startTime: anchor.BN,
-    // biddingPeriod: anchor.BN,
-    // buyNowPrice: anchor.BN | null,
-    // program: anchor.Program
     if (!wallet || !selected) return;
 
     const treasuryMint = candyShop.treasuryMint;
@@ -136,7 +128,7 @@ export const Auction: React.FC<AuctionProps> = ({ candyShop, wallet, walletConne
     const buyNowPrice = null;
     const program = await candyShop.getStaticProgram(wallet);
 
-    const res = await createAuction(
+    const res = await createAuction({
       wallet,
       treasuryMint,
       nftMint,
@@ -145,7 +137,7 @@ export const Auction: React.FC<AuctionProps> = ({ candyShop, wallet, walletConne
       biddingPeriod,
       buyNowPrice,
       program
-    );
+    });
 
     console.log(res);
   };

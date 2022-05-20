@@ -25,14 +25,14 @@ import { awaitTransactionSignatureConfirmation, WRAPPED_SOL_MINT } from '.';
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);
 
-export const getAuction = async (candyShop: web3.PublicKey, mint: web3.PublicKey, marketProgramId: web3.PublicKey) => {
+export const getAuction = (candyShop: web3.PublicKey, mint: web3.PublicKey, marketProgramId: web3.PublicKey) => {
   return web3.PublicKey.findProgramAddress(
     [Buffer.from(AUCTION), candyShop.toBuffer(), mint.toBuffer()],
     marketProgramId
   );
 };
 
-export const getAuctionHouse = async (
+export const getAuctionHouse = (
   authority: web3.PublicKey,
   treasuryMint: web3.PublicKey
 ): Promise<[web3.PublicKey, number]> => {
@@ -42,7 +42,7 @@ export const getAuctionHouse = async (
   );
 };
 
-export const getAuctionHouseAuthority = async (
+export const getAuctionHouseAuthority = (
   creator: web3.PublicKey,
   treasuryMint: web3.PublicKey,
   marketProgramId: web3.PublicKey
@@ -53,7 +53,7 @@ export const getAuctionHouseAuthority = async (
   );
 };
 
-export const getCandyShop = async (
+export const getCandyShop = (
   creator: web3.PublicKey,
   treasuryMint: web3.PublicKey,
   marketProgramId: web3.PublicKey
@@ -82,7 +82,7 @@ export const getAuctionHouseProgramAsSigner = (): Promise<[web3.PublicKey, numbe
   );
 };
 
-export const getAuctionHouseTradeState = async (
+export const getAuctionHouseTradeState = (
   auctionHouse: web3.PublicKey,
   wallet: web3.PublicKey,
   tokenAccount: web3.PublicKey,
@@ -106,21 +106,21 @@ export const getAuctionHouseTradeState = async (
   );
 };
 
-export const getAuctionHouseFeeAcct = async (auctionHouse: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
+export const getAuctionHouseFeeAcct = (auctionHouse: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
   return web3.PublicKey.findProgramAddress(
     [Buffer.from(AUCTION_HOUSE), auctionHouse.toBuffer(), Buffer.from(FEE_PAYER)],
     AUCTION_HOUSE_PROGRAM_ID
   );
 };
 
-export const getAuctionHouseTreasuryAcct = async (auctionHouse: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
+export const getAuctionHouseTreasuryAcct = (auctionHouse: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
   return web3.PublicKey.findProgramAddress(
     [Buffer.from(AUCTION_HOUSE), auctionHouse.toBuffer(), Buffer.from(TREASURY)],
     AUCTION_HOUSE_PROGRAM_ID
   );
 };
 
-export const getAuctionHouseEscrow = async (
+export const getAuctionHouseEscrow = (
   auctionHouse: web3.PublicKey,
   wallet: web3.PublicKey
 ): Promise<[web3.PublicKey, number]> => {
@@ -130,21 +130,21 @@ export const getAuctionHouseEscrow = async (
   );
 };
 
-export const getAtaForMint = async (mint: web3.PublicKey, buyer: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
+export const getAtaForMint = (mint: web3.PublicKey, buyer: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
   return web3.PublicKey.findProgramAddress(
     [buyer.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mint.toBuffer()],
     ASSOCIATED_TOKEN_PROGRAM_ID
   );
 };
 
-export const getMetadataAccount = async (tokenMint: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
+export const getMetadataAccount = (tokenMint: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
   return web3.PublicKey.findProgramAddress(
     [Buffer.from('metadata'), metadataProgramId.toBuffer(), tokenMint.toBuffer()],
     metadataProgramId
   );
 };
 
-export const getSignedTx = async (wallet: AnchorWallet | web3.Keypair, transaction: web3.Transaction) => {
+export const getSignedTx = (wallet: AnchorWallet | web3.Keypair, transaction: web3.Transaction) => {
   if ('signTransaction' in wallet) {
     return wallet.signTransaction(transaction);
   }
@@ -286,15 +286,11 @@ export const treasuryMintIsNative = (treasuryMint: web3.PublicKey) => {
   return treasuryMint.equals(WRAPPED_SOL_MINT);
 };
 
-export const getBid = async (auction: web3.PublicKey, wallet: web3.PublicKey, marketProgramId: web3.PublicKey) => {
+export const getBid = (auction: web3.PublicKey, wallet: web3.PublicKey, marketProgramId: web3.PublicKey) => {
   return web3.PublicKey.findProgramAddress([Buffer.from(BID), auction.toBuffer(), wallet.toBuffer()], marketProgramId);
 };
 
-export const getBidWallet = async (
-  auction: web3.PublicKey,
-  wallet: web3.PublicKey,
-  marketProgramId: web3.PublicKey
-) => {
+export const getBidWallet = (auction: web3.PublicKey, wallet: web3.PublicKey, marketProgramId: web3.PublicKey) => {
   return web3.PublicKey.findProgramAddress(
     [Buffer.from(BID), auction.toBuffer(), wallet.toBuffer(), Buffer.from(WALLET)],
     marketProgramId
