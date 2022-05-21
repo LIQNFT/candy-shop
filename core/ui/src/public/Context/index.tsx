@@ -31,15 +31,19 @@ export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children 
   const polling = useCallback((candyShopAddress: web3.PublicKey) => {
     fetchShopStatusByShopAddress(candyShopAddress)
       .then((res: SingleBase<ShopStatus[]>) => {
-        res.result.forEach((result: ShopStatus) => {
-          const prevTimestamp = localStorage.getItem(result.type);
-          const resTimestamp = JSON.stringify(result.timestamp);
-          const isShopRefreshed = prevTimestamp !== resTimestamp;
-          if (isShopRefreshed) {
-            console.log(`${Logger}: ${result.type}`, prevTimestamp, res);
-            localStorage.setItem(result.type, JSON.stringify(result.timestamp));
+        if (res.result) {
+          for (const shopStatus of res.result) {
+            const prevTimestamp = localStorage.getItem(shopStatus.type);
+            const resTimestamp = JSON.stringify(shopStatus.timestamp);
+            const isShopRefreshed = prevTimestamp !== resTimestamp;
+            if (isShopRefreshed) {
+              console.log(`${Logger}: ${shopStatus.type}`, prevTimestamp, res);
+              localStorage.setItem(shopStatus.type, JSON.stringify(shopStatus.timestamp));
+            }
           }
-        });
+        } else {
+          console.log(`${Logger}: fetchShopStatus res.result is undefined=`, res);
+        }
       })
       .catch((err: any) => {
         console.log(`${Logger}: fetchShopStatus failed, error=`, err);
