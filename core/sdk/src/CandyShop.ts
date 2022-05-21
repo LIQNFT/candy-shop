@@ -10,19 +10,26 @@ import {
 } from '@liqnft/candy-shop-types';
 import { BN, Idl, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { OrdersFilterQuery, TradeQuery } from './api/backend';
-import { CANDY_SHOP_INS_PROGRAM_ID } from './api/constants';
-import { BuyAndExecuteSaleTransactionParams } from './api/model';
-import { buyAndExecuteSale, cancelOrder, insBuyAndExecuteSale, sellNft } from './api/program';
 import {
+  buyAndExecuteSale,
+  BuyAndExecuteSaleTransactionParams,
+  cancelOrder,
+  createAuction,
+  CreateAuctionParams,
+  getAuction,
   getAuctionHouse,
   getAuctionHouseAuthority,
   getAuctionHouseFeeAcct,
   getAuctionHouseTradeState,
   getAuctionHouseTreasuryAcct,
   getCandyShopSync,
-  getMetadataAccount
-} from './api/utils';
+  getMetadataAccount,
+  insBuyAndExecuteSale,
+  sellNft
+} from './api';
+import candyShopIdl from './candy_shop.json';
+import { OrdersFilterQuery, TradeQuery } from './api/backend';
+import { CANDY_SHOP_INS_PROGRAM_ID } from './api/constants';
 import {
   fetchNFTByMintAddress,
   fetchOrderByShopAndMintAddress,
@@ -33,8 +40,15 @@ import {
   fetchStatsByShopAddress,
   fetchTradeByShopAddress
 } from './CandyShopInfoAPI';
-import { CandyShopBuyParams, CandyShopCancelParams, CandyShopSellParams, CandyShopSettings } from './CandyShopModel';
+import {
+  CandyShopBuyParams,
+  CandyShopCancelParams,
+  CandyShopCreateAuctionParams,
+  CandyShopSellParams,
+  CandyShopSettings
+} from './CandyShopModel';
 import { configBaseUrl } from './config';
+import { CandyShopError, CandyShopErrorType } from './utils';
 
 const DEFAULT_CURRENCY_SYMBOL = 'SOL';
 const DEFAULT_CURRENCY_DECIMALS = 9;
@@ -127,13 +141,10 @@ export class CandyShop {
     );
     console.log('CandyShop init: fetching idl for programId', this._programId.toString());
 
-    const idl = await Program.fetchIdl(this._programId, provider);
-    if (idl) {
-      this._program = new Program(idl, this._programId, provider);
-      return this._program;
-    } else {
-      throw new Error('Idl not found');
-    }
+    // Directly use the JSON file here temporarily
+    // @ts-ignore
+    this._program = new Program(candyShopIdl, this._programId, provider);
+    return this._program;
   }
 
   get currencyDecimals(): number {
@@ -335,6 +346,59 @@ export class CandyShop {
 
     return txHash;
   }
+  /**
+   * Executes Candy Shop __CreateAuction__ action
+   *
+   * @param {CandyShopCreateAuctionParams} params required parameters for sell action
+   */
+  public async createAuction(params: CandyShopCreateAuctionParams): Promise<string> {
+    const { tokenAccount, tokenMint, startingBid, startTime, biddingPeriod, buyNowPrice, wallet } = params;
+
+    if (wallet.publicKey.toString() !== this.candyShopCreatorAddress.toString()) {
+      throw new CandyShopError(CandyShopErrorType.NonShopOwner);
+    }
+
+    console.log('CandyShop: performing create auction', {
+      tokenMint: tokenMint.toString(),
+      tokenAccount: tokenAccount.toString(),
+      startingBid: startingBid.toString(),
+      startTime: startTime.toString(),
+      biddingPeriod: biddingPeriod.toString(),
+      buyNowPrice
+    });
+    const program = await this.getStaticProgram(wallet);
+
+    const [auction, auctionBump] = await getAuction(this._candyShopAddress, tokenMint, this._programId);
+
+    const auctionAccount = await program.provider.connection.getAccountInfo(auction);
+
+    if (auctionAccount?.data) {
+      throw new Error(CandyShopErrorType.AuctionExists);
+    }
+
+    const [auctionHouseAuthority] = await getAuctionHouseAuthority(
+      this._candyShopCreatorAddress,
+      this._treasuryMint,
+      this._programId
+    );
+
+    const txHash = await createAuction({
+      seller: wallet,
+      auction,
+      authority: auctionHouseAuthority,
+      auctionBump,
+      candyShop: this._candyShopAddress,
+      treasuryMint: this._treasuryMint,
+      nftMint: tokenMint,
+      startingBid,
+      startTime,
+      biddingPeriod,
+      buyNowPrice,
+      program
+    } as CreateAuctionParams);
+    return txHash.txId;
+  }
+
   /**
    * Fetch stats associated with this Candy Shop
    */

@@ -37,7 +37,7 @@ export interface AuctionParams {
   authority: web3.PublicKey;
   auction: web3.PublicKey;
   nftMint: web3.PublicKey;
-  program: anchor.Program;
+  program: anchor.Program<anchor.Idl>;
 }
 
 export interface CreateAuctionParams extends AuctionParams {

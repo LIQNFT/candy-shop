@@ -6,7 +6,9 @@ export enum CandyShopErrorType {
   InvalidNFTMetadata = 'InvalidNFTMetadata',
   SellerATACannotHaveDelegate = 'SellerATACannotHaveDelegate',
   BuyerATACannotHaveDelegate = 'BuyerATACannotHaveDelegate',
-  TradeStateExists = 'TradeStateExists'
+  TradeStateExists = 'TradeStateExists',
+  NonShopOwner = 'NonShopOwner',
+  AuctionExists = 'AuctionExists'
 }
 
 export const CandyShopErrorMsgMap = {
@@ -17,7 +19,9 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.InvalidNFTMetadata]: 'Failed to get metadata account data.',
   [CandyShopErrorType.SellerATACannotHaveDelegate]: 'Seller payment receipt account cannot have a delegate set.',
   [CandyShopErrorType.BuyerATACannotHaveDelegate]: 'Buyer receipt token account cannot have a delegate set.',
-  [CandyShopErrorType.TradeStateExists]: 'Sell Order already placed.'
+  [CandyShopErrorType.TradeStateExists]: 'Sell Order already placed.',
+  [CandyShopErrorType.NonShopOwner]: 'Only shop owner can create auction.',
+  [CandyShopErrorType.AuctionExists]: 'Auction already exists.'
 };
 
 export class CandyShopError extends Error {
