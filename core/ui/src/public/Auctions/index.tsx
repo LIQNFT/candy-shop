@@ -67,6 +67,12 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
                   <div className="candy-status-tag candy-status-tag-gray">Outbid</div>
                 )
               }
+              footer={
+                <div className="candy-card-footer">
+                  <div className="candy-card-stat">Current Bid: 25 SOL</div>
+                  <div className="candy-card-stat">Ends In: 16 hours</div>
+                </div>
+              }
             />
           ))}
         </div>

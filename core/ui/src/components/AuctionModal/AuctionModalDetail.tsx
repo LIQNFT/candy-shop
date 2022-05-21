@@ -82,7 +82,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
 
   const PlaceBidButton = walletPublicKey ? (
     <button className={`candy-button ${isEnableBuyNow ? 'candy-button-ghost' : ''}`} onClick={buy}>
-      Place bid
+      Place Bid
     </button>
   ) : (
     walletConnectComponent
@@ -90,7 +90,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
 
   return (
     <div className="candy-auction-modal-detail">
-      <div className="candy-auction-modal-notice"> Congratulations, you are currently the highest bidder! </div>
+      <div className="candy-auction-modal-notice">Congratulations, you are currently the highest bidder!</div>
       <div style={{ display: 'flex', gap: '24px' }}>
         <div className="candy-auction-modal-thumbnail">
           <LiqImage src={order?.nftImageLink || ''} alt={order?.name} fit="contain" />

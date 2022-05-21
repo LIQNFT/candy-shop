@@ -11,7 +11,7 @@ import { Empty } from 'components/Empty';
 import { Card } from 'components/Card';
 import { Skeleton } from 'components/Skeleton';
 import { AuctionForm } from 'components/AuctionForm';
-import { AuctionNft } from 'components/AuctionNft';
+import { AuctionNftHeader } from 'components/AuctionNftHeader';
 import { IconTick } from 'assets/IconTick';
 import { LoadStatus } from 'constant';
 import dayjs from 'dayjs';
@@ -171,7 +171,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({ candyShop, wallet,
                   ticker={nft.metadata?.data.symbol}
                   key={nft.tokenMintAddress}
                   onClick={onClickCard(nft)}
-                  label={selected === nft && SelectedLabel}
+                  label={selected === nft ? SelectedTick : undefined}
                 />
               ))}
             </div>
@@ -191,7 +191,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({ candyShop, wallet,
             Review and confirm the auction details are correct. Once an auction starts, you the owner will have to sell
             to the highest bidder.
           </div>
-          <AuctionNft name="NFT_name" collection=" collection" imgUrl={IMAGE} />
+          <AuctionNftHeader name="NFT_name" ticker="HELLO" imgUrl={IMAGE} edition={24} />
 
           <div className="candy-auction-confirm-break" />
           {MOCK_CONFIRM.map(({ name, value }: any) => (
@@ -240,7 +240,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({ candyShop, wallet,
   );
 };
 
-const SelectedLabel = (
+const SelectedTick = (
   <span className="candy-auction-tick-label">
     <IconTick fill="#7522f5" />
   </span>
