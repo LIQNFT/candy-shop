@@ -4,7 +4,7 @@ import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { web3 } from '@project-serum/anchor';
 import { CandyShop } from '../core/sdk/.';
-import { Auction, Auctions } from '../core/ui/.';
+import { CreateAuction, Auctions } from '../core/ui/.';
 
 import { CANDY_SHOP_PROGRAM_ID, CREATOR_ADDRESS, TREASURY_MINT } from './constant/publicKey';
 
@@ -50,14 +50,9 @@ export const AuctionExample: React.FC<AuctionExampleProps> = ({ network }) => {
         </div>
         <WalletMultiButton />
       </div>
-      <button onClick={() => setShowCreateAuction((prev) => !prev)} className="candy-button">
-        Click to toggle setup a Auction
-      </button>
-      {showCreateAuction ? (
-        <Auction candyShop={candyShop} wallet={wallet} walletConnectComponent={<WalletMultiButton />} />
-      ) : null}
+      <CreateAuction candyShop={candyShop} wallet={wallet} walletConnectComponent={<WalletMultiButton />} />
 
-      <h1 style={{ marginTop: '40px' }}>Auctions</h1>
+      <h1 style={{ marginTop: 40, marginBottom: 40 }}>Auctions</h1>
       <Auctions candyShop={candyShop} wallet={wallet} walletConnectComponent={<WalletMultiButton />} />
     </div>
   );

@@ -47,7 +47,6 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit }) => {
 
   return (
     <form className="candy-auction-form" onSubmit={onSubmitForm}>
-      <div className="candy-auction-form-title">Auction Details</div>
       <AuctionNft name="NFT_name" collection="collection" imgUrl={imgUrl} />
 
       <div className="candy-auction-form-item">
@@ -55,7 +54,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit }) => {
         <input
           id="auction_bid"
           type="number"
-          placeholder="0,0"
+          placeholder="0"
           required
           min={0}
           value={form['auction_bid']}
@@ -100,7 +99,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit }) => {
         <input
           id="auction_price"
           type="number"
-          placeholder="0,0"
+          placeholder="0"
           required
           min={0}
           value={form['auction_price']}
@@ -176,7 +175,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit }) => {
         </div>
       </div>
 
-      <input className="candy-button" type="submit" value="NEXT" />
+      <input className="candy-button" type="submit" value="Continue" />
     </form>
   );
 };

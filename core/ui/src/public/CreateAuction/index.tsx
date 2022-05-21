@@ -19,7 +19,7 @@ import dayjs from 'dayjs';
 import { web3 } from '@project-serum/anchor';
 import './style.less';
 
-interface AuctionProps {
+interface CreateAuctionProps {
   wallet: AnchorWallet | undefined;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
@@ -31,7 +31,7 @@ enum StageEnum {
   CONFIRM = 'CONFIRM'
 }
 
-export const Auction: React.FC<AuctionProps> = ({ candyShop, wallet, walletConnectComponent }) => {
+export const CreateAuction: React.FC<CreateAuctionProps> = ({ candyShop, wallet, walletConnectComponent }) => {
   const [selected, setSelected] = useState<SingleTokenInfo>();
   const [stage, setStage] = useState<StageEnum>(StageEnum.SELECT);
   const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
@@ -142,7 +142,7 @@ export const Auction: React.FC<AuctionProps> = ({ candyShop, wallet, walletConne
     console.log(res);
   };
 
-  const onNext = () => {
+  const onContinue = () => {
     if (stage === StageEnum.SELECT) return setStage(StageEnum.FORM);
     if (stage === StageEnum.FORM) {
       return setStage(StageEnum.CONFIRM);
@@ -154,11 +154,11 @@ export const Auction: React.FC<AuctionProps> = ({ candyShop, wallet, walletConne
   const list = nfts.filter((nft) => !ownedNfts[nft.tokenMintAddress]);
   const loading = loadingNft !== LoadStatus.Loaded || loadingOwnedNft !== LoadStatus.Loaded;
 
-  const AuctionRightContent = (
-    <>
+  const CreateAuctionContent = (
+    <div className="candy-container">
       {stage === StageEnum.SELECT ? (
         <>
-          <div className="candy-auction-description">Select the NFT you want to put up for auction!</div>
+          <div className="candy-auction-description">Select the NFT you want to put up for auction</div>
 
           {loading ? (
             LoadingView
@@ -179,13 +179,9 @@ export const Auction: React.FC<AuctionProps> = ({ candyShop, wallet, walletConne
             <Empty description="No orders found" />
           )}
 
-          <button disabled={checkDisableBtn()} className="candy-button candy-auction-button" onClick={onNext}>
-            Next
+          <button disabled={checkDisableBtn()} className="candy-button candy-auction-button" onClick={onContinue}>
+            Continue
           </button>
-
-          {/* <button disabled={checkDisableBtn()} className="candy-button candy-auction-button" onClick={onCreateAuction}>
-            Create Auction
-          </button> */}
         </>
       ) : stage === StageEnum.FORM ? (
         <AuctionForm onSubmit={() => setStage(StageEnum.CONFIRM)} />
@@ -214,7 +210,7 @@ export const Auction: React.FC<AuctionProps> = ({ candyShop, wallet, walletConne
           </button>
         </div>
       )}
-    </>
+    </div>
   );
 
   return (
@@ -238,7 +234,7 @@ export const Auction: React.FC<AuctionProps> = ({ candyShop, wallet, walletConne
             Confirmation
           </div>
         </div>
-        <div className="candy-auction-content-detail">{!wallet ? walletConnectComponent : AuctionRightContent}</div>
+        <div className="candy-auction-content-detail">{!wallet ? walletConnectComponent : CreateAuctionContent}</div>
       </div>
     </div>
   );

@@ -35,7 +35,7 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
   }, []);
 
   return (
-    <>
+    <div className="candy-container">
       <InfiniteScroll
         dataLength={nfts.length}
         next={loadNextPage}
@@ -81,7 +81,7 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
           walletConnectComponent={walletConnectComponent}
         />
       ) : null}
-    </>
+    </div>
   );
 };
 
