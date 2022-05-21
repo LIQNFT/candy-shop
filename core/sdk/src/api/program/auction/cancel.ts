@@ -1,16 +1,19 @@
 import { SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
-import { getAtaForMint, getAuction, getAuctionHouseAuthority, getCandyShop, sendTx } from '../..';
-import { CancelAuctionParams } from '../../model';
+import { CancelAuctionParams, getAtaForMint, getAuctionHouseAuthority, sendTx } from '../..';
 
-export const cancelAuction = async ({ wallet, treasuryMint, nftMint, program }: CancelAuctionParams) => {
-  const [candyShop] = await getCandyShop(wallet.publicKey, treasuryMint, program.programId);
-
-  const [auction, auctionBump] = await getAuction(candyShop, nftMint, program.programId);
-
+export const cancelAuction = async ({
+  seller,
+  auction,
+  candyShop,
+  auctionBump,
+  treasuryMint,
+  nftMint,
+  program
+}: CancelAuctionParams) => {
   const [[auctionEscrow], [tokenAccount], [authority]] = await Promise.all([
     getAtaForMint(nftMint, auction),
-    getAtaForMint(nftMint, wallet.publicKey),
-    getAuctionHouseAuthority(wallet.publicKey, treasuryMint, program.programId)
+    getAtaForMint(nftMint, seller.publicKey),
+    getAuctionHouseAuthority(seller.publicKey, treasuryMint, program.programId)
   ]);
 
   const transaction = new Transaction();
@@ -20,17 +23,17 @@ export const cancelAuction = async ({ wallet, treasuryMint, nftMint, program }: 
     .accounts({
       auction,
       auctionEscrow,
+      wallet: seller.publicKey,
       tokenAccount,
-      wallet: wallet.publicKey,
       nftMint,
-      candyShop,
       authority,
+      candyShop,
       clock: SYSVAR_CLOCK_PUBKEY
     })
     .instruction();
 
   transaction.add(ix);
-  const txId = await sendTx(wallet, transaction, program);
+  const txId = await sendTx(seller, transaction, program);
   console.log('Auction cancelled with txId ==', txId);
 
   return {

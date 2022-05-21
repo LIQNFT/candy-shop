@@ -1,23 +1,21 @@
 import * as anchor from '@project-serum/anchor';
-import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
 import {
+  AUCTION_HOUSE_PROGRAM_ID,
+  BidAuctionParams,
   getAtaForMint,
-  getAuction,
-  getAuctionHouseAuthority,
   getAuctionHouseEscrow,
   getAuctionHouseTradeState,
   getBid,
   getBidWallet,
-  getCandyShop,
   sendTx,
   treasuryMintIsNative
 } from '../..';
-import { AUCTION_HOUSE_PROGRAM_ID } from '../../constants';
-import { BidAuctionParams } from '../../model';
 
 export const bidAuction = async ({
-  wallet,
+  auction,
+  authority,
+  candyShop,
   buyer,
   treasuryMint,
   nftMint,
@@ -27,10 +25,6 @@ export const bidAuction = async ({
   bidPrice,
   program
 }: BidAuctionParams) => {
-  const [candyShop] = await getCandyShop(wallet.publicKey, treasuryMint, program.programId);
-
-  const [auction] = await getAuction(candyShop, nftMint, program.programId);
-
   const [bidWallet, bidWalletBump] = await getBidWallet(auction, buyer.publicKey, program.programId);
 
   const isNative = treasuryMintIsNative(treasuryMint);
@@ -40,13 +34,11 @@ export const bidAuction = async ({
   const [auctionEscrow] = await getAtaForMint(nftMint, auction);
 
   const [
-    [authority],
     [bid],
     [userTreasuryAta],
     [escrowPaymentAccount, escrowPaymentAccountBump],
     [bidTradeState, bidTradeStateBump]
   ] = await Promise.all([
-    getAuctionHouseAuthority(wallet.publicKey, treasuryMint, program.programId),
     getBid(auction, buyer.publicKey, program.programId),
     getAtaForMint(treasuryMint, buyer.publicKey),
     getAuctionHouseEscrow(auctionHouse, bidWallet),
@@ -58,25 +50,23 @@ export const bidAuction = async ({
   const ix = await program.methods
     .makeBid(bidPrice, bidWalletBump, bidTradeStateBump, escrowPaymentAccountBump)
     .accounts({
-      auction,
-      auctionEscrow,
-      bidPaymentAccount,
-      userTreasuryAta,
       wallet: buyer.publicKey,
+      auction,
+      candyShop,
       bid,
       auctionBidWallet: bidWallet,
-      seller: wallet.publicKey,
+      nftMint,
+      bidPaymentAccount,
+      userTreasuryAta,
+      treasuryMint,
+      auctionEscrow,
+      metadata,
       escrowPaymentAccount,
+      authority,
       auctionHouse,
       auctionHouseFeeAccount: feeAccount,
-      nftMint,
-      treasuryMint,
-      metadata,
-      candyShop,
-      authority,
       bidTradeState,
       ahProgram: AUCTION_HOUSE_PROGRAM_ID,
-      ataProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
       clock: SYSVAR_CLOCK_PUBKEY
     })
     .instruction();

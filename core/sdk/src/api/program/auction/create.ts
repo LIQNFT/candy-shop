@@ -1,9 +1,11 @@
 import { Transaction } from '@solana/web3.js';
-import { getAtaForMint, getAuction, getAuctionHouseAuthority, getCandyShop, sendTx } from '../..';
-import { CreateAuctionParams } from '../../model';
+import { getAtaForMint, getAuctionHouseAuthority, sendTx, CreateAuctionParams } from '../..';
 
 export const createAuction = async ({
-  wallet,
+  seller,
+  auction,
+  auctionBump,
+  candyShop,
   treasuryMint,
   nftMint,
   startingBid,
@@ -12,14 +14,10 @@ export const createAuction = async ({
   buyNowPrice,
   program
 }: CreateAuctionParams) => {
-  const [candyShop] = await getCandyShop(wallet.publicKey, treasuryMint, program.programId);
-
-  const [auction, auctionBump] = await getAuction(candyShop, nftMint, program.programId);
-
   const [[auctionEscrow], [tokenAccount], [authority]] = await Promise.all([
     getAtaForMint(nftMint, auction),
-    getAtaForMint(nftMint, wallet.publicKey),
-    getAuctionHouseAuthority(wallet.publicKey, treasuryMint, program.programId)
+    getAtaForMint(nftMint, seller.publicKey),
+    getAuctionHouseAuthority(seller.publicKey, treasuryMint, program.programId)
   ]);
 
   const transaction = new Transaction();
@@ -30,7 +28,7 @@ export const createAuction = async ({
       auction,
       auctionEscrow,
       tokenAccount,
-      wallet: wallet.publicKey,
+      wallet: seller.publicKey,
       nftMint,
       candyShop,
       authority
@@ -38,7 +36,7 @@ export const createAuction = async ({
     .instruction();
 
   transaction.add(ix);
-  const txId = await sendTx(wallet, transaction, program);
+  const txId = await sendTx(seller, transaction, program);
   console.log('Auction created with txId ==', txId);
 
   return {

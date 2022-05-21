@@ -1,22 +1,22 @@
 import * as anchor from '@project-serum/anchor';
-import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
 import {
+  AUCTION_HOUSE_PROGRAM_ID,
+  BuyNowAuctionParams,
   getAtaForMint,
-  getAuction,
-  getAuctionHouseAuthority,
   getAuctionHouseEscrow,
   getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
-  getCandyShop,
   sendTx,
   treasuryMintIsNative
 } from '../..';
-import { AUCTION_HOUSE_PROGRAM_ID } from '../../constants';
-import { BuyNowAuctionParams } from '../../model';
 
 export const buyNowAuction = async ({
-  wallet,
+  seller,
+  candyShop,
+  auction,
+  auctionBump,
+  authority,
   buyer,
   treasuryMint,
   nftMint,
@@ -29,19 +29,10 @@ export const buyNowAuction = async ({
 }: BuyNowAuctionParams) => {
   const isNative = treasuryMintIsNative(treasuryMint);
 
-  const [candyShop] = await getCandyShop(wallet.publicKey, treasuryMint, program.programId);
-
-  const [auction, auctionBump] = await getAuction(candyShop, nftMint, program.programId);
-
   const [auctionEscrow] = await getAtaForMint(nftMint, auction);
-
-  const [authority] = await getAuctionHouseAuthority(wallet.publicKey, treasuryMint, program.programId);
-
   const [buyerReceiptTokenAccount] = await getAtaForMint(nftMint, buyer.publicKey);
 
-  const sellerPaymentReceiptAccount = isNative
-    ? wallet.publicKey
-    : (await getAtaForMint(treasuryMint, wallet.publicKey))[0];
+  const sellerPaymentReceiptAccount = isNative ? seller : (await getAtaForMint(treasuryMint, seller))[0];
 
   const paymentAccount = isNative ? buyer.publicKey : (await getAtaForMint(treasuryMint, buyer.publicKey))[0];
 
@@ -93,30 +84,29 @@ export const buyNowAuction = async ({
       programAsSignerBump
     )
     .accounts({
-      auction,
-      auctionEscrow,
+      wallet: buyer.publicKey,
+      seller,
       sellerPaymentReceiptAccount,
-      buyerReceiptTokenAccount,
+      auction,
+      candyShop,
       paymentAccount,
       transferAuthority: buyer.publicKey,
-      wallet: buyer.publicKey,
-      seller: wallet.publicKey,
+      nftMint,
+      treasuryMint,
+      auctionEscrow,
+      metadata,
       escrowPaymentAccount,
       auctionPaymentReceiptAccount,
+      buyerReceiptTokenAccount,
+      authority,
       auctionHouse,
       auctionHouseFeeAccount: feeAccount,
       auctionHouseTreasury: treasuryAccount,
-      nftMint,
-      treasuryMint,
-      metadata,
-      candyShop,
-      authority,
       buyerTradeState,
       auctionTradeState,
       freeAuctionTradeState,
       ahProgram: AUCTION_HOUSE_PROGRAM_ID,
       programAsSigner,
-      ataProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
       clock: SYSVAR_CLOCK_PUBKEY
     })
     .instruction();

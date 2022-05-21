@@ -1,22 +1,21 @@
 import * as anchor from '@project-serum/anchor';
 import { web3 } from '@project-serum/anchor';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { BuyAndExecuteSaleTransactionParams } from '../model';
-import { CandyShopError, CandyShopErrorType } from '../../utils';
-import { Metadata, parseMetadata } from '../../utils/parseData';
-import { AUCTION_HOUSE_PROGRAM_ID } from '../constants';
 import {
+  AUCTION_HOUSE_PROGRAM_ID,
+  BuyAndExecuteSaleTransactionParams,
+  checkDelegateOnReceiptAccounts,
+  checkNftAvailability,
+  checkPaymentAccountBalance,
+  compileAtaCreationIxs,
   getAtaForMint,
   getAuctionHouseEscrow,
   getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
-  checkDelegateOnReceiptAccounts,
-  checkNftAvailability,
-  checkPaymentAccountBalance,
   sendTx,
-  compileAtaCreationIxs,
   treasuryMintIsNative
-} from '../utils';
+} from '../..';
+import { CandyShopError, CandyShopErrorType, Metadata, parseMetadata } from '../../../utils';
 
 export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionParams) {
   const {
@@ -40,8 +39,6 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
   if (counterParty.toString() === wallet.publicKey.toString()) {
     throw new CandyShopError(CandyShopErrorType.BuyerOwnsListing);
   }
-
-  const candyShopData = await program.account.candyShopV1.fetch(candyShop);
 
   const [buyerEscrow, buyerEscrowBump] = await getAuctionHouseEscrow(auctionHouse, wallet.publicKey);
 
@@ -185,41 +182,6 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
       sellerPaymentReceiptAccount,
       buyerReceiptTokenAccount
     );
-  }
-
-  const coOwnerCounts = candyShopData.splits.filter((s: number) => s > 0).length;
-
-  if (isNative) {
-    for (let i = 0; i < coOwnerCounts; i++) {
-      const coOwner = candyShopData.coOwners[i];
-      remainingAccounts.push({
-        pubkey: coOwner,
-        isWritable: true,
-        isSigner: false
-      });
-    }
-  } else {
-    for (let i = 0; i < coOwnerCounts * 2; i += 2) {
-      const coOwner = candyShopData.coOwners[i];
-      remainingAccounts.push({
-        pubkey: coOwner,
-        isWritable: true,
-        isSigner: false
-      });
-
-      const tokenMintAtaIxs = await compileAtaCreationIxs(coOwner, [coOwner], treasuryMint, program);
-      if (tokenMintAtaIxs) {
-        allAtaIxs.push(...tokenMintAtaIxs);
-      }
-
-      const coOwnerTokenAccount = (await getAtaForMint(treasuryMint, coOwner))[0];
-
-      remainingAccounts.push({
-        pubkey: coOwnerTokenAccount,
-        isWritable: true,
-        isSigner: false
-      });
-    }
   }
 
   const ix2 = await program.methods

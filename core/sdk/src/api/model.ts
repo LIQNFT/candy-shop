@@ -32,20 +32,27 @@ export interface CancelTransactionParams extends CandyShopTransactionParams {
 }
 
 export interface AuctionParams {
-  wallet: AnchorWallet | web3.Keypair;
+  candyShop: web3.PublicKey;
   treasuryMint: web3.PublicKey;
+  authority: web3.PublicKey;
+  auction: web3.PublicKey;
   nftMint: web3.PublicKey;
   program: anchor.Program;
 }
 
 export interface CreateAuctionParams extends AuctionParams {
+  auctionBump: number;
+  seller: AnchorWallet | web3.Keypair;
   startingBid: anchor.BN;
   startTime: anchor.BN;
   biddingPeriod: anchor.BN;
   buyNowPrice: anchor.BN | null;
 }
 
-export interface CancelAuctionParams extends AuctionParams {}
+export interface CancelAuctionParams extends AuctionParams {
+  auctionBump: number;
+  seller: AnchorWallet | web3.Keypair;
+}
 
 export interface BidAuctionParams extends AuctionParams {
   buyer: AnchorWallet | web3.Keypair;
@@ -57,6 +64,8 @@ export interface BidAuctionParams extends AuctionParams {
 
 export interface BuyNowAuctionParams extends AuctionParams {
   buyer: AnchorWallet | web3.Keypair;
+  auctionBump: number;
+  seller: web3.PublicKey;
   metadata: web3.PublicKey;
   auctionHouse: web3.PublicKey;
   feeAccount: web3.PublicKey;

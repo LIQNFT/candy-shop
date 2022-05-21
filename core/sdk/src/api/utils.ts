@@ -6,21 +6,22 @@ import {
   createAssociatedTokenAccountInstruction
 } from '@solana/spl-token';
 import {
+  AUCTION,
   AUCTION_HOUSE,
+  WRAPPED_SOL_MINT,
   AUCTION_HOUSE_PROGRAM_ID,
   AUTHORITY,
+  BID,
   CANDY_STORE,
   FEE_PAYER,
   TREASURY,
-  AUCTION,
-  BID,
   WALLET
 } from './constants';
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
 import { CandyShopError, CandyShopErrorType } from '../utils/error';
 import { safeAwait } from '../utils';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { awaitTransactionSignatureConfirmation, WRAPPED_SOL_MINT } from '.';
+import { awaitTransactionSignatureConfirmation } from './program';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);
@@ -28,6 +29,17 @@ const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);
 export const getAuction = (candyShop: web3.PublicKey, mint: web3.PublicKey, marketProgramId: web3.PublicKey) => {
   return web3.PublicKey.findProgramAddress(
     [Buffer.from(AUCTION), candyShop.toBuffer(), mint.toBuffer()],
+    marketProgramId
+  );
+};
+
+export const getBid = (auction: web3.PublicKey, wallet: web3.PublicKey, marketProgramId: web3.PublicKey) => {
+  return web3.PublicKey.findProgramAddress([Buffer.from(BID), auction.toBuffer(), wallet.toBuffer()], marketProgramId);
+};
+
+export const getBidWallet = (auction: web3.PublicKey, wallet: web3.PublicKey, marketProgramId: web3.PublicKey) => {
+  return web3.PublicKey.findProgramAddress(
+    [Buffer.from(BID), auction.toBuffer(), wallet.toBuffer(), Buffer.from(WALLET)],
     marketProgramId
   );
 };
@@ -284,15 +296,4 @@ export const sendTx = async (
 
 export const treasuryMintIsNative = (treasuryMint: web3.PublicKey) => {
   return treasuryMint.equals(WRAPPED_SOL_MINT);
-};
-
-export const getBid = (auction: web3.PublicKey, wallet: web3.PublicKey, marketProgramId: web3.PublicKey) => {
-  return web3.PublicKey.findProgramAddress([Buffer.from(BID), auction.toBuffer(), wallet.toBuffer()], marketProgramId);
-};
-
-export const getBidWallet = (auction: web3.PublicKey, wallet: web3.PublicKey, marketProgramId: web3.PublicKey) => {
-  return web3.PublicKey.findProgramAddress(
-    [Buffer.from(BID), auction.toBuffer(), wallet.toBuffer(), Buffer.from(WALLET)],
-    marketProgramId
-  );
 };

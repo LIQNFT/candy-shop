@@ -1,24 +1,19 @@
-import { BN, Idl, Program, Provider, web3 } from '@project-serum/anchor';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { configBaseUrl } from './config';
-
 import {
+  CandyShop as CandyShopResponse,
   ListBase,
   Nft,
   Order,
   ShopStats,
   SingleBase,
   Trade,
-  WhitelistNft,
-  CandyShop as CandyShopResponse
+  WhitelistNft
 } from '@liqnft/candy-shop-types';
-
+import { BN, Idl, Program, Provider, web3 } from '@project-serum/anchor';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { OrdersFilterQuery, TradeQuery } from './api/backend';
 import { CANDY_SHOP_INS_PROGRAM_ID } from './api/constants';
-import { buyAndExecuteSale } from './api/program/buyAndExecuteSale';
-import { buyAndExecuteSale as insBuyAndExecuteSale } from './api/program/InsBuyAndExecuteSale';
-import { cancelOrder, sellNft } from './api/program';
-
+import { BuyAndExecuteSaleTransactionParams } from './api/model';
+import { buyAndExecuteSale, cancelOrder, insBuyAndExecuteSale, sellNft } from './api/program';
 import {
   getAuctionHouse,
   getAuctionHouseAuthority,
@@ -28,8 +23,6 @@ import {
   getCandyShopSync,
   getMetadataAccount
 } from './api/utils';
-import { CandyShopBuyParams, CandyShopCancelParams, CandyShopSellParams, CandyShopSettings } from './CandyShopModel';
-import { BuyAndExecuteSaleTransactionParams } from './api/model';
 import {
   fetchNFTByMintAddress,
   fetchOrderByShopAndMintAddress,
@@ -40,6 +33,8 @@ import {
   fetchStatsByShopAddress,
   fetchTradeByShopAddress
 } from './CandyShopInfoAPI';
+import { CandyShopBuyParams, CandyShopCancelParams, CandyShopSellParams, CandyShopSettings } from './CandyShopModel';
+import { configBaseUrl } from './config';
 
 const DEFAULT_CURRENCY_SYMBOL = 'SOL';
 const DEFAULT_CURRENCY_DECIMALS = 9;
