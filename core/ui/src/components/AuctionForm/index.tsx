@@ -116,16 +116,16 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit }) => {
         onClick={onCheckbox(CheckEnum.START_NOW)}
         checked={Boolean(form[CheckEnum.START_NOW])}
         id="auction-start-now"
-        label="Start Immediately"
+        label="Start immediately"
       />
 
       <div className="candy-auction-form-item">
-        <label htmlFor="auction_date">Enter starting bid</label>
+        <label htmlFor="auction_date">Auction start date</label>
         <input id="auction_date" type="date" required />
       </div>
 
       <label htmlFor="auction_hour" className="candy-auction-time-label">
-        Time
+        Auction start time
       </label>
       <div className="candy-auction-form-time">
         <input
@@ -184,9 +184,9 @@ const imgUrl =
   'https://lhotgeeogrlhabitqqgfjmtxhtt2v3caww7nk2gq47gvugkky2sa.arweave.net/Wd0zEI40VnAFE4QMVLJ3POeq7EC1vtVo0OfNWhlKxqQ?ext=png';
 
 const PERIODS = [
-  { label: '1 Hour', value: 1 },
-  { label: '6 Hour', value: 6 },
-  { label: '12 Hour', value: 12 },
-  { label: '24 Hour', value: 24 },
-  { label: '48 Hour', value: 48 }
+  { label: '1h', value: 1 },
+  { label: '6h', value: 6 },
+  { label: '12h', value: 12 },
+  { label: '24h', value: 24 },
+  { label: '48h', value: 48 }
 ];

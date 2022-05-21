@@ -81,10 +81,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
   const isEnableBuyNow = true;
 
   const PlaceBidButton = walletPublicKey ? (
-    <button
-      className={`candy-button candy-buy-modal-button ${isEnableBuyNow ? 'candy-button-ghost' : ''}`}
-      onClick={buy}
-    >
+    <button className={`candy-button ${isEnableBuyNow ? 'candy-button-ghost' : ''}`} onClick={buy}>
       Place bid
     </button>
   ) : (
@@ -95,10 +92,10 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
     <div className="candy-auction-modal-detail">
       <div className="candy-auction-modal-notice"> Congratulations, you are currently the highest bidder! </div>
       <div style={{ display: 'flex', gap: '24px' }}>
-        <div className="candy-buy-modal-thumbnail">
+        <div className="candy-auction-modal-thumbnail">
           <LiqImage src={order?.nftImageLink || ''} alt={order?.name} fit="contain" />
         </div>
-        <div className="candy-buy-modal-container">
+        <div className="candy-auction-modal-container">
           <div className="candy-auction-modal-countdown">
             AUCTION ENDS IN
             <span ref={setCountDownRef}>00:00:00</span>
@@ -115,17 +112,16 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
               <button className="candy-button">Buy Now</button>
             </div>
           )}
-
-          <div>
-            <div className="candy-label">PRICE</div>
+          <div className="candy-auction-modal-form-item">
+            <div className="candy-label">CURRENT BID</div>
             <div className="candy-price">{priceContent}</div>
           </div>
-          <div className="candy-buy-modal-control">
+          <div className="candy-auction-modal-control">
             <div>
-              <div>Enter your bid</div>
+              <div className="candy-input-label">Enter your bid</div>
               <div className="candy-input-price">
                 <input
-                  placeholder="Price"
+                  placeholder="0"
                   min={0}
                   onChange={onChangeInput}
                   type="number"
@@ -136,7 +132,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
             </div>
             {PlaceBidButton}
           </div>
-          <div className="candy-auction-modal-min-price">Enter {priceContent} or more</div>
+          <div className="candy-auction-modal-prompt">Place bid of {priceContent} or more</div>
 
           {order.nftDescription && (
             <div className="candy-stat">

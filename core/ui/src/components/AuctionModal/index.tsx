@@ -40,7 +40,7 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
 
   return (
     <Modal onCancel={onClose} width={state !== TransactionState.DISPLAY ? 600 : 1000}>
-      <div className="candy-buy-modal">
+      <div className="candy-auction-modal">
         {state === TransactionState.DISPLAY && (
           <AuctionModalDetail
             order={order}

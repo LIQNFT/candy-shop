@@ -11,6 +11,10 @@
     margin: 0;
   }
 
+  input:focus-visible {
+    outline-color: #7522f5;
+  }
+
   /* Firefox */
   input[type='number'] {
     -moz-appearance: textfield;
@@ -19,6 +23,7 @@
   .candy-auction-form-title {
     padding: 40px 0;
   }
+
   .candy-auction-form-info {
     display: flex;
     justify-content: center;
@@ -49,34 +54,35 @@
   }
 
   .candy-checkbox-container {
-    margin: 20px 0;
+    margin-bottom: 15px;
   }
 
   .candy-auction-period {
     text-align: left;
-    margin: 20px 0;
+    margin-bottom: 15px;
+
     label {
-      padding-bottom: 10px;
+      display: block;
     }
 
     div {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      column-gap: 12px;
+      column-gap: 5px;
     }
   }
 
   .candy-auction-radio {
     border: 2px solid @primary-color;
     border-radius: 4px;
-    padding: 12px 14px;
+    padding: 8px 12px;
     cursor: pointer;
     background-color: @primary-color-light;
     color: @primary-color;
   }
 
   .candy-auction-radio-disable {
-    border-color: @gray-medium;
+    border-color: @gray-medium-alt;
     color: #000;
     background-color: #fff;
   }
@@ -91,30 +97,32 @@
     flex-direction: column;
     align-items: flex-start;
     position: relative;
+    margin-bottom: 15px;
 
     input {
       width: 100%;
-      border: 1px solid @gray-medium-alt;
+      border: 2px solid @gray-medium-alt;
       padding: 8px 12px;
       border-radius: 4px;
     }
 
     .candy-auction-form-sol {
       position: absolute;
-      top: 50%;
+      top: 37px;
       right: 10px;
     }
   }
 
   .candy-auction-form-time {
     display: grid;
-    grid-template-columns: 1fr 10px 1fr 1fr;
-    column-gap: 12px;
+    grid-template-columns: 1fr 5px 1fr 1fr;
+    column-gap: 5px;
     align-items: center;
+    margin-bottom: 15px;
 
-    input {
+    > input {
       width: 100%;
-      border: 1px solid @gray-medium-alt;
+      border: 2px solid @gray-medium-alt;
       padding: 8px 12px;
       border-radius: 4px;
     }
@@ -122,9 +130,8 @@
     .candy-auction-time-checkbox {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      column-gap: 12px;
+      column-gap: 5px;
       align-items: center;
-      padding-top: 12px;
     }
   }
 
@@ -132,18 +139,20 @@
     display: flex;
     width: 100%;
     justify-content: space-between;
+    margin-bottom: 15px;
   }
 
   .candy-auction-time-label {
-    margin-top: 40px;
     display: block;
     text-align: left;
   }
 
   .candy-auction-input-hidden {
+    display: block;
     width: 0;
     height: 0;
     opacity: 0;
+    border: 0;
     pointer-events: none;
   }
 }

@@ -2,7 +2,11 @@
 
 .candy-auction-modal-detail {
   width: 100%;
-  padding: 20px;
+  padding-top: 20px;
+
+  .candy-auction-modal-form-item {
+    margin-bottom: 15px;
+  }
 }
 
 .candy-auction-modal-countdown {
@@ -14,10 +18,12 @@
   font-size: 12px;
 }
 
-.candy-auction-modal-min-price {
-  margin-bottom: 30px;
+.candy-auction-modal-prompt {
+  margin-bottom: 15px;
   color: @gray-medium;
-  width: fit-content;
+  text-align: left;
+  font-size: 14px;
+  display: block;
 }
 
 .candy-auction-modal-notice {
@@ -46,7 +52,7 @@
   }
 }
 
-.candy-buy-modal {
+.candy-auction-modal {
   display: flex;
   gap: 24px;
   font-size: 16px;
@@ -57,7 +63,7 @@
     margin: 20px 0;
   }
 
-  .candy-buy-modal-thumbnail {
+  .candy-auction-modal-thumbnail {
     width: 340px;
     height: 340px;
     text-align: center;
@@ -69,7 +75,7 @@
     }
   }
 
-  .candy-buy-modal-container {
+  .candy-auction-modal-container {
     flex: 1;
     padding-top: 20px;
     padding-bottom: 20px;
@@ -78,20 +84,29 @@
     //   text-align: left;
     // }
 
-    .candy-buy-modal-title {
+    .candy-auction-modal-title {
       text-align: left;
       font-weight: bold;
       font-size: 24px;
     }
 
-    .candy-buy-modal-control {
+    .candy-auction-modal-control {
       display: flex;
       text-align: left;
       justify-content: space-between;
-      align-items: center;
-      margin-top: 20px;
+      align-items: flex-end;
+      margin-bottom: 5px;
 
-      .candy-buy-modal-button {
+      .candy-input-label {
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+
+      .candy-input-price {
+        height: 42px;
+      }
+
+      .candy-button {
         padding: 8px 50px;
         border-radius: 32px;
         width: 220px;
@@ -107,13 +122,13 @@
     }
   }
 
-  .candy-buy-modal-price {
+  .candy-auction-modal-price {
     font-weight: bold;
     font-size: 16px;
     line-height: 24px;
   }
 
-  .candy-buy-modal-confirmed {
+  .candy-auction-modal-confirmed {
     width: 100%;
 
     &-flex {
@@ -130,7 +145,7 @@
       text-align: left;
     }
 
-    .candy-buy-modal-confirmed-header {
+    .candy-auction-modal-confirmed-header {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -143,7 +158,7 @@
       line-height: 36px;
     }
 
-    .candy-buy-modal-confirmed-container {
+    .candy-auction-modal-confirmed-container {
       width: 100%;
       display: flex;
       align-items: center;
@@ -154,26 +169,26 @@
       }
     }
 
-    .candy-buy-modal-confirmed-content {
+    .candy-auction-modal-confirmed-content {
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
       width: 100%;
       flex: 1;
 
-      .candy-buy-modal-name {
+      .candy-auction-modal-name {
         text-align: left;
         font-size: 16px;
         font-weight: bold;
       }
 
-      .candy-buy-modal-ticker {
+      .candy-auction-modal-ticker {
         text-align: left;
         font-size: 14px;
       }
     }
 
-    .candy-buy-modal-confirmed-thumbnail {
+    .candy-auction-modal-confirmed-thumbnail {
       width: 100px;
       height: 100px;
       margin-right: 20px;
