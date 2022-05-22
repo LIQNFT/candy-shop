@@ -214,9 +214,9 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
                 ))}
               </div>
             )}
-            {nfts.length === 0 && <Empty description="No NFTs found" />}
           </>
         )}
+        {loadingNFTStatus === LoadStatus.Loaded && nfts.length === 0 && <Empty description="No NFTs found" />}
       </div>
     </div>
   );
