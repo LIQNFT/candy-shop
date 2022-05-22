@@ -78,8 +78,8 @@ export const CandyShopContent: React.FC<CandyShopContentProps> = ({ network }) =
 };
 
 const FILTERS = [
-  { name: 'Puppies', identifier: 2036309415 },
-  { name: 'Shibas', identifier: 1235887132 },
-  { name: 'Puppies + Shibas', identifier: [1235887132, 2036309415] },
-  { name: 'Purple Puppies', identifier: 2036309415, attribute: { backgrounds: 'gradient_purple' } }
+  { name: 'Puppies', collectionId: '1', identifier: 2036309415 },
+  { name: 'Shibas', collectionId: '2', identifier: 1235887132 },
+  { name: 'Puppies + Shibas', collectionId: '3', identifier: [1235887132, 2036309415] },
+  { name: 'Purple Puppies', collectionId: '4', identifier: 2036309415, attribute: { backgrounds: 'gradient_purple' } }
 ];

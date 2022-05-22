@@ -11,6 +11,7 @@ export interface ShopExchangeInfo {
 
 export interface CollectionFilter {
   name: string;
+  collectionId: string;
   identifier: number | Array<number>;
   attribute?: { [key: string]: string };
 }
@@ -21,6 +22,6 @@ export interface ShopFilter {
 }
 
 export enum OrderDefaultFilter {
-  COLLECTION = 'COLLECTION',
-  SHOP = 'SHOP'
+  COLLECTION = 'collection',
+  SHOP = 'shop'
 }

@@ -47,12 +47,12 @@ export const Orders: React.FC<OrdersProps> = ({
   const [startIndex, setStartIndex] = useState(0);
   const [collectionFilter, setCollectionFilter] = useState<CollectionFilter | undefined>(() => {
     if (defaultFilter?.[OrderDefaultFilter.COLLECTION]) {
-      return filters?.find((item) => item.name === defaultFilter.COLLECTION);
+      return filters?.find((item) => item.collectionId === defaultFilter.collection);
     }
   });
   const [shopFilter, setShopFilter] = useState<ShopFilter | undefined>(() => {
     if (defaultFilter?.[OrderDefaultFilter.SHOP]) {
-      return shopFilters?.find((shop) => shop.name === defaultFilter.SHOP);
+      return shopFilters?.find((shop) => shop.shopId === defaultFilter.shop);
     }
   });
 
@@ -173,7 +173,7 @@ export const Orders: React.FC<OrdersProps> = ({
                       return (
                         <li
                           key={filter.name}
-                          className={collectionFilter?.name === filter.name ? 'selected' : ''}
+                          className={collectionFilter?.collectionId === filter.collectionId ? 'selected' : ''}
                           onClick={() => setCollectionFilter(filter)}
                         >
                           {filter.name}
@@ -195,7 +195,7 @@ export const Orders: React.FC<OrdersProps> = ({
                       return (
                         <li
                           key={item.name}
-                          className={shopFilter?.name === item.name ? 'selected' : ''}
+                          className={shopFilter?.shopId === item.shopId ? 'selected' : ''}
                           onClick={() => setShopFilter(item)}
                         >
                           {item.name}
