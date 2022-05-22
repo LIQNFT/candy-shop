@@ -23,6 +23,7 @@
   - [How to use sdk](#how-to-use-sdk)
 - [Embedded UI Usages](#embedded-ui-usages)
   - [Refresh CandyShop by React Context](#refresh-candyshop-by-react-context)
+  - [Enable Cache NFT](#enable-cache-nft)
 - [Solana Transaction Size Limit](#%EF%B8%8F-solana-transaction-size-limit-%EF%B8%8F)
 - [Contribute to Candy Shop](https://github.com/LIQNFT/candy-shop/wiki/Contribute-to-Candy-Shop)
 
@@ -143,26 +144,8 @@ You may pass an additional settings object to customize your shop:
 
 ### How to use sdk
 
-```ts
-import { CandyShop } from '@liqnft/candy-shop-sdk';
-// Fetch orders
-candyShop.getOrders();
-
-// Buy
-candyShop.buy();
-
-// Sell
-candyShop.sell();
-
-// Cancel sell order
-candyShop.cancel();
-
-// Get statistics
-candyShop.getStats();
-
-// Get transactions
-candyShop.getTransactions();
-```
+Check our Wiki page to get more detail
+- https://github.com/LIQNFT/candy-shop/wiki/How-to-use-CandyShop-SDK
 
 ## Embedded UI Usages
 
@@ -233,6 +216,14 @@ import { Sell } from '@liqnft/candy-shop';
 <Sell wallet={wallet} candyShop={candyShop} walletConnectComponent={<WalletMultiButton />} />;
 ```
 
+#### Enable Cache NFT
+
+We also provide the optional prop for Sell component to enable cache NFT that will store connected wallet's NFT in IndexedDB.
+The CandyShop IDB will auto be deleted once remove the enableCacheNFT prop or set it as `false`.
+
+```ts
+<Sell wallet={wallet} candyShop={candyShop} walletConnectComponent={<WalletMultiButton />} enableCacheNFT={true}/>;
+```
 ### Show Stats
 
 Show key stats about your collection
