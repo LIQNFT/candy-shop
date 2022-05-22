@@ -82,6 +82,14 @@ export interface CandyShopAuctionParams {
   tokenAccount: web3.PublicKey;
   /** Mint address of NFT */
   tokenMint: web3.PublicKey;
+  /** User wallet keypair */
+  wallet: AnchorWallet | web3.Keypair;
+}
+
+/**
+ * Arguments required for calling Candy Shop create auction action
+ */
+export interface CandyShopCreateAuctionParams extends CandyShopAuctionParams {
   /** Starting bid for auction */
   startingBid: BN;
   /** Start Time for auction */
@@ -90,11 +98,9 @@ export interface CandyShopAuctionParams {
   biddingPeriod: BN;
   /** Buynow price for auction, nullable */
   buyNowPrice: BN;
-  /** User wallet keypair */
-  wallet: AnchorWallet | web3.Keypair;
 }
 
 /**
- * Arguments required for calling Candy Shop create auction action
+ * Arguments required for calling Candy Shop cancel auction action
  */
-export interface CandyShopCreateAuctionParams extends CandyShopAuctionParams {}
+export interface CandyShopCancelAuctionParams extends CandyShopAuctionParams {}

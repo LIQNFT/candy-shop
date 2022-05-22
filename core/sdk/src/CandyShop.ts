@@ -13,6 +13,8 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import {
   buyAndExecuteSale,
   BuyAndExecuteSaleTransactionParams,
+  cancelAuction,
+  CancelAuctionParams,
   cancelOrder,
   createAuction,
   CreateAuctionParams,
@@ -42,6 +44,7 @@ import {
 } from './CandyShopInfoAPI';
 import {
   CandyShopBuyParams,
+  CandyShopCancelAuctionParams,
   CandyShopCancelParams,
   CandyShopCreateAuctionParams,
   CandyShopSellParams,
@@ -396,6 +399,52 @@ export class CandyShop {
       buyNowPrice,
       program
     } as CreateAuctionParams);
+    return txHash.txId;
+  }
+
+  /**
+   * Executes Candy Shop __CancelAuction__ action
+   *
+   * @param {CandyShopCancelAuctionParams} params required parameters for sell action
+   */
+  public async cancelAuction(params: CandyShopCancelAuctionParams): Promise<string> {
+    const { tokenAccount, tokenMint, wallet } = params;
+
+    if (wallet.publicKey.toString() !== this.candyShopCreatorAddress.toString()) {
+      throw new CandyShopError(CandyShopErrorType.NonShopOwner);
+    }
+
+    console.log('CandyShop: performing cancel auction', {
+      tokenMint: tokenMint.toString(),
+      tokenAccount: tokenAccount.toString()
+    });
+
+    const program = await this.getStaticProgram(wallet);
+
+    const [auction, auctionBump] = await getAuction(this._candyShopAddress, tokenMint, this._programId);
+
+    const auctionAccount = await program.provider.connection.getAccountInfo(auction);
+
+    if (!auctionAccount) {
+      throw new Error(CandyShopErrorType.AuctionDoesNotExists);
+    }
+
+    const [auctionHouseAuthority] = await getAuctionHouseAuthority(
+      this._candyShopCreatorAddress,
+      this._treasuryMint,
+      this._programId
+    );
+
+    const txHash = await cancelAuction({
+      seller: wallet,
+      auction,
+      authority: auctionHouseAuthority,
+      auctionBump,
+      candyShop: this._candyShopAddress,
+      treasuryMint: this._treasuryMint,
+      nftMint: tokenMint,
+      program
+    } as CancelAuctionParams);
     return txHash.txId;
   }
 

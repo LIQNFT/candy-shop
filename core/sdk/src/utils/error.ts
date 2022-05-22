@@ -8,7 +8,8 @@ export enum CandyShopErrorType {
   BuyerATACannotHaveDelegate = 'BuyerATACannotHaveDelegate',
   TradeStateExists = 'TradeStateExists',
   NonShopOwner = 'NonShopOwner',
-  AuctionExists = 'AuctionExists'
+  AuctionExists = 'AuctionExists',
+  AuctionDoesNotExists = 'AuctionDoesNotExists'
 }
 
 export const CandyShopErrorMsgMap = {
@@ -21,7 +22,8 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.BuyerATACannotHaveDelegate]: 'Buyer receipt token account cannot have a delegate set.',
   [CandyShopErrorType.TradeStateExists]: 'Sell Order already placed.',
   [CandyShopErrorType.NonShopOwner]: 'Only shop owner can create auction.',
-  [CandyShopErrorType.AuctionExists]: 'Auction already exists.'
+  [CandyShopErrorType.AuctionExists]: 'Auction already exists.',
+  [CandyShopErrorType.AuctionDoesNotExists]: 'Auction does not exists.'
 };
 
 export class CandyShopError extends Error {
