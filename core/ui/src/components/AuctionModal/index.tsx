@@ -10,7 +10,7 @@ import { AuctionModalDetail } from './AuctionModalDetail';
 import { TransactionState } from 'model';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
-import { Order as OrderSchema } from 'solana-candy-shop-schema/dist';
+import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 
 import './style.less';
 

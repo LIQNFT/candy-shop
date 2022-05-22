@@ -1,3 +1,3 @@
 export * from './auction';
-export * from './candyShop';
+export * from './marketplace';
 export * from './submitTx';
