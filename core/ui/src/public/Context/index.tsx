@@ -8,7 +8,7 @@ import { POLLING_SHOP_INTERVAL } from 'constant';
 import { useInterval } from 'hooks/useInterval';
 import { useCallback } from 'react';
 
-const Logger = 'CandyShopDataValidator';
+const Logger = 'CandyShopUI/CandyShopDataValidator';
 
 // Data context
 interface ContextData {
@@ -42,7 +42,7 @@ export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children 
             }
           }
         } else {
-          console.log(`${Logger}: fetchShopStatus res.result is undefined=`, res);
+          console.log(`${Logger}: fetchShopStatus res.result is undefined`);
         }
       })
       .catch((err: any) => {
