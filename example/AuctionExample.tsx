@@ -16,13 +16,12 @@ interface AuctionExampleProps {
 
 export const AuctionExample: React.FC<AuctionExampleProps> = ({ network }) => {
   const [treasuryMint] = useState(new web3.PublicKey(TREASURY_MINT));
-  const [showCreateAuction, setShowCreateAuction] = useState<boolean>(false);
 
   const wallet = useAnchorWallet();
 
   const candyShop = useMemo(() => {
     return new CandyShop(
-      new web3.PublicKey(CREATOR_ADDRESS),
+      new web3.PublicKey('31kxUz7wkaQhTs266pPmcKeAMtQSpohZJ8gL9joR4eXe'),
       treasuryMint,
       new web3.PublicKey(CANDY_SHOP_PROGRAM_ID),
       network,

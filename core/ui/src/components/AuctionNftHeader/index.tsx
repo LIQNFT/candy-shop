@@ -2,9 +2,9 @@ import React from 'react';
 import './style.less';
 
 interface AuctionNftHeaderProps {
-  name: string;
+  name?: string;
   imgUrl: string;
-  ticker: string;
+  ticker?: string;
   edition?: string | number;
 }
 
