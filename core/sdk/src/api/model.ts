@@ -62,6 +62,13 @@ export interface BidAuctionParams extends AuctionParams {
   bidPrice: anchor.BN;
 }
 
+export interface WithdrawBidParams extends AuctionParams {
+  buyer: AnchorWallet | web3.Keypair;
+  metadata: web3.PublicKey;
+  auctionHouse: web3.PublicKey;
+  feeAccount: web3.PublicKey;
+}
+
 export interface BuyNowAuctionParams extends AuctionParams {
   buyer: AnchorWallet | web3.Keypair;
   auctionBump: number;

@@ -104,3 +104,16 @@ export interface CandyShopCreateAuctionParams extends CandyShopAuctionParams {
  * Arguments required for calling Candy Shop cancel auction action
  */
 export interface CandyShopCancelAuctionParams extends CandyShopAuctionParams {}
+
+/**
+ * Arguments required for calling Candy Shop bid auction action
+ */
+export interface CandyShopBidAuctionParams extends CandyShopAuctionParams {
+  /** bidPrice for auction */
+  bidPrice: BN;
+}
+
+/**
+ * Arguments required for calling Candy Shop withdraw auction bid action
+ */
+export interface CandyShopWithdrawAuctionBidParams extends CandyShopAuctionParams {}

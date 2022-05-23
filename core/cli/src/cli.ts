@@ -305,4 +305,78 @@ programCommand('cancelAuction')
     console.log('txHash', txHash);
   });
 
+programCommand('makeBid')
+  .description('make bid to an auction')
+  .requiredOption('-tam, --token-account-mint <string>', 'NFT token mint address')
+  .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
+  .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
+  .requiredOption('-p, --price <string>', 'price in token decimals')
+  .action(async (name, cmd) => {
+    console.log(name);
+
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, price } = cmd.opts();
+
+    const wallet = loadKey(keypair);
+
+    const candyShop = new CandyShop(
+      new anchor.web3.PublicKey(shopCreator),
+      new anchor.web3.PublicKey(treasuryMint),
+      CANDY_SHOP_PROGRAM_ID,
+      env,
+      {
+        mainnetConnectionUrl: rpcUrl
+      }
+    );
+
+    let tokenAccount = await findAssociatedTokenAddress(
+      new anchor.web3.PublicKey(wallet.publicKey),
+      new anchor.web3.PublicKey(tokenAccountMint)
+    );
+
+    const txHash = await candyShop.bidAuction({
+      tokenAccount: tokenAccount,
+      tokenMint: new anchor.web3.PublicKey(tokenAccountMint),
+      wallet,
+      bidPrice: new anchor.BN(price)
+    });
+
+    console.log('txHash', txHash);
+  });
+
+programCommand('withdrawBid')
+  .description('withdraw bid to an auction')
+  .requiredOption('-tam, --token-account-mint <string>', 'NFT token mint address')
+  .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
+  .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
+  .action(async (name, cmd) => {
+    console.log(name);
+
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator } = cmd.opts();
+
+    const wallet = loadKey(keypair);
+
+    const candyShop = new CandyShop(
+      new anchor.web3.PublicKey(shopCreator),
+      new anchor.web3.PublicKey(treasuryMint),
+      CANDY_SHOP_PROGRAM_ID,
+      env,
+      {
+        mainnetConnectionUrl: rpcUrl
+      }
+    );
+
+    let tokenAccount = await findAssociatedTokenAddress(
+      new anchor.web3.PublicKey(wallet.publicKey),
+      new anchor.web3.PublicKey(tokenAccountMint)
+    );
+
+    const txHash = await candyShop.withdrawAuctionBid({
+      tokenAccount: tokenAccount,
+      tokenMint: new anchor.web3.PublicKey(tokenAccountMint),
+      wallet
+    });
+
+    console.log('txHash', txHash);
+  });
+
 CMD.parse(process.argv);

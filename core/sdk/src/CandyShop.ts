@@ -27,7 +27,11 @@ import {
   getCandyShopSync,
   getMetadataAccount,
   insBuyAndExecuteSale,
-  sellNft
+  sellNft,
+  bidAuction,
+  BidAuctionParams,
+  withdrawBid,
+  WithdrawBidParams
 } from './api';
 import candyShopIdl from './candy_shop.json';
 import { OrdersFilterQuery, TradeQuery } from './api/backend';
@@ -43,12 +47,14 @@ import {
   fetchTradeByShopAddress
 } from './CandyShopInfoAPI';
 import {
+  CandyShopBidAuctionParams,
   CandyShopBuyParams,
   CandyShopCancelAuctionParams,
   CandyShopCancelParams,
   CandyShopCreateAuctionParams,
   CandyShopSellParams,
-  CandyShopSettings
+  CandyShopSettings,
+  CandyShopWithdrawAuctionBidParams
 } from './CandyShopModel';
 import { configBaseUrl } from './config';
 import { CandyShopError, CandyShopErrorType } from './utils';
@@ -385,7 +391,7 @@ export class CandyShop {
       this._programId
     );
 
-    const txHash = await createAuction({
+    const tx = await createAuction({
       seller: wallet,
       auction,
       authority: auctionHouseAuthority,
@@ -399,7 +405,7 @@ export class CandyShop {
       buyNowPrice,
       program
     } as CreateAuctionParams);
-    return txHash.txId;
+    return tx.txId;
   }
 
   /**
@@ -435,7 +441,7 @@ export class CandyShop {
       this._programId
     );
 
-    const txHash = await cancelAuction({
+    const tx = await cancelAuction({
       seller: wallet,
       auction,
       authority: auctionHouseAuthority,
@@ -445,7 +451,107 @@ export class CandyShop {
       nftMint: tokenMint,
       program
     } as CancelAuctionParams);
-    return txHash.txId;
+    return tx.txId;
+  }
+
+  /**
+   * Executes Candy Shop __BidAuction__ action
+   *
+   * @param {BidAuctionParams} params required parameters for sell action
+   */
+  public async bidAuction(params: CandyShopBidAuctionParams): Promise<string> {
+    const { tokenAccount, tokenMint, wallet, bidPrice } = params;
+
+    console.log('CandyShop: performing bid auction', {
+      bidPrice: bidPrice.toString(),
+      tokenAccount: tokenAccount.toString()
+    });
+
+    const program = await this.getStaticProgram(wallet);
+
+    const [auction] = await getAuction(this._candyShopAddress, tokenMint, this._programId);
+
+    const auctionAccount = await program.provider.connection.getAccountInfo(auction);
+
+    if (!auctionAccount) {
+      throw new Error(CandyShopErrorType.AuctionDoesNotExists);
+    }
+
+    const [auctionHouseAuthority] = await getAuctionHouseAuthority(
+      this._candyShopCreatorAddress,
+      this._treasuryMint,
+      this._programId
+    );
+
+    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
+
+    const [feeAccount] = await getAuctionHouseFeeAcct(auctionHouse);
+
+    const [metadata] = await getMetadataAccount(tokenMint);
+
+    const tx = await bidAuction({
+      auction,
+      authority: auctionHouseAuthority,
+      candyShop: this._candyShopAddress,
+      buyer: wallet,
+      treasuryMint: this._treasuryMint,
+      nftMint: tokenMint,
+      metadata,
+      auctionHouse,
+      feeAccount,
+      bidPrice,
+      program
+    } as BidAuctionParams);
+    return tx.txId;
+  }
+
+  /**
+   * Executes Candy Shop __WithdrawBid__ action
+   *
+   * @param {CandyShopWithdrawAuctionBidParams} params required parameters for sell action
+   */
+  public async withdrawAuctionBid(params: CandyShopWithdrawAuctionBidParams): Promise<string> {
+    const { tokenAccount, tokenMint, wallet } = params;
+
+    console.log('CandyShop: performing withdraw bid auction', {
+      tokenAccount: tokenAccount.toString()
+    });
+
+    const program = await this.getStaticProgram(wallet);
+
+    const [auction] = await getAuction(this._candyShopAddress, tokenMint, this._programId);
+
+    const auctionAccount = await program.provider.connection.getAccountInfo(auction);
+
+    if (!auctionAccount) {
+      throw new Error(CandyShopErrorType.AuctionDoesNotExists);
+    }
+
+    const [auctionHouseAuthority] = await getAuctionHouseAuthority(
+      this._candyShopCreatorAddress,
+      this._treasuryMint,
+      this._programId
+    );
+
+    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
+
+    const [feeAccount] = await getAuctionHouseFeeAcct(auctionHouse);
+
+    const [metadata] = await getMetadataAccount(tokenMint);
+
+    const tx = await withdrawBid({
+      auction,
+      authority: auctionHouseAuthority,
+      candyShop: this._candyShopAddress,
+      buyer: wallet,
+      treasuryMint: this._treasuryMint,
+      nftMint: tokenMint,
+      metadata,
+      auctionHouse,
+      feeAccount,
+      program
+    } as WithdrawBidParams);
+    return tx.txId;
   }
 
   /**
