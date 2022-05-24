@@ -1,8 +1,11 @@
+import { NftAttribute, NftProperties } from '../nft';
+
 export enum AuctionStatus {
   CREATED,
   STARTED,
   COMPLETE,
-  CANCELLED
+  CANCELLED,
+  EXPIRED
 }
 
 export interface Auction {
@@ -17,4 +20,15 @@ export interface Auction {
   highestBid: string;
   buyNowPrice: string | null;
   status: AuctionStatus;
+
+  nftUri?: string;
+  name: string;
+  symbol: string;
+  description?: string;
+  sellerFeeBasisPoint: number;
+  image?: string;
+  animationUrl?: string;
+  attributes?: NftAttribute[];
+  externalUri?: string;
+  properties?: NftProperties;
 }
