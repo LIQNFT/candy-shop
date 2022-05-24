@@ -198,7 +198,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
           {
             name: 'Fees',
             value: fee
-              ? `${(Number(auctionForm.starting_bid) * fee) / 100} ${candyShop.currencySymbol} (${fee}%)`
+              ? `${((Number(auctionForm.starting_bid) * fee) / 100).toFixed(2)} ${candyShop.currencySymbol} (${fee}%)`
               : 'n/a'
           },
           { name: 'Bidding Period', value: `${auctionForm.bidding_period} hour(s)` },
@@ -276,13 +276,16 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
             </div>
           ))}
 
-          <button
-            disabled={checkDisableBtn()}
-            className="candy-button candy-auction-confirm-button"
-            onClick={onCreateAuction}
-          >
-            Create Auction
-          </button>
+          <div>
+            <span onClick={() => setStage(StageEnum.FORM)}>Back to detail</span>
+            <button
+              disabled={checkDisableBtn()}
+              className="candy-button candy-auction-confirm-button"
+              onClick={onCreateAuction}
+            >
+              Create Auction
+            </button>
+          </div>
         </div>
       )}
     </div>
@@ -333,15 +336,18 @@ const LoadingView = (
   </div>
 );
 
-const IMAGE =
-  'https://lhotgeeogrlhabitqqgfjmtxhtt2v3caww7nk2gq47gvugkky2sa.arweave.net/Wd0zEI40VnAFE4QMVLJ3POeq7EC1vtVo0OfNWhlKxqQ?ext=png';
-
-const getStartTime = (auctionForm: FormType): string =>
-  dayjs
-    .utc(auctionForm.start_date, 'YYYY-MM-DD')
-    .add(
-      ((auctionForm.clock_format === 'PM' ? 12 : 0) + Number(auctionForm.auction_hour)) * 60 +
-        Number(auctionForm.auction_minute),
-      'minute'
-    )
-    .format('MMMM DD, YYYY HH:mm') + ' UTC';
+const getStartTime = (auctionForm: FormType): string => {
+  if (auctionForm.start_now) {
+    return dayjs().format('MMMM DD, YYYY HH:mm') + ' UTC';
+  }
+  return (
+    dayjs
+      .utc(auctionForm.start_date, 'YYYY-MM-DD')
+      .add(
+        ((auctionForm.clock_format === 'PM' ? 12 : 0) + Number(auctionForm.auction_hour)) * 60 +
+          Number(auctionForm.auction_minute),
+        'minute'
+      )
+      .format('MMMM DD, YYYY HH:mm') + ' UTC'
+  );
+};

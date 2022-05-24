@@ -67,6 +67,11 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit, currencySymb
     onSubmit(form);
   };
 
+  const preventUpdateNumberOnWheel = (e) => {
+    e.preventDefault();
+    e.currentTarget.blur();
+  };
+
   return (
     <form className="candy-auction-form" onSubmit={onSubmitForm}>
       <AuctionNftHeader
@@ -87,6 +92,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit, currencySymb
           min={0}
           value={form['starting_bid']}
           onChange={onChangeInput}
+          onWheel={preventUpdateNumberOnWheel}
         />
         <span className="candy-auction-form-sol">{currencySymbol}</span>
       </div>
@@ -109,9 +115,10 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit, currencySymb
           id="buy_now_price"
           name="buy_now_price"
           type="number"
+          onWheel={preventUpdateNumberOnWheel}
           placeholder="0"
           required={form[CheckEnum.BUY_NOW]}
-          min={0}
+          min={form['starting_bid'] || 0}
           value={form['buy_now_price']}
           onChange={onChangeInput}
         />
@@ -173,6 +180,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit, currencySymb
             id="auction_hour"
             name="auction_hour"
             type="number"
+            onWheel={preventUpdateNumberOnWheel}
             placeholder={'00'}
             min={0}
             max={11}
@@ -186,6 +194,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit, currencySymb
             id="auction_minute"
             name="auction_minute"
             type="number"
+            onWheel={preventUpdateNumberOnWheel}
             placeholder={'00'}
             min={0}
             max={59}
