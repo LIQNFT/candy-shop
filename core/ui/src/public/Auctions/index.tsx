@@ -7,12 +7,22 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { Skeleton } from 'components/Skeleton';
 import { Card } from 'components/Card';
 import { AuctionModal } from 'components/AuctionModal';
+import { Auction } from '@liqnft/candy-shop-types';
 
 interface AuctionsProps {
   wallet?: AnchorWallet;
   walletConnectComponent: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
   candyShop: CandyShop;
 }
+
+const getPrice = (candyShop: CandyShop, order: Auction) => {
+  if (!order?.startingBid) return null;
+
+  return (Number(order?.startingBid) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
+    minimumFractionDigits: candyShop.priceDecimalsMin,
+    maximumFractionDigits: candyShop.priceDecimals
+  });
+};
 
 export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wallet, candyShop }) => {
   const [nfts, setNfts] = useState([]);
@@ -28,20 +38,19 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
   };
 
   useEffect(() => {
-    if (!candyShop) return;
-
-    fetchAuctionsByShopAddress(candyShop.candyShopAddress.toString())
+    fetchAuctionsByShopAddress('HCF8y8wjrUQUBuD2kF7Np24UaaQTHoicUYSWidW1t1bw')
       .then((data: any) => {
         console.log(data);
+        setNfts(data.result);
       })
       .catch((error: any) => {
         console.log(error);
       });
 
-    setTimeout(() => {
-      setNfts(Array.from({ length: 5 }));
-      setHasNextPage(false);
-    }, 3_000);
+    // setTimeout(() => {
+    //   setNfts(Array.from({ length: 5 }));
+    //   setHasNextPage(false);
+    // }, 3_000);
   }, [candyShop]);
 
   return (
@@ -63,15 +72,15 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
         }
       >
         <div className="candy-container-list">
-          {nfts.map((order, index) => (
+          {nfts.map((order: Auction) => (
             <Card
-              onClick={() => setSelected(ORDER)}
-              key={index}
-              name={ORDER.name}
-              ticker={ORDER.symbol}
-              imgUrl={ORDER.nftImageLink}
+              onClick={() => setSelected(order)}
+              key={order.auctionAddress}
+              name="Mirror #3457"
+              ticker="MIRROR"
+              imgUrl="https://storage.mirrorworld.fun/nft/3457.png"
               label={
-                index % 2 === 0 ? (
+                order.highestBid === wallet?.publicKey.toString() ? (
                   <div className="candy-status-tag">HIGHEST BID</div>
                 ) : (
                   <div className="candy-status-tag candy-status-tag-gray">Outbid</div>
@@ -79,7 +88,7 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
               }
               footer={
                 <div className="candy-card-footer">
-                  <div className="candy-card-stat">Current Bid: 25 SOL</div>
+                  <div className="candy-card-stat">Current Bid: {getPrice(candyShop, order)} SOL</div>
                   <div className="candy-card-stat">Ends In: 16 hours</div>
                 </div>
               }

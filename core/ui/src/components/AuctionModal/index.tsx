@@ -11,7 +11,7 @@ import { AuctionModalDetail } from './AuctionModalDetail';
 import { TransactionState } from 'model';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
-import { Order as OrderSchema } from '@liqnft/candy-shop-types';
+import { Auction } from '@liqnft/candy-shop-types';
 
 import './style.less';
 import { web3 } from '@project-serum/anchor';
@@ -20,7 +20,7 @@ import { notification, NotificationType } from 'utils/rc-notification';
 const Logger = 'CandyShopUI/AuctionModal';
 
 export interface AuctionModalProps {
-  order: OrderSchema | any;
+  order: Auction;
   onClose: () => void;
   wallet: AnchorWallet | undefined;
   walletConnectComponent: React.ReactElement;
@@ -41,7 +41,10 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
 
   const placeBid = (price: number) => {
     if (!wallet) return;
-    console.log('Place bid');
+    if (price < Number(order.startingBid) / candyShop.baseUnitsPerCurrency) {
+      return notification('Your bid must be greater than current price', NotificationType.Error);
+    }
+
     setState(TransactionState.PROCESSING);
     candyShop
       .bidAuction({
@@ -64,7 +67,7 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
 
   const buyNow = () => {
     if (!wallet) return;
-    console.log('Buy now');
+
     setState(TransactionState.PROCESSING);
     candyShop
       .buyNowAuction({

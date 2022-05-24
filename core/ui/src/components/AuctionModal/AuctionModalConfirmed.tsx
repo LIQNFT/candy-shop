@@ -2,7 +2,7 @@ import React from 'react';
 
 import { web3 } from '@project-serum/anchor';
 import { formatDate } from 'utils/format';
-import { Order as OrderSchema } from '@liqnft/candy-shop-types';
+import { Auction } from '@liqnft/candy-shop-types';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { LiqImage } from 'components/LiqImage';
 import IconTick from 'assets/IconTick';
@@ -10,17 +10,17 @@ import IconTick from 'assets/IconTick';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 
 interface BuyModalConfirmedProps {
-  order: OrderSchema;
+  order: Auction;
   txHash: string;
   walletPublicKey: web3.PublicKey | undefined;
   onClose: () => void;
   candyShop: CandyShop;
 }
 
-const getPrice = (candyShop: CandyShop, order: OrderSchema) => {
-  if (!order?.price) return null;
+const getPrice = (candyShop: CandyShop, order: Auction) => {
+  if (!order?.startingBid) return null;
 
-  return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
+  return (Number(order?.startingBid) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
     minimumFractionDigits: candyShop.priceDecimalsMin,
     maximumFractionDigits: candyShop.priceDecimals
   });

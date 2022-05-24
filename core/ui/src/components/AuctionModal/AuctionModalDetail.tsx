@@ -5,13 +5,13 @@ import { LiqImage } from 'components/LiqImage';
 import { NftStat } from 'components/NftStat';
 // import { NftAttributes } from 'components/NftAttributes';
 
-import { Order as OrderSchema } from '@liqnft/candy-shop-types';
+import { Auction } from '@liqnft/candy-shop-types';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import dayjs from 'dayjs';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 
 export interface AuctionModalDetailProps {
-  order: OrderSchema;
+  order: Auction;
   buy: (price: number) => void;
   buyNow: () => void;
   walletPublicKey: web3.PublicKey | undefined;
@@ -19,10 +19,10 @@ export interface AuctionModalDetailProps {
   candyShop: CandyShop;
 }
 
-const getPrice = (candyShop: CandyShop, order: OrderSchema) => {
-  if (!order?.price) return null;
+const getPrice = (candyShop: CandyShop, order: Auction) => {
+  if (!order?.startingBid) return null;
 
-  return (Number(order?.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
+  return (Number(order?.startingBid) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
     minimumFractionDigits: candyShop.priceDecimalsMin,
     maximumFractionDigits: candyShop.priceDecimals
   });
@@ -38,7 +38,10 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
 }) => {
   // const [loadingNftInfo, setLoadingNftInfo] = useState(false);
   // const [nftInfo, setNftInfo] = useState<Nft | null>(null);
-  const [countdown] = useState<number>(dayjs().add(24, 'hour').unix());
+  const [countdown] = useState<number>(() => {
+    const second = Math.floor(Number(order.startTime) + Number(order.biddingPeroid) - Date.now() / 1000);
+    return dayjs().add(second, 'second').unix();
+  });
   const [countDownRef, setCountDownRef] = useState<HTMLSpanElement | null>();
   const [price, setPrice] = useState<number>();
 
@@ -75,10 +78,6 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
   }, [countDownRef, countdown, timeoutRef]);
 
   const onChangeInput = (e: any) => {
-    if (orderPrice && e.target.value <= orderPrice) {
-      return setPrice(Number(orderPrice));
-    }
-
     setPrice(e.target.value);
   };
 
