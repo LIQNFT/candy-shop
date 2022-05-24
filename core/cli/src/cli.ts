@@ -219,7 +219,7 @@ programCommand('createAuction')
   .requiredOption('-tam, --token-account-mint <string>', 'NFT token mint address')
   .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
   .requiredOption('-sb, --starting-bid <string>', 'Starting Bid, in the unit of treasury mint')
-  .requiredOption('-st, --start-time <string>', 'Start Time, unix timestamp')
+  .requiredOption('-ts, --tick-size <string>', 'Tick Size')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .requiredOption('-bp, --bidding-period <string>', 'Bidding Period in seconds')
   .requiredOption('-ts, --tick-size <string>', 'tick size')
@@ -234,12 +234,13 @@ programCommand('createAuction')
       treasuryMint,
       rpcUrl,
       startingBid,
-      startTime,
       biddingPeriod,
       tickSize,
       buyNowPrice,
       shopCreator
     } = cmd.opts();
+
+    const startTime = Date.now() / 1000;
 
     const wallet = loadKey(keypair);
 
