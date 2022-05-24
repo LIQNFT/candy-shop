@@ -2,6 +2,7 @@ import * as anchor from '@project-serum/anchor';
 import { SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
 import {
   AUCTION_HOUSE_PROGRAM_ID,
+  checkCanWithdraw,
   getAtaForMint,
   getAuctionHouseEscrow,
   getAuctionHouseTradeState,
@@ -31,6 +32,8 @@ export const withdrawBid = async ({
   const [auctionEscrow] = await getAtaForMint(nftMint, auction);
 
   const [bid] = await getBid(auction, buyer.publicKey, program.programId);
+
+  await checkCanWithdraw(auction, bid, program);
 
   const bidAccount = await program.account.bid.fetch(bid);
 

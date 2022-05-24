@@ -1,4 +1,4 @@
-import { web3, BN, Program } from '@project-serum/anchor';
+import { web3, BN, Program, Idl, IdlTypes } from '@project-serum/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
@@ -22,6 +22,8 @@ import { CandyShopError, CandyShopErrorType } from '../utils/error';
 import { Creator, Metadata, parseMetadata, safeAwait } from '../utils';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { awaitTransactionSignatureConfirmation } from './program';
+import { TypeDef } from '@project-serum/anchor/dist/cjs/program/namespace/types';
+import { IdlTypeDef } from '@project-serum/anchor/dist/cjs/idl';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);
@@ -245,6 +247,108 @@ export const checkDelegateOnReceiptAccounts = async (
 
   if (buyerReceiptTokenAccountInfo && buyerReceiptTokenAccountInfo.delegate) {
     throw new CandyShopError(CandyShopErrorType.BuyerATACannotHaveDelegate);
+  }
+};
+
+export const getAuctionData = async (auction: web3.PublicKey, program: Program) => {
+  const auctionData = (await safeAwait(program.account.auctionV1.fetch(auction))).result;
+
+  if (!auctionData) {
+    throw new CandyShopError(CandyShopErrorType.AuctionDoesNotExist);
+  }
+
+  return auctionData;
+};
+
+export const getBidData = async (bid: web3.PublicKey, program: Program) => {
+  const bidData = (await safeAwait(program.account.bid.fetch(bid))).result;
+
+  if (!bidData) {
+    throw new CandyShopError(CandyShopErrorType.BidDoesNotExist);
+  }
+
+  return bidData;
+};
+
+export const checkCreationParams = (startTime: BN, startingBid: BN, buyNowPrice: BN | null, tickSize: BN) => {
+  if (
+    tickSize.lten(0) ||
+    startTime.ltn(Date.now() / 1000 - 1) ||
+    (buyNowPrice && buyNowPrice.lt(startingBid.add(tickSize)))
+  ) {
+    throw new CandyShopError(CandyShopErrorType.InvalidAuctionCreationParams);
+  }
+};
+
+export const checkCanCancel = async (auction: web3.PublicKey, program: Program) => {
+  const currentTime = new BN(Date.now() / 1000);
+  const auctionData = await getAuctionData(auction, program);
+  const auctionEndTime: BN = auctionData.startTime.add(auctionData.biddingPeriod);
+
+  if (
+    (currentTime.gt(auctionEndTime) && auctionData.highestBid != null) ||
+    (currentTime.gt(auctionData.startTime) && currentTime.lt(auctionEndTime))
+  ) {
+    throw new CandyShopError(CandyShopErrorType.CannotCancel);
+  }
+};
+
+export const checkBidPeriod = async (auction: web3.PublicKey, program: Program) => {
+  const currentTime = new BN(Date.now() / 1000);
+  const auctionData = await getAuctionData(auction, program);
+  const auctionEndTime: BN = auctionData.startTime.add(auctionData.biddingPeriod);
+
+  if (currentTime.lt(auctionData.startTime) || currentTime.gt(auctionEndTime)) {
+    throw new CandyShopError(CandyShopErrorType.NotWithinBidPeriod);
+  }
+};
+
+export const checkBidParams = async (auction: web3.PublicKey, bidPrice: BN, program: Program) => {
+  const auctionData = await getAuctionData(auction, program);
+
+  await checkBidPeriod(auction, program);
+
+  if (auctionData.buyNowPrice && bidPrice.gt(auctionData.buyNowPrice)) {
+    throw new CandyShopError(CandyShopErrorType.BidTooHigh);
+  }
+
+  if (
+    (auctionData.highestBid && bidPrice.lt(auctionData.highestBid.price)) ||
+    (!auctionData.highestBid && bidPrice.lt(auctionData.startingBid))
+  ) {
+    throw new CandyShopError(CandyShopErrorType.BidTooLow);
+  }
+};
+
+export const checkCanWithdraw = async (auction: web3.PublicKey, bid: web3.PublicKey, program: Program) => {
+  const auctionData = await getAuctionData(auction, program);
+
+  if (auctionData.highestBid && auctionData.highestBid.key.equals(bid)) {
+    throw new CandyShopError(CandyShopErrorType.CannotWithdraw);
+  }
+};
+
+export const checkBuyNowAvailable = async (auction: web3.PublicKey, program: Program): Promise<BN> => {
+  const auctionData = await getAuctionData(auction, program);
+
+  if (!auctionData.buyNowPrice) {
+    throw new Error(CandyShopErrorType.BuyNowUnavailable);
+  }
+
+  return auctionData.buyNowPrice;
+};
+
+export const checkSettleParams = async (auction: web3.PublicKey, program: Program) => {
+  const auctionData = await getAuctionData(auction, program);
+  const currentTime = new BN(Date.now() / 1000);
+  const auctionEndTime: BN = auctionData.startTime.add(auctionData.biddingPeriod);
+
+  if (currentTime.lt(auctionEndTime)) {
+    throw new CandyShopError(CandyShopErrorType.AuctionNotOver);
+  }
+
+  if (!auctionData.highestBid) {
+    throw new Error(CandyShopErrorType.AuctionHasNoBids);
   }
 };
 

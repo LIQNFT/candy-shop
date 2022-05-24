@@ -3,10 +3,13 @@ import { SYSVAR_CLOCK_PUBKEY, Transaction, PublicKey } from '@solana/web3.js';
 import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import {
   AUCTION_HOUSE_PROGRAM_ID,
+  checkSettleParams,
   getAtaForMint,
+  getAuctionData,
   getAuctionHouseEscrow,
   getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
+  getBidData,
   getBidWallet,
   getRemainigAccountsForExecuteSaleIx,
   sendTx,
@@ -33,25 +36,13 @@ export const settleAndDistributeProceeds = async ({
 }: SettleAndDistributeProceedParams) => {
   const isNative = treasuryMintIsNative(treasuryMint);
 
-  let auctionAccount;
-  try {
-    auctionAccount = await program.account.auctionV1.fetch(auction);
-  } catch {
-    throw new Error(CandyShopErrorType.AuctionDoesNotExists);
-  }
-
-  if (!auctionAccount.highestBid) {
-    throw new Error(CandyShopErrorType.AuctionHasNoBids);
-  }
-
-  const seller: PublicKey = auctionAccount.seller;
-  const bid: PublicKey = auctionAccount.highestBid.key;
-  let buyer;
-  try {
-    buyer = (await program.account.bid.fetch(bid)).buyer;
-  } catch {
-    throw new Error(CandyShopErrorType.AuctionHasNoBids);
-  }
+  await checkSettleParams(auction, program);
+  const auctionData = await getAuctionData(auction, program);
+  const bid: PublicKey = auctionData.highestBid.key;
+  const bidPrice: anchor.BN = auctionData.highestBid.price;
+  const seller: PublicKey = auctionData.seller;
+  const bidData = await getBidData(bid, program);
+  const buyer: PublicKey = bidData.buyer;
 
   const [
     [auctionEscrow],
@@ -65,8 +56,6 @@ export const settleAndDistributeProceeds = async ({
     getAtaForMint(nftMint, buyer)
   ]);
 
-  const bidAccount = await program.account.bid.fetch(bid);
-
   const [
     [escrowPaymentAccount, escrowPaymentAccountBump],
     [bidReceiptTokenAccount],
@@ -76,15 +65,7 @@ export const settleAndDistributeProceeds = async ({
   ] = await Promise.all([
     getAuctionHouseEscrow(auctionHouse, bidWallet),
     getAtaForMint(nftMint, bidWallet),
-    getAuctionHouseTradeState(
-      auctionHouse,
-      auction,
-      auctionEscrow,
-      treasuryMint,
-      nftMint,
-      new anchor.BN(1),
-      bidAccount.price
-    ),
+    getAuctionHouseTradeState(auctionHouse, auction, auctionEscrow, treasuryMint, nftMint, new anchor.BN(1), bidPrice),
     await getAuctionHouseTradeState(
       auctionHouse,
       auction,
@@ -94,15 +75,7 @@ export const settleAndDistributeProceeds = async ({
       new anchor.BN(1),
       new anchor.BN(0)
     ),
-    getAuctionHouseTradeState(
-      auctionHouse,
-      bidWallet,
-      auctionEscrow,
-      treasuryMint,
-      nftMint,
-      new anchor.BN(1),
-      bidAccount.price
-    )
+    getAuctionHouseTradeState(auctionHouse, bidWallet, auctionEscrow, treasuryMint, nftMint, new anchor.BN(1), bidPrice)
   ]);
 
   const auctionPaymentReceiptAccount = isNative ? auction : (await getAtaForMint(treasuryMint, auction))[0];

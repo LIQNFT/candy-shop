@@ -3,7 +3,10 @@ import { SYSVAR_CLOCK_PUBKEY, Transaction, PublicKey } from '@solana/web3.js';
 import {
   AUCTION_HOUSE_PROGRAM_ID,
   BuyNowAuctionParams,
+  checkBidPeriod,
+  checkBuyNowAvailable,
   getAtaForMint,
+  getAuctionData,
   getAuctionHouseEscrow,
   getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
@@ -31,18 +34,11 @@ export const buyNowAuction = async ({
 }: BuyNowAuctionParams) => {
   const isNative = treasuryMintIsNative(treasuryMint);
 
-  let auctionAccount;
-  try {
-    auctionAccount = await program.account.auctionV1.fetch(auction);
-  } catch {
-    throw new Error(CandyShopErrorType.AuctionDoesNotExists);
-  }
+  const auctionData = await getAuctionData(auction, program);
+  await checkBidPeriod(auction, program);
+  const buyNowPrice = await checkBuyNowAvailable(auction, program);
 
-  if (!auctionAccount.buyNowPrice) {
-    throw new Error(CandyShopErrorType.BuyNowUnavailable);
-  }
-
-  const seller: PublicKey = auctionAccount.seller;
+  const seller: PublicKey = auctionData.seller;
 
   const [auctionEscrow] = await getAtaForMint(nftMint, auction);
   const [buyerReceiptTokenAccount] = await getAtaForMint(nftMint, buyer.publicKey);
@@ -62,7 +58,7 @@ export const buyNowAuction = async ({
     treasuryMint,
     nftMint,
     new anchor.BN(1),
-    auctionAccount.buyNowPrice
+    buyNowPrice
   );
 
   const [freeAuctionTradeState, freeAuctionTradeStateBump] = await getAuctionHouseTradeState(
@@ -82,7 +78,7 @@ export const buyNowAuction = async ({
     treasuryMint,
     nftMint,
     new anchor.BN(1),
-    auctionAccount.buyNowPrice
+    buyNowPrice
   );
 
   const [programAsSigner, programAsSignerBump] = await getAuctionHouseProgramAsSigner();

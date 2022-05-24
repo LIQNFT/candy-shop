@@ -1,5 +1,5 @@
 import { SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
-import { CancelAuctionParams, getAtaForMint, getAuctionHouseAuthority, sendTx } from '../..';
+import { CancelAuctionParams, checkCanCancel, getAtaForMint, getAuctionHouseAuthority, sendTx } from '../..';
 
 export const cancelAuction = async ({
   seller,
@@ -10,6 +10,8 @@ export const cancelAuction = async ({
   nftMint,
   program
 }: CancelAuctionParams) => {
+  await checkCanCancel(auction, program);
+
   const [[auctionEscrow], [tokenAccount], [authority]] = await Promise.all([
     getAtaForMint(nftMint, auction),
     getAtaForMint(nftMint, seller.publicKey),

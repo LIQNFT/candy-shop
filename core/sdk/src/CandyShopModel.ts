@@ -96,7 +96,7 @@ export interface CandyShopCreateAuctionParams extends CandyShopAuctionParams {
   startTime: BN;
   /** Bidding period for auction */
   biddingPeriod: BN;
-  /** min size to outbid the highest bid */
+  /** Minimum bid increment to outbid highest bid this auction */
   tickSize: BN;
   /** Buynow price for auction, nullable */
   buyNowPrice: BN | null;

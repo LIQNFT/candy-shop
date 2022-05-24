@@ -439,7 +439,7 @@ export class CandyShop {
     const auctionAccount = await program.provider.connection.getAccountInfo(auction);
 
     if (!auctionAccount) {
-      throw new Error(CandyShopErrorType.AuctionDoesNotExists);
+      throw new Error(CandyShopErrorType.AuctionDoesNotExist);
     }
 
     const [auctionHouseAuthority] = await getAuctionHouseAuthority(
@@ -481,7 +481,7 @@ export class CandyShop {
     const auctionAccount = await program.provider.connection.getAccountInfo(auction);
 
     if (!auctionAccount) {
-      throw new Error(CandyShopErrorType.AuctionDoesNotExists);
+      throw new Error(CandyShopErrorType.AuctionDoesNotExist);
     }
 
     const [auctionHouseAuthority] = await getAuctionHouseAuthority(
@@ -531,7 +531,7 @@ export class CandyShop {
     const auctionAccount = await program.provider.connection.getAccountInfo(auction);
 
     if (!auctionAccount) {
-      throw new Error(CandyShopErrorType.AuctionDoesNotExists);
+      throw new Error(CandyShopErrorType.AuctionDoesNotExist);
     }
 
     const [auctionHouseAuthority] = await getAuctionHouseAuthority(

@@ -1,5 +1,5 @@
 import { Transaction } from '@solana/web3.js';
-import { getAtaForMint, getAuctionHouseAuthority, sendTx, CreateAuctionParams } from '../..';
+import { getAtaForMint, getAuctionHouseAuthority, sendTx, CreateAuctionParams, checkCreationParams } from '../..';
 
 export const createAuction = async ({
   seller,
@@ -15,6 +15,8 @@ export const createAuction = async ({
   buyNowPrice,
   program
 }: CreateAuctionParams) => {
+  checkCreationParams(startTime, startingBid, buyNowPrice, tickSize);
+
   const [[auctionEscrow], [tokenAccount], [authority]] = await Promise.all([
     getAtaForMint(nftMint, auction),
     getAtaForMint(nftMint, seller.publicKey),
