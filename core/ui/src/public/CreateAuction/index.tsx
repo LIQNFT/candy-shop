@@ -65,6 +65,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
     const userNFTs = allNFTs.current.concat(batchNFTs);
     allNFTs.current = userNFTs;
     setNfts(userNFTs);
+    console.log(userNFTs);
   }, []);
 
   const progressiveLoadUserNFTs = useCallback(

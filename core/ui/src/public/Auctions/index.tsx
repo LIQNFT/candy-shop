@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { CandyShop, fetchAuctionsByShopAddress } from '@liqnft/candy-shop-sdk';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Skeleton } from 'components/Skeleton';
@@ -28,11 +28,21 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
   };
 
   useEffect(() => {
+    if (!candyShop) return;
+
+    fetchAuctionsByShopAddress(candyShop.candyShopAddress.toString())
+      .then((data: any) => {
+        console.log(data);
+      })
+      .catch((error: any) => {
+        console.log(error);
+      });
+
     setTimeout(() => {
       setNfts(Array.from({ length: 5 }));
       setHasNextPage(false);
     }, 3_000);
-  }, []);
+  }, [candyShop]);
 
   return (
     <div className="candy-container">
@@ -57,9 +67,9 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
             <Card
               onClick={() => setSelected(ORDER)}
               key={index}
-              name="Auction nft"
-              ticker="Ticker"
-              imgUrl="https://bf3shfdg4einqbytuuofqvpjo2k3iawhuqeg4nud3i5wdrlram.arweave.net/CXcjlGbhENg_HE6UcWFXpdpW0AsekCG42g9o7YcVxA8?ext=jpeg"
+              name={ORDER.name}
+              ticker={ORDER.symbol}
+              imgUrl={ORDER.nftImageLink}
               label={
                 index % 2 === 0 ? (
                   <div className="candy-status-tag">HIGHEST BID</div>
@@ -92,8 +102,11 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
 };
 
 const ORDER = {
-  name: 'Auction ticker',
-  tokenMint: 'alsdjflkasjdf',
-  nftImageLink:
-    'https://bf3shfdg4einqbytuuofqvpjo2k3iawhuqeg4nud3i5wdrlram.arweave.net/CXcjlGbhENg_HE6UcWFXpdpW0AsekCG42g9o7YcVxA8?ext=jpeg'
+  name: 'Mirror #3457',
+  symbol: 'MIRROR',
+  nftImageLink: 'https://storage.mirrorworld.fun/nft/3457.png',
+  tokenMint: '3FJLJ3vUrFyLeRQthnY3okkexb13ey86vUJ1hhBFr1bj',
+  tokenAccount: '9YXHf5hGqETBJADjJ14YPbkCCC7ryk2ntdAVr24QUsKJ',
+  nftDescription:
+    'Mirrors is a collection of 11,000 unique AI Virtual Beings. Each Mirror can be upgraded and co-create narratives by talking with the collector, also offering a series of rights in the future games.'
 };

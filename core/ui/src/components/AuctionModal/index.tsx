@@ -1,3 +1,4 @@
+import * as anchor from '@project-serum/anchor';
 import React, { useState } from 'react';
 
 import { AnchorWallet } from '@solana/wallet-adapter-react';
@@ -13,6 +14,10 @@ import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 
 import './style.less';
+import { web3 } from '@project-serum/anchor';
+import { notification, NotificationType } from 'utils/rc-notification';
+
+const Logger = 'CandyShopUI/AuctionModal';
 
 export interface AuctionModalProps {
   order: OrderSchema | any;
@@ -34,8 +39,49 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
 
   const timeoutRef = useUnmountTimeout();
 
-  const placeBid = () => {
+  const placeBid = (price: number) => {
+    if (!wallet) return;
     console.log('Place bid');
+    setState(TransactionState.PROCESSING);
+    candyShop
+      .bidAuction({
+        wallet,
+        tokenAccount: new web3.PublicKey(order.tokenAccount),
+        tokenMint: new web3.PublicKey(order.tokenMint),
+        bidPrice: new anchor.BN(price)
+      })
+      .then((res) => {
+        console.log({ res });
+        notification('Bid Auction successful.', NotificationType.Success);
+        setState(TransactionState.CONFIRMED);
+      })
+      .catch((err) => {
+        notification(err.message, NotificationType.Error);
+        console.log(`${Logger} fail=`, err);
+        setState(TransactionState.DISPLAY);
+      });
+  };
+
+  const buyNow = () => {
+    if (!wallet) return;
+    console.log('Buy now');
+    setState(TransactionState.PROCESSING);
+    candyShop
+      .buyNowAuction({
+        wallet,
+        tokenAccount: new web3.PublicKey(order.tokenAccount),
+        tokenMint: new web3.PublicKey(order.tokenMint)
+      })
+      .then((res) => {
+        console.log({ res });
+        notification('Buy Now Auction successful.', NotificationType.Success);
+        setState(TransactionState.CONFIRMED);
+      })
+      .catch((err) => {
+        notification(err.message, NotificationType.Error);
+        console.log(`${Logger} fail=`, err);
+        setState(TransactionState.DISPLAY);
+      });
   };
 
   return (
@@ -45,6 +91,7 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
           <AuctionModalDetail
             order={order}
             buy={placeBid}
+            buyNow={buyNow}
             walletPublicKey={wallet?.publicKey}
             walletConnectComponent={walletConnectComponent}
             candyShop={candyShop}

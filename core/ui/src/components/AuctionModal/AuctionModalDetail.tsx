@@ -12,7 +12,8 @@ import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 
 export interface AuctionModalDetailProps {
   order: OrderSchema;
-  buy: () => void;
+  buy: (price: number) => void;
+  buyNow: () => void;
   walletPublicKey: web3.PublicKey | undefined;
   walletConnectComponent: React.ReactElement;
   candyShop: CandyShop;
@@ -30,6 +31,7 @@ const getPrice = (candyShop: CandyShop, order: OrderSchema) => {
 export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
   order,
   buy,
+  buyNow,
   walletPublicKey,
   walletConnectComponent,
   candyShop
@@ -72,8 +74,12 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
     getRetainCountdown();
   }, [countDownRef, countdown, timeoutRef]);
 
-  const onChangeInput = () => {
-    //
+  const onChangeInput = (e: any) => {
+    if (orderPrice && e.target.value <= orderPrice) {
+      return setPrice(Number(orderPrice));
+    }
+
+    setPrice(e.target.value);
   };
 
   const orderPrice = getPrice(candyShop, order);
@@ -81,7 +87,11 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
   const isEnableBuyNow = true;
 
   const PlaceBidButton = walletPublicKey ? (
-    <button className={`candy-button ${isEnableBuyNow ? 'candy-button-ghost' : ''}`} onClick={buy}>
+    <button
+      disabled={Boolean(!price)}
+      className={`candy-button ${isEnableBuyNow ? 'candy-button-ghost' : ''}`}
+      onClick={() => price && buy(price)}
+    >
       Place Bid
     </button>
   ) : (
@@ -109,7 +119,9 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
                 <div className="candy-label">BUY NOW PRICE</div>
                 <div className="candy-price">{priceContent}</div>
               </div>
-              <button className="candy-button">Buy Now</button>
+              <button className="candy-button" onClick={buyNow}>
+                Buy Now
+              </button>
             </div>
           )}
           <div className="candy-auction-modal-form-item">
