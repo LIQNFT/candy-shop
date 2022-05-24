@@ -16,7 +16,7 @@ export interface Auction {
   sellerAddress: string;
   startingBid: string;
   startTime: string;
-  biddingPeroid: string;
+  biddingPeriod: string;
   highestBid: string;
   buyNowPrice: string | null;
   status: AuctionStatus;
