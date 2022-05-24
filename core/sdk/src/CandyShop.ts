@@ -602,7 +602,8 @@ export class CandyShop {
       auctionHouse,
       feeAccount,
       treasuryAccount,
-      program
+      program,
+      env: this._env
     } as BuyNowAuctionParams);
     return tx.txId;
   }
@@ -649,7 +650,8 @@ export class CandyShop {
       auctionHouse,
       feeAccount,
       treasuryAccount,
-      program
+      program,
+      env: this._env
     } as SettleAndDistributeProceedParams);
     return tx.txId;
   }

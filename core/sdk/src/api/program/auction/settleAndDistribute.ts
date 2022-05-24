@@ -7,7 +7,6 @@ import {
   getAuctionHouseEscrow,
   getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
-  getBid,
   getBidWallet,
   getRemainigAccountsForExecuteSaleIx,
   sendTx,
@@ -15,6 +14,7 @@ import {
   treasuryMintIsNative
 } from '../..';
 import { CandyShopErrorType, Creator } from '../../../utils';
+import { requestExtraComputeIx } from './requestExtraComputeIx';
 
 export const settleAndDistributeProceeds = async ({
   settler,
@@ -28,7 +28,8 @@ export const settleAndDistributeProceeds = async ({
   auction,
   auctionBump,
   nftMint,
-  program
+  program,
+  env
 }: SettleAndDistributeProceedParams) => {
   const isNative = treasuryMintIsNative(treasuryMint);
 
@@ -174,6 +175,10 @@ export const settleAndDistributeProceeds = async ({
       clock: SYSVAR_CLOCK_PUBKEY
     })
     .instruction();
+
+  if (env === 'mainnet-beta') {
+    transaction.add(requestExtraComputeIx(400000));
+  }
 
   transaction.add(ix1, ix2);
   const txId = await sendTx(settler, transaction, program);

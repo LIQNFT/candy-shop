@@ -76,6 +76,7 @@ export interface BuyNowAuctionParams extends AuctionParams {
   auctionHouse: web3.PublicKey;
   feeAccount: web3.PublicKey;
   treasuryAccount: web3.PublicKey;
+  env: string;
 }
 
 export interface SettleAndDistributeProceedParams extends AuctionParams {
@@ -85,4 +86,5 @@ export interface SettleAndDistributeProceedParams extends AuctionParams {
   auctionHouse: web3.PublicKey;
   feeAccount: web3.PublicKey;
   treasuryAccount: web3.PublicKey;
+  env: string;
 }
