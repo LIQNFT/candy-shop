@@ -20,6 +20,8 @@ export interface Auction {
   highestBid: string;
   buyNowPrice: string | null;
   status: AuctionStatus;
+  highestBidBuyer?: string;
+  highestBidPrice?: string;
 
   nftUri?: string;
   name: string;
