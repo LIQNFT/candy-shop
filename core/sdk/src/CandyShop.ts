@@ -367,7 +367,7 @@ export class CandyShop {
    * @param {CandyShopCreateAuctionParams} params required parameters for sell action
    */
   public async createAuction(params: CandyShopCreateAuctionParams): Promise<string> {
-    const { tokenAccount, tokenMint, startingBid, startTime, biddingPeriod, buyNowPrice, wallet } = params;
+    const { tokenAccount, tokenMint, startingBid, startTime, biddingPeriod, buyNowPrice, wallet, tickSize } = params;
 
     if (wallet.publicKey.toString() !== this.candyShopCreatorAddress.toString()) {
       throw new CandyShopError(CandyShopErrorType.NonShopOwner);
@@ -408,6 +408,7 @@ export class CandyShop {
       startingBid,
       startTime,
       biddingPeriod,
+      tickSize,
       buyNowPrice,
       program
     } as CreateAuctionParams);

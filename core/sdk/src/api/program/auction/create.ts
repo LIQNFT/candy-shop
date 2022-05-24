@@ -11,6 +11,7 @@ export const createAuction = async ({
   startingBid,
   startTime,
   biddingPeriod,
+  tickSize,
   buyNowPrice,
   program
 }: CreateAuctionParams) => {
@@ -23,7 +24,7 @@ export const createAuction = async ({
   const transaction = new Transaction();
 
   const ix = await program.methods
-    .createAuction(startingBid, startTime, biddingPeriod, buyNowPrice)
+    .createAuction(startingBid, startTime, biddingPeriod, tickSize, buyNowPrice)
     .accounts({
       auction,
       auctionEscrow,

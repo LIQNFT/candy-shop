@@ -219,9 +219,10 @@ programCommand('createAuction')
   .requiredOption('-tam, --token-account-mint <string>', 'NFT token mint address')
   .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
   .requiredOption('-sb, --starting-bid <string>', 'Starting Bid, in the unit of treasury mint')
-  // .requiredOption('-st, --start-time <string>', 'Start Time')
+  .requiredOption('-st, --start-time <string>', 'Start Time, unix timestamp')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
-  .requiredOption('-bp, --bidding-period <string>', 'Bidding Period')
+  .requiredOption('-bp, --bidding-period <string>', 'Bidding Period in seconds')
+  .requiredOption('-ts, --tick-size <string>', 'tick size')
   .option('-bnp, --buy-now-price <string>', 'Buy now price, in the unit of treasury mint, nullable')
   .action(async (name, cmd) => {
     console.log(name);
@@ -233,13 +234,12 @@ programCommand('createAuction')
       treasuryMint,
       rpcUrl,
       startingBid,
-      // startTime,
+      startTime,
       biddingPeriod,
+      tickSize,
       buyNowPrice,
       shopCreator
     } = cmd.opts();
-
-    const startTime = Date.now() / 1000;
 
     const wallet = loadKey(keypair);
 
@@ -264,6 +264,7 @@ programCommand('createAuction')
       startingBid: new anchor.BN(startingBid),
       startTime: new anchor.BN(startTime),
       biddingPeriod: new anchor.BN(biddingPeriod),
+      tickSize: new anchor.BN(tickSize),
       buyNowPrice: buyNowPrice ? new anchor.BN(buyNowPrice) : null,
       wallet
     });

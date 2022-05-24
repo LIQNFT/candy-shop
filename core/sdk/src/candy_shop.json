@@ -714,6 +714,10 @@
           "type": "u64"
         },
         {
+          "name": "tickSize",
+          "type": "u64"
+        },
+        {
           "name": "buyNowPrice",
           "type": {
             "option": "u64"
@@ -886,7 +890,7 @@
           "isSigner": false
         },
         {
-          "name": "associatedTokenProgram",
+          "name": "ataProgram",
           "isMut": false,
           "isSigner": false
         },
@@ -1019,7 +1023,7 @@
           "isSigner": false
         },
         {
-          "name": "associatedTokenProgram",
+          "name": "ataProgram",
           "isMut": false,
           "isSigner": false
         },
@@ -1562,6 +1566,10 @@
             "type": "u64"
           },
           {
+            "name": "tickSize",
+            "type": "u64"
+          },
+          {
             "name": "highestBid",
             "type": {
               "option": {
@@ -1625,6 +1633,74 @@
       }
     },
     {
+      "name": "ErrorCode",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "InvalidFeeSplit"
+          },
+          {
+            "name": "InvalidSfbp"
+          },
+          {
+            "name": "NameTooLong"
+          },
+          {
+            "name": "NumericalOverflow"
+          },
+          {
+            "name": "BuyNowPriceNotProvived"
+          },
+          {
+            "name": "InvalidTickSize"
+          },
+          {
+            "name": "NotCSCreator"
+          },
+          {
+            "name": "AuctionStarted"
+          },
+          {
+            "name": "AuctionOver"
+          },
+          {
+            "name": "AuctionNotStarted"
+          },
+          {
+            "name": "AuctionNotOver"
+          },
+          {
+            "name": "CannotCancel"
+          },
+          {
+            "name": "InvalidSeller"
+          },
+          {
+            "name": "InvalidBuyer"
+          },
+          {
+            "name": "BidTooLow"
+          },
+          {
+            "name": "BidTooHigh"
+          },
+          {
+            "name": "LeadingBid"
+          },
+          {
+            "name": "BuyNowNotEnabled"
+          },
+          {
+            "name": "NoValidBids"
+          },
+          {
+            "name": "InvalidBidAccountPassed"
+          }
+        ]
+      }
+    },
+    {
       "name": "AccountType",
       "type": {
         "kind": "enum",
@@ -1657,103 +1733,6 @@
           }
         ]
       }
-    }
-  ],
-  "errors": [
-    {
-      "code": 6000,
-      "name": "InvalidFeeSplit",
-      "msg": "Invalid fee split"
-    },
-    {
-      "code": 6001,
-      "name": "InvalidSfbp",
-      "msg": "Invalid seller fee basis points"
-    },
-    {
-      "code": 6002,
-      "name": "NameTooLong",
-      "msg": "Name too long"
-    },
-    {
-      "code": 6003,
-      "name": "NumericalOverflow",
-      "msg": "Numerical Overflow"
-    },
-    {
-      "code": 6004,
-      "name": "BuyNowPriceNotProvived",
-      "msg": "Buy now price must be provided when buy now is enabled"
-    },
-    {
-      "code": 6005,
-      "name": "NotCSCreator",
-      "msg": "The caller of this instruction must be the Candy Shop creator"
-    },
-    {
-      "code": 6006,
-      "name": "AuctionStarted",
-      "msg": "Cannot cancel an auction that has already begun"
-    },
-    {
-      "code": 6007,
-      "name": "AuctionOver",
-      "msg": "The bidding period for this auction is over"
-    },
-    {
-      "code": 6008,
-      "name": "AuctionNotStarted",
-      "msg": "The bidding period for this auction has not started"
-    },
-    {
-      "code": 6009,
-      "name": "AuctionNotOver",
-      "msg": "The bidding period for this auction is not over"
-    },
-    {
-      "code": 6010,
-      "name": "CannotCancel",
-      "msg": "Auction has a winning bid. It cannot be cancelled"
-    },
-    {
-      "code": 6011,
-      "name": "InvalidSeller",
-      "msg": "The provided seller is not the one who created the auction"
-    },
-    {
-      "code": 6012,
-      "name": "InvalidBuyer",
-      "msg": "The provided buyer is not the one who made the bid"
-    },
-    {
-      "code": 6013,
-      "name": "BidTooLow",
-      "msg": "Placed bid does not beat current highest bid price"
-    },
-    {
-      "code": 6014,
-      "name": "BidTooHigh",
-      "msg": "Provided bid price is greater than `buy_now_price`. Please call `BuyNow` instruction instead"
-    },
-    {
-      "code": 6015,
-      "name": "LeadingBid",
-      "msg": "Cannot remove the leading bid in this auction"
-    },
-    {
-      "code": 6016,
-      "name": "BuyNowNotEnabled",
-      "msg": "Buy now is not available on this auction"
-    },
-    {
-      "code": 6017,
-      "name": "NoValidBids",
-      "msg": "No valid bids were placed in this auction"
-    },
-    {
-      "code": 6018,
-      "name": "InvalidBidAccountPassed",
-      "msg": "Provided bid account does not match the highest bid for the auction"
     }
   ],
   "metadata": {

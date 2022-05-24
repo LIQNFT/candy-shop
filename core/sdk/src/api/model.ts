@@ -46,6 +46,7 @@ export interface CreateAuctionParams extends AuctionParams {
   startingBid: anchor.BN;
   startTime: anchor.BN;
   biddingPeriod: anchor.BN;
+  tickSize: anchor.BN;
   buyNowPrice: anchor.BN | null;
 }
 
