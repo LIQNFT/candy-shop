@@ -19,7 +19,7 @@ import {
 } from './constants';
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
 import { CandyShopError, CandyShopErrorType } from '../utils/error';
-import { safeAwait } from '../utils';
+import { Creator, Metadata, parseMetadata, safeAwait } from '../utils';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { awaitTransactionSignatureConfirmation } from './program';
 
@@ -296,4 +296,61 @@ export const sendTx = async (
 
 export const treasuryMintIsNative = (treasuryMint: web3.PublicKey) => {
   return treasuryMint.equals(WRAPPED_SOL_MINT);
+};
+
+export const getNftCreators = async (metadata: web3.PublicKey, connection: web3.Connection) => {
+  const metadataObj = await connection.getAccountInfo(metadata);
+
+  if (!metadataObj?.data) {
+    throw new Error(CandyShopErrorType.InvalidNFTMetadata);
+  }
+
+  const metadataDecoded: Metadata = parseMetadata(Buffer.from(metadataObj.data));
+
+  if (!metadataDecoded || !metadataDecoded.data || !metadataDecoded.data.creators) {
+    throw new Error(CandyShopErrorType.InvalidNFTMetadata);
+  }
+
+  return metadataDecoded.data.creators;
+};
+
+export const getRemainigAccountsForExecuteSaleIx = async (
+  metadata: web3.PublicKey,
+  connection: web3.Connection,
+  treasuryMint: web3.PublicKey,
+  isNative: boolean
+) => {
+  const creators: Creator[] = await getNftCreators(metadata, connection);
+
+  const remainingAccounts = isNative
+    ? creators.map((c) => {
+        return {
+          pubkey: new web3.PublicKey(c.address),
+          isWritable: true,
+          isSigner: false
+        };
+      })
+    : (
+        await Promise.all(
+          creators.map(async (c) => {
+            const key = new web3.PublicKey(c.address);
+            const ataAddress = (await getAtaForMint(treasuryMint, key))[0];
+
+            return [
+              {
+                pubkey: key,
+                isWritable: true,
+                isSigner: false
+              },
+              {
+                pubkey: ataAddress,
+                isWritable: true,
+                isSigner: false
+              }
+            ];
+          })
+        )
+      ).flat();
+
+  return remainingAccounts;
 };

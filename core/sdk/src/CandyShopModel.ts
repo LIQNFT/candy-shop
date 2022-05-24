@@ -97,7 +97,7 @@ export interface CandyShopCreateAuctionParams extends CandyShopAuctionParams {
   /** Bidding period for auction */
   biddingPeriod: BN;
   /** Buynow price for auction, nullable */
-  buyNowPrice: BN;
+  buyNowPrice: BN | null;
 }
 
 /**
@@ -117,3 +117,13 @@ export interface CandyShopBidAuctionParams extends CandyShopAuctionParams {
  * Arguments required for calling Candy Shop withdraw auction bid action
  */
 export interface CandyShopWithdrawAuctionBidParams extends CandyShopAuctionParams {}
+
+/**
+ * Arguments required for calling Candy Shop the auction buy now action
+ */
+export interface CandyShopBuyNowParams extends CandyShopAuctionParams {}
+
+/**
+ * Arguments required for calling Candy Shop settle auction and distribute proceed actions
+ */
+export interface CandyShopSettleAndDistributeParams extends CandyShopAuctionParams {}

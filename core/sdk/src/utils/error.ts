@@ -9,7 +9,9 @@ export enum CandyShopErrorType {
   TradeStateExists = 'TradeStateExists',
   NonShopOwner = 'NonShopOwner',
   AuctionExists = 'AuctionExists',
-  AuctionDoesNotExists = 'AuctionDoesNotExists'
+  AuctionDoesNotExists = 'AuctionDoesNotExists',
+  AuctionHasNoBids = 'AuctionHasNoBids',
+  BuyNowUnavailable = 'BuyNowUnavailable'
 }
 
 export const CandyShopErrorMsgMap = {
@@ -23,7 +25,9 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.TradeStateExists]: 'Sell Order already placed.',
   [CandyShopErrorType.NonShopOwner]: 'Only shop owner can create auction.',
   [CandyShopErrorType.AuctionExists]: 'Auction already exists.',
-  [CandyShopErrorType.AuctionDoesNotExists]: 'Auction does not exists.'
+  [CandyShopErrorType.AuctionDoesNotExists]: 'Auction does not exists.',
+  [CandyShopErrorType.AuctionHasNoBids]: 'Auctions without bids cannot be settled.',
+  [CandyShopErrorType.BuyNowUnavailable]: 'Buy now is unavailabel on this auction.'
 };
 
 export class CandyShopError extends Error {

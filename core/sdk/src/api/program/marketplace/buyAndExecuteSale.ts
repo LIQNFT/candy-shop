@@ -155,7 +155,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     accountsRequireAta.push(counterParty);
   }
 
-  const allAtaIxs = [];
+  const allAtaIxs: web3.TransactionInstruction[] = [];
 
   const treasuyMintAtaIxs = await compileAtaCreationIxs(wallet.publicKey, accountsRequireAta, treasuryMint, program);
   if (treasuyMintAtaIxs) {

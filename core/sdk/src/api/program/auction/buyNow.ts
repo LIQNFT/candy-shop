@@ -1,5 +1,5 @@
 import * as anchor from '@project-serum/anchor';
-import { SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
+import { SYSVAR_CLOCK_PUBKEY, Transaction, PublicKey } from '@solana/web3.js';
 import {
   AUCTION_HOUSE_PROGRAM_ID,
   BuyNowAuctionParams,
@@ -7,12 +7,13 @@ import {
   getAuctionHouseEscrow,
   getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
+  getRemainigAccountsForExecuteSaleIx,
   sendTx,
   treasuryMintIsNative
 } from '../..';
+import { CandyShopErrorType } from '../../../utils';
 
 export const buyNowAuction = async ({
-  seller,
   candyShop,
   auction,
   auctionBump,
@@ -24,10 +25,22 @@ export const buyNowAuction = async ({
   auctionHouse,
   feeAccount,
   treasuryAccount,
-  buyNowPrice,
   program
 }: BuyNowAuctionParams) => {
   const isNative = treasuryMintIsNative(treasuryMint);
+
+  let auctionAccount;
+  try {
+    auctionAccount = await program.account.auctionV1.fetch(auction);
+  } catch {
+    throw new Error(CandyShopErrorType.AuctionDoesNotExists);
+  }
+
+  if (!auctionAccount.buyNowPrice) {
+    throw new Error(CandyShopErrorType.BuyNowUnavailable);
+  }
+
+  const seller: PublicKey = auctionAccount.seller;
 
   const [auctionEscrow] = await getAtaForMint(nftMint, auction);
   const [buyerReceiptTokenAccount] = await getAtaForMint(nftMint, buyer.publicKey);
@@ -47,7 +60,7 @@ export const buyNowAuction = async ({
     treasuryMint,
     nftMint,
     new anchor.BN(1),
-    buyNowPrice
+    auctionAccount.buyNowPrice
   );
 
   const [freeAuctionTradeState, freeAuctionTradeStateBump] = await getAuctionHouseTradeState(
@@ -67,10 +80,17 @@ export const buyNowAuction = async ({
     treasuryMint,
     nftMint,
     new anchor.BN(1),
-    buyNowPrice
+    auctionAccount.buyNowPrice
   );
 
   const [programAsSigner, programAsSignerBump] = await getAuctionHouseProgramAsSigner();
+
+  const remainingAccounts = await getRemainigAccountsForExecuteSaleIx(
+    metadata,
+    program.provider.connection,
+    treasuryMint,
+    isNative
+  );
 
   const transaction = new Transaction();
 
@@ -109,6 +129,7 @@ export const buyNowAuction = async ({
       programAsSigner,
       clock: SYSVAR_CLOCK_PUBKEY
     })
+    .remainingAccounts(remainingAccounts)
     .instruction();
 
   transaction.add(ix);
