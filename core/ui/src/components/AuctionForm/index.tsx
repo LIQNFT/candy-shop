@@ -32,11 +32,13 @@ export type FormType = {
   buy_now?: boolean;
   start_now?: boolean;
   start_date?: string;
+  tickSize: string;
 };
 
 export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit, currencySymbol, fee, nft }) => {
   const [form, setForm] = useState<FormType>({
     starting_bid: '',
+    tickSize: '',
     buy_now_price: '',
     bidding_period: 24,
     clock_format: 'PM',
@@ -91,6 +93,22 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit, currencySymb
           required
           min={0}
           value={form['starting_bid']}
+          onChange={onChangeInput}
+          onWheel={preventUpdateNumberOnWheel}
+        />
+        <span className="candy-auction-form-sol">{currencySymbol}</span>
+      </div>
+
+      <div className="candy-auction-form-item">
+        <label htmlFor="tickSize">Minimum Incremental Bid</label>
+        <input
+          id="tickSize"
+          name="tickSize"
+          type="number"
+          placeholder="0"
+          required
+          min={0}
+          value={form['tickSize']}
           onChange={onChangeInput}
           onWheel={preventUpdateNumberOnWheel}
         />

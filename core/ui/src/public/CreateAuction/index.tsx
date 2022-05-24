@@ -151,11 +151,13 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
 
     const startingBid = new BN(Number(auctionForm.starting_bid) * 10 ** candyShop.currencyDecimals);
     const startTime = new BN(dayjs(getStartTime(auctionForm)).unix());
-    const biddingPeriod = new BN(auctionForm.bidding_period);
+    const biddingPeriod = new BN(Number(auctionForm.bidding_period) * 3600);
     const buyNowPrice = auctionForm.buy_now
       ? new BN(Number(auctionForm.buy_now_price) * 10 ** candyShop.currencyDecimals)
       : null;
+    const tickSize = new BN(Number(auctionForm.tickSize) * 10 ** candyShop.currencyDecimals);
 
+    console.log('candyShopAddress===', candyShop.candyShopAddress.toString());
     candyShop
       .createAuction({
         startingBid,
@@ -164,7 +166,8 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
         buyNowPrice,
         tokenAccount: new web3.PublicKey(selected.tokenAccountAddress),
         tokenMint: new web3.PublicKey(selected.tokenMintAddress),
-        wallet
+        wallet,
+        tickSize
       })
       .then((res) => {
         console.log({ res });

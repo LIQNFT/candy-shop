@@ -38,10 +38,11 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
   };
 
   useEffect(() => {
-    fetchAuctionsByShopAddress('HCF8y8wjrUQUBuD2kF7Np24UaaQTHoicUYSWidW1t1bw')
+    fetchAuctionsByShopAddress(candyShop.candyShopAddress.toString())
       .then((data: any) => {
         console.log(data);
         setNfts(data.result);
+        setHasNextPage(false);
       })
       .catch((error: any) => {
         console.log(error);
