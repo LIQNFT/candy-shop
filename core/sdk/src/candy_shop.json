@@ -698,6 +698,11 @@
           "name": "rent",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "clock",
+          "isMut": false,
+          "isSigner": false
         }
       ],
       "args": [
@@ -1650,7 +1655,10 @@
             "name": "NumericalOverflow"
           },
           {
-            "name": "BuyNowPriceNotProvived"
+            "name": "BuyNowPriceTooLow"
+          },
+          {
+            "name": "InvalidStartTime"
           },
           {
             "name": "InvalidTickSize"
