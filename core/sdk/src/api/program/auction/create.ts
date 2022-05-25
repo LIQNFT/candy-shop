@@ -1,4 +1,4 @@
-import { Transaction } from '@solana/web3.js';
+import { Transaction, SYSVAR_CLOCK_PUBKEY } from '@solana/web3.js';
 import { getAtaForMint, getAuctionHouseAuthority, sendTx, CreateAuctionParams, checkCreationParams } from '../..';
 
 export const createAuction = async ({
@@ -34,7 +34,8 @@ export const createAuction = async ({
       wallet: seller.publicKey,
       nftMint,
       candyShop,
-      authority
+      authority,
+      clock: SYSVAR_CLOCK_PUBKEY
     })
     .instruction();
 
