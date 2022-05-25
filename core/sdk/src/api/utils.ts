@@ -273,7 +273,7 @@ export const getBidData = async (bid: web3.PublicKey, program: Program) => {
 export const checkCreationParams = (startTime: BN, startingBid: BN, buyNowPrice: BN | null, tickSize: BN) => {
   if (
     tickSize.lten(0) ||
-    startTime.ltn(Date.now() / 1000 - 1) ||
+    startTime.ltn(Date.now() / 1000 - 60) ||
     (buyNowPrice && buyNowPrice.lt(startingBid.add(tickSize)))
   ) {
     throw new CandyShopError(CandyShopErrorType.InvalidAuctionCreationParams);
