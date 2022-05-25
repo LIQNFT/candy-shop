@@ -19,7 +19,8 @@ export enum CandyShopErrorType {
   AuctionHasNoBids = 'AuctionHasNoBids',
   CannotWithdraw = 'CannotWithdraw',
   BuyNowUnavailable = 'BuyNowUnavailable',
-  AuctionNotOver = 'AuctionNotOver'
+  AuctionNotOver = 'AuctionNotOver',
+  FeeAccountEmpty = 'FeeAccountEmpty'
 }
 
 export const CandyShopErrorMsgMap = {
@@ -46,7 +47,8 @@ export const CandyShopErrorMsgMap = {
     'This bid is currently the highest for the auction, it cannot be withdrawn at this time.',
   [CandyShopErrorType.InvalidAuctionCreationParams]:
     'One or more of the passed auction creation parameters are invalid.',
-  [CandyShopErrorType.AuctionNotOver]: 'Attempted to settle and auction that is not over.'
+  [CandyShopErrorType.AuctionNotOver]: 'Attempted to settle and auction that is not over.',
+  [CandyShopErrorType.FeeAccountEmpty]: 'Please contact shop owner to top up shop syrup balance.'
 };
 
 export class CandyShopError extends Error {

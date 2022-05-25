@@ -3,6 +3,7 @@ import { SYSVAR_CLOCK_PUBKEY, Transaction, PublicKey } from '@solana/web3.js';
 import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import {
   AUCTION_HOUSE_PROGRAM_ID,
+  checkAHFeeAccountBalance,
   checkSettleParams,
   getAtaForMint,
   getAuctionData,
@@ -34,6 +35,8 @@ export const settleAndDistributeProceeds = async ({
   program,
   env
 }: SettleAndDistributeProceedParams) => {
+  await checkAHFeeAccountBalance(feeAccount, program.provider.connection);
+
   const isNative = treasuryMintIsNative(treasuryMint);
 
   await checkSettleParams(auction, program);

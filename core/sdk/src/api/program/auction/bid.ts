@@ -3,6 +3,7 @@ import { SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
 import {
   AUCTION_HOUSE_PROGRAM_ID,
   BidAuctionParams,
+  checkAHFeeAccountBalance,
   checkBidParams,
   getAtaForMint,
   getAuctionHouseEscrow,
@@ -26,6 +27,7 @@ export const bidAuction = async ({
   bidPrice,
   program
 }: BidAuctionParams) => {
+  await checkAHFeeAccountBalance(feeAccount, program.provider.connection);
   await checkBidParams(auction, bidPrice, program);
 
   const [bidWallet, bidWalletBump] = await getBidWallet(auction, buyer.publicKey, program.programId);

@@ -458,3 +458,15 @@ export const getRemainigAccountsForExecuteSaleIx = async (
 
   return remainingAccounts;
 };
+
+export const checkAHFeeAccountBalance = async (feeAccount: web3.PublicKey, connection: web3.Connection) => {
+  const feeAccountInfo = await connection.getAccountInfo(feeAccount);
+  if (!feeAccountInfo) {
+    throw new CandyShopError(CandyShopErrorType.FeeAccountEmpty);
+  }
+
+  const rentExemptBal = await connection.getMinimumBalanceForRentExemption(feeAccountInfo.data.length);
+  if (feeAccountInfo.lamports < rentExemptBal) {
+    throw new CandyShopError(CandyShopErrorType.FeeAccountEmpty);
+  }
+};

@@ -3,6 +3,7 @@ import { SYSVAR_CLOCK_PUBKEY, Transaction, PublicKey } from '@solana/web3.js';
 import {
   AUCTION_HOUSE_PROGRAM_ID,
   BuyNowAuctionParams,
+  checkAHFeeAccountBalance,
   checkBidPeriod,
   checkBuyNowAvailable,
   getAtaForMint,
@@ -14,7 +15,6 @@ import {
   sendTx,
   treasuryMintIsNative
 } from '../..';
-import { CandyShopErrorType } from '../../../utils';
 import { requestExtraComputeIx } from './requestExtraComputeIx';
 
 export const buyNowAuction = async ({
@@ -32,6 +32,8 @@ export const buyNowAuction = async ({
   program,
   env
 }: BuyNowAuctionParams) => {
+  await checkAHFeeAccountBalance(feeAccount, program.provider.connection);
+
   const isNative = treasuryMintIsNative(treasuryMint);
 
   const auctionData = await getAuctionData(auction, program);
