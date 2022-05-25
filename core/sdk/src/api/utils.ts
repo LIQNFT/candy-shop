@@ -463,6 +463,6 @@ export const getRemainigAccountsForExecuteSaleIx = async (
 export const checkAHFeeAccountBalance = async (feeAccount: web3.PublicKey, connection: web3.Connection) => {
   const feeAccountInfo = await connection.getAccountInfo(feeAccount);
   if (!feeAccountInfo || feeAccountInfo.lamports < FEE_ACCOUNT_MIN_BAL) {
-    throw new CandyShopError(CandyShopErrorType.FeeAccountEmpty);
+    throw new CandyShopError(CandyShopErrorType.InsufficientFeeAccountBalance);
   }
 };
