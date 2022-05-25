@@ -890,7 +890,7 @@
           "isSigner": false
         },
         {
-          "name": "ataProgram",
+          "name": "associatedTokenProgram",
           "isMut": false,
           "isSigner": false
         },
@@ -1023,7 +1023,7 @@
           "isSigner": false
         },
         {
-          "name": "ataProgram",
+          "name": "associatedTokenProgram",
           "isMut": false,
           "isSigner": false
         },
