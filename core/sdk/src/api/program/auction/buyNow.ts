@@ -3,6 +3,7 @@ import { SYSVAR_CLOCK_PUBKEY, Transaction, PublicKey } from '@solana/web3.js';
 import {
   AUCTION_HOUSE_PROGRAM_ID,
   BuyNowAuctionParams,
+  checkAHFeeAccountBalance,
   checkBidPeriod,
   checkBuyNowAvailable,
   getAtaForMint,
@@ -16,22 +17,22 @@ import {
 } from '../..';
 import { requestExtraComputeIx } from './requestExtraComputeIx';
 
-export const buyNowAuction = async (params: BuyNowAuctionParams) => {
-  const {
-    candyShop,
-    auction,
-    auctionBump,
-    authority,
-    buyer,
-    treasuryMint,
-    nftMint,
-    metadata,
-    auctionHouse,
-    feeAccount,
-    treasuryAccount,
-    program,
-    env
-  } = params;
+export const buyNowAuction = async ({
+  candyShop,
+  auction,
+  auctionBump,
+  authority,
+  buyer,
+  treasuryMint,
+  nftMint,
+  metadata,
+  auctionHouse,
+  feeAccount,
+  treasuryAccount,
+  program,
+  env
+}: BuyNowAuctionParams) => {
+  await checkAHFeeAccountBalance(feeAccount, program.provider.connection);
 
   const isNative = treasuryMintIsNative(treasuryMint);
 
