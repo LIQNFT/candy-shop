@@ -24,6 +24,7 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { awaitTransactionSignatureConfirmation } from './program';
 import { TypeDef } from '@project-serum/anchor/dist/cjs/program/namespace/types';
 import { IdlTypeDef } from '@project-serum/anchor/dist/cjs/idl';
+import { FEE_ACCOUNT_MIN_BAL } from '.';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);
@@ -461,12 +462,7 @@ export const getRemainigAccountsForExecuteSaleIx = async (
 
 export const checkAHFeeAccountBalance = async (feeAccount: web3.PublicKey, connection: web3.Connection) => {
   const feeAccountInfo = await connection.getAccountInfo(feeAccount);
-  if (!feeAccountInfo) {
-    throw new CandyShopError(CandyShopErrorType.FeeAccountEmpty);
-  }
-
-  const rentExemptBal = await connection.getMinimumBalanceForRentExemption(feeAccountInfo.data.length);
-  if (feeAccountInfo.lamports < rentExemptBal) {
+  if (!feeAccountInfo || feeAccountInfo.lamports < FEE_ACCOUNT_MIN_BAL) {
     throw new CandyShopError(CandyShopErrorType.FeeAccountEmpty);
   }
 };
