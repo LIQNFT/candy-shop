@@ -33,10 +33,12 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
   const [hasNextPage, setHasNextPage] = useState<boolean>(true);
   const [startIndex, setStartIndex] = useState(0);
 
-  const loadNextPage = (startIndex: number, limit: number) => () => {
+  const loadNextPage = (startIndex: number) => () => {
+    if (startIndex === 0) return;
+
     fetchAuctionsByShopAddress(candyShop.candyShopAddress.toString(), {
-      limit: limit,
       offset: startIndex,
+      limit: ORDER_FETCH_LIMIT,
       status: [AuctionStatus.CREATED, AuctionStatus.EXPIRED, AuctionStatus.STARTED]
     })
       .then((data: any) => {
@@ -46,8 +48,8 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
         } else {
           setHasNextPage(true);
         }
-        setStartIndex((startIndex) => startIndex + limit);
-        setNfts((existingOrders) => [...existingOrders, ...data.result]);
+        setStartIndex((prevIndex) => prevIndex + ORDER_FETCH_LIMIT);
+        setNfts((prevNfts) => [...prevNfts, ...data.result]);
       })
       .catch((error: any) => {
         console.info('fetchAuctionsByShopAddress failed: ', error);
@@ -60,8 +62,8 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
 
   useEffect(() => {
     fetchAuctionsByShopAddress(candyShop.candyShopAddress.toString(), {
-      limit: ORDER_FETCH_LIMIT,
       offset: 0,
+      limit: ORDER_FETCH_LIMIT,
       status: [AuctionStatus.CREATED, AuctionStatus.EXPIRED, AuctionStatus.STARTED]
     })
       .then((data: any) => {
@@ -80,7 +82,7 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
     <div className="candy-container">
       <InfiniteScroll
         dataLength={nfts.length}
-        next={loadNextPage(startIndex, ORDER_FETCH_LIMIT)}
+        next={loadNextPage(startIndex)}
         hasMore={hasNextPage}
         loader={
           <div className="candy-container-list">
@@ -104,9 +106,12 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
               const highestBidPriceContent = highestBidPrice ? `${highestBidPrice} ${candyShop.currencySymbol}` : 'N/A';
               const second = Math.floor(Number(order.startTime) + Number(order.biddingPeriod) - dayjs().unix());
               const countdown = dayjs().add(second, 'second').unix();
-              const getRetainCountdown = () => {
+
+              const getRetainCountdown: any = () => {
                 const countdownElement = document.querySelector(`#x${order.auctionAddress}`);
-                if (!countdownElement) return;
+                if (!countdownElement) {
+                  return setTimeout(getRetainCountdown, 1000);
+                }
 
                 const NOW = dayjs().unix();
                 const t = countdown - NOW;
