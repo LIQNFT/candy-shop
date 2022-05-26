@@ -251,23 +251,31 @@ export const checkDelegateOnReceiptAccounts = async (
 };
 
 export const getAuctionData = async (auction: web3.PublicKey, program: Program) => {
-  const auctionData = (await safeAwait(program.account.auctionV1.fetch(auction))).result;
+  const auctionData = await safeAwait(program.account.auctionV1.fetch(auction));
+
+  if (auctionData.error) {
+    throw auctionData.error;
+  }
 
   if (!auctionData) {
     throw new CandyShopError(CandyShopErrorType.AuctionDoesNotExist);
   }
 
-  return auctionData;
+  return auctionData.result;
 };
 
 export const getBidData = async (bid: web3.PublicKey, program: Program) => {
-  const bidData = (await safeAwait(program.account.bid.fetch(bid))).result;
+  const bidData = await safeAwait(program.account.bid.fetch(bid));
+
+  if (bidData.error) {
+    throw bidData.error;
+  }
 
   if (!bidData) {
     throw new CandyShopError(CandyShopErrorType.BidDoesNotExist);
   }
 
-  return bidData;
+  return bidData.result;
 };
 
 export const checkCreationParams = (startTime: BN, startingBid: BN, buyNowPrice: BN | null, tickSize: BN) => {
