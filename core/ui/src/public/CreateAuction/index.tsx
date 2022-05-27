@@ -180,6 +180,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
       })
       .catch((err) => {
         console.log(`${Logger} fail=`, err);
+        notification(err.message, NotificationType.Error);
       });
   };
 
