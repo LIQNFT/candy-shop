@@ -132,18 +132,6 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
 
   const onClickCard = (item: any) => () => setSelected(item);
 
-  const checkDisableBtn = () => {
-    if (stage === StageEnum.SELECT) {
-      return !selected;
-    }
-
-    if (stage === StageEnum.FORM) {
-      return false;
-    }
-
-    return false;
-  };
-
   const onCreateAuction = () => {
     if (!wallet || !auctionForm || !selected) return;
 
@@ -246,7 +234,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
             <Empty description="No orders found" />
           )}
 
-          <button disabled={checkDisableBtn()} className="candy-button candy-auction-button" onClick={onContinue}>
+          <button disabled={!selected} className="candy-button candy-auction-button" onClick={onContinue}>
             Continue
           </button>
         </>
@@ -287,11 +275,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
 
           <div className="candy-auction-confirm-button-container">
             <span onClick={() => setStage(StageEnum.FORM)}>Back</span>
-            <button
-              disabled={checkDisableBtn()}
-              className="candy-button candy-auction-confirm-button"
-              onClick={onCreateAuction}
-            >
+            <button className="candy-button candy-auction-confirm-button" onClick={onCreateAuction}>
               Create Auction
             </button>
           </div>

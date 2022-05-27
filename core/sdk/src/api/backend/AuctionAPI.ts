@@ -18,7 +18,6 @@ export function fetchAuctionsByShop(
 
   let queryObj: any = {};
   if (offset !== undefined) {
-    // queryString = qs.stringify({ offset, limit });
     queryObj = { offset, limit };
   }
 
