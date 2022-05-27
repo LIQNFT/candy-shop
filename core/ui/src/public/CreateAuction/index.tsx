@@ -1,10 +1,8 @@
-import { web3, BN } from '@project-serum/anchor';
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { CandyShop, SingleTokenInfo, fetchNftsFromWallet, fetchShopByShopAddress } from '@liqnft/candy-shop-sdk';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-
+import { web3, BN } from '@project-serum/anchor';
+import { CandyShop, SingleTokenInfo, fetchNftsFromWallet, fetchShopByShopAddress } from '@liqnft/candy-shop-sdk';
 import { Order, WhitelistNft, ListBase, SingleBase, CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
-import { LOADING_SKELETON_COUNT } from 'constant/Orders';
 
 import { Empty } from 'components/Empty';
 import { Card } from 'components/Card';
@@ -12,9 +10,10 @@ import { Skeleton } from 'components/Skeleton';
 import { AuctionForm, FormType } from 'components/AuctionForm';
 import { AuctionNftHeader } from 'components/AuctionNftHeader';
 import { IconTick } from 'assets/IconTick';
+
+import { LOADING_SKELETON_COUNT } from 'constant/Orders';
 import { LoadStatus } from 'constant';
 import { notification, NotificationType } from 'utils/rc-notification';
-
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
@@ -149,14 +148,21 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
     if (!wallet || !auctionForm || !selected) return;
 
     const startingBid = new BN(Number(auctionForm.starting_bid) * 10 ** candyShop.currencyDecimals);
-    const startTime = new BN(dayjs(getStartTime(auctionForm)).unix());
+    const startTime = new BN(
+      dayjs(
+        `${auctionForm.start_date} ${convertTime12to24(
+          auctionForm.auction_hour,
+          auctionForm.auction_minute,
+          auctionForm.clock_format
+        )} UTC`
+      ).unix()
+    );
     const biddingPeriod = new BN(Number(auctionForm.bidding_period) * 3600);
     const buyNowPrice = auctionForm.buy_now
       ? new BN(Number(auctionForm.buy_now_price) * 10 ** candyShop.currencyDecimals)
       : null;
     const tickSize = new BN(Number(auctionForm.tickSize) * 10 ** candyShop.currencyDecimals);
 
-    console.log('candyShopAddress===', candyShop.candyShopAddress.toString());
     candyShop
       .createAuction({
         startingBid,
@@ -168,14 +174,9 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
         wallet,
         tickSize
       })
-      .then((res) => {
-        console.log({ res });
+      .then(() => {
         notification('Create Auction successful.', NotificationType.Success);
         onCreateAuctionSuccess && onCreateAuctionSuccess();
-        // setTimeout(() => {
-        //   setAuctionForm(undefined);
-        //   setStage(StageEnum.SELECT);
-        // }, 3000);
       })
       .catch((err) => {
         console.log(`${Logger} fail=`, err);
@@ -258,12 +259,13 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
           currencySymbol={candyShop.currencySymbol}
           fee={fee}
           nft={selected}
+          auctionForm={auctionForm}
         />
       ) : (
         <div className="candy-auction-confirm-container">
           <div className="candy-auction-confirm-title">
-            Review and confirm the auction details are correct. Once an auction starts, you the owner will have to sell
-            to the highest bidder.
+            Review and confirm the auction details are correct. You can cancel the auction before it starts, but once an
+            auction begins, the owner will have to sell to the highest bidder.
           </div>
           {selected ? (
             <AuctionNftHeader
@@ -282,7 +284,8 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
             </div>
           ))}
 
-          <div>
+          <div className="candy-auction-confirm-button-container">
+            <span onClick={() => setStage(StageEnum.FORM)}>Back</span>
             <button
               disabled={checkDisableBtn()}
               className="candy-button candy-auction-confirm-button"
@@ -342,17 +345,36 @@ const LoadingView = (
 );
 
 const getStartTime = (auctionForm: FormType): string => {
+  if (!auctionForm.auction_hour || !auctionForm.auction_minute || !auctionForm.clock_format) {
+    return dayjs.utc().format('MMMM DD, YYYY HH:mm') + ' UTC';
+  }
+
   if (auctionForm.start_now) {
     return dayjs.utc().format('MMMM DD, YYYY HH:mm') + ' UTC';
   }
+
   return (
     dayjs
-      .utc(auctionForm.start_date, 'YYYY-MM-DD')
-      .add(
-        ((auctionForm.clock_format === 'PM' ? 12 : 0) + Number(auctionForm.auction_hour)) * 60 +
-          Number(auctionForm.auction_minute),
-        'minute'
+      .utc(
+        `${auctionForm.start_date} ${convertTime12to24(
+          auctionForm.auction_hour,
+          auctionForm.auction_minute,
+          auctionForm.clock_format
+        )}`,
+        'YYYY-MM-DD HH:mm'
       )
-      .format('MMMM DD, YYYY HH:mm') + ' UTC'
+      .format('MMMM DD, YYYY hh:mmA') + ' UTC'
   );
+};
+
+const convertTime12to24 = (hour: string, min: string, clock_format: string): string => {
+  if (hour === '12') {
+    hour = '00';
+  }
+
+  if (clock_format === 'PM') {
+    hour = (parseInt(hour, 10) + 12).toString();
+  }
+
+  return `${hour}:${min}`;
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Checkbox } from 'components/Checkbox';
 import { AuctionNftHeader } from 'components/AuctionNftHeader';
@@ -13,6 +13,7 @@ interface AuctionFormProps {
   currencySymbol: string;
   fee?: number;
   nft: SingleTokenInfo;
+  auctionForm?: FormType;
 }
 
 enum CheckEnum {
@@ -27,26 +28,26 @@ export type FormType = {
   buy_now_price: string;
   bidding_period: number;
   clock_format: 'PM' | 'AM';
-  auction_hour: number;
-  auction_minute: number;
+  auction_hour: string;
+  auction_minute: string;
   buy_now?: boolean;
   start_now?: boolean;
-  start_date?: string;
+  start_date: string;
   tickSize: string;
 };
 
-export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit, currencySymbol, fee, nft }) => {
+export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit, currencySymbol, fee, nft, auctionForm }) => {
   const [form, setForm] = useState<FormType>({
     starting_bid: '',
     tickSize: '',
     buy_now_price: '',
     bidding_period: 24,
-    clock_format: 'PM',
-    auction_hour: 0,
-    auction_minute: 0,
+    clock_format: 'AM',
+    auction_hour: '12',
+    auction_minute: '0',
     start_now: false,
     buy_now: false,
-    start_date: dayjs().format('YYYY-MM-DD')
+    start_date: dayjs().add(1, 'd').format('YYYY-MM-DD')
   });
 
   const onCheck = (key: CheckEnum, value?: any) => (e: any) => {
@@ -73,6 +74,10 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit, currencySymb
     e.preventDefault();
     e.currentTarget.blur();
   };
+
+  useEffect(() => {
+    if (auctionForm) setForm(auctionForm);
+  }, [auctionForm]);
 
   return (
     <form className="candy-auction-form" onSubmit={onSubmitForm}>
@@ -202,9 +207,9 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit, currencySymb
             name="auction_hour"
             type="number"
             onWheel={preventUpdateNumberOnWheel}
-            placeholder={'00'}
-            min={0}
-            max={11}
+            placeholder={'1'}
+            min={1}
+            max={12}
             required={!form[CheckEnum.START_NOW]}
             value={form['auction_hour']}
             onChange={onChangeInput}
@@ -217,7 +222,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit, currencySymb
             name="auction_minute"
             type="number"
             onWheel={preventUpdateNumberOnWheel}
-            placeholder={'00'}
+            placeholder={'0'}
             min={0}
             max={59}
             required={!form[CheckEnum.START_NOW]}

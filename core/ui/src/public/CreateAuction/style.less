@@ -136,8 +136,22 @@
     line-height: 24px;
     font-weight: 600;
   }
-  .candy-auction-confirm-button {
-    width: 100%;
+  .candy-auction-confirm-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-top: 50px;
+    cursor: pointer;
+
+    span {
+      font-size: 18px;
+      font-weight: 600;
+      color: @gray-medium;
+      margin-right: 30px;
+    }
+
+    .candy-auction-confirm-button {
+      width: 200px;
+    }
   }
 }
