@@ -81,7 +81,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
 
   // fetch current wallet nfts when mount and when publicKey was changed.
   useEffect(() => {
-    if (!wallet?.publicKey) return;
+    if (!wallet?.publicKey || wallet.publicKey.toString() !== candyShop.candyShopCreatorAddress.toString()) return;
 
     setLoadingNft(LoadStatus.Loading);
     progressiveLoadUserNFTs(wallet.publicKey)
@@ -94,10 +94,10 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
       .finally(() => {
         setLoadingNft(LoadStatus.Loaded);
       });
-  }, [progressiveLoadUserNFTs, wallet?.publicKey]);
+  }, [candyShop, progressiveLoadUserNFTs, wallet?.publicKey]);
 
   useEffect(() => {
-    if (!wallet?.publicKey) return;
+    if (!wallet?.publicKey || wallet.publicKey.toString() !== candyShop.candyShopCreatorAddress.toString()) return;
     setLoadingOwnedNft(LoadStatus.Loading);
     candyShop
       .activeOrdersByWalletAddress(wallet.publicKey.toString())
@@ -115,7 +115,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
   }, [candyShop, wallet?.publicKey]);
 
   useEffect(() => {
-    if (!wallet?.publicKey) return;
+    if (!wallet?.publicKey || wallet.publicKey.toString() !== candyShop.candyShopCreatorAddress.toString()) return;
 
     fetchShopByShopAddress(candyShop.candyShopAddress)
       .then((data: SingleBase<CandyShopResponse>) => {
@@ -123,7 +123,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
         setShop(data.result);
       })
       .catch((error: any) => {
-        console.log(`${Logger}: Sell failed to get shop detail, error=`, error);
+        console.log(`${Logger}: CreateAuction failed to get shop detail, error=`, error);
       })
       .finally(() => {
         setLoadingShop(LoadStatus.Loaded);
@@ -216,7 +216,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
           <div className="candy-auction-description">Select the NFT you want to put up for auction</div>
 
           {loading ? (
-            LoadingView
+            <LoadingView />
           ) : list.length ? (
             <div className="candy-auction-list candy-container-list">
               {list.map((nft) => (
@@ -226,7 +226,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
                   ticker={nft.metadata?.data.symbol}
                   key={nft.tokenMintAddress}
                   onClick={onClickCard(nft)}
-                  label={selected === nft ? SelectedTick : undefined}
+                  label={selected === nft ? <SelectedTick /> : undefined}
                 />
               ))}
             </div>
@@ -309,19 +309,29 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
             Confirmation
           </div>
         </div>
-        <div className="candy-auction-content-detail">{!wallet ? walletConnectComponent : CreateAuctionContent}</div>
+        <div className="candy-auction-content-detail">
+          {wallet ? (
+            wallet.publicKey.toString() !== candyShop.candyShopCreatorAddress.toString() ? (
+              <div className="candy-title">You must be the shop owner to create auctions.</div>
+            ) : (
+              CreateAuctionContent
+            )
+          ) : (
+            walletConnectComponent
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-const SelectedTick = (
+const SelectedTick = () => (
   <span className="candy-auction-tick-label">
     <IconTick fill="#7522f5" />
   </span>
 );
 
-const LoadingView = (
+const LoadingView = () => (
   <div className="candy-container-list">
     {Array(LOADING_SKELETON_COUNT)
       .fill(0)

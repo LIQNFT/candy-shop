@@ -42,7 +42,10 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
       status: [AuctionStatus.CREATED, AuctionStatus.EXPIRED, AuctionStatus.STARTED]
     })
       .then((data: any) => {
-        if (!data.result) return;
+        if (!data.result) {
+          setHasNextPage(false);
+          return;
+        }
         if (data.offset + data.count >= data.totalCount) {
           setHasNextPage(false);
         } else {
@@ -67,7 +70,10 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
       status: [AuctionStatus.CREATED, AuctionStatus.EXPIRED, AuctionStatus.STARTED]
     })
       .then((data: any) => {
-        if (!data.result) return;
+        if (!data.result) {
+          setHasNextPage(false);
+          return;
+        }
         const haveNextPage = data.offset + data.count < data.totalCount;
         setHasNextPage(haveNextPage);
         setStartIndex(() => 0 + ORDER_FETCH_LIMIT);
@@ -180,13 +186,3 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
     </div>
   );
 };
-
-// const ORDER = {
-//   name: 'Mirror #3457',
-//   symbol: 'MIRROR',
-//   nftImageLink: 'https://storage.mirrorworld.fun/nft/3457.png',
-//   tokenMint: '3FJLJ3vUrFyLeRQthnY3okkexb13ey86vUJ1hhBFr1bj',
-//   tokenAccount: '9YXHf5hGqETBJADjJ14YPbkCCC7ryk2ntdAVr24QUsKJ',
-//   nftDescription:
-//     'Mirrors is a collection of 11,000 unique AI Virtual Beings. Each Mirror can be upgraded and co-create narratives by talking with the collector, also offering a series of rights in the future games.'
-// };

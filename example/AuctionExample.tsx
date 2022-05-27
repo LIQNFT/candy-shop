@@ -21,7 +21,7 @@ export const AuctionExample: React.FC<AuctionExampleProps> = ({ network }) => {
 
   const candyShop = useMemo(() => {
     return new CandyShop(
-      new web3.PublicKey('31kxUz7wkaQhTs266pPmcKeAMtQSpohZJ8gL9joR4eXe'),
+      new web3.PublicKey('HCF8y8wjrUQUBuD2kF7Np24UaaQTHoicUYSWidW1t1bw'),
       treasuryMint,
       new web3.PublicKey(CANDY_SHOP_PROGRAM_ID),
       network,
