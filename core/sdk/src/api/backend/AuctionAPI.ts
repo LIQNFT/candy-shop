@@ -6,6 +6,7 @@ export type AuctionQuery = {
   offset?: number;
   limit?: number;
   status?: AuctionStatus[];
+  walletAddress?: string;
 };
 
 export function fetchAuctionsByShop(
@@ -13,7 +14,7 @@ export function fetchAuctionsByShop(
   shopId: string,
   queryDto: AuctionQuery = {}
 ): Promise<ListBase<Auction>> {
-  const { offset, limit = 10, status } = queryDto;
+  const { offset, limit = 10, status, walletAddress } = queryDto;
   console.log('fetching Auctions By ShopId=', shopId);
 
   let queryObj: any = {};
@@ -23,6 +24,10 @@ export function fetchAuctionsByShop(
 
   if (status?.length) {
     queryObj = { ...queryObj, status };
+  }
+
+  if (walletAddress) {
+    queryObj = { ...queryObj, walletAddress };
   }
 
   const queryString = qs.stringify(queryObj, { indices: false });
