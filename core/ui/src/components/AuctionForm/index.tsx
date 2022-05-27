@@ -14,6 +14,7 @@ interface AuctionFormProps {
   fee?: number;
   nft: SingleTokenInfo;
   auctionForm?: FormType;
+  onBack: () => void;
 }
 
 enum CheckEnum {
@@ -36,7 +37,14 @@ export type FormType = {
   tickSize: string;
 };
 
-export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit, currencySymbol, fee, nft, auctionForm }) => {
+export const AuctionForm: React.FC<AuctionFormProps> = ({
+  onSubmit,
+  currencySymbol,
+  fee,
+  nft,
+  auctionForm,
+  onBack
+}) => {
   const [form, setForm] = useState<FormType>({
     starting_bid: '',
     tickSize: '',
@@ -261,7 +269,10 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({ onSubmit, currencySymb
         </div>
       </div>
 
-      <input className="candy-button" type="submit" value="Continue" />
+      <div className="candy-auction-confirm-button-container">
+        <span onClick={onBack}>Back</span>
+        <input className="candy-button" type="submit" value="Continue" />
+      </div>
     </form>
   );
 };

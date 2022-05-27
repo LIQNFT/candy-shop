@@ -249,6 +249,10 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
           fee={fee}
           nft={selected}
           auctionForm={auctionForm}
+          onBack={() => {
+            setStage(StageEnum.SELECT);
+            setAuctionForm(undefined);
+          }}
         />
       ) : (
         <div className="candy-auction-confirm-container">

@@ -145,9 +145,16 @@
 
     span {
       font-size: 18px;
-      font-weight: 600;
       color: @gray-medium;
       margin-right: 30px;
+      transition: 0.3s all ease-in-out;
+      border-radius: 20px;
+      padding: 6px 16px;
+      transition: 0.2s all ease-in-out;
+
+      &:hover {
+        background-color: @gray-lightest;
+      }
     }
 
     .candy-auction-confirm-button {
