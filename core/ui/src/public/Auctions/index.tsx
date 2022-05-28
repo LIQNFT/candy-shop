@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CandyShop, fetchAuctionsByShopAddress } from '@liqnft/candy-shop-sdk';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -8,6 +8,7 @@ import { Auction, AuctionStatus } from '@liqnft/candy-shop-types';
 import { Empty } from 'components/Empty';
 import { ORDER_FETCH_LIMIT } from 'constant/Orders';
 
+const Logger = 'CandyShopUI/Auctions';
 interface AuctionsProps {
   wallet?: AnchorWallet;
   walletConnectComponent: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -24,65 +25,52 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
 
   const loadNextPage = (startIndex: number) => () => {
     if (startIndex === 0) return;
-
-    setHasNextPage(true);
-    setLoading(true);
-
-    fetchAuctionsByShopAddress(candyShop.candyShopAddress.toString(), {
-      offset: startIndex,
-      limit: ORDER_FETCH_LIMIT,
-      status: [AuctionStatus.CREATED, AuctionStatus.STARTED, AuctionStatus.EXPIRED, AuctionStatus.COMPLETE],
-      walletAddress: wallet?.publicKey.toString()
-    })
-      .then((data: any) => {
-        if (!data.result) {
-          setHasNextPage(false);
-          return;
-        }
-        const haveNextPage = data.offset + data.count < data.totalCount;
-        setHasNextPage(haveNextPage);
-        setStartIndex((prevIndex) => prevIndex + ORDER_FETCH_LIMIT);
-        setNfts((prevNfts) => [...prevNfts, ...data.result]);
-      })
-      .catch((error: any) => {
-        setHasNextPage(false);
-        console.info('fetchAuctionsByShopAddress failed: ', error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    fetchAuctions(startIndex);
   };
 
-  useEffect(() => {
-    console.log({ candyShop });
-
-    setHasNextPage(true);
-    setLoading(true);
-
-    fetchAuctionsByShopAddress(candyShop.candyShopAddress.toString(), {
-      offset: 0,
-      limit: ORDER_FETCH_LIMIT,
-      status: [AuctionStatus.CREATED, AuctionStatus.STARTED, AuctionStatus.EXPIRED, AuctionStatus.COMPLETE],
-      walletAddress: wallet?.publicKey.toString()
-    })
-      .then((data: any) => {
-        if (!data.result) {
+  const fetchAuctions = useCallback(
+    (startIndex: number) => {
+      setHasNextPage(true);
+      setLoading(true);
+      fetchAuctionsByShopAddress(candyShop.candyShopAddress.toString(), {
+        offset: startIndex,
+        limit: ORDER_FETCH_LIMIT,
+        status: [AuctionStatus.CREATED, AuctionStatus.STARTED, AuctionStatus.EXPIRED, AuctionStatus.COMPLETE],
+        walletAddress: walletKeyString
+      })
+        .then((data: any) => {
+          if (!data.result) {
+            setHasNextPage(false);
+            return;
+          }
+          const haveNextPage = data.offset + data.count < data.totalCount;
+          setHasNextPage(haveNextPage);
+          setStartIndex((prevIndex) => {
+            if (startIndex === 0) {
+              return 0 + ORDER_FETCH_LIMIT;
+            }
+            return prevIndex + ORDER_FETCH_LIMIT;
+          });
+          if (startIndex === 0) {
+            setNfts(data.result);
+          } else {
+            setNfts((prevNfts) => [...prevNfts, ...data.result]);
+          }
+        })
+        .catch((error: any) => {
           setHasNextPage(false);
-          return;
-        }
-        const haveNextPage = data.offset + data.count < data.totalCount;
-        setHasNextPage(haveNextPage);
-        setStartIndex(() => 0 + ORDER_FETCH_LIMIT);
-        setNfts(data.result);
-      })
-      .catch((error: any) => {
-        setHasNextPage(false);
-        console.log('fetchAuctionsByShopAddress failed: ', error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [candyShop, wallet?.publicKey]);
+          console.info(`${Logger}: fetchAuctionsByShopAddress failed, startIndex=${startIndex}, error= `, error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [candyShop.candyShopAddress, walletKeyString]
+  );
+
+  useEffect(() => {
+    fetchAuctions(0);
+  }, [fetchAuctions]);
 
   return (
     <div className="candy-container">
@@ -98,6 +86,7 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
           <div className="candy-container-list">
             {nfts.map((auction: Auction) => (
               <AuctionCard
+                key={auction.tokenAccount}
                 auction={auction}
                 candyShop={candyShop}
                 wallet={wallet}

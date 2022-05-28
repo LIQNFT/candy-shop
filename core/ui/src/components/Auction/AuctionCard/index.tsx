@@ -21,7 +21,6 @@ export const AuctionCard: React.FC<AuctionCardProps> = ({ auction, candyShop, wa
   if (auction.status === AuctionStatus.CREATED) {
     statusTag = <div className="candy-status-tag candy-status-tag-gray">NOT STARTED</div>;
   } else if (auction.status === AuctionStatus.STARTED) {
-    console.log('debugger: auction=', auction);
     if (auction.highestBidBuyer && auction.highestBidBuyer === wallet?.publicKey.toString()) {
       statusTag = <div className="candy-status-tag">HIGHEST BID</div>;
     } else if (auction.userBid && wallet && auction.highestBidBuyer !== wallet.publicKey.toString()) {

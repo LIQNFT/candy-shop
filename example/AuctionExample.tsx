@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import { web3 } from '@project-serum/anchor';
-import { CandyShop } from '../core/sdk/.';
+import { CandyShop, SingleTokenInfo } from '../core/sdk/.';
 import { CreateAuction, Auctions } from '../core/ui/.';
 import { getParameterByName } from './utils';
 
@@ -34,6 +34,10 @@ export const AuctionExample: React.FC<AuctionExampleProps> = ({ network }) => {
     );
   }, [network, treasuryMint]);
 
+  const onCreatedAuctionSuccessCallback = (auctionedToken: SingleTokenInfo) => {
+    console.log('AuctionExample: onCreatedAuction, token=', auctionedToken);
+  };
+
   return (
     <div style={{ paddingBottom: 50, textAlign: 'center' }}>
       <div
@@ -56,6 +60,7 @@ export const AuctionExample: React.FC<AuctionExampleProps> = ({ network }) => {
         candyShop={candyShop}
         wallet={wallet}
         walletConnectComponent={<WalletMultiButton />}
+        onCreatedAuctionSuccess={(token: SingleTokenInfo) => onCreatedAuctionSuccessCallback(token)}
         cacheUserNFT={true}
       />
 

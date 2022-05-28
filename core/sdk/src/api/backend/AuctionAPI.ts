@@ -2,6 +2,8 @@ import { SingleBase, ListBase, Auction, AuctionBid, AuctionStatus } from '@liqnf
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
 
+const Logger = 'CandyShopSDK/AuctionAPI';
+
 export type AuctionQuery = {
   offset?: number;
   limit?: number;
@@ -15,7 +17,7 @@ export function fetchAuctionsByShop(
   queryDto: AuctionQuery = {}
 ): Promise<ListBase<Auction>> {
   const { offset, limit = 10, status, walletAddress } = queryDto;
-  console.log('fetching Auctions By ShopId=', shopId);
+  console.log(`${Logger}: fetching Auctions By ShopId=`, shopId);
 
   let queryObj: any = {};
   if (offset !== undefined) {
@@ -39,12 +41,12 @@ export function fetchAuctionBid(
   auctionAddress: string,
   walletAddress: string
 ): Promise<SingleBase<AuctionBid>> {
-  console.log(`fetching Auction bid by auctionAddress=${auctionAddress}, walletAddress=${walletAddress}`);
+  console.log(`${Logger}: fetching Auction bid by auctionAddress=${auctionAddress}, walletAddress=${walletAddress}`);
   return axiosInstance.get(`/auction/${auctionAddress}/wallet/${walletAddress}`).then((res) => res.data);
 }
 
 export function fetchAuction(axiosInstance: AxiosInstance, auctionAddress: string): Promise<SingleBase<Auction>> {
-  console.log(`fetching Auction detail, auctionAddress=${auctionAddress}`);
+  console.log(`${Logger}: fetching Auction detail, auctionAddress=${auctionAddress}`);
   return axiosInstance.get(`/auction/${auctionAddress}`).then((res) => res.data);
 }
 
@@ -52,6 +54,6 @@ export function fetchAuctionHistoryByAddress(
   axiosInstance: AxiosInstance,
   auctionAddress: string
 ): Promise<ListBase<AuctionBid>> {
-  console.log(`fetching Auction bid history by auctionAddress=`, auctionAddress);
+  console.log(`${Logger}: fetching Auction bid history by auctionAddress=`, auctionAddress);
   return axiosInstance.get(`/auction/history/${auctionAddress}`).then((res) => res.data);
 }

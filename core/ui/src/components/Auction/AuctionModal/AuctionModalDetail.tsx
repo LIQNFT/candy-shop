@@ -8,11 +8,10 @@ import { ExplorerLink } from 'components/ExplorerLink';
 import { Countdown } from 'components/Countdown';
 import { Price } from 'components/Price';
 
-import { Auction, AuctionBid, SingleBase, AuctionStatus } from '@liqnft/candy-shop-types';
+import { Auction, AuctionBid, SingleBase, AuctionStatus, BidStatus } from '@liqnft/candy-shop-types';
 import { CandyShop, fetchAuctionBidAPI } from '@liqnft/candy-shop-sdk';
-import dayjs from 'dayjs';
-import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 
+const Logger = 'CandyShopUI/AuctionModalDetail';
 export interface AuctionModalDetailProps {
   auction: Auction;
   placeBid: (price: number) => void;
@@ -42,10 +41,11 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
       .then((res: SingleBase<AuctionBid>) => {
         if (!res.success) return;
         setBidInfo(res.result);
-        console.log(res);
+        console.log(`${Logger}: fetchAuctionBidAPI success=`, res);
+        console.log(`${Logger}: fetchAuctionBidAPI BidStatus=`, mappedBidStatusString(res.result.status));
       })
       .catch((error: any) => {
-        console.log(error);
+        console.log(`${Logger}: fetchAuctionBidAPI failed, error=`, error);
       });
   }, [auction, walletPublicKey]);
 
@@ -71,7 +71,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
       return <div className="candy-auction-modal-notice">You are currently the highest bidder!</div>;
     }
 
-    if (bidInfo.status !== 1) {
+    if (bidInfo.status !== BidStatus.WITHDRAWN) {
       return (
         <div className="candy-auction-modal-notice">
           {auction.status === AuctionStatus.STARTED
@@ -85,6 +85,21 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
     }
 
     return null;
+  };
+
+  const mappedBidStatusString = (bidStatus: BidStatus) => {
+    switch (bidStatus) {
+      case BidStatus.LOST:
+        return 'LOST';
+      case BidStatus.OPEN:
+        return 'OPEN';
+      case BidStatus.WITHDRAWN:
+        return 'WITHDRAWN';
+      case BidStatus.WON:
+        return 'WON';
+      default:
+        console.log(`${Logger}: Invalid BitStatus ${bidStatus}`);
+    }
   };
 
   let auctionContent: React.ReactElement | null = null;

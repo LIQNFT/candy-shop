@@ -21,7 +21,7 @@ interface CreateAuctionProps {
   selected: SingleTokenInfo;
   onBack: () => void;
   auctionForm: FormType;
-  onCreateAuctionSuccess?: () => void;
+  onCreateAuctionSuccess?: (auctionedToken: SingleTokenInfo) => void;
   fee?: number;
 }
 
@@ -63,7 +63,7 @@ export const CreateAuctionConfirm: React.FC<CreateAuctionProps> = ({
       })
       .then(() => {
         notification('Auction created', NotificationType.Success);
-        onCreateAuctionSuccess && onCreateAuctionSuccess();
+        onCreateAuctionSuccess && onCreateAuctionSuccess(selected);
       })
       .catch((err: Error) => {
         console.log(`${Logger}: Create Auction failed=`, err);

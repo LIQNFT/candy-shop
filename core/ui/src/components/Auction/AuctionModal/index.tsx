@@ -58,15 +58,15 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
         tokenAccount: new web3.PublicKey(auction.tokenAccount),
         bidPrice: new BN(price * candyShop.baseUnitsPerCurrency)
       })
-      .then((txId) => {
-        console.log(txId);
+      .then((txId: string) => {
+        console.log(`${Logger}: bidAuction request success, txId=`, txId);
         setHash(txId);
         setTitleText('Bid Confirmed');
         setState(TransactionState.CONFIRMED);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         notification(err.message, NotificationType.Error);
-        console.log(`${Logger} fail=`, err);
+        console.log(`${Logger} bidAuction failed, error=`, err);
         setState(TransactionState.DISPLAY);
       });
   };
@@ -82,15 +82,15 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
         tokenMint: new web3.PublicKey(auction.tokenMint),
         tokenAccount: new web3.PublicKey(auction.tokenAccount)
       })
-      .then((txId) => {
-        console.log(txId);
+      .then((txId: string) => {
+        console.log(`${Logger}: buyNowAuction request success, txId=`, txId);
         setHash(txId);
         setTitleText('Transaction Confirmed');
         setState(TransactionState.CONFIRMED);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         notification(err.message, NotificationType.Error);
-        console.log(`${Logger} fail=`, err);
+        console.log(`${Logger} buyNowAuction failed, error=`, err);
         setState(TransactionState.DISPLAY);
       });
   };
@@ -106,15 +106,15 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
         tokenMint: new web3.PublicKey(auction.tokenMint),
         tokenAccount: new web3.PublicKey(auction.tokenAccount)
       })
-      .then((txId) => {
-        console.log(txId);
+      .then((txId: string) => {
+        console.log(`${Logger}: withdrawAuctionBid request success, txId=`, txId);
         setHash(txId);
         setTitleText('Withdrawal Confirmed');
         setState(TransactionState.CONFIRMED);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         notification(err.message, NotificationType.Error);
-        console.log(`${Logger} fail=`, err);
+        console.log(`${Logger} withdrawAuctionBid failed, error=`, err);
         setState(TransactionState.DISPLAY);
       });
   };

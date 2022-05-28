@@ -30,26 +30,32 @@ interface CreateAuctionProps {
   wallet: AnchorWallet | undefined;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
-  onCreateAuctionSuccess?: () => void;
+  onCreatedAuctionSuccess?: (auctionedToken: SingleTokenInfo) => void;
   cacheUserNFT?: boolean;
 }
 
-enum StageEnum {
+enum AuctionStage {
   SELECT = 'SELECT',
   FORM = 'FORM',
-  CONFIRM = 'CONFIRM'
+  CONFIRMING = 'CONFIRMING'
 }
 const Logger = 'CandyShopUI/CreateAuction';
+
+const STEPS = [
+  { title: 'Select an NFT', stage: AuctionStage.SELECT },
+  { title: 'Auction Details', stage: AuctionStage.FORM },
+  { title: 'Confirmation', stage: AuctionStage.CONFIRMING }
+];
 
 export const CreateAuction: React.FC<CreateAuctionProps> = ({
   candyShop,
   wallet,
   walletConnectComponent,
-  onCreateAuctionSuccess,
+  onCreatedAuctionSuccess,
   cacheUserNFT
 }) => {
   const [selected, setSelected] = useState<SingleTokenInfo>();
-  const [stage, setStage] = useState<StageEnum>(StageEnum.SELECT);
+  const [stage, setStage] = useState<AuctionStage>(AuctionStage.SELECT);
   const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
   const [listedUserNfts, setListedUserNfts] = useState<{ [key: string]: Order }>({});
   const [loadingNft, setLoadingNft] = useState<LoadStatus>(LoadStatus.ToLoad);
@@ -103,6 +109,11 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
     [candyShop, getShopIdentifiers, getUserNFTFromBatch, cacheUserNFT]
   );
 
+  const onFilledUpAuctionForm = (auctionForm: FormType) => {
+    setAuctionForm(auctionForm);
+    setStage(AuctionStage.CONFIRMING);
+  };
+
   // fetch current wallet nfts when mount and when publicKey was changed.
   useEffect(() => {
     if (!wallet?.publicKey || !isShopCreator(wallet.publicKey.toString())) return;
@@ -127,21 +138,23 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
 
   useEffect(() => {
     if (!wallet?.publicKey || !isShopCreator(wallet.publicKey.toString())) return;
-    setLoadingListedUserNft(LoadStatus.Loading);
-    candyShop
-      .activeOrdersByWalletAddress(wallet.publicKey.toString())
-      .then((sellOrders: Order[]) => {
-        setListedUserNfts(
-          sellOrders.reduce((acc: any, nft: Order) => {
-            acc[nft.tokenMint] = nft;
-            return acc;
-          }, {})
-        );
-      })
-      .finally(() => {
-        setLoadingListedUserNft(LoadStatus.Loaded);
-      });
-  }, [candyShop, wallet?.publicKey, isShopCreator]);
+    if (loadingListedUserNft === LoadStatus.ToLoad) {
+      setLoadingListedUserNft(LoadStatus.Loading);
+      candyShop
+        .activeOrdersByWalletAddress(wallet.publicKey.toString())
+        .then((sellOrders: Order[]) => {
+          setListedUserNfts(
+            sellOrders.reduce((acc: any, nft: Order) => {
+              acc[nft.tokenMint] = nft;
+              return acc;
+            }, {})
+          );
+        })
+        .finally(() => {
+          setLoadingListedUserNft(LoadStatus.Loaded);
+        });
+    }
+  }, [candyShop, wallet?.publicKey, isShopCreator, loadingListedUserNft]);
 
   useEffect(() => {
     if (!wallet?.publicKey || !isShopCreator(wallet.publicKey.toString())) return;
@@ -189,7 +202,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
               />
             ))}
           </div>
-          <button disabled={!selected} className="candy-button" onClick={() => setStage(StageEnum.FORM)}>
+          <button disabled={!selected} className="candy-button" onClick={() => setStage(AuctionStage.FORM)}>
             Continue
           </button>
         </>
@@ -200,31 +213,28 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
 
   const CreateAuctionStages = (
     <div className="candy-container">
-      {stage === StageEnum.SELECT && CreateAuctionSelectStage}
-      {stage === StageEnum.FORM && selected ? (
+      {stage === AuctionStage.SELECT && CreateAuctionSelectStage}
+      {stage === AuctionStage.FORM && selected ? (
         <AuctionForm
           currencySymbol={candyShop.currencySymbol}
           fee={fee}
           nft={selected}
           auctionForm={auctionForm}
           onBack={() => {
-            setStage(StageEnum.SELECT);
+            setStage(AuctionStage.SELECT);
             setAuctionForm(undefined);
           }}
-          onSubmit={(form) => {
-            setAuctionForm(form);
-            setStage(StageEnum.CONFIRM);
-          }}
+          onSubmit={(form: FormType) => onFilledUpAuctionForm(form)}
         />
       ) : null}
-      {stage === StageEnum.CONFIRM && selected && auctionForm && (
+      {stage === AuctionStage.CONFIRMING && selected && auctionForm && (
         <CreateAuctionConfirm
           candyShop={candyShop}
           wallet={wallet}
           selected={selected}
-          onBack={() => setStage(StageEnum.FORM)}
+          onBack={() => setStage(AuctionStage.FORM)}
           auctionForm={auctionForm}
-          onCreateAuctionSuccess={onCreateAuctionSuccess}
+          onCreateAuctionSuccess={(token: SingleTokenInfo) => onCreatedAuctionSuccess && onCreatedAuctionSuccess(token)}
           fee={fee}
         />
       )}
@@ -256,9 +266,3 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
     </div>
   );
 };
-
-const STEPS = [
-  { title: 'Select an NFT', stage: StageEnum.SELECT },
-  { title: 'Auction Details', stage: StageEnum.FORM },
-  { title: 'Confirmation', stage: StageEnum.CONFIRM }
-];
