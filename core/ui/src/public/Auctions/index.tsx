@@ -3,7 +3,7 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CandyShop, fetchAuctionsByShopAddress } from '@liqnft/candy-shop-sdk';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { LoadingSkeleton } from 'components/LoadingSkeleton';
-import { AuctionCard } from 'components/AuctionCard';
+import { AuctionCard } from 'components/Auction';
 import { Auction, AuctionStatus } from '@liqnft/candy-shop-types';
 import { Empty } from 'components/Empty';
 import { ORDER_FETCH_LIMIT } from 'constant/Orders';

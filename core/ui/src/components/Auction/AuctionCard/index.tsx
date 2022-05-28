@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { Auction, AuctionStatus } from '@liqnft/candy-shop-types';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { AuctionModal } from 'components/AuctionModal';
+import { AuctionModal } from '../AuctionModal';
 import { Countdown } from 'components/Countdown';
 import { Price } from 'components/Price';
 import { Card } from 'components/Card';
-import dayjs from 'dayjs';
 
 interface AuctionCardProps {
   auction: Auction;

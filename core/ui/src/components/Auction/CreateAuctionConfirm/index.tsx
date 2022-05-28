@@ -3,8 +3,8 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { web3, BN } from '@project-serum/anchor';
 import { CandyShop, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
 
-import { FormType } from 'components/AuctionForm';
-import { AuctionNftHeader } from 'components/AuctionNftHeader';
+import { FormType } from '../AuctionForm';
+import { AuctionNftHeader } from '../AuctionNftHeader';
 
 import { notification, NotificationType } from 'utils/rc-notification';
 import { getStartTime, convertTime12to24 } from 'utils/format';

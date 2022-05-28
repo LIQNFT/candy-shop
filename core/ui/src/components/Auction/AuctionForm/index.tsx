@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { Checkbox } from 'components/Checkbox';
-import { AuctionNftHeader } from 'components/AuctionNftHeader';
+import { AuctionNftHeader } from '../AuctionNftHeader';
 
 import { SingleTokenInfo } from '@liqnft/candy-shop-sdk';
 import dayjs from 'dayjs';

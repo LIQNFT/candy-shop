@@ -15,8 +15,7 @@ import { Empty } from 'components/Empty';
 import { Card } from 'components/Card';
 
 import { LoadingSkeleton } from 'components/LoadingSkeleton';
-import { AuctionForm, FormType } from 'components/AuctionForm';
-import { CreateAuctionConfirm } from 'components/CreateAuctionConfirm';
+import { AuctionForm, FormType, CreateAuctionConfirm } from 'components/Auction';
 import { IconTick } from 'assets/IconTick';
 
 import { LoadStatus } from 'constant';
