@@ -106,7 +106,7 @@ const getUserNFTDataArray = async (
   // Update store object if cacheNFT is enabled and fetched tokens has updated
   if (cacheNFTParam?.enable && cachedTokens.length !== nftTokens.length) {
     await storeWalletNftToIDB(walletAddress, nftTokens);
-    console.log(`${Logger}: Updated new token to cached tokens =`, cachedTokens);
+    console.log(`${Logger}: Updated new token to cache, cached tokens =`, nftTokens);
   }
   return nftTokens;
 };
