@@ -74,7 +74,9 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
     if (bidInfo.status !== 1) {
       return (
         <div className="candy-auction-modal-notice">
-          You have been outbid! Retrieve your funds here or place a higher bid below.
+          {auction.status === AuctionStatus.STARTED
+            ? 'You have been outbid! Retrieve your funds here or place a higher bid below.'
+            : 'You have been outbid! Retrieve your funds here'}
           <button className="candy-button candy-button-outlined" style={{ marginLeft: 5 }} onClick={withdraw}>
             Retrieve Funds
           </button>
@@ -214,6 +216,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
             <Countdown
               start={Number(auction.startTime)}
               end={Number(auction.startTime) + Number(auction.biddingPeriod)}
+              status={auction.status}
             />
           </div>
 

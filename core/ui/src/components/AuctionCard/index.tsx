@@ -18,8 +18,6 @@ interface AuctionCardProps {
 export const AuctionCard: React.FC<AuctionCardProps> = ({ auction, candyShop, wallet, walletConnectComponent }) => {
   const [selected, setSelected] = useState<any>();
 
-  const timeLeft = Math.floor(Number(auction.startTime) + Number(auction.biddingPeriod) - dayjs().unix());
-
   let statusTag: React.ReactElement = <></>;
   if (auction.status === AuctionStatus.CREATED) {
     statusTag = <div className="candy-status-tag candy-status-tag-gray">NOT STARTED</div>;
@@ -38,6 +36,35 @@ export const AuctionCard: React.FC<AuctionCardProps> = ({ auction, candyShop, wa
     statusTag = <div className="candy-status-tag candy-status-tag-gray">ENDED</div>;
   }
 
+  let lastBid: React.ReactElement = <></>;
+  if (auction.status === AuctionStatus.STARTED) {
+    if (auction.highestBidPrice) {
+      lastBid = (
+        <>
+          Current bid: <Price value={auction.highestBidPrice} candyShop={candyShop} />
+        </>
+      );
+    } else {
+      lastBid = (
+        <>
+          Starting bid: <Price value={auction.startingBid} candyShop={candyShop} />
+        </>
+      );
+    }
+  } else if (auction.status === AuctionStatus.CREATED) {
+    lastBid = (
+      <>
+        Starting bid: <Price value={auction.startingBid} candyShop={candyShop} />
+      </>
+    );
+  } else {
+    lastBid = (
+      <>
+        Winning bid: <Price value={auction.highestBidPrice} candyShop={candyShop} />
+      </>
+    );
+  }
+
   return (
     <div>
       <Card
@@ -49,21 +76,12 @@ export const AuctionCard: React.FC<AuctionCardProps> = ({ auction, candyShop, wa
         label={statusTag}
         footer={
           <div className="candy-card-footer">
-            <div className="candy-card-stat">
-              {auction.highestBidPrice ? (
-                <>
-                  Current bid: <Price value={auction.highestBidPrice} candyShop={candyShop} />
-                </>
-              ) : (
-                <>
-                  Starting bid: <Price value={auction.startingBid} candyShop={candyShop} />
-                </>
-              )}
-            </div>
+            <div className="candy-card-stat">{lastBid}</div>
             <div className="candy-card-stat">
               <Countdown
                 start={Number(auction.startTime)}
                 end={Number(auction.startTime) + Number(auction.biddingPeriod)}
+                status={auction.status}
               />
             </div>
           </div>
