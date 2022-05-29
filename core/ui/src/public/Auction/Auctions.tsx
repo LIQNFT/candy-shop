@@ -9,6 +9,7 @@ import { Empty } from 'components/Empty';
 import { ORDER_FETCH_LIMIT } from 'constant/Orders';
 
 const Logger = 'CandyShopUI/Auctions';
+
 interface AuctionsProps {
   wallet?: AnchorWallet;
   walletConnectComponent: React.ReactElement<any, string | React.JSXElementConstructor<any>>;

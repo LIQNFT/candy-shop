@@ -24,7 +24,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 
-import './style.less';
+import './create-auction-style.less';
 
 interface CreateAuctionProps {
   wallet: AnchorWallet | undefined;
