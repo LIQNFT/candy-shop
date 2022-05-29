@@ -409,6 +409,12 @@ export const treasuryMintIsNative = (treasuryMint: web3.PublicKey) => {
   return treasuryMint.equals(WRAPPED_SOL_MINT);
 };
 
+export const checkIfBidExists = async (bid: web3.PublicKey, connection: web3.Connection) => {
+  const bidAccount = await connection.getAccountInfo(bid);
+  if (bidAccount !== null) return true;
+  return false;
+};
+
 export const getNftCreators = async (metadata: web3.PublicKey, connection: web3.Connection) => {
   const metadataObj = await connection.getAccountInfo(metadata);
 

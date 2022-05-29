@@ -15,8 +15,11 @@ import {
   sendTx,
   treasuryMintIsNative
 } from '../..';
+import { checkIfBidExists, getBid } from '../../utils';
 import { requestExtraComputeIx } from './requestExtraComputeIx';
+import { withdrawBid } from './withdraw';
 
+// will withdraw Bid first if bid account exists
 export const buyNowAuction = async ({
   candyShop,
   auction,
@@ -91,6 +94,23 @@ export const buyNowAuction = async ({
     treasuryMint,
     isNative
   );
+
+  const [bid] = await getBid(auction, buyer.publicKey, program.programId);
+  if (await checkIfBidExists(bid, program.provider.connection)) {
+    console.log("withdrawing user's bid before buy now");
+    await withdrawBid({
+      auction,
+      authority,
+      candyShop,
+      buyer,
+      treasuryMint,
+      nftMint,
+      metadata,
+      auctionHouse,
+      feeAccount,
+      program
+    });
+  }
 
   const transaction = new Transaction();
 
