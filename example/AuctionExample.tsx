@@ -56,6 +56,11 @@ export const AuctionExample: React.FC<AuctionExampleProps> = ({ network }) => {
         </div>
         <WalletMultiButton />
       </div>
+      <p style={{ fontSize: 16, color: 'red', fontWeight: 'bold', maxWidth: 1000, margin: '0px auto 30px' }}>
+        Note: Auctions are now available on devnet, feel free to try it out and give us feedback. We aim to launch on
+        mainnet in mid June. To create an auction on your Candy Shop, you may use the URL
+        /auction?creatorAddress=[yourWalletAddress]
+      </p>
       <CreateAuction
         candyShop={candyShop}
         wallet={wallet}
