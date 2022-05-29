@@ -6,6 +6,9 @@ export function fetchAuctionsByShopAddress(shopId: string, queryDto?: AuctionQue
   return fetchAuctionsByShop(axiosInstance, shopId, queryDto);
 }
 
-export function fetchAuctionBidAPI(auctionAddress: string, walletAddress: string): Promise<SingleBase<AuctionBid>> {
+export function fetchAuctionBidByWalletAddress(
+  auctionAddress: string,
+  walletAddress: string
+): Promise<SingleBase<AuctionBid>> {
   return fetchAuctionBid(axiosInstance, auctionAddress, walletAddress);
 }

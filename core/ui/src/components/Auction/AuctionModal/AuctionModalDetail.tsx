@@ -9,14 +9,14 @@ import { Countdown } from 'components/Countdown';
 import { Price } from 'components/Price';
 
 import { Auction, AuctionBid, SingleBase, AuctionStatus, BidStatus } from '@liqnft/candy-shop-types';
-import { CandyShop, fetchAuctionBidAPI } from '@liqnft/candy-shop-sdk';
+import { CandyShop, fetchAuctionBidByWalletAddress } from '@liqnft/candy-shop-sdk';
 
 const Logger = 'CandyShopUI/AuctionModalDetail';
 export interface AuctionModalDetailProps {
   auction: Auction;
   placeBid: (price: number) => void;
   buyNow: () => void;
-  withdraw: () => void;
+  onWithdrew: () => void;
   walletPublicKey: web3.PublicKey | undefined;
   walletConnectComponent: React.ReactElement;
   candyShop: CandyShop;
@@ -26,7 +26,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
   auction,
   placeBid,
   buyNow,
-  withdraw,
+  onWithdrew,
   walletPublicKey,
   walletConnectComponent,
   candyShop
@@ -37,12 +37,15 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
   useEffect(() => {
     if (!walletPublicKey) return;
 
-    fetchAuctionBidAPI(auction.auctionAddress, walletPublicKey.toString())
+    fetchAuctionBidByWalletAddress(auction.auctionAddress, walletPublicKey.toString())
       .then((res: SingleBase<AuctionBid>) => {
-        if (!res.success) return;
-        setBidInfo(res.result);
-        console.log(`${Logger}: fetchAuctionBidAPI success=`, res);
-        console.log(`${Logger}: fetchAuctionBidAPI BidStatus=`, mappedBidStatusString(res.result.status));
+        if (res.success) {
+          setBidInfo(res.result);
+          console.log(`${Logger}: fetchAuctionBidByWalletAddress success=`, res.result);
+          console.log(`${Logger}: fetchAuctionBidAPI BidStatus=`, mappedBidStatusString(res.result.status));
+        } else {
+          console.log(`${Logger}: fetchAuctionBidAPI failed, ${walletPublicKey.toString()} has not placed any bid yet`);
+        }
       })
       .catch((error: any) => {
         console.log(`${Logger}: fetchAuctionBidAPI failed, error=`, error);
@@ -64,10 +67,10 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
     walletConnectComponent
   );
 
-  const ModalAlert = () => {
+  const ModalAlertElement = () => {
     if (!bidInfo) return null;
 
-    if (auction.highestBidBuyer === walletPublicKey?.toString()) {
+    if (auction.highestBidBuyer && auction.highestBidBuyer === walletPublicKey?.toString()) {
       return <div className="candy-auction-modal-notice">You are currently the highest bidder!</div>;
     }
 
@@ -77,7 +80,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
           {auction.status === AuctionStatus.STARTED
             ? 'You have been outbid! Retrieve your funds here or place a higher bid below.'
             : 'You have been outbid! Retrieve your funds here'}
-          <button className="candy-button candy-button-outlined" style={{ marginLeft: 5 }} onClick={withdraw}>
+          <button className="candy-button candy-button-outlined" style={{ marginLeft: 5 }} onClick={onWithdrew}>
             Retrieve Funds
           </button>
         </div>
@@ -220,7 +223,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
 
   return (
     <div className="candy-auction-modal-detail">
-      {ModalAlert()}
+      {ModalAlertElement()}
 
       <div className="candy-auction-modal-detail-container">
         <div className="candy-auction-modal-thumbnail">

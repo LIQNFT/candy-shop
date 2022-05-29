@@ -65,6 +65,8 @@ import {
 import { configBaseUrl } from './config';
 import { CandyShopError, CandyShopErrorType } from './utils';
 
+const Logger = 'CandyShop';
+
 const DEFAULT_CURRENCY_SYMBOL = 'SOL';
 const DEFAULT_CURRENCY_DECIMALS = 9;
 const DEFAULT_PRICE_DECIMALS = 3;
@@ -154,7 +156,7 @@ export class CandyShop {
       wallet instanceof web3.Keypair ? getNodeWallet(wallet) : wallet,
       options
     );
-    console.log('CandyShop init: fetching idl for programId', this._programId.toString());
+    console.log(`${Logger}: fetching idl for programId`, this._programId.toString());
 
     // Directly use the JSON file here temporarily
     // @ts-ignore
@@ -226,7 +228,7 @@ export class CandyShop {
   public async buy(params: CandyShopBuyParams): Promise<string> {
     const { seller, tokenAccount, tokenMint, price, wallet } = params;
 
-    console.log('CandyShop: performing buy', {
+    console.log(`${Logger}: performing buy, `, {
       seller: seller.toString(),
       tokenAccount: tokenAccount.toString(),
       tokenMint: tokenMint.toString(),
@@ -274,7 +276,7 @@ export class CandyShop {
   public async sell(params: CandyShopSellParams): Promise<string> {
     const { tokenAccount, tokenMint, price, wallet } = params;
 
-    console.log('CandyShop: performing sell', {
+    console.log(`${Logger}: Performing sell `, {
       tokenMint: tokenMint.toString(),
       tokenAccount: tokenAccount.toString(),
       price
@@ -373,7 +375,7 @@ export class CandyShop {
       throw new CandyShopError(CandyShopErrorType.NonShopOwner);
     }
 
-    console.log('CandyShop: performing create auction', {
+    console.log(`${Logger}: Performing create auction`, {
       tokenMint: tokenMint.toString(),
       tokenAccount: tokenAccount.toString(),
       startingBid: startingBid.toString(),
@@ -427,7 +429,7 @@ export class CandyShop {
       throw new CandyShopError(CandyShopErrorType.NonShopOwner);
     }
 
-    console.log('CandyShop: performing cancel auction', {
+    console.log(`${Logger}: Performing cancel auction `, {
       tokenMint: tokenMint.toString(),
       tokenAccount: tokenAccount.toString()
     });
@@ -469,7 +471,7 @@ export class CandyShop {
   public async bidAuction(params: CandyShopBidAuctionParams): Promise<string> {
     const { tokenAccount, tokenMint, wallet, bidPrice } = params;
 
-    console.log('CandyShop: performing bid auction', {
+    console.log(`${Logger}: performing bid auction, `, {
       bidPrice: bidPrice.toString(),
       tokenAccount: tokenAccount.toString()
     });
@@ -520,7 +522,7 @@ export class CandyShop {
   public async withdrawAuctionBid(params: CandyShopWithdrawAuctionBidParams): Promise<string> {
     const { tokenAccount, tokenMint, wallet } = params;
 
-    console.log('CandyShop: performing withdraw bid auction', {
+    console.log(`${Logger}: Performing withdraw bid auction `, {
       tokenAccount: tokenAccount.toString()
     });
 
@@ -569,7 +571,7 @@ export class CandyShop {
   public async buyNowAuction(params: CandyShopBuyNowParams): Promise<string> {
     const { tokenAccount, tokenMint, wallet } = params;
 
-    console.log('CandyShop: performing buy now auction', {
+    console.log(`${Logger}: performing buy now auction `, {
       tokenAccount: tokenAccount.toString()
     });
 
@@ -617,7 +619,7 @@ export class CandyShop {
   public async settleAndDistributeAuctionProceeds(params: CandyShopSettleAndDistributeParams): Promise<string> {
     const { tokenAccount, tokenMint, wallet } = params;
 
-    console.log('CandyShop: performing settle auction and distribute proceeds', {
+    console.log(`${Logger}: performing settle auction and distribute proceeds `, {
       tokenAccount: tokenAccount.toString()
     });
 
