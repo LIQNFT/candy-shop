@@ -16,7 +16,7 @@ interface AuctionsProps {
 }
 
 export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wallet, candyShop }) => {
-  const [nfts, setNfts] = useState<any[]>([]);
+  const [auctionedNfts, setAuctionedNfts] = useState<Auction[]>([]);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
   const [startIndex, setStartIndex] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
@@ -52,9 +52,9 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
             return prevIndex + ORDER_FETCH_LIMIT;
           });
           if (startIndex === 0) {
-            setNfts(data.result);
+            setAuctionedNfts(data.result);
           } else {
-            setNfts((prevNfts) => [...prevNfts, ...data.result]);
+            setAuctionedNfts((prevNfts) => [...prevNfts, ...data.result]);
           }
         })
         .catch((error: any) => {
@@ -75,16 +75,16 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
   return (
     <div className="candy-container">
       <InfiniteScroll
-        dataLength={nfts.length}
+        dataLength={auctionedNfts.length}
         next={loadNextPage(startIndex)}
         hasMore={hasNextPage}
         loader={<LoadingSkeleton />}
       >
-        {nfts.length === 0 && !loading ? (
+        {auctionedNfts.length === 0 && !loading ? (
           <Empty description="No auctions found" />
         ) : (
           <div className="candy-container-list">
-            {nfts.map((auction: Auction) => (
+            {auctionedNfts.map((auction: Auction) => (
               <AuctionCard
                 key={auction.tokenAccount}
                 auction={auction}

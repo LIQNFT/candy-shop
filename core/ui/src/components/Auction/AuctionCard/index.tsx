@@ -14,54 +14,45 @@ interface AuctionCardProps {
   walletConnectComponent: React.ReactElement;
 }
 
+interface LastBidInfo {
+  price: string | undefined;
+  title: string;
+}
+
+interface statusTagInfo {
+  tagName: string;
+  styleName: string;
+}
+
 export const AuctionCard: React.FC<AuctionCardProps> = ({ auction, candyShop, wallet, walletConnectComponent }) => {
   const [selected, setSelected] = useState<any>();
+  const [lastBid, setLastBid] = useState<LastBidInfo>();
+  const [statusTag, setStatusTag] = useState<statusTagInfo>({ tagName: '', styleName: '' });
 
-  let statusTag: React.ReactElement = <></>;
-  if (auction.status === AuctionStatus.CREATED) {
-    statusTag = <div className="candy-status-tag candy-status-tag-gray">NOT STARTED</div>;
-  } else if (auction.status === AuctionStatus.STARTED) {
-    if (auction.highestBidBuyer && auction.highestBidBuyer === wallet?.publicKey.toString()) {
-      statusTag = <div className="candy-status-tag">HIGHEST BID</div>;
-    } else if (auction.userBid && wallet && auction.highestBidBuyer !== wallet.publicKey.toString()) {
-      statusTag = <div className="candy-status-tag candy-status-tag-yellow">OUTBID</div>;
+  useEffect(() => {
+    if (auction.status === AuctionStatus.CREATED) {
+      setLastBid({ price: auction.startingBid, title: 'Starting bid' });
+      setStatusTag({ tagName: 'NOT STARTED', styleName: 'candy-status-tag candy-status-tag-gray' });
+    } else if (auction.status === AuctionStatus.STARTED) {
+      if (auction.highestBidPrice) {
+        setLastBid({ price: auction.highestBidPrice, title: 'Current bid' });
+      } else {
+        setLastBid({ price: auction.startingBid, title: 'Starting bid' });
+      }
+      if (auction.highestBidBuyer && auction.highestBidBuyer === wallet?.publicKey.toString()) {
+        setStatusTag({ tagName: 'HIGHEST BID', styleName: 'candy-status-tag' });
+      } else if (auction.userBid && wallet && auction.highestBidBuyer !== wallet.publicKey.toString()) {
+        setStatusTag({ tagName: 'OUTBID', styleName: 'candy-status-tag candy-status-tag-yellow' });
+      }
+    } else if (
+      auction.status === AuctionStatus.COMPLETE ||
+      auction.status === AuctionStatus.CANCELLED ||
+      auction.status === AuctionStatus.EXPIRED
+    ) {
+      setLastBid({ price: auction.highestBidPrice, title: 'Winning bid' });
+      setStatusTag({ tagName: 'ENDED', styleName: 'candy-status-tag candy-status-tag-gray' });
     }
-  } else if (
-    auction.status === AuctionStatus.COMPLETE ||
-    auction.status === AuctionStatus.CANCELLED ||
-    auction.status === AuctionStatus.EXPIRED
-  ) {
-    statusTag = <div className="candy-status-tag candy-status-tag-gray">ENDED</div>;
-  }
-
-  let lastBid: React.ReactElement = <></>;
-  if (auction.status === AuctionStatus.STARTED) {
-    if (auction.highestBidPrice) {
-      lastBid = (
-        <>
-          Current bid: <Price value={auction.highestBidPrice} candyShop={candyShop} />
-        </>
-      );
-    } else {
-      lastBid = (
-        <>
-          Starting bid: <Price value={auction.startingBid} candyShop={candyShop} />
-        </>
-      );
-    }
-  } else if (auction.status === AuctionStatus.CREATED) {
-    lastBid = (
-      <>
-        Starting bid: <Price value={auction.startingBid} candyShop={candyShop} />
-      </>
-    );
-  } else {
-    lastBid = (
-      <>
-        Winning bid: <Price value={auction.highestBidPrice} candyShop={candyShop} />
-      </>
-    );
-  }
+  }, [auction, wallet]);
 
   return (
     <div>
@@ -71,10 +62,12 @@ export const AuctionCard: React.FC<AuctionCardProps> = ({ auction, candyShop, wa
         name={auction.name}
         ticker={auction.symbol}
         imgUrl={auction.image || ''}
-        label={statusTag}
+        label={statusTag && <div className={`${statusTag.styleName}`}>{statusTag.tagName}</div>}
         footer={
           <div className="candy-card-footer">
-            <div className="candy-card-stat">{lastBid}</div>
+            <div className="candy-card-stat">
+              {lastBid?.title}: <Price value={lastBid?.price} candyShop={candyShop} />
+            </div>
             <div className="candy-card-stat">
               <Countdown
                 start={Number(auction.startTime)}
