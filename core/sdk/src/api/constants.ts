@@ -27,4 +27,4 @@ export const AUTHORITY = 'authority';
 export const ORDER = 'order';
 export type Side = 'sell' | 'buy';
 
-export const FEE_ACCOUNT_MIN_BAL = 0.1 * web3.LAMPORTS_PER_SOL;
+export const FEE_ACCOUNT_MIN_BAL = 0.05 * web3.LAMPORTS_PER_SOL;

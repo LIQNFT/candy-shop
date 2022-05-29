@@ -48,7 +48,8 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.InvalidAuctionCreationParams]:
     'One or more of the passed auction creation parameters are invalid.',
   [CandyShopErrorType.AuctionNotOver]: 'Attempted to settle and auction that is not over.',
-  [CandyShopErrorType.InsufficientFeeAccountBalance]: 'Please contact shop owner to top up shop syrup balance.'
+  [CandyShopErrorType.InsufficientFeeAccountBalance]:
+    'Please contact shop owner to top up shop syrup balance. Min balance requirement 0.05 SOL.'
 };
 
 export class CandyShopError extends Error {
