@@ -320,7 +320,7 @@ export const checkBidParams = async (auction: web3.PublicKey, bidPrice: BN, prog
   }
 
   if (
-    (auctionData.highestBid && bidPrice.lt(auctionData.highestBid.price)) ||
+    (auctionData.highestBid && bidPrice.lt(auctionData.highestBid.price.add(auctionData.tickSize))) ||
     (!auctionData.highestBid && bidPrice.lt(auctionData.startingBid))
   ) {
     throw new CandyShopError(CandyShopErrorType.BidTooLow);
