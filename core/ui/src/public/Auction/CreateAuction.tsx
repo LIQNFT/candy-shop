@@ -174,6 +174,11 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
 
   const onClickCard = (item: any) => () => setSelected(item);
 
+  const onGoToNextAuctionDetail = () => {
+    setStage(AuctionStage.FORM);
+    window.scrollTo({ top: document.getElementById('candy-auction-title-id')?.offsetTop, behavior: 'smooth' });
+  };
+
   const loading =
     !firstBatchNFTLoaded.current || loadingListedUserNft !== LoadStatus.Loaded || loadingShop !== LoadStatus.Loaded;
   const availableAuctionNfts = nfts.filter((nft) => !listedUserNfts[nft.tokenMintAddress]);
@@ -184,6 +189,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
       <IconTick fill="#7522f5" />
     </span>
   );
+
   const CreateAuctionSelectStage = (
     <>
       <div className="candy-auction-description">Select the NFT you want to put up for auction</div>
@@ -202,7 +208,11 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
               />
             ))}
           </div>
-          <button disabled={!selected} className="candy-button" onClick={() => setStage(AuctionStage.FORM)}>
+          <button
+            disabled={!selected}
+            className="candy-button candy-auction-select-button"
+            onClick={onGoToNextAuctionDetail}
+          >
             Continue
           </button>
         </>
@@ -247,7 +257,9 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
 
   return (
     <div className="candy-auction">
-      <div className="candy-title">Create Auction</div>
+      <div className="candy-title" id="candy-auction-title-id">
+        Create Auction
+      </div>
       <div className="candy-auction-content">
         <div className="candy-auction-content-step">
           <div className="candy-auction-step-connector" />
@@ -258,6 +270,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
             </div>
           ))}
         </div>
+
         <div className="candy-auction-content-detail">
           {wallet && (isShopCreator(wallet.publicKey.toString()) ? CreateAuctionStages : NotOwnerNotification)}
           {!wallet && walletConnectComponent}

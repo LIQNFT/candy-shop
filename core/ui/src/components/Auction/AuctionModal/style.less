@@ -121,6 +121,13 @@
 
       .candy-input-price {
         height: 42px;
+
+        input::-webkit-input-placeholder {
+          color: @gray-medium-alt;
+        }
+        input::placeholder {
+          color: @gray-medium-alt;
+        }
       }
 
       .candy-button {
@@ -167,19 +174,22 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-
       padding-top: 20px;
-      padding-bottom: 20px;
       font-weight: bold;
       font-size: 24px;
       line-height: 36px;
+    }
+
+    .candy-auction-modal-confirmed-description {
+      font-weight: 600;
+      font-size: 14px;
     }
 
     .candy-auction-modal-confirmed-container {
       width: 100%;
       display: flex;
       align-items: center;
-      margin-bottom: 24px;
+      margin: 24px 0;
 
       p {
         margin-bottom: 4px;

@@ -174,11 +174,9 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
                 <div className="candy-input-label">Enter your bid</div>
                 <div className="candy-input-price">
                   <input
-                    placeholder={String(minNextBid / candyShop.baseUnitsPerCurrency)}
+                    placeholder={`${String(minNextBid / candyShop.baseUnitsPerCurrency)}+`}
                     min={minNextBid / candyShop.baseUnitsPerCurrency}
-                    onChange={(e: any) => {
-                      setPrice(e.target.value);
-                    }}
+                    onChange={(e: any) => setPrice(e.target.value)}
                     type="number"
                     value={price === undefined ? '' : price}
                   />
