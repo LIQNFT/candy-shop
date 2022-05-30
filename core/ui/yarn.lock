@@ -1262,12 +1262,12 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-6.10.0.tgz#c012c1ecc1a0e53d50e6af381618dca5268461c1"
   integrity sha512-lLseUPEhSFUXYTKj6q7s2O3s2vW2ebgA11vMAlKodXGf5AFw4zUoEbTz9CoFOC9jS6xY4Qr8BmRnxP/odT4Uuw==
 
-"@liqnft/candy-shop-sdk@0.4.38":
-  version "0.4.38"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-sdk/-/candy-shop-sdk-0.4.38.tgz#85b55c05909156fb8561302a61166e3a93f50481"
-  integrity sha512-HWM0k69chOY2GRHw8B9GWbkifZWWa0SqQZFBa5qTZi4GZSRwv9OAYGawx/Ydv6uu+Ez8y63J+cOjIU1KNkBTNA==
+"@liqnft/candy-shop-sdk@0.4.40":
+  version "0.4.39"
+  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-sdk/-/candy-shop-sdk-0.4.39.tgz#d6215e20716034ff762165adc063cd8ee16c51b6"
+  integrity sha512-POE5pTwzJUTOAcWI5JAUiy1yE/krzwHw88pR24Rz7QDwEuhrCs99gXkx9XLTFWJ70E5zrqAorP0pSC+6e6sQKw==
   dependencies:
-    "@liqnft/candy-shop-types" "0.1.12"
+    "@liqnft/candy-shop-types" "^0.1.13"
     "@project-serum/anchor" "^0.23.0"
     "@solana/spl-token" "^0.2.0"
     "@solana/wallet-adapter-react" "^0.15.4"
@@ -1276,10 +1276,15 @@
     idb "^7.0.1"
     qs "^6.10.3"
 
-"@liqnft/candy-shop-types@0.1.12":
-  version "0.1.12"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.1.12.tgz#8b9fead643da9ebb67e31747a8bade9be05832e3"
-  integrity sha512-Z+HjbbMbok6mB4EswOozs+jcUjQfBVDeVUu8Pw/UkyPf1+iltMG3Axk9mM+ea0qmtV8n5ejkMpFSMnb089EelA==
+"@liqnft/candy-shop-types@0.1.14":
+  version "0.1.14"
+  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.1.14.tgz#ac207b855926bbd0c95bd1c3fc61d5be440a3eef"
+  integrity sha512-78nSeoXIKBLiet3KfuaLiHVm6cRoovsTBWnzr3Ij2JLegg9/cC36oQMwTjx9idXAZuzr+YLW+ua3X9HUwMcWww==
+
+"@liqnft/candy-shop-types@^0.1.13":
+  version "0.1.13"
+  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.1.13.tgz#4c82ffd7f1a713472f5e5109063fbecdb9f9ab25"
+  integrity sha512-4ytBqABMm12tSOR4Kfqlj8C5REycbAEZhiH0N1Os2fTT5Z3PVXbPse7O2flrDcRmaxIbeiN5Roaj2vlytonIiw==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
