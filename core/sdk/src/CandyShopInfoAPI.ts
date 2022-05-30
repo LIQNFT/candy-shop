@@ -74,6 +74,9 @@ export function fetchShopByShopAddress(candyShopAddress: web3.PublicKey): Promis
   return fetchShopByShopId(axiosInstance, candyShopAddress.toString());
 }
 
-export function fetchShopStatusByShopAddress(candyShopAddress: web3.PublicKey): Promise<SingleBase<ShopStatus[]>> {
-  return fetchShopStatusByShopId(axiosInstance, candyShopAddress.toString());
+export function fetchShopStatusByShopAddress(
+  candyShopAddress: web3.PublicKey,
+  walletAddress?: string
+): Promise<SingleBase<ShopStatus[]>> {
+  return fetchShopStatusByShopId(axiosInstance, candyShopAddress.toString(), walletAddress);
 }
