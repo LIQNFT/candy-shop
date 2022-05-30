@@ -4,7 +4,7 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 
 import { Empty } from 'components/Empty';
 import { Nft } from 'components/Nft';
-import { Skeleton } from 'components/Skeleton';
+import { LoadingSkeleton } from 'components/LoadingSkeleton';
 
 import {
   Order as OrderSchema,
@@ -141,6 +141,7 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
         })
         .catch((error: any) => {
           console.log(`${Logger}: getUserNFTs failed, error=`, error);
+          firstBatchNFTLoaded.current = true;
         })
         .finally(() => {
           setNFTLoadingStatus(LoadStatus.Loaded);
@@ -157,6 +158,9 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
       .activeOrdersByWalletAddress(walletPublicKey.toString())
       .then((sellOrders: OrderSchema[]) => {
         setSellOrders(sellOrders);
+      })
+      .catch((err: Error) => {
+        console.log(`${Logger}: activeOrdersByWalletAddress failed, error=`, err);
       })
       .finally(() => {
         setOrderLoading(LoadStatus.Loaded);
@@ -186,17 +190,7 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
   return (
     <div style={style} className="candy-sell-component">
       <div className="candy-container">
-        {loading && (
-          <div className="candy-container-list">
-            {Array(4)
-              .fill(0)
-              .map((_, key) => (
-                <div key={key}>
-                  <Skeleton />
-                </div>
-              ))}
-          </div>
-        )}
+        {loading && <LoadingSkeleton />}
         {!loading && (
           <>
             {nfts.length > 0 && shop && (
