@@ -60,10 +60,12 @@ import {
   CandyShopSettings,
   CandyShopWithdrawAuctionBidParams,
   CandyShopSettleAndDistributeParams,
-  CandyShopBuyNowParams
+  CandyShopBuyNowParams,
+  CandyShopUpdateParams
 } from './CandyShopModel';
 import { configBaseUrl } from './config';
 import { CandyShopError, CandyShopErrorType } from './utils';
+import { updateCandyShop } from './api/program/marketplace/updateCandyShop';
 
 const Logger = 'CandyShop';
 
@@ -218,6 +220,44 @@ export class CandyShop {
 
   get volumeDecimalsMin(): number {
     return this._settings.volumeDecimalsMin;
+  }
+
+  /**
+   * Executes Candy Shop __UpdateCandyShop__ action
+   *
+   * @param {CandyShopUpdateParams} params required parameters for update action
+   */
+  public async updateCandyShop(params: CandyShopUpdateParams): Promise<string> {
+    const { wallet, sellerFeeBasisPoint, requiresSignOff, canChangeSalePrice, split } = params;
+
+    const program = await this.getStaticProgram(wallet);
+    const [auctionHouseAuthority, authorityBump] = await getAuctionHouseAuthority(
+      this._candyShopCreatorAddress,
+      this._treasuryMint,
+      this._programId
+    );
+
+    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
+
+    console.log(`${Logger}: performing update, `, {
+      auctionHouse: auctionHouse.toString(),
+      sellerFeeBasisPoint: sellerFeeBasisPoint ? sellerFeeBasisPoint.toString() : null
+    });
+
+    const tx = await updateCandyShop({
+      wallet,
+      treasuryMint: this._treasuryMint,
+      sellerFeeBasisPoint,
+      requiresSignOff,
+      canChangeSalePrice,
+      split,
+      auctionHouse,
+      auctionHouseAuthority,
+      authorityBump,
+      program
+    });
+
+    return tx.txId;
   }
 
   /**
