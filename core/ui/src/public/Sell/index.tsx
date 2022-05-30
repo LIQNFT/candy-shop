@@ -53,7 +53,7 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
   const firstBatchNFTLoaded = useRef<boolean>(false);
 
   const sellUpdateStatus = useValidateStatus(SellActionsStatus);
-  useUpdateCandyShopContext(candyShop.candyShopAddress);
+  useUpdateCandyShopContext(candyShop.candyShopAddress, wallet?.publicKey.toString());
 
   useEffect(() => {
     if (!walletPublicKey) return;
