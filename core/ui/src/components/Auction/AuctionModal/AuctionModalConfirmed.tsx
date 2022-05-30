@@ -13,6 +13,7 @@ interface AuctionModalConfirmedProps {
   walletPublicKey: web3.PublicKey | undefined;
   onClose: () => void;
   titleText: string;
+  descriptionText?: string;
 }
 
 export const AuctionModalConfirmed: React.FC<AuctionModalConfirmedProps> = ({
@@ -20,7 +21,8 @@ export const AuctionModalConfirmed: React.FC<AuctionModalConfirmedProps> = ({
   txHash,
   walletPublicKey,
   onClose,
-  titleText
+  titleText,
+  descriptionText
 }) => {
   const walletAddress = walletPublicKey?.toBase58();
 
@@ -30,6 +32,7 @@ export const AuctionModalConfirmed: React.FC<AuctionModalConfirmedProps> = ({
         <IconTick />
         <div>{titleText}</div>
       </div>
+      {descriptionText && <p className="candy-auction-modal-confirmed-description">{descriptionText}</p>}
 
       <div className="candy-auction-modal-confirmed-container">
         <div className="candy-auction-modal-confirmed-thumbnail">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 
 interface PriceProps {
@@ -17,7 +17,7 @@ const getPrice = (candyShop: CandyShop, price?: string | number | null) => {
 };
 
 export const Price: React.FC<PriceProps> = ({ value, candyShop, emptyValue }) => {
-  let formattedValue = getPrice(candyShop, value);
+  const formattedValue = getPrice(candyShop, value);
   emptyValue = emptyValue || 'N/A';
 
   return candyShop && formattedValue ? (

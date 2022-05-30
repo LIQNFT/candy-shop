@@ -25,6 +25,17 @@ export interface AuctionModalProps {
   candyShop: CandyShop;
 }
 
+enum TitleTextType {
+  BID_CONFIRMED = 'Bid Confirmed',
+  TRANSACTION_CONFIRMED = 'Transaction Confirmed',
+  WITHDRAWAL_CONFIRMED = 'Withdrawal Confirmed'
+}
+enum ProcessingTextType {
+  BID = 'Processing Bid',
+  TRANSACTION = 'Processing Transaction',
+  WITHDRAW = 'Processing Withdraw'
+}
+
 export const AuctionModal: React.FC<AuctionModalProps> = ({
   auction,
   onClose,
@@ -33,9 +44,10 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
   candyShop
 }) => {
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
-  const [hash, setHash] = useState('');
-  const [processingText, setProcessingText] = useState<string>('Processing Transaction');
-  const [titleText, setTitleText] = useState<string>('Transaction Confirmed');
+  const [hash, setHash] = useState<string>('');
+  const [processingText, setProcessingText] = useState<ProcessingTextType>(ProcessingTextType.TRANSACTION);
+  const [titleText, setTitleText] = useState<TitleTextType>(TitleTextType.TRANSACTION_CONFIRMED);
+  const [bidPrice, setBidPrice] = useState<number>();
 
   const placeBid = (price: number) => {
     if (!wallet) return;
@@ -49,7 +61,7 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
       return notification(`You must bid at least ${minBidPrice}`, NotificationType.Error);
     }
 
-    setProcessingText('Processing Bid');
+    setProcessingText(ProcessingTextType.BID);
     setState(TransactionState.PROCESSING);
     candyShop
       .bidAuction({
@@ -61,8 +73,9 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
       .then((txId: string) => {
         console.log(`${Logger}: bidAuction request success, txId=`, txId);
         setHash(txId);
-        setTitleText('Bid Confirmed');
+        setTitleText(TitleTextType.BID_CONFIRMED);
         setState(TransactionState.CONFIRMED);
+        setBidPrice(price);
       })
       .catch((err: Error) => {
         notification(err.message, NotificationType.Error);
@@ -74,7 +87,7 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
   const buyNow = () => {
     if (!wallet) return;
 
-    setProcessingText('Processing Transaction');
+    setProcessingText(ProcessingTextType.TRANSACTION);
     setState(TransactionState.PROCESSING);
     candyShop
       .buyNowAuction({
@@ -85,7 +98,7 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
       .then((txId: string) => {
         console.log(`${Logger}: buyNowAuction request success, txId=`, txId);
         setHash(txId);
-        setTitleText('Transaction Confirmed');
+        setTitleText(TitleTextType.TRANSACTION_CONFIRMED);
         setState(TransactionState.CONFIRMED);
       })
       .catch((err: Error) => {
@@ -98,7 +111,7 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
   const withdraw = () => {
     if (!wallet) return;
 
-    setProcessingText('Processing Withdraw');
+    setProcessingText(ProcessingTextType.WITHDRAW);
     setState(TransactionState.PROCESSING);
     candyShop
       .withdrawAuctionBid({
@@ -109,7 +122,7 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
       .then((txId: string) => {
         console.log(`${Logger}: withdrawAuctionBid request success, txId=`, txId);
         setHash(txId);
-        setTitleText('Withdrawal Confirmed');
+        setTitleText(TitleTextType.WITHDRAWAL_CONFIRMED);
         setState(TransactionState.CONFIRMED);
       })
       .catch((err: Error) => {
@@ -141,6 +154,7 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
             auction={auction}
             txHash={hash}
             onClose={onClose}
+            descriptionText={bidPrice ? `${bidPrice} ${candyShop.currencySymbol}` : undefined}
           />
         )}
       </div>

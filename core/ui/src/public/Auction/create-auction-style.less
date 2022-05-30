@@ -36,6 +36,7 @@
         flex-direction: column;
         align-items: center;
         color: @gray-medium-alt;
+        z-index: 1;
 
         span {
           background-color: @gray-medium-alt;
@@ -65,7 +66,6 @@
         top: 15px;
         left: 50%;
         transform: translateX(-50%);
-        z-index: -1;
       }
     }
 
@@ -93,7 +93,7 @@
             background: #fff;
             width: 50%;
             height: 50%;
-            top: 50%;
+            top: 43%;
             left: 50%;
             z-index: -1;
             transform: translate(-50%, -50%);
@@ -104,6 +104,11 @@
             height: 25px;
           }
         }
+      }
+
+      .candy-auction-select-button {
+        display: block;
+        margin: 0 auto;
       }
     }
   }

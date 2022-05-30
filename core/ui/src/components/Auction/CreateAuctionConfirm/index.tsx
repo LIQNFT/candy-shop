@@ -93,7 +93,7 @@ export const CreateAuctionConfirm: React.FC<CreateAuctionProps> = ({
     <div className="candy-auction-confirm-container">
       <div className="candy-auction-confirm-title">
         Review and confirm the auction details are correct. You can cancel the auction before it starts, but once an
-        auction begins, the owner will have to sell to the highest bidder.
+        auction begins, you will have to sell to the highest bidder.
       </div>
       {selected ? (
         <AuctionNftHeader
