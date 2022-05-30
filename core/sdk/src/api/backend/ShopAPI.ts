@@ -15,7 +15,10 @@ export async function fetchShopByShopId(axiosInstance: AxiosInstance, shopId: st
 
 export async function fetchShopStatusByShopId(
   axiosInstance: AxiosInstance,
-  shopId: string
+  shopId: string,
+  walletAddress?: string
 ): Promise<SingleBase<ShopStatus[]>> {
-  return axiosInstance.get<SingleBase<ShopStatus[]>>(`/status/${shopId}`).then((res) => res.data);
+  return axiosInstance
+    .get<SingleBase<ShopStatus[]>>(`/status/${shopId}?${walletAddress ? `walletAddress=${walletAddress}` : ''}`)
+    .then((res) => res.data);
 }
