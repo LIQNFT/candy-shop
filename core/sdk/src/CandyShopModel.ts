@@ -31,6 +31,26 @@ export interface CandyShopSettings {
 }
 
 /**
+ * Arguments required for calling Update Candy Shop action
+ *
+ * @property {AnchorWallet | Keypair} wallet
+ * @property {BN | null} sellerFeeBasisPoint
+ * @property {PublicKey | null} newAuthority
+ */
+export interface CandyShopUpdateParams {
+  /** User wallet keypair */
+  wallet: AnchorWallet | web3.Keypair;
+  /** Updated valuse for sellerFeeBasisPoint */
+  sellerFeeBasisPoint: BN | null;
+  /** Updated valuse for requiresSignOff */
+  requiresSignOff: boolean | null;
+  /** Updated valuse for canChangeSalePrice */
+  canChangeSalePrice: boolean | null;
+  /** fee split of the shop */
+  split: BN | null;
+}
+
+/**
  * General arguments required for calling Candy Shop actions
  *
  * @property {PublicKey} tokenAccount

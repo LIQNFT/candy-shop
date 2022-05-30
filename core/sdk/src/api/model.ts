@@ -2,6 +2,19 @@ import * as anchor from '@project-serum/anchor';
 import { web3, BN, Program, Idl } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
+export interface UpdateCandyShopParams {
+  wallet: AnchorWallet | web3.Keypair;
+  treasuryMint: web3.PublicKey;
+  sellerFeeBasisPoint: BN | null;
+  requiresSignOff: boolean | null;
+  canChangeSalePrice: boolean | null;
+  split: BN | null;
+  auctionHouse: web3.PublicKey;
+  auctionHouseAuthority: web3.PublicKey;
+  authorityBump: number;
+  program: Program<Idl>;
+}
+
 export interface CandyShopTransactionParams {
   wallet: AnchorWallet | web3.Keypair;
   tokenAccount: web3.PublicKey;
