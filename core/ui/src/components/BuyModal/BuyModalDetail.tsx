@@ -1,13 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { web3 } from '@project-serum/anchor';
-
-import { LiqImage } from 'components/LiqImage';
-import { NftStat } from 'components/NftStat';
-import { NftAttributes } from 'components/NftAttributes';
-
-import { Nft, Order as OrderSchema } from '@liqnft/candy-shop-types';
+import '@google/model-viewer';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { Nft, Order as OrderSchema } from '@liqnft/candy-shop-types';
+import { web3 } from '@project-serum/anchor';
+import { NftAttributes } from 'components/NftAttributes';
+import { NftStat } from 'components/NftStat';
+import { Viewer } from 'components/Viewer';
 import { ShopExchangeInfo } from 'model';
+import React, { useEffect, useState } from 'react';
 import { getPrice } from 'utils/getPrice';
 
 export interface BuyModalDetailProps {
@@ -48,7 +47,7 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   return (
     <>
       <div className="candy-buy-modal-thumbnail">
-        <LiqImage src={order?.nftImageLink || ''} alt={order?.name} fit="contain" />
+        <Viewer order={order} />
       </div>
       <div className="candy-buy-modal-container">
         <div className="candy-title">{order?.name}</div>
