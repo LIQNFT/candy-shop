@@ -1,4 +1,13 @@
-import React, { createContext, ReactElement, useEffect, useState, Dispatch, SetStateAction, useContext } from 'react';
+import React, {
+  createContext,
+  ReactElement,
+  useEffect,
+  useState,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useCallback
+} from 'react';
 
 import { fetchShopStatusByShopAddress } from '@liqnft/candy-shop-sdk';
 import { SingleBase, ShopStatus } from '@liqnft/candy-shop-types';
@@ -6,7 +15,6 @@ import { web3 } from '@project-serum/anchor';
 
 import { POLLING_SHOP_INTERVAL } from 'constant';
 import { useInterval } from 'hooks/useInterval';
-import { useCallback } from 'react';
 
 const Logger = 'CandyShopUI/CandyShopDataValidator';
 
