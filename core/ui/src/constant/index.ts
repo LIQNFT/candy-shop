@@ -11,5 +11,5 @@ export const POLLING_INTERVAL = POLLING_SHOP_INTERVAL + 500;
 
 export const StatActionsStatus = [ShopStatusType.Order];
 export const OrdersActionsStatus = [ShopStatusType.Order];
-export const SellActionsStatus = [ShopStatusType.Order];
+export const SellActionsStatus = [ShopStatusType.UserNft];
 export const ActivityActionsStatus = [ShopStatusType.Trade];
