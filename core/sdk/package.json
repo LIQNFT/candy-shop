@@ -1,6 +1,6 @@
 {
   "name": "@liqnft/candy-shop-sdk",
-  "version": "0.4.40",
+  "version": "0.4.41",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
@@ -9,7 +9,7 @@
     "test": "ts-mocha test/**/*.spec.ts"
   },
   "dependencies": {
-    "@liqnft/candy-shop-types": "0.1.14",
+    "@liqnft/candy-shop-types": "0.1.15",
     "@project-serum/anchor": "^0.23.0",
     "@solana/spl-token": "^0.2.0",
     "@solana/wallet-adapter-react": "^0.15.4",
