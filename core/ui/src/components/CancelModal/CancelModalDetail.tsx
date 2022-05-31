@@ -1,9 +1,10 @@
+import '@google/model-viewer';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { ExplorerLink } from 'components/ExplorerLink';
-import { LiqImage } from 'components/LiqImage';
+import { Viewer } from 'components/Viewer';
 import { TIMEOUT_EXTRA_LOADING } from 'constant';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 import { ShopExchangeInfo, TransactionState } from 'model';
@@ -54,7 +55,7 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
   return (
     <div className="candy-cancel-modal">
       <div className="candy-cancel-modal-thumbnail">
-        <LiqImage src={order.nftImageLink} alt={order?.name} fit="contain" />
+        <Viewer order={order} />
       </div>
 
       <div className="candy-cancel-modal-container">

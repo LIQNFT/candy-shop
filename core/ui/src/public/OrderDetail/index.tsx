@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { web3, BN } from '@project-serum/anchor';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
-
-import { ExplorerLink } from 'components/ExplorerLink';
-import { NftAttributes } from 'components/NftAttributes';
-import { LiqImage } from 'components/LiqImage';
-import { Modal } from 'components/Modal';
-import { Processing } from 'components/Processing';
-import BuyModalConfirmed from 'components/BuyModal/BuyModalConfirmed';
-import { handleError } from 'utils/ErrorHandler';
-import { Nft, Order as OrderSchema } from '@liqnft/candy-shop-types';
-import { TransactionState } from 'model';
-
+import '@google/model-viewer';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
-import './style.less';
+import { Nft, Order as OrderSchema } from '@liqnft/candy-shop-types';
+import { BN, web3 } from '@project-serum/anchor';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
+import BuyModalConfirmed from 'components/BuyModal/BuyModalConfirmed';
+import { ExplorerLink } from 'components/ExplorerLink';
+import { Modal } from 'components/Modal';
+import { NftAttributes } from 'components/NftAttributes';
+import { Processing } from 'components/Processing';
+import { Viewer } from 'components/Viewer';
+import { TransactionState } from 'model';
+import React, { useEffect, useState } from 'react';
+import { handleError } from 'utils/ErrorHandler';
 import { getExchangeInfo } from 'utils/getExchangeInfo';
 import { getPrice } from 'utils/getPrice';
+import './style.less';
 
 interface OrderDetailProps {
   tokenMint: string;
@@ -113,9 +112,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   return (
     <div className="candy-order-detail">
       <div className="candy-container">
-        <div className="candy-order-detail-left">
-          <LiqImage src={order?.nftImageLink || ''} alt={order?.name} fit="contain" />
-        </div>
+        <div className="candy-order-detail-left">{order && <Viewer order={order} />}</div>
         <div className="candy-order-detail-right">
           {isUserListing && <div className="candy-status-tag-inline">Your Listing</div>}
           <div className="candy-order-detail-title">{order?.name}</div>

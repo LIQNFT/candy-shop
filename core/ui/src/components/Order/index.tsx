@@ -10,6 +10,7 @@ import { getPrice } from 'utils/getPrice';
 import { LiqImage } from 'components/LiqImage';
 import { BuyModal } from 'components/BuyModal';
 import { CancelModal } from 'components/CancelModal';
+import { IconPlayer } from 'assets/IconPlayer';
 
 import './index.less';
 
@@ -62,6 +63,7 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectCompon
           style={{ borderTopRightRadius: 14, borderTopLeftRadius: 14 }}
         />
         <div className="candy-order-info">
+          {order?.nftAnimationLink?.includes('ext=mp4') && <IconPlayer className="candy-order-player-icon" />}
           <div className="candy-order-name candy-line-limit-1">
             {`${order?.name}${order?.edition !== 0 ? ` #${order?.edition}` : ''}`}
           </div>
