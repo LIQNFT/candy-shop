@@ -49,7 +49,34 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
   const [titleText, setTitleText] = useState<TitleTextType>(TitleTextType.TRANSACTION_CONFIRMED);
   const [bidPrice, setBidPrice] = useState<number>();
 
+  const buyNow = () => {
+    if (!wallet) return;
+
+    setProcessingText(ProcessingTextType.TRANSACTION);
+    setState(TransactionState.PROCESSING);
+    candyShop
+      .buyNowAuction({
+        wallet,
+        tokenMint: new web3.PublicKey(auction.tokenMint),
+        tokenAccount: new web3.PublicKey(auction.tokenAccount)
+      })
+      .then((txId: string) => {
+        console.log(`${Logger}: buyNowAuction request success, txId=`, txId);
+        setHash(txId);
+        setTitleText(TitleTextType.TRANSACTION_CONFIRMED);
+        setState(TransactionState.CONFIRMED);
+      })
+      .catch((err: Error) => {
+        notification(err.message, NotificationType.Error);
+        console.log(`${Logger} buyNowAuction failed, error=`, err);
+        setState(TransactionState.DISPLAY);
+      });
+  };
+
   const placeBid = (price: number) => {
+    // buy now when price > buyNowPrice
+    if (price * candyShop.baseUnitsPerCurrency >= Number(auction.buyNowPrice)) return buyNow();
+
     if (!wallet) return;
 
     const minBidPrice =
@@ -80,30 +107,6 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
       .catch((err: Error) => {
         notification(err.message, NotificationType.Error);
         console.log(`${Logger} bidAuction failed, error=`, err);
-        setState(TransactionState.DISPLAY);
-      });
-  };
-
-  const buyNow = () => {
-    if (!wallet) return;
-
-    setProcessingText(ProcessingTextType.TRANSACTION);
-    setState(TransactionState.PROCESSING);
-    candyShop
-      .buyNowAuction({
-        wallet,
-        tokenMint: new web3.PublicKey(auction.tokenMint),
-        tokenAccount: new web3.PublicKey(auction.tokenAccount)
-      })
-      .then((txId: string) => {
-        console.log(`${Logger}: buyNowAuction request success, txId=`, txId);
-        setHash(txId);
-        setTitleText(TitleTextType.TRANSACTION_CONFIRMED);
-        setState(TransactionState.CONFIRMED);
-      })
-      .catch((err: Error) => {
-        notification(err.message, NotificationType.Error);
-        console.log(`${Logger} buyNowAuction failed, error=`, err);
         setState(TransactionState.DISPLAY);
       });
   };
