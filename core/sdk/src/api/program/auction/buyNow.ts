@@ -19,7 +19,6 @@ import { checkIfBidExists, getBid } from '../../utils';
 import { requestExtraComputeIx } from './requestExtraComputeIx';
 import { withdrawBid } from './withdraw';
 
-// will withdraw Bid first if bid account exists
 export const buyNowAuction = async ({
   candyShop,
   auction,
