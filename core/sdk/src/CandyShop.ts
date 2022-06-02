@@ -39,7 +39,7 @@ import {
 } from './api';
 import candyShopIdl from './candy_shop.json';
 import { OrdersFilterQuery, TradeQuery } from './api/backend';
-import { CANDY_SHOP_INS_PROGRAM_ID, CANDY_SHOP_PROGRAM_ID } from './api/constants';
+// import { CANDY_SHOP_INS_PROGRAM_ID } from './api/constants';
 import {
   fetchNFTByMintAddress,
   fetchOrderByShopAndMintAddress,
@@ -89,6 +89,7 @@ export class CandyShop {
   private _env: web3.Cluster;
   private _settings: CandyShopSettings;
   private _baseUnitsPerCurrency: number;
+  private _isEnterprise: boolean;
   private _program: Program | undefined;
 
   /**
@@ -106,13 +107,15 @@ export class CandyShop {
     treasuryMint: web3.PublicKey,
     candyShopProgramId: web3.PublicKey,
     env: web3.Cluster,
-    settings?: Partial<CandyShopSettings>
+    settings?: Partial<CandyShopSettings>,
+    isEnterprise?: boolean
   ) {
     this._candyShopAddress = getCandyShopSync(candyShopCreatorAddress, treasuryMint, candyShopProgramId)[0];
     this._candyShopCreatorAddress = candyShopCreatorAddress;
     this._treasuryMint = treasuryMint;
     this._programId = candyShopProgramId;
     this._env = env;
+    this._isEnterprise = isEnterprise !== undefined ? isEnterprise : false;
     this._settings = {
       currencySymbol: settings?.currencySymbol ?? DEFAULT_CURRENCY_SYMBOL,
       currencyDecimals: settings?.currencyDecimals ?? DEFAULT_CURRENCY_DECIMALS,
@@ -209,6 +212,10 @@ export class CandyShop {
     return this._programId;
   }
 
+  get isEnterprise(): boolean {
+    return this._isEnterprise;
+  }
+
   get baseUnitsPerCurrency(): number {
     return this._baseUnitsPerCurrency;
   }
@@ -300,6 +307,7 @@ export class CandyShop {
 
     const buyTxHashParams: BuyAndExecuteSaleTransactionParams = {
       wallet,
+      candyShopCreator: this._candyShopCreatorAddress,
       counterParty: seller,
       tokenAccount,
       tokenAccountMint: tokenMint,
@@ -315,7 +323,7 @@ export class CandyShop {
       amount: new BN(1),
       program
     };
-    const txHash = await buyAndExecuteSales(this._programId, buyTxHashParams);
+    const txHash = await buyAndExecuteSales(this._isEnterprise, buyTxHashParams);
 
     return txHash;
   }
@@ -347,6 +355,7 @@ export class CandyShop {
 
     const txHash = await sellNft({
       wallet,
+      candyShopCreator: this._candyShopCreatorAddress,
       tokenAccount,
       tokenAccountMint: tokenMint,
       treasuryMint: this._treasuryMint,
@@ -398,6 +407,7 @@ export class CandyShop {
 
     const txHash = await cancelOrder({
       wallet,
+      candyShopCreator: this._candyShopCreatorAddress,
       tokenAccount,
       tokenAccountMint: tokenMint,
       treasuryMint: this._treasuryMint,
@@ -785,14 +795,14 @@ function getNodeWallet(wallet: web3.Keypair) {
 }
 
 /**
- * Get tx hash from different executions by programId
+ * Get tx hash from different executions
  *
- * @param {PublicKey} programId
+ * @param {boolean} isEneterprise
  * @param {BuyAndExecuteSaleTransactionParams} params required params for buy/sell transaction
  * @returns
  */
-function buyAndExecuteSales(programId: web3.PublicKey, params: BuyAndExecuteSaleTransactionParams): Promise<string> {
-  if (programId.equals(CANDY_SHOP_INS_PROGRAM_ID)) {
+function buyAndExecuteSales(isEneterprise: boolean, params: BuyAndExecuteSaleTransactionParams): Promise<string> {
+  if (isEneterprise) {
     return insBuyAndExecuteSale(params);
   }
   return buyAndExecuteSale(params);

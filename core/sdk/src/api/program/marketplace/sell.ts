@@ -14,6 +14,7 @@ import { safeAwait } from '../../../utils';
 export async function sellNft(params: SellTransactionParams): Promise<string> {
   const {
     wallet,
+    candyShopCreator,
     tokenAccount,
     tokenAccountMint,
     treasuryMint,
@@ -69,7 +70,7 @@ export async function sellNft(params: SellTransactionParams): Promise<string> {
   }
 
   const ix = await program.methods
-    .sellWithProxy(price, amount, tradeStateBump, freeTradeStateBump, programAsSignerBump, authorityBump)
+    .sellWithProxy(price, amount, tradeStateBump, freeTradeStateBump, programAsSignerBump)
     .accounts({
       wallet: wallet.publicKey,
       tokenAccount,
@@ -79,12 +80,11 @@ export async function sellNft(params: SellTransactionParams): Promise<string> {
       auctionHouseFeeAccount: feeAccount,
       sellerTradeState: tradeState,
       freeSellerTradeState: freeTradeState,
+      treasuryMint,
+      candyShopCreator,
       candyShop,
       ahProgram: AUCTION_HOUSE_PROGRAM_ID,
-      tokenProgram: TOKEN_PROGRAM_ID,
-      systemProgram: anchor.web3.SystemProgram.programId,
-      programAsSigner,
-      rent: anchor.web3.SYSVAR_RENT_PUBKEY
+      programAsSigner
     })
     .instruction();
 
