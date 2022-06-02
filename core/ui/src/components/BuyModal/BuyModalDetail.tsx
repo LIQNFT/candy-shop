@@ -1,4 +1,3 @@
-import '@google/model-viewer';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { Nft, Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { web3 } from '@project-serum/anchor';
