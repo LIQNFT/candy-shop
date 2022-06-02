@@ -22,7 +22,7 @@ import { CandyShopError, CandyShopErrorType } from '../utils/error';
 import { Creator, Metadata, parseMetadata, safeAwait } from '../utils';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { awaitTransactionSignatureConfirmation } from './program';
-import { FEE_ACCOUNT_MIN_BAL } from '.';
+import { SPL_CREATORS_LIMIT, FEE_ACCOUNT_MIN_BAL, NATIVE_CREATORS_LIMIT } from '.';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);
@@ -476,5 +476,20 @@ export const checkAHFeeAccountBalance = async (feeAccount: web3.PublicKey, conne
   const feeAccountInfo = await connection.getAccountInfo(feeAccount);
   if (!feeAccountInfo || feeAccountInfo.lamports < FEE_ACCOUNT_MIN_BAL) {
     throw new CandyShopError(CandyShopErrorType.InsufficientFeeAccountBalance);
+  }
+};
+
+export const checkCanExecSettle = async (
+  treasuryMint: web3.PublicKey,
+  nftMint: web3.PublicKey,
+  connection: web3.Connection
+) => {
+  const isNative = treasuryMintIsNative(treasuryMint);
+  const [nftMetadata] = await getMetadataAccount(nftMint);
+  const creators = await getNftCreators(nftMetadata, connection);
+  const creatorsLimit = isNative ? NATIVE_CREATORS_LIMIT : SPL_CREATORS_LIMIT;
+
+  if (creators.length > creatorsLimit) {
+    throw new CandyShopError(CandyShopErrorType.TooManyCreators);
   }
 };
