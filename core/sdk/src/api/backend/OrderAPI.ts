@@ -1,4 +1,4 @@
-import { ListBase, Order, SingleBase } from '@liqnft/candy-shop-types';
+import { ListBase, Order, Side, SingleBase, Status } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
 
@@ -10,7 +10,7 @@ type SortBy = {
 export type OrderSortBy = SortBy;
 
 export type OrdersFilterQuery = {
-  sortBy?: SortBy;
+  sortBy?: SortBy | SortBy[];
   offset?: number;
   limit?: number;
   identifiers?: number[];
@@ -33,6 +33,7 @@ export async function fetchOrdersByStoreId(
     candyShopAddress,
     attribute: attributeQuery
   } = ordersFilterQuery;
+  let queryParams: any = {};
   let attribute: any = undefined;
   if (attributeQuery) {
     const entries = Object.entries(attributeQuery);
@@ -42,46 +43,44 @@ export async function fetchOrdersByStoreId(
     };
   }
 
-  console.log(`CandyShop: fetching orders from ${storeId}, query=${JSON.stringify(ordersFilterQuery)}`);
+  console.log(`CandyShop: fetching orders from ${storeId}`, { query: ordersFilterQuery });
 
-  const queryObject = {} as any;
   if (sortBy) {
-    queryObject['orderByArr'] = JSON.stringify(sortBy);
-  }
-  if (offset) {
-    queryObject['offset'] = offset;
-  }
-  if (limit) {
-    queryObject['limit'] = limit;
+    const arrSortBy = Array.isArray(sortBy) ? sortBy : [sortBy];
+    queryParams.orderByArr = arrSortBy.map((sort) => JSON.stringify(sort));
   }
 
-  let filterString = '';
+  if (offset) {
+    queryParams.offset = offset;
+  }
+
+  if (limit) {
+    queryParams.limit = limit;
+  }
+
   if (identifiers && identifiers.length !== 0) {
-    filterString = identifiers.reduce(
-      (aggregated, identifier) =>
-        aggregated +
-        `&filterArr[]=${JSON.stringify({
-          side: 1,
-          status: 0,
-          identifier,
-          walletAddress: sellerAddress,
-          candyShopAddress,
-          attribute // attribute is exited when having identifier
-        })}`,
-      ''
+    queryParams['filterArr[]'] = identifiers.map((identifier) =>
+      JSON.stringify({
+        side: Side.SELL,
+        status: Status.OPEN,
+        identifier,
+        walletAddress: sellerAddress,
+        candyShopAddress,
+        attribute
+      })
     );
   } else {
-    filterString = `&filterArr[]=${JSON.stringify({
-      side: 1,
-      status: 0,
+    queryParams['filterArr[]'] = JSON.stringify({
+      side: Side.SELL,
+      status: Status.OPEN,
       walletAddress: sellerAddress,
       candyShopAddress
-    })}`;
+    });
   }
 
-  let queryString = qs.stringify(queryObject);
-  queryString += filterString;
-  return axiosInstance.get<ListBase<Order>>(`/order/${storeId}?${queryString}`).then((response) => response.data);
+  return axiosInstance
+    .get<ListBase<Order>>(`/order/${storeId}?${qs.stringify(queryParams, { indices: false })}`)
+    .then((response) => response.data);
 }
 
 /**

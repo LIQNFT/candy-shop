@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Dropdown } from 'components/Dropdown';
 import { Empty } from 'components/Empty';
 import { InfiniteOrderList } from 'components/InfiniteOrderList';
@@ -11,6 +11,7 @@ import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { useUpdateCandyShopContext } from 'public/Context';
 import { CollectionFilter, ShopFilter, OrderDefaultFilter } from 'model';
+import { ListBase, Order } from '@liqnft/candy-shop-types';
 import './index.less';
 
 interface OrdersProps {
@@ -62,30 +63,54 @@ export const Orders: React.FC<OrdersProps> = ({
   const updateOrderStatus = useValidateStatus(OrdersActionsStatus);
   useUpdateCandyShopContext(candyShop.candyShopAddress);
 
-  const loadNextPage = (startIndex: number, limit: number) => () => {
-    candyShop
-      .orders({
-        sortBy: sortedByOption.value,
-        offset: startIndex,
-        limit,
-        identifiers: getUniqueIdentifiers(identifiers, collectionFilter?.identifier),
-        sellerAddress,
-        attribute: collectionFilter?.attribute,
-        candyShopAddress: shopFilter?.shopId
-      })
-      .then((data: any) => {
-        if (!data.result) return;
-        if (data.offset + data.count >= data.totalCount) {
-          setHasNextPage(false);
-        } else {
-          setHasNextPage(true);
-        }
-        setStartIndex((startIndex) => startIndex + limit);
-        setOrders((existingOrders) => [...existingOrders, ...data.result]);
-      })
-      .catch((err) => {
-        console.info('fetchOrdersByStoreId failed: ', err);
-      });
+  const fetchOrders = useCallback(
+    (offset: number) => {
+      candyShop
+        .orders({
+          sortBy: [sortedByOption.value],
+          offset,
+          limit: ORDER_FETCH_LIMIT,
+          identifiers: getUniqueIdentifiers(identifiers, collectionFilter?.identifier),
+          sellerAddress,
+          attribute: collectionFilter?.attribute,
+          candyShopAddress: shopFilter?.shopId
+        })
+        .then((res: ListBase<Order>) => {
+          if (!res.success) {
+            setHasNextPage(false);
+            return;
+          }
+          const { result, count, offset, totalCount } = res;
+
+          setHasNextPage(offset + count < totalCount);
+          setStartIndex((startIndex) => startIndex + ORDER_FETCH_LIMIT);
+          setOrders((existingOrders) => {
+            const duplicateOrderList = [...existingOrders, ...result];
+            const newOrderList: Order[] = [];
+            const memo: any = {};
+
+            duplicateOrderList.forEach((order) => {
+              if (memo[order.tokenMint]) return;
+              newOrderList.push(order);
+              memo[order.tokenMint] = true;
+            });
+
+            return newOrderList;
+          });
+        })
+        .catch((err) => {
+          console.info('fetchOrdersByStoreId failed: ', err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [candyShop, collectionFilter, identifiers, sellerAddress, shopFilter?.shopId, sortedByOption]
+  );
+
+  const loadNextPage = (startIndex: number) => () => {
+    if (startIndex === 0) return;
+    fetchOrders(startIndex);
   };
 
   useEffect(() => {
@@ -94,30 +119,8 @@ export const Orders: React.FC<OrdersProps> = ({
     }
     loadingMountRef.current = true;
 
-    candyShop
-      .orders({
-        sortBy: sortedByOption.value,
-        offset: 0,
-        limit: ORDER_FETCH_LIMIT,
-        identifiers: getUniqueIdentifiers(identifiers, collectionFilter?.identifier),
-        sellerAddress,
-        attribute: collectionFilter?.attribute,
-        candyShopAddress: shopFilter?.shopId
-      })
-      .then((data: any) => {
-        if (!data.result) return;
-        const haveNextPage = data.offset + data.count < data.totalCount;
-        setHasNextPage(haveNextPage);
-        setStartIndex(() => 0 + ORDER_FETCH_LIMIT);
-        setOrders(data.result);
-      })
-      .catch((err) => {
-        console.log('fetchOrdersByStoreId failed: ', err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [candyShop, sortedByOption.value, updateOrderStatus, sellerAddress, identifiers, collectionFilter, shopFilter]);
+    fetchOrders(0);
+  }, [fetchOrders, updateOrderStatus]);
 
   const emptyView = <Empty description="No orders found" />;
 
@@ -128,7 +131,7 @@ export const Orders: React.FC<OrdersProps> = ({
       wallet={wallet}
       url={url}
       hasNextPage={hasNextPage}
-      loadNextPage={loadNextPage(startIndex, ORDER_FETCH_LIMIT)}
+      loadNextPage={loadNextPage(startIndex)}
       candyShop={candyShop}
     />
   );
@@ -141,7 +144,10 @@ export const Orders: React.FC<OrdersProps> = ({
             <Dropdown
               items={SORT_OPTIONS}
               selectedItem={sortedByOption}
-              onSelectItem={(item) => setSortedByOption(item)}
+              onSelectItem={(item) => {
+                setSortedByOption(item);
+                setStartIndex(0);
+              }}
               defaultValue={SORT_OPTIONS[0]}
             />
           </div>
@@ -152,7 +158,10 @@ export const Orders: React.FC<OrdersProps> = ({
                   <div className="candy-filter-title">Filter by Collection</div>
                   <ul>
                     <li
-                      onClick={() => setCollectionFilter(undefined)}
+                      onClick={() => {
+                        setCollectionFilter(undefined);
+                        setStartIndex(0);
+                      }}
                       key="All"
                       className={collectionFilter ? '' : 'selected'}
                     >
@@ -163,7 +172,10 @@ export const Orders: React.FC<OrdersProps> = ({
                         <li
                           key={filter.name}
                           className={collectionFilter?.collectionId === filter.collectionId ? 'selected' : ''}
-                          onClick={() => setCollectionFilter(filter)}
+                          onClick={() => {
+                            setCollectionFilter(filter);
+                            setStartIndex(0);
+                          }}
                         >
                           {filter.name}
                         </li>
@@ -177,7 +189,14 @@ export const Orders: React.FC<OrdersProps> = ({
                 <>
                   <div className="candy-filter-title">Filter by Shop</div>
                   <ul>
-                    <li onClick={() => setShopFilter(undefined)} key="All" className={shopFilter ? '' : 'selected'}>
+                    <li
+                      onClick={() => {
+                        setShopFilter(undefined);
+                        setStartIndex(0);
+                      }}
+                      key="All"
+                      className={shopFilter ? '' : 'selected'}
+                    >
                       All
                     </li>
                     {shopFilters.map((item) => {
@@ -185,7 +204,10 @@ export const Orders: React.FC<OrdersProps> = ({
                         <li
                           key={item.name}
                           className={shopFilter?.shopId === item.shopId ? 'selected' : ''}
-                          onClick={() => setShopFilter(item)}
+                          onClick={() => {
+                            setShopFilter(item);
+                            setStartIndex(0);
+                          }}
                         >
                           {item.name}
                         </li>

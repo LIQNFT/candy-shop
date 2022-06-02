@@ -42,7 +42,19 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers }) =>
           setOffset(offset + count + 1);
         }
         setHasMore(hasMore);
-        setTrades((list) => (firstLoad ? result : [...list, ...result]));
+        setTrades((list) => {
+          if (firstLoad) return result || [];
+          const duplicateTradeList = [...list, ...result];
+          const newTradeList: Trade[] = [];
+          const memo: any = {};
+
+          duplicateTradeList.forEach((trade) => {
+            if (memo[trade.txHashAtCreation]) return;
+            newTradeList.push(trade);
+            memo[trade.tokenMint] = true;
+          });
+          return newTradeList;
+        });
       });
     },
     [candyShop, identifiers]
