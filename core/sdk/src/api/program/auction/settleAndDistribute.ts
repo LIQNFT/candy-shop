@@ -90,8 +90,6 @@ export const settleAndDistributeProceeds = async ({
     isNative
   );
 
-  const transaction = new Transaction();
-
   const ix1 = await program.methods
     .settleAuction(
       auctionBump,
@@ -130,6 +128,16 @@ export const settleAndDistributeProceeds = async ({
     .remainingAccounts(remainingAccounts)
     .instruction();
 
+  let transaction = new Transaction();
+
+  if (env === 'mainnet-beta') {
+    transaction.add(requestExtraComputeIx(400000));
+  }
+
+  transaction.add(ix1);
+  const tx1 = await sendTx(settler, transaction, program);
+  console.log('Auction settled with txId ==', tx1);
+
   const ix2 = await program.methods
     .distributeAuctionProceeds(auctionBump, bidWalletBump)
     .accounts({
@@ -155,15 +163,16 @@ export const settleAndDistributeProceeds = async ({
     transaction.add(requestExtraComputeIx(400000));
   }
 
-  transaction.add(ix1, ix2);
-  const txId = await sendTx(settler, transaction, program);
-  console.log('Auction settled with txId ==', txId);
+  transaction = new Transaction();
+  transaction.add(ix2);
+  const tx2 = await sendTx(settler, transaction, program);
+  console.log('Proceeds distributed with txId ==', tx2);
 
   return {
     sellerPaymentReceiptAccount,
     buyerReceiptTokenAccount,
     auctionPaymentReceiptAccount,
     bidReceiptTokenAccount,
-    txId
+    txId: tx2
   };
 };

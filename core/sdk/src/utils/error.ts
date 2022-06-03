@@ -20,7 +20,8 @@ export enum CandyShopErrorType {
   CannotWithdraw = 'CannotWithdraw',
   BuyNowUnavailable = 'BuyNowUnavailable',
   AuctionNotOver = 'AuctionNotOver',
-  InsufficientFeeAccountBalance = 'InsufficientFeeAccountBalance'
+  InsufficientFeeAccountBalance = 'InsufficientFeeAccountBalance',
+  TooManyCreators = 'TooManyCreators'
 }
 
 export const CandyShopErrorMsgMap = {
@@ -49,7 +50,8 @@ export const CandyShopErrorMsgMap = {
     'One or more of the passed auction creation parameters are invalid.',
   [CandyShopErrorType.AuctionNotOver]: 'Attempted to settle and auction that is not over.',
   [CandyShopErrorType.InsufficientFeeAccountBalance]:
-    'Please contact shop owner to top up shop syrup balance. Min balance requirement 0.05 SOL.'
+    'Please contact shop owner to top up shop syrup balance. Min balance requirement 0.05 SOL.',
+  [CandyShopErrorType.TooManyCreators]: 'Nft has too many listed creators.'
 };
 
 export class CandyShopError extends Error {

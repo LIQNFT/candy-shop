@@ -1,5 +1,12 @@
 import { Transaction, SYSVAR_CLOCK_PUBKEY } from '@solana/web3.js';
-import { getAtaForMint, getAuctionHouseAuthority, sendTx, CreateAuctionParams, checkCreationParams } from '../..';
+import {
+  getAtaForMint,
+  getAuctionHouseAuthority,
+  sendTx,
+  CreateAuctionParams,
+  checkCreationParams,
+  checkCanExecSettle
+} from '../..';
 
 export const createAuction = async (params: CreateAuctionParams) => {
   const {
@@ -18,6 +25,7 @@ export const createAuction = async (params: CreateAuctionParams) => {
   } = params;
 
   checkCreationParams(startTime, startingBid, buyNowPrice, tickSize);
+  await checkCanExecSettle(treasuryMint, nftMint, program.provider.connection);
 
   const [[auctionEscrow], [tokenAccount], [authority]] = await Promise.all([
     getAtaForMint(nftMint, auction),
