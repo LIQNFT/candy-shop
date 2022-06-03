@@ -81,6 +81,7 @@ export interface WithdrawBidParams extends AuctionParams {
   metadata: web3.PublicKey;
   auctionHouse: web3.PublicKey;
   feeAccount: web3.PublicKey;
+  isBuynow?: boolean;
 }
 
 export interface BuyNowAuctionParams extends AuctionParams {
