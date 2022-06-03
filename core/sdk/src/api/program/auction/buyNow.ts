@@ -95,21 +95,6 @@ export const buyNowAuction = async ({
   );
 
   const [bid] = await getBid(auction, buyer.publicKey, program.programId);
-  if (await checkIfBidExists(bid, program.provider.connection)) {
-    console.log("withdrawing user's bid before buy now");
-    await withdrawBid({
-      auction,
-      authority,
-      candyShop,
-      buyer,
-      treasuryMint,
-      nftMint,
-      metadata,
-      auctionHouse,
-      feeAccount,
-      program
-    });
-  }
 
   const transaction = new Transaction();
 
@@ -158,6 +143,22 @@ export const buyNowAuction = async ({
   transaction.add(ix);
   const txId = await sendTx(buyer, transaction, program);
   console.log('Buy Now called with txId ==', txId);
+
+  if (await checkIfBidExists(bid, program.provider.connection)) {
+    console.log("withdrawing user's bid after buy now");
+    await withdrawBid({
+      auction,
+      authority,
+      candyShop,
+      buyer,
+      treasuryMint,
+      nftMint,
+      metadata,
+      auctionHouse,
+      feeAccount,
+      program
+    });
+  }
 
   return {
     buyerReceiptTokenAccount,
