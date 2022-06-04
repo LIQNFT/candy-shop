@@ -161,8 +161,19 @@ export class CandyShop {
     console.log(`${Logger}: fetching idl for programId`, this._programId.toString());
 
     // Directly use the JSON file here temporarily
-    // @ts-ignore
-    this._program = new Program(candyShopIdl, this._programId, provider);
+    if (this.programId.equals(CANDY_SHOP_PROGRAM_ID)) {
+      // @ts-ignore
+      this._program = new Program(candyShopIdl, this._programId, provider);
+    } else {
+      // TODO: remove when CandyShop V2 is deployed
+      const idl = await Program.fetchIdl(this._programId, provider);
+      if (idl) {
+        this._program = new Program(idl, this._programId, provider);
+        return this._program;
+      } else {
+        throw new Error('Idl not found');
+      }
+    }
     return this._program;
   }
 
