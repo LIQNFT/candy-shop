@@ -234,6 +234,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
       sellerPaymentReceiptAccount,
       buyerReceiptTokenAccount,
       authority,
+      treasuryWithdrawalDestination: authority,
       auctionHouse,
       auctionHouseFeeAccount: feeAccount,
       auctionHouseTreasury,
