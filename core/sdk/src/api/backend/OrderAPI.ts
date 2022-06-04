@@ -74,7 +74,8 @@ export async function fetchOrdersByStoreId(
       side: Side.SELL,
       status: Status.OPEN,
       walletAddress: sellerAddress,
-      candyShopAddress
+      candyShopAddress,
+      attribute
     });
   }
 

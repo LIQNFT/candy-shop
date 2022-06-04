@@ -39,7 +39,7 @@ import {
 } from './api';
 import candyShopIdl from './candy_shop.json';
 import { OrdersFilterQuery, TradeQuery } from './api/backend';
-import { CANDY_SHOP_INS_PROGRAM_ID } from './api/constants';
+import { CANDY_SHOP_INS_PROGRAM_ID, CANDY_SHOP_PROGRAM_ID } from './api/constants';
 import {
   fetchNFTByMintAddress,
   fetchOrderByShopAndMintAddress,
