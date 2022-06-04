@@ -85,6 +85,8 @@ export const Orders: React.FC<OrdersProps> = ({
           setHasNextPage(offset + count < totalCount);
           setStartIndex((startIndex) => startIndex + ORDER_FETCH_LIMIT);
           setOrders((existingOrders) => {
+            if (offset === 0) return result;
+
             const duplicateOrderList = [...existingOrders, ...result];
             const newOrderList: Order[] = [];
             const memo: any = {};
