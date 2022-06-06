@@ -26,6 +26,8 @@ const DO_NOTHING_FUNC = () => {
   // this prevent double call api transaction in useEffect and infinity lib
 };
 
+const Logger = 'CandyShopUI/Activity';
+
 export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers }) => {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
@@ -35,27 +37,35 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers }) =>
 
   const getTrades = useCallback(
     (offset: number, limit: number, firstLoad?: boolean) => () => {
-      candyShop.transactions({ identifiers, offset, limit }).then((res: ListBase<Trade>) => {
-        const { result, offset, totalCount, count } = res;
-        const hasMore = offset + count < Number(totalCount);
-        if (hasMore) {
-          setOffset(offset + count + 1);
-        }
-        setHasMore(hasMore);
-        setTrades((list) => {
-          if (firstLoad) return result || [];
-          const duplicateTradeList = [...list, ...result];
-          const newTradeList: Trade[] = [];
-          const memo: any = {};
+      candyShop
+        .transactions({ identifiers, offset, limit })
+        .then((res: ListBase<Trade>) => {
+          const { result, offset, totalCount, count, success } = res;
+          if (!success) {
+            return setHasMore(false);
+          }
+          const hasMore = offset + count < Number(totalCount);
+          if (hasMore) {
+            setOffset(offset + count + 1);
+          }
+          setHasMore(hasMore);
+          setTrades((list) => {
+            if (firstLoad) return result || [];
+            const duplicateTradeList = [...list, ...result];
+            const newTradeList: Trade[] = [];
+            const memo: any = {};
 
-          duplicateTradeList.forEach((trade) => {
-            if (memo[trade.txHashAtCreation]) return;
-            newTradeList.push(trade);
-            memo[trade.tokenMint] = true;
+            duplicateTradeList.forEach((trade) => {
+              if (memo[trade.txHashAtCreation]) return;
+              newTradeList.push(trade);
+              memo[trade.tokenMint] = true;
+            });
+            return newTradeList;
           });
-          return newTradeList;
+        })
+        .catch((error: any) => {
+          console.log(`${Logger}: candyShop.transactions failed, error=`, error);
         });
-      });
     },
     [candyShop, identifiers]
   );
@@ -68,16 +78,20 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers }) =>
   useEffect(() => {
     if (!updateActivityStatus) return;
 
-    candyShop.transactions({ identifiers, offset: 0, limit: 10 }).then((res: ListBase<Trade>) => {
-      console.log({ updateActivityStatus, resActivity: res });
-      setTrades((list) => {
-        // prettier-ignore
-        const newItems = res.result.filter((item) => list.findIndex((i) => i.txHashAtCreation === item.txHashAtCreation) === -1);
-
-        if (newItems.length) return [...newItems, ...list];
-        return list;
+    candyShop
+      .transactions({ identifiers, offset: 0, limit: 10 })
+      .then((res: ListBase<Trade>) => {
+        if (!res.success) return;
+        setTrades((list) => {
+          // prettier-ignore
+          const newItems = res.result.filter((item) => list.findIndex((i) => i.txHashAtCreation === item.txHashAtCreation) === -1);
+          if (newItems.length) return [...newItems, ...list];
+          return list;
+        });
+      })
+      .catch((error: any) => {
+        console.log(`${Logger}: candyShop.transactions failed, error=`, error);
       });
-    });
   }, [candyShop, identifiers, updateActivityStatus]);
 
   return (
