@@ -24,6 +24,7 @@ export interface Auction {
   highestBidBuyer?: string;
   highestBidPrice?: string;
   userBid?: boolean;
+  totalBid?: number;
 
   nftUri?: string;
   name: string;
