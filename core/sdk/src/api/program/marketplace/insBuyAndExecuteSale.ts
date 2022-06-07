@@ -40,7 +40,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     throw new CandyShopError(CandyShopErrorType.BuyerOwnsListing);
   }
 
-  const candyShopData = await program.account.candyShopV1.fetch(candyShop);
+  const candyShopData = await program.account.enterpriseCandyShopV1.fetch(candyShop);
 
   const [buyerEscrow, buyerEscrowBump] = await getAuctionHouseEscrow(auctionHouse, wallet.publicKey);
 
@@ -222,7 +222,15 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
   }
 
   const ix2 = await program.methods
-    .executeSaleWithProxy(price, amount, buyerEscrowBump, freeTradeStateBump, programAsSignerBump, authorityBump, true)
+    .executeEnterpriseSaleWithProxy(
+      price,
+      amount,
+      buyerEscrowBump,
+      freeTradeStateBump,
+      programAsSignerBump,
+      authorityBump,
+      true
+    )
     .accounts({
       buyer: wallet.publicKey,
       seller: counterParty,

@@ -39,7 +39,7 @@ import {
 } from './api';
 import candyShopIdl from './candy_shop.json';
 import { OrdersFilterQuery, TradeQuery } from './api/backend';
-import { CANDY_SHOP_INS_PROGRAM_ID, CANDY_SHOP_PROGRAM_ID } from './api/constants';
+import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from './api/constants';
 import {
   fetchNFTByMintAddress,
   fetchOrderByShopAndMintAddress,
@@ -792,7 +792,7 @@ function getNodeWallet(wallet: web3.Keypair) {
  * @returns
  */
 function buyAndExecuteSales(programId: web3.PublicKey, params: BuyAndExecuteSaleTransactionParams): Promise<string> {
-  if (programId.equals(CANDY_SHOP_INS_PROGRAM_ID)) {
+  if (programId.equals(CANDY_SHOP_V2_PROGRAM_ID)) {
     return insBuyAndExecuteSale(params);
   }
   return buyAndExecuteSale(params);
