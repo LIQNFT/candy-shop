@@ -14,7 +14,6 @@ const CMD = new Command();
 CMD.description('CLI for interacting with Candy Shop');
 
 function programCommand(name: string) {
-  // Should we add required option here to specify program version?
   return CMD.command(name)
     .requiredOption(
       '-e, --env <string>',
@@ -22,7 +21,8 @@ function programCommand(name: string) {
       'devnet' //mainnet-beta, testnet, devnet
     )
     .option('-r, --rpc-url <string>', '(optional) Solana mainnet RPC url')
-    .requiredOption('-k, --keypair <path>', 'path to Solana wallet keypair');
+    .requiredOption('-k, --keypair <path>', 'path to Solana wallet keypair')
+    .requiredOption('-v, --version <v1 | v2>', 'version of the program');
 }
 
 programCommand('sellMany')
@@ -34,14 +34,16 @@ programCommand('sellMany')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl } = cmd.opts();
+    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl, version } = cmd.opts();
+
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
     let wallet = loadKey(keypair);
 
     const candyShop = new CandyShop({
       candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
       treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
+      candyShopProgramId,
       env,
       settings: {
         mainnetConnectionUrl: rpcUrl
@@ -77,14 +79,16 @@ programCommand('cancelMany')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl } = cmd.opts();
+    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl, version } = cmd.opts();
 
     let wallet = loadKey(keypair);
+
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
     const candyShop = new CandyShop({
       candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
       treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
+      candyShopProgramId,
       env,
       settings: {
         mainnetConnectionUrl: rpcUrl
@@ -120,14 +124,16 @@ programCommand('sell')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl, version } = cmd.opts();
 
     const wallet = loadKey(keypair);
+
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
     const candyShop = new CandyShop({
       candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
       treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
+      candyShopProgramId,
       env,
       settings: {
         mainnetConnectionUrl: rpcUrl
@@ -159,14 +165,16 @@ programCommand('cancel')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl, version } = cmd.opts();
 
     const wallet = loadKey(keypair);
+
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
     const candyShop = new CandyShop({
       candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
       treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
+      candyShopProgramId,
       env,
       settings: {
         mainnetConnectionUrl: rpcUrl
@@ -200,14 +208,17 @@ programCommand('buy')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, seller, tokenAccount, tokenAccountMint, treasuryMint, shopCreator, price, rpcUrl } = cmd.opts();
+    let { keypair, env, seller, tokenAccount, tokenAccountMint, treasuryMint, shopCreator, price, rpcUrl, version } =
+      cmd.opts();
 
     const wallet = loadKey(keypair);
+
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
     const candyShop = new CandyShop({
       candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
       treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
+      candyShopProgramId,
       env,
       settings: {
         mainnetConnectionUrl: rpcUrl
@@ -251,15 +262,18 @@ programCommand('createAuction')
       tickSize,
       buyNowPrice,
       shopCreator,
-      startTime
+      startTime,
+      version
     } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
+
     const candyShop = new CandyShop({
       candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
       treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
+      candyShopProgramId,
       env,
       settings: {
         mainnetConnectionUrl: rpcUrl
@@ -294,14 +308,16 @@ programCommand('cancelAuction')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version } = cmd.opts();
 
     const wallet = loadKey(keypair);
+
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
     const candyShop = new CandyShop({
       candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
       treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
+      candyShopProgramId,
       env,
       settings: {
         mainnetConnectionUrl: rpcUrl
@@ -332,14 +348,16 @@ programCommand('makeBid')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, price } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, price, version } = cmd.opts();
 
     const wallet = loadKey(keypair);
+
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
     const candyShop = new CandyShop({
       candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
       treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
+      candyShopProgramId,
       env,
       settings: {
         mainnetConnectionUrl: rpcUrl
@@ -370,14 +388,16 @@ programCommand('withdrawBid')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version } = cmd.opts();
 
     const wallet = loadKey(keypair);
+
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
     const candyShop = new CandyShop({
       candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
       treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
+      candyShopProgramId,
       env,
       settings: {
         mainnetConnectionUrl: rpcUrl
@@ -407,14 +427,16 @@ programCommand('buyNow')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version } = cmd.opts();
 
     const wallet = loadKey(keypair);
+
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
     const candyShop = new CandyShop({
       candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
       treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
+      candyShopProgramId,
       env,
       settings: {
         mainnetConnectionUrl: rpcUrl
@@ -444,14 +466,16 @@ programCommand('settleAndDistribute')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version } = cmd.opts();
 
     const wallet = loadKey(keypair);
+
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
     const candyShop = new CandyShop({
       candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
       treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
+      candyShopProgramId,
       env,
       settings: {
         mainnetConnectionUrl: rpcUrl
