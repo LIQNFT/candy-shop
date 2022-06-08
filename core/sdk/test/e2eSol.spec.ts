@@ -37,7 +37,14 @@ describe('e2e sol flow', function () {
   it('sell -> cancel -> sell -> buy', async function () {
     this.timeout(60000);
 
-    const candyShop = new CandyShop(CREATOR_ADDRESS, TREASURY_MINT, CANDY_SHOP_PROGRAM_ID, 'devnet');
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: CREATOR_ADDRESS,
+      treasuryMint: TREASURY_MINT,
+      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
+      env: 'devnet',
+      settings: undefined,
+      isEnterprise: false
+    });
 
     const sellTxHash = await candyShop.sell({
       tokenAccount: TOKEN_ACCOUNT,

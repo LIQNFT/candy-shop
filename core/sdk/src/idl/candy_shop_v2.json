@@ -381,16 +381,6 @@
           "isSigner": false
         },
         {
-          "name": "treasuryMint",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "candyShopCreator",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
           "name": "candyShop",
           "isMut": false,
           "isSigner": false
@@ -500,11 +490,6 @@
         {
           "name": "buyerTradeState",
           "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "candyShopCreator",
-          "isMut": false,
           "isSigner": false
         },
         {
@@ -971,16 +956,6 @@
         {
           "name": "tradeState",
           "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "treasuryMint",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "candyShopCreator",
-          "isMut": false,
           "isSigner": false
         },
         {
@@ -2192,16 +2167,21 @@
     },
     {
       "code": 6021,
-      "name": "InvalidCoOwnerAccounts",
-      "msg": "Co-owner counts invalid"
+      "name": "Unauthorized",
+      "msg": "Caller is not authorized to perform this action"
     },
     {
       "code": 6022,
+      "name": "InvalidCoOwnerAccounts",
+      "msg": "Co-owner accounts invalid"
+    },
+    {
+      "code": 6023,
       "name": "TokenAccountUninitialized",
       "msg": "Token Account not initialized"
     }
   ],
   "metadata": {
-    "address": "csa8JpYfKSZajP7JzxnJipUL3qagub1z29hLvp578iN"
+    "address": "csbMUULiQfGjT8ezT16EoEBaiarS6VWRevTw1JMydrS"
   }
 }

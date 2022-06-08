@@ -16,9 +16,9 @@ const USER_2 = new Uint8Array([
 ]);
 
 // TODO: add creator
-const CREATOR_ADDRESS = new web3.PublicKey('');
+const CREATOR_ADDRESS = new web3.PublicKey('B2B2XZpk2a9hvpNBpXYNdZxg3Sy5WJb34wdoDgb5VFJ8');
 const TREASURY_MINT = new web3.PublicKey('So11111111111111111111111111111111111111112');
-const CANDY_SHOP_PROGRAM_ID = new web3.PublicKey('csa8JpYfKSZajP7JzxnJipUL3qagub1z29hLvp578iN');
+const CANDY_SHOP_PROGRAM_ID = new web3.PublicKey('csbMUULiQfGjT8ezT16EoEBaiarS6VWRevTw1JMydrS');
 
 const TOKEN_ACCOUNT = new web3.PublicKey('Eakkca8Ms9W82uzPyzVRRkSdgRY9rczEaua8rwycu4hq');
 
@@ -38,7 +38,14 @@ describe('e2e sol flow', function () {
   it('sell -> cancel -> sell -> buy', async function () {
     this.timeout(60000);
 
-    const candyShop = new CandyShop(CREATOR_ADDRESS, TREASURY_MINT, CANDY_SHOP_PROGRAM_ID, 'devnet', undefined, true);
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: CREATOR_ADDRESS,
+      treasuryMint: TREASURY_MINT,
+      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
+      env: 'devnet',
+      settings: undefined,
+      isEnterprise: true
+    });
 
     const sellTxHash = await candyShop.sell({
       tokenAccount: TOKEN_ACCOUNT,

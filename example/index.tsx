@@ -60,13 +60,14 @@ const App = () => {
   const candyShop = useMemo(() => {
     let candyShop: any = null;
     try {
-      candyShop = new CandyShop(
-        new web3.PublicKey(candyForm.creatorAddress),
-        new web3.PublicKey(candyForm.treasuryMint),
-        new web3.PublicKey(candyForm.programId),
-        candyForm.network,
-        JSON.parse(candyForm.settings)
-      );
+      candyShop = new CandyShop({
+        candyShopCreatorAddress: new web3.PublicKey(candyForm.creatorAddress),
+        treasuryMint: new web3.PublicKey(candyForm.treasuryMint),
+        candyShopProgramId: new web3.PublicKey(candyForm.programId),
+        env: candyForm.network,
+        settings: JSON.parse(candyForm.settings),
+        isEnterprise: false
+      });
     } catch (err) {
       console.log(`CandyShop: create instance failed, error=`, err);
     }

@@ -17,7 +17,6 @@ export interface UpdateCandyShopParams {
 
 export interface CandyShopTransactionParams {
   wallet: AnchorWallet | web3.Keypair;
-  candyShopCreator: web3.PublicKey;
   tokenAccount: web3.PublicKey;
   tokenAccountMint: web3.PublicKey;
   treasuryMint: web3.PublicKey;

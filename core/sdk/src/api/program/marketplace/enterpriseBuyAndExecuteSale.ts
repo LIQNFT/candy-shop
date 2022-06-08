@@ -1,6 +1,5 @@
 import * as anchor from '@project-serum/anchor';
 import { web3 } from '@project-serum/anchor';
-import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import {
   AUCTION_HOUSE_PROGRAM_ID,
   BuyAndExecuteSaleTransactionParams,
@@ -20,7 +19,6 @@ import { CandyShopError, CandyShopErrorType, Metadata, parseMetadata } from '../
 export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionParams) {
   const {
     wallet,
-    candyShopCreator,
     counterParty,
     tokenAccount,
     tokenAccountMint,
@@ -41,7 +39,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     throw new CandyShopError(CandyShopErrorType.BuyerOwnsListing);
   }
 
-  const candyShopData = await program.account.candyShopV1.fetch(candyShop);
+  const candyShopData = await program.account.enterpriseCandyShopV1.fetch(candyShop);
 
   const [buyerEscrow, buyerEscrowBump] = await getAuctionHouseEscrow(auctionHouse, wallet.publicKey);
 
@@ -106,7 +104,6 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
       auctionHouse,
       auctionHouseFeeAccount: feeAccount,
       buyerTradeState: buyTradeState,
-      candyShopCreator,
       candyShop,
       ahProgram: AUCTION_HOUSE_PROGRAM_ID
     })

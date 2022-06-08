@@ -20,7 +20,6 @@ import { CandyShopError, CandyShopErrorType, Metadata, parseMetadata } from '../
 export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionParams) {
   const {
     wallet,
-    candyShopCreator,
     counterParty,
     tokenAccount,
     tokenAccountMint,
@@ -91,7 +90,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
   );
 
   const ix = await program.methods
-    .buyWithProxy(price, amount, buyTradeStateBump, buyerEscrowBump)
+    .buyWithProxy(price, amount, buyTradeStateBump, buyerEscrowBump, authorityBump)
     .accounts({
       wallet: wallet.publicKey,
       paymentAccount,
@@ -104,7 +103,6 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
       auctionHouse,
       auctionHouseFeeAccount: feeAccount,
       buyerTradeState: buyTradeState,
-      candyShopCreator,
       candyShop,
       ahProgram: AUCTION_HOUSE_PROGRAM_ID
     })
@@ -184,7 +182,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
   }
 
   const ix2 = await program.methods
-    .executeSaleWithProxy(price, amount, buyerEscrowBump, freeTradeStateBump, programAsSignerBump, true)
+    .executeSaleWithProxy(price, amount, buyerEscrowBump, freeTradeStateBump, programAsSignerBump, authorityBump, true)
     .accounts({
       buyer: wallet.publicKey,
       seller: counterParty,

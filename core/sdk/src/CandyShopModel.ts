@@ -2,6 +2,40 @@ import { web3, BN } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
 /**
+ * Program version that CandyShop was created with
+ */
+export enum CandyShopVersion {
+  V1,
+  V2
+}
+
+/**
+ * Parameters to CandyShop constructor
+ *
+ * @property {PublicKey} candyShopCreatorAddress
+ * @property {PublicKey} treasuryMint
+ * @property {PublicKey} candyShopProgramId
+ * @property {web3.Cluster} env
+ * @property {Partial<CandyShopSettings>} settings
+ * @property {boolean} isEnterprise
+ */
+
+export interface CandyShopConstructorParams {
+  /** Creator address (i.e. your wallet address) */
+  candyShopCreatorAddress: web3.PublicKey;
+  /** Treasury mint (i.e. currency to buy and sell with) */
+  treasuryMint: web3.PublicKey;
+  /** Candy Shop program id */
+  candyShopProgramId: web3.PublicKey;
+  /** web3.Cluster mainnet, devnet */
+  env: web3.Cluster;
+  /** Optional, additional shop settings */
+  settings?: Partial<CandyShopSettings>;
+  /** Indicates if this shop uses enterprise program functionality. Defaults to false */
+  isEnterprise?: boolean;
+}
+
+/**
  * Custom CandyShop settings
  *
  * @property {string} currencySymbol

@@ -37,9 +37,10 @@ import {
   buyNowAuction,
   BuyNowAuctionParams
 } from './api';
-import candyShopIdl from './candy_shop.json';
+import candyShopIdl from './idl/candy_shop.json';
+import candyShopV2Idl from './idl/candy_shop_v2.json';
 import { OrdersFilterQuery, TradeQuery } from './api/backend';
-// import { CANDY_SHOP_INS_PROGRAM_ID } from './api/constants';
+import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from './api/constants';
 import {
   fetchNFTByMintAddress,
   fetchOrderByShopAndMintAddress,
@@ -61,7 +62,9 @@ import {
   CandyShopWithdrawAuctionBidParams,
   CandyShopSettleAndDistributeParams,
   CandyShopBuyNowParams,
-  CandyShopUpdateParams
+  CandyShopUpdateParams,
+  CandyShopConstructorParams,
+  CandyShopVersion
 } from './CandyShopModel';
 import { configBaseUrl } from './config';
 import { CandyShopError, CandyShopErrorType } from './utils';
@@ -90,32 +93,32 @@ export class CandyShop {
   private _settings: CandyShopSettings;
   private _baseUnitsPerCurrency: number;
   private _isEnterprise: boolean;
+  private _version: CandyShopVersion;
   private _program: Program | undefined;
 
   /**
-   * Initiate the CandyShop object
+   * Instantiate a CandyShop object
    *
    * @constructor
-   * @param candyShopCreatorAddress creator address (i.e. your wallet address)
-   * @param treasuryMint treasury mint (i.e. currency to buy and sell with)
-   * @param candyShopProgramId Candy Shop program id
-   * @param env web3.Cluster mainnet, devnet
-   * @param settings optional, additional shop settings
+   * @param {CandyShopConstructorParams} params
    */
-  constructor(
-    candyShopCreatorAddress: web3.PublicKey,
-    treasuryMint: web3.PublicKey,
-    candyShopProgramId: web3.PublicKey,
-    env: web3.Cluster,
-    settings?: Partial<CandyShopSettings>,
-    isEnterprise?: boolean
-  ) {
+  // Changed constructor params to object, can revert if it will cause too many issues
+  constructor(params: CandyShopConstructorParams) {
+    const { candyShopCreatorAddress, candyShopProgramId, treasuryMint, env, settings, isEnterprise } = params;
+
+    this.verifyProgramId(candyShopProgramId);
+
+    if (isEnterprise && !candyShopProgramId.equals(CANDY_SHOP_V2_PROGRAM_ID)) {
+      throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
+    }
+
     this._candyShopAddress = getCandyShopSync(candyShopCreatorAddress, treasuryMint, candyShopProgramId)[0];
     this._candyShopCreatorAddress = candyShopCreatorAddress;
     this._treasuryMint = treasuryMint;
     this._programId = candyShopProgramId;
     this._env = env;
-    this._isEnterprise = isEnterprise !== undefined ? isEnterprise : false;
+    this._isEnterprise = isEnterprise ? true : false;
+    this._version = candyShopProgramId.equals(CANDY_SHOP_V2_PROGRAM_ID) ? CandyShopVersion.V2 : CandyShopVersion.V1;
     this._settings = {
       currencySymbol: settings?.currencySymbol ?? DEFAULT_CURRENCY_SYMBOL,
       currencyDecimals: settings?.currencyDecimals ?? DEFAULT_CURRENCY_DECIMALS,
@@ -130,6 +133,18 @@ export class CandyShop {
     console.log('CandyShop constructor: init CandyShop=', this);
     configBaseUrl(env);
   }
+
+  verifyProgramId(programId: web3.PublicKey) {
+    switch (programId.toString()) {
+      case CANDY_SHOP_PROGRAM_ID.toString():
+        break;
+      case CANDY_SHOP_V2_PROGRAM_ID.toString():
+        break;
+      default:
+        throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
+    }
+  }
+
   /**
    * Get JSON rpc connection
    */
@@ -144,7 +159,6 @@ export class CandyShop {
       this._settings.connectionConfig || options.commitment
     );
   }
-
   /**
    * Gets anchor Program object for Candy Shop program
    *
@@ -163,20 +177,10 @@ export class CandyShop {
     );
     console.log(`${Logger}: fetching idl for programId`, this._programId.toString());
 
+    const idl = this._programId.equals(CANDY_SHOP_V2_PROGRAM_ID) ? candyShopV2Idl : candyShopIdl;
     // Directly use the JSON file here temporarily
-    if (this.programId.equals(CANDY_SHOP_PROGRAM_ID)) {
-      // @ts-ignore
-      this._program = new Program(candyShopIdl, this._programId, provider);
-    } else {
-      // TODO: remove when CandyShop V2 is deployed
-      const idl = await Program.fetchIdl(this._programId, provider);
-      if (idl) {
-        this._program = new Program(idl, this._programId, provider);
-        return this._program;
-      } else {
-        throw new Error('Idl not found');
-      }
-    }
+    // @ts-ignore
+    this._program = new Program(idl, this._programId, provider);
     return this._program;
   }
 
@@ -214,6 +218,10 @@ export class CandyShop {
 
   get isEnterprise(): boolean {
     return this._isEnterprise;
+  }
+
+  get version(): CandyShopVersion {
+    return this._version;
   }
 
   get baseUnitsPerCurrency(): number {
@@ -307,7 +315,6 @@ export class CandyShop {
 
     const buyTxHashParams: BuyAndExecuteSaleTransactionParams = {
       wallet,
-      candyShopCreator: this._candyShopCreatorAddress,
       counterParty: seller,
       tokenAccount,
       tokenAccountMint: tokenMint,
@@ -355,7 +362,6 @@ export class CandyShop {
 
     const txHash = await sellNft({
       wallet,
-      candyShopCreator: this._candyShopCreatorAddress,
       tokenAccount,
       tokenAccountMint: tokenMint,
       treasuryMint: this._treasuryMint,
@@ -407,7 +413,6 @@ export class CandyShop {
 
     const txHash = await cancelOrder({
       wallet,
-      candyShopCreator: this._candyShopCreatorAddress,
       tokenAccount,
       tokenAccountMint: tokenMint,
       treasuryMint: this._treasuryMint,

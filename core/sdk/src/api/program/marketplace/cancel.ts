@@ -9,7 +9,6 @@ import {
 export async function cancelOrder(params: CancelTransactionParams) {
   const {
     wallet,
-    candyShopCreator,
     tokenAccount,
     tokenAccountMint,
     treasuryMint,
@@ -42,7 +41,7 @@ export async function cancelOrder(params: CancelTransactionParams) {
   );
 
   const txHash = await program.methods
-    .cancelWithProxy(price, amount)
+    .cancelWithProxy(price, amount, authorityBump)
     .accounts({
       wallet: wallet.publicKey,
       tokenAccount,
@@ -51,8 +50,6 @@ export async function cancelOrder(params: CancelTransactionParams) {
       auctionHouse,
       auctionHouseFeeAccount: feeAccount,
       tradeState,
-      treasuryMint,
-      candyShopCreator,
       candyShop,
       ahProgram: AUCTION_HOUSE_PROGRAM_ID
     })
