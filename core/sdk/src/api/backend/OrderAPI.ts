@@ -9,13 +9,15 @@ type SortBy = {
 
 export type OrderSortBy = SortBy;
 
+type attributeType = { [key: string]: string };
+
 export type OrdersFilterQuery = {
   sortBy?: SortBy | SortBy[];
   offset?: number;
   limit?: number;
   identifiers?: number[];
   sellerAddress?: string;
-  attribute?: { [key: string]: string };
+  attribute?: attributeType | attributeType[];
   candyShopAddress?: string;
 };
 
@@ -36,11 +38,11 @@ export async function fetchOrdersByStoreId(
   let queryParams: any = {};
   let attribute: any = undefined;
   if (attributeQuery) {
-    const entries = Object.entries(attributeQuery);
-    attribute = {
-      trait_type: entries[0][0],
-      value: entries[0][1]
-    };
+    const attributes = Array.isArray(attributeQuery) ? attributeQuery : [attributeQuery];
+    attribute = attributes.map((attr) => {
+      const entry = Object.entries(attr)[0];
+      return { trait_type: entry[0], value: entry[1] };
+    });
   }
 
   console.log(`CandyShop: fetching orders from ${storeId}`, { query: ordersFilterQuery });

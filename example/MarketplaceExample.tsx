@@ -55,5 +55,15 @@ const FILTERS = [
   { name: 'Puppies', collectionId: '1', identifier: 2036309415 },
   { name: 'Shibas', collectionId: '2', identifier: 1235887132 },
   { name: 'Puppies + Shibas', collectionId: '3', identifier: [1235887132, 2036309415] },
-  { name: 'Purple Puppies', collectionId: '4', identifier: 2036309415, attribute: { backgrounds: 'gradient_purple' } }
+  {
+    name: 'Purple Puppies',
+    collectionId: '4',
+    identifier: 2036309415,
+    attribute: [{ backgrounds: 'gradient_purple' }]
+  },
+  {
+    name: 'White eye',
+    collectionId: '5',
+    attribute: [{ Shine: 'Shapes' }, { Eyeball: 'White' }]
+  }
 ];
