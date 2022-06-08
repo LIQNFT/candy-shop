@@ -52,11 +52,6 @@ export async function updateCandyShop(params: UpdateCandyShopParams) {
   console.log('updateCandyShopIx', txId);
 
   console.log('Auction house updated!');
-  return {
-    auctionHouseAuthority,
-    authorityBump,
-    auctionHouse,
-    candyShop,
-    txId
-  };
+
+  return txId;
 }

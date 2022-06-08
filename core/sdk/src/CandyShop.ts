@@ -46,7 +46,10 @@ import {
   SettleAndDistributeProceedParams,
   buyNowAuction,
   buyNowAuctionV1,
-  BuyNowAuctionParams
+  BuyNowAuctionParams,
+  updateCandyShop,
+  updateCandyShopV1,
+  UpdateCandyShopParams
 } from './api';
 import candyShopIdl from './idl/candy_shop.json';
 import candyShopV2Idl from './idl/candy_shop_v2.json';
@@ -79,7 +82,6 @@ import {
 } from './CandyShopModel';
 import { configBaseUrl } from './config';
 import { CandyShopError, CandyShopErrorType } from './utils';
-import { updateCandyShop } from './api/program/v1/marketplace/updateCandyShop';
 
 const Logger = 'CandyShop';
 
@@ -281,7 +283,7 @@ export class CandyShop {
       sellerFeeBasisPoint: sellerFeeBasisPoint ? sellerFeeBasisPoint.toString() : null
     });
 
-    const tx = await updateCandyShop({
+    const updateCandyShopParams: UpdateCandyShopParams = {
       wallet,
       treasuryMint: this._treasuryMint,
       sellerFeeBasisPoint,
@@ -292,9 +294,11 @@ export class CandyShop {
       auctionHouseAuthority,
       authorityBump,
       program
-    });
+    };
 
-    return tx.txId;
+    const txHash = await call(updateCandyShopParams, this._version, updateCandyShopV1, updateCandyShop);
+
+    return txHash;
   }
 
   /**
