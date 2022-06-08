@@ -1,3 +1,5 @@
+import { NftCreator } from '../nft';
+
 export enum Side {
   BUY,
   SELL
@@ -31,6 +33,7 @@ export interface Order {
   nftUri: string;
   nftImageLink: string | null;
   nftAnimationLink: string | null;
+  nftCreators: NftCreator[];
   tradeState: string;
   status: Status;
   // Current owner
