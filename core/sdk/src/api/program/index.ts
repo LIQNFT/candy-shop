@@ -1,3 +1,3 @@
-export * from './auction';
-export * from './marketplace';
+export * from './v1';
+export * from './v2';
 export * from './submitTx';

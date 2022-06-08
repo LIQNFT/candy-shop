@@ -8,8 +8,8 @@ import {
   SellTransactionParams,
   sendTx,
   treasuryMintIsNative
-} from '../..';
-import { safeAwait } from '../../../utils';
+} from '../../..';
+import { safeAwait } from '../../../../utils';
 
 export async function sellNft(params: SellTransactionParams): Promise<string> {
   const {

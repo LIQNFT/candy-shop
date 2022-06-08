@@ -12,7 +12,7 @@ import {
   getBidWallet,
   sendTx,
   treasuryMintIsNative
-} from '../..';
+} from '../../..';
 
 export const bidAuction = async (params: BidAuctionParams) => {
   const {
@@ -83,10 +83,5 @@ export const bidAuction = async (params: BidAuctionParams) => {
   const txId = await sendTx(buyer, transaction, program);
   console.log('Bid made with txId ==', txId);
 
-  return {
-    escrowPaymentAccount,
-    bidTradeState,
-    bidTradeStateBump,
-    txId
-  };
+  return txId;
 };

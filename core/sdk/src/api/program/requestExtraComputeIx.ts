@@ -1,6 +1,6 @@
 import * as anchor from '@project-serum/anchor';
 import { TransactionInstruction } from '@solana/web3.js';
-import { COMPUTE_BUDGET_PROGRAM_ID } from '../../constants';
+import { COMPUTE_BUDGET_PROGRAM_ID } from '../constants';
 
 export const requestExtraComputeIx = (amount: number) => {
   const data = Buffer.concat([

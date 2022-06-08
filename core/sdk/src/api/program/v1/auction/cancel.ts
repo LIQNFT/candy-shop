@@ -1,5 +1,5 @@
 import { SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
-import { CancelAuctionParams, checkCanCancel, getAtaForMint, getAuctionHouseAuthority, sendTx } from '../..';
+import { CancelAuctionParams, checkCanCancel, getAtaForMint, getAuctionHouseAuthority, sendTx } from '../../..';
 
 export const cancelAuction = async (params: CancelAuctionParams) => {
   const { seller, auction, candyShop, auctionBump, treasuryMint, nftMint, program } = params;
@@ -32,11 +32,5 @@ export const cancelAuction = async (params: CancelAuctionParams) => {
   const txId = await sendTx(seller, transaction, program);
   console.log('Auction cancelled with txId ==', txId);
 
-  return {
-    auction,
-    auctionBump,
-    auctionEscrow,
-    usertokenAccount: tokenAccount,
-    txId
-  };
+  return txId;
 };

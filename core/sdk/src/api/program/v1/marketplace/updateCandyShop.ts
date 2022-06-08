@@ -6,7 +6,7 @@ import {
   sendTx,
   treasuryMintIsNative,
   UpdateCandyShopParams
-} from '../..';
+} from '../../..';
 
 export async function updateCandyShop(params: UpdateCandyShopParams) {
   const {

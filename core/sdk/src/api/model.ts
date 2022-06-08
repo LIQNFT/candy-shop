@@ -21,7 +21,7 @@ export interface CandyShopTransactionParams {
   tokenAccountMint: web3.PublicKey;
   treasuryMint: web3.PublicKey;
   authority: web3.PublicKey;
-  authorityBump: number;
+  authorityBump?: number;
   auctionHouse: web3.PublicKey;
   feeAccount: web3.PublicKey;
   candyShop: web3.PublicKey;

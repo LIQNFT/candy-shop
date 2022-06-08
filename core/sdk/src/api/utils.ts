@@ -22,7 +22,7 @@ import { CandyShopError, CandyShopErrorType } from '../utils/error';
 import { Creator, Metadata, parseMetadata, safeAwait } from '../utils';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { awaitTransactionSignatureConfirmation } from './program';
-import { SPL_CREATORS_LIMIT, FEE_ACCOUNT_MIN_BAL, NATIVE_CREATORS_LIMIT } from '.';
+import { SPL_CREATORS_LIMIT, FEE_ACCOUNT_MIN_BAL, NATIVE_CREATORS_LIMIT } from './constants';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);

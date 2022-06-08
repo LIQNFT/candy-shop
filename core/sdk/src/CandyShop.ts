@@ -12,11 +12,16 @@ import { BN, Idl, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import {
   buyAndExecuteSale,
+  buyAndExecuteSaleV1,
   BuyAndExecuteSaleTransactionParams,
   cancelAuction,
+  cancelAuctionV1,
   CancelAuctionParams,
   cancelOrder,
+  cancelOrderV1,
+  CancelTransactionParams,
   createAuction,
+  createAuctionV1,
   CreateAuctionParams,
   getAuction,
   getAuctionHouse,
@@ -28,13 +33,19 @@ import {
   getMetadataAccount,
   insBuyAndExecuteSale,
   sellNft,
+  sellNftV1,
+  SellTransactionParams,
   bidAuction,
+  bidAuctionV1,
   BidAuctionParams,
   withdrawBid,
+  withdrawBidV1,
   WithdrawBidParams,
   settleAndDistributeProceeds,
+  settleAndDistributeProceedsV1,
   SettleAndDistributeProceedParams,
   buyNowAuction,
+  buyNowAuctionV1,
   BuyNowAuctionParams
 } from './api';
 import candyShopIdl from './idl/candy_shop.json';
@@ -68,7 +79,7 @@ import {
 } from './CandyShopModel';
 import { configBaseUrl } from './config';
 import { CandyShopError, CandyShopErrorType } from './utils';
-import { updateCandyShop } from './api/program/marketplace/updateCandyShop';
+import { updateCandyShop } from './api/program/v1/marketplace/updateCandyShop';
 
 const Logger = 'CandyShop';
 
@@ -330,7 +341,12 @@ export class CandyShop {
       amount: new BN(1),
       program
     };
-    const txHash = await buyAndExecuteSales(this._isEnterprise, buyTxHashParams);
+    const txHash = await buyAndExecuteSales(this._isEnterprise, {
+      params: buyTxHashParams,
+      version: this._version,
+      v1Func: buyAndExecuteSaleV1,
+      v2Func: buyAndExecuteSale
+    });
 
     return txHash;
   }
@@ -360,7 +376,7 @@ export class CandyShop {
 
     const [metadata] = await getMetadataAccount(tokenMint);
 
-    const txHash = await sellNft({
+    const sellTxParams: SellTransactionParams = {
       wallet,
       tokenAccount,
       tokenAccountMint: tokenMint,
@@ -374,7 +390,10 @@ export class CandyShop {
       price,
       amount: new BN(1),
       program
-    });
+    };
+
+    const txHash = await call(sellTxParams, this._version, sellNftV1, sellNft);
+
     return txHash;
   }
   /**
@@ -411,7 +430,7 @@ export class CandyShop {
       price
     );
 
-    const txHash = await cancelOrder({
+    const cancelTxParams: CancelTransactionParams = {
       wallet,
       tokenAccount,
       tokenAccountMint: tokenMint,
@@ -425,7 +444,9 @@ export class CandyShop {
       price,
       amount: new BN(1),
       program
-    });
+    };
+
+    const txHash = await call(cancelTxParams, this._version, cancelOrderV1, cancelOrder);
 
     return txHash;
   }
@@ -465,7 +486,7 @@ export class CandyShop {
       this._programId
     );
 
-    const tx = await createAuction({
+    const createAuctionParams: CreateAuctionParams = {
       seller: wallet,
       auction,
       authority: auctionHouseAuthority,
@@ -479,8 +500,11 @@ export class CandyShop {
       tickSize,
       buyNowPrice,
       program
-    } as CreateAuctionParams);
-    return tx.txId;
+    };
+
+    const txHash = await call(createAuctionParams, this._version, createAuctionV1, createAuction);
+
+    return txHash;
   }
 
   /**
@@ -516,7 +540,7 @@ export class CandyShop {
       this._programId
     );
 
-    const tx = await cancelAuction({
+    const cancelAuctionParams: CancelAuctionParams = {
       seller: wallet,
       auction,
       authority: auctionHouseAuthority,
@@ -525,8 +549,11 @@ export class CandyShop {
       treasuryMint: this._treasuryMint,
       nftMint: tokenMint,
       program
-    } as CancelAuctionParams);
-    return tx.txId;
+    };
+
+    const txHash = await call(cancelAuctionParams, this._version, cancelAuctionV1, cancelAuction);
+
+    return txHash;
   }
 
   /**
@@ -564,7 +591,7 @@ export class CandyShop {
 
     const [metadata] = await getMetadataAccount(tokenMint);
 
-    const tx = await bidAuction({
+    const bidParams: BidAuctionParams = {
       auction,
       authority: auctionHouseAuthority,
       candyShop: this._candyShopAddress,
@@ -576,8 +603,11 @@ export class CandyShop {
       feeAccount,
       bidPrice,
       program
-    } as BidAuctionParams);
-    return tx.txId;
+    };
+
+    const txHash = await call(bidParams, this._version, bidAuctionV1, bidAuction);
+
+    return txHash;
   }
 
   /**
@@ -614,7 +644,7 @@ export class CandyShop {
 
     const [metadata] = await getMetadataAccount(tokenMint);
 
-    const tx = await withdrawBid({
+    const withdrawBidParams: WithdrawBidParams = {
       auction,
       authority: auctionHouseAuthority,
       candyShop: this._candyShopAddress,
@@ -625,8 +655,11 @@ export class CandyShop {
       auctionHouse,
       feeAccount,
       program
-    } as WithdrawBidParams);
-    return tx.txId;
+    };
+
+    const txHash = await call(withdrawBidParams, this._version, withdrawBidV1, withdrawBid);
+
+    return txHash;
   }
 
   /**
@@ -659,7 +692,7 @@ export class CandyShop {
 
     const [metadata] = await getMetadataAccount(tokenMint);
 
-    const tx = await buyNowAuction({
+    const buyNowParams: BuyNowAuctionParams = {
       auction,
       auctionBump,
       authority: auctionHouseAuthority,
@@ -673,8 +706,11 @@ export class CandyShop {
       treasuryAccount,
       program,
       env: this._env
-    } as BuyNowAuctionParams);
-    return tx.txId;
+    };
+
+    const txHash = await call(buyNowParams, this._version, buyNowAuctionV1, buyNowAuction);
+
+    return txHash;
   }
 
   /**
@@ -707,7 +743,7 @@ export class CandyShop {
 
     const [metadata] = await getMetadataAccount(tokenMint);
 
-    const tx = await settleAndDistributeProceeds({
+    const settleAndDistributeParams: SettleAndDistributeProceedParams = {
       auction,
       auctionBump,
       authority: auctionHouseAuthority,
@@ -721,8 +757,16 @@ export class CandyShop {
       treasuryAccount,
       program,
       env: this._env
-    } as SettleAndDistributeProceedParams);
-    return tx.txId;
+    };
+
+    const txHash = await call(
+      settleAndDistributeParams,
+      this._version,
+      settleAndDistributeProceedsV1,
+      settleAndDistributeProceeds
+    );
+
+    return txHash;
   }
 
   /**
@@ -804,11 +848,42 @@ function getNodeWallet(wallet: web3.Keypair) {
  *
  * @param {boolean} isEneterprise
  * @param {BuyAndExecuteSaleTransactionParams} params required params for buy/sell transaction
- * @returns
  */
-function buyAndExecuteSales(isEneterprise: boolean, params: BuyAndExecuteSaleTransactionParams): Promise<string> {
+function buyAndExecuteSales(
+  isEneterprise: boolean,
+  callParams: {
+    params: BuyAndExecuteSaleTransactionParams;
+    version: CandyShopVersion;
+    v1Func: (params: any) => Promise<string>;
+    v2Func: (params: any) => Promise<string>;
+  }
+): Promise<string> {
+  const { params, version, v1Func, v2Func } = callParams;
+
   if (isEneterprise) {
     return insBuyAndExecuteSale(params);
   }
-  return buyAndExecuteSale(params);
+  return call(params, version, v1Func, v2Func);
+}
+
+/**
+ * Chooses to call either v1 or v2 version of passed fuction based on candy shop version
+ *
+ * @param {any} params argument to the function to call
+ * @param {CandyShopVersion} version version of the candy shop
+ * @param {function} v1Func function to call if using v1 candy shop
+ * @param {function} v2Func function to call if using v1 candy shop
+ */
+// Please feel free to come up with better name :)
+function call(
+  params: any,
+  version: CandyShopVersion,
+  v1Func: (params: any) => Promise<string>,
+  v2Func: (params: any) => Promise<string>
+): Promise<string> {
+  if (version === CandyShopVersion.V1) {
+    return v1Func(params);
+  } else {
+    return v2Func(params);
+  }
 }

@@ -4,7 +4,7 @@ import {
   CancelTransactionParams,
   checkNftAvailability,
   getAuctionHouseTradeState
-} from '../..';
+} from '../../..';
 
 export async function cancelOrder(params: CancelTransactionParams) {
   const {

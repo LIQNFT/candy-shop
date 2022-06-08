@@ -16,8 +16,8 @@ import {
   sendTx,
   SettleAndDistributeProceedParams,
   treasuryMintIsNative
-} from '../..';
-import { requestExtraComputeIx } from './requestExtraComputeIx';
+} from '../../..';
+import { requestExtraComputeIx } from '../../requestExtraComputeIx';
 
 export const settleAndDistributeProceeds = async ({
   settler,
@@ -168,11 +168,5 @@ export const settleAndDistributeProceeds = async ({
   const tx2 = await sendTx(settler, transaction, program);
   console.log('Proceeds distributed with txId ==', tx2);
 
-  return {
-    sellerPaymentReceiptAccount,
-    buyerReceiptTokenAccount,
-    auctionPaymentReceiptAccount,
-    bidReceiptTokenAccount,
-    txId: tx2
-  };
+  return tx2;
 };
