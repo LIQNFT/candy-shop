@@ -37,6 +37,12 @@ export type FormType = {
   tickSize: string;
 };
 
+const VALIDATE_MESSAGE: { [key: string]: string } = {
+  startingBid: 'Starting Bid must be greater than 0.',
+  tickSize: 'Minimum Incremental Bid must be greater than 0.',
+  buyNowPrice: 'Buy Now Price must be greater than 0.'
+};
+
 export const AuctionForm: React.FC<AuctionFormProps> = ({
   onSubmit,
   currencySymbol,
@@ -52,7 +58,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
     biddingPeriod: 24,
     clockFormat: 'AM',
     auctionHour: '12',
-    auctionMinute: '0',
+    auctionMinute: '00',
     startNow: false,
     buyNow: false,
     startDate: dayjs().add(1, 'd').format('YYYY-MM-DD')
@@ -68,13 +74,41 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
     setForm((prev: FormType) => ({ ...prev, [key]: !prev[key] }));
   };
 
+  const validateInput = (nodeId: string, message: string) => {
+    console.log({ nodeId, message });
+    (document.getElementById(nodeId) as HTMLInputElement)?.setCustomValidity(message);
+  };
+
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
+    validateInput(name, Number(value) > 0 ? '' : VALIDATE_MESSAGE[name]);
+    if (name === 'buyNowPrice' && form.buyNow) {
+      const minBuyNowPrice = Number(form.startingBid) + Number(form.tickSize);
+
+      validateInput(
+        name,
+        Number(value) > minBuyNowPrice ? '' : `Buy Now Price must be greater than ${minBuyNowPrice}.`
+      );
+    }
     setForm((prev: FormType) => ({ ...prev, [name]: value }));
   };
 
   const onSubmitForm = (e: any) => {
     e.preventDefault();
+    const VALIDATES: { nodeId: keyof FormType; trigger: boolean }[] = [
+      { nodeId: 'startingBid', trigger: true },
+      { nodeId: 'tickSize', trigger: true },
+      { nodeId: 'buyNowPrice', trigger: Boolean(form.buyNow) }
+    ];
+
+    if (
+      VALIDATES.some(({ nodeId, trigger }) => {
+        if (!trigger) return false;
+        return Number(form[nodeId]) <= 0;
+      })
+    ) {
+      return;
+    }
     onSubmit(form);
   };
 
@@ -97,7 +131,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
       />
 
       <div className="candy-auction-form-item">
-        <label htmlFor="startingBid">Enter starting bid</label>
+        <label htmlFor="startingBid">Starting Bid</label>
         <input
           id="startingBid"
           name="startingBid"
@@ -114,7 +148,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
       </div>
 
       <div className="candy-auction-form-item">
-        <label htmlFor="tickSize">Minimum Bid Increment</label>
+        <label htmlFor="tickSize">Minimum Incremental Bid</label>
         <input
           id="tickSize"
           name="tickSize"
@@ -230,7 +264,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
             name="auctionMinute"
             type="number"
             onWheel={preventUpdateNumberOnWheel}
-            placeholder={'0'}
+            placeholder={'00'}
             min={0}
             max={59}
             required={!form[CheckEnum.START_NOW]}
@@ -238,6 +272,10 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
             onChange={onChangeInput}
             maxLength={2}
             step="any"
+            onBlur={() => {
+              const num = Number(form['auctionMinute']);
+              setForm((form) => ({ ...form, ['auctionMinute']: num > 10 ? `${num}` : `0${num}` }));
+            }}
           />
           <div className="candy-auction-time-checkbox">
             <button

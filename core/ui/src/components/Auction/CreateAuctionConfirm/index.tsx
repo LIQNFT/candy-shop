@@ -72,19 +72,19 @@ export const CreateAuctionConfirm: React.FC<CreateAuctionProps> = ({
   };
 
   const confirmDetails = [
-    { name: 'Starting bid', value: `${auctionForm.startingBid} ${candyShop.currencySymbol}` },
-    { name: 'Minimum bid increment', value: `${auctionForm.tickSize} ${candyShop.currencySymbol}` },
+    { name: 'Starting bid', value: `${Number(auctionForm.startingBid)} ${candyShop.currencySymbol}` },
+    { name: 'Minimum Incremental Bid', value: `${Number(auctionForm.tickSize)} ${candyShop.currencySymbol}` },
     {
-      name: 'Buy now price',
-      value: auctionForm.buyNow ? `${auctionForm.buyNowPrice} ${candyShop.currencySymbol}` : 'N/A'
+      name: 'Buy Now Price',
+      value: auctionForm.buyNow ? `${Number(auctionForm.buyNowPrice)} ${candyShop.currencySymbol}` : 'N/A'
     },
     {
       name: 'Fees',
       value: fee ? `${fee.toFixed(1)}%` : 'N/A'
     },
-    { name: 'Bidding period', value: `${auctionForm.biddingPeriod} hour(s)` },
+    { name: 'Bidding Period', value: `${auctionForm.biddingPeriod} hour(s)` },
     {
-      name: 'Auction start date',
+      name: 'Auction Start Date',
       value: getStartTime(auctionForm)
     }
   ];

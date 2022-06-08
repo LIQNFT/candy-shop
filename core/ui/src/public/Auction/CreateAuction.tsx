@@ -9,7 +9,7 @@ import {
   FetchNFTBatchParam,
   CacheNFTParam
 } from '@liqnft/candy-shop-sdk';
-import { Order, WhitelistNft, ListBase, SingleBase, CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
+import { Order, SingleBase, CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
 
 import { Empty } from 'components/Empty';
 import { Card } from 'components/Card';
@@ -73,14 +73,6 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
     [candyShop]
   );
 
-  const getShopIdentifiers = useCallback(async (): Promise<string[]> => {
-    return candyShop
-      .shopWlNfts()
-      .then((nfts: ListBase<WhitelistNft>) =>
-        nfts.result.reduce((arr: string[], item: WhitelistNft) => arr.concat(item.identifier), [])
-      );
-  }, [candyShop]);
-
   const getUserNFTFromBatch = useCallback((batchNFTs: SingleTokenInfo[]) => {
     if (!firstBatchNFTLoaded.current) {
       firstBatchNFTLoaded.current = true;
@@ -92,7 +84,6 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
 
   const progressiveLoadUserNFTs = useCallback(
     async (walletPublicKey: web3.PublicKey) => {
-      const identifiers = await getShopIdentifiers();
       // Setup the batchCallback to retrieve the batch result.
       const fetchBatchParam: FetchNFTBatchParam = {
         batchCallback: getUserNFTFromBatch,
@@ -104,9 +95,9 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
         enable: cacheUserNFT ?? false
       };
 
-      return fetchNftsFromWallet(candyShop.connection(), walletPublicKey, identifiers, fetchBatchParam, cacheNFTParam);
+      return fetchNftsFromWallet(candyShop.connection(), walletPublicKey, [], fetchBatchParam, cacheNFTParam);
     },
-    [candyShop, getShopIdentifiers, getUserNFTFromBatch, cacheUserNFT]
+    [candyShop, getUserNFTFromBatch, cacheUserNFT]
   );
 
   const onFilledUpAuctionForm = (auctionForm: FormType) => {
