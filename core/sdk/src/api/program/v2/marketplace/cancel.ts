@@ -1,9 +1,10 @@
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import * as anchor from '@project-serum/anchor';
 import {
   AUCTION_HOUSE_PROGRAM_ID,
   CancelTransactionParams,
   checkNftAvailability,
-  getAuctionHouseTradeState
+  getAuctionHouseTradeState,
+  sendTx
 } from '../../..';
 
 export async function cancelOrder(params: CancelTransactionParams) {
@@ -39,7 +40,9 @@ export async function cancelOrder(params: CancelTransactionParams) {
     amount.toNumber()
   );
 
-  const txHash = await program.methods
+  const transaction = new anchor.web3.Transaction();
+
+  const ix = await program.methods
     .cancelWithProxy(price, amount)
     .accounts({
       wallet: wallet.publicKey,
@@ -52,7 +55,11 @@ export async function cancelOrder(params: CancelTransactionParams) {
       candyShop,
       ahProgram: AUCTION_HOUSE_PROGRAM_ID
     })
-    .rpc();
+    .instruction();
+
+  transaction.add(ix);
+
+  const txHash = await sendTx(wallet, transaction, program);
 
   console.log('sell order cancelled');
 
