@@ -5,6 +5,8 @@ import { AuctionNftHeader } from '../AuctionNftHeader';
 
 import { SingleTokenInfo } from '@liqnft/candy-shop-sdk';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 
 import './style.less';
 
@@ -75,7 +77,6 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
   };
 
   const validateInput = (nodeId: string, message: string) => {
-    console.log({ nodeId, message });
     (document.getElementById(nodeId) as HTMLInputElement)?.setCustomValidity(message);
   };
 
@@ -236,7 +237,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
             required={!form[CheckEnum.START_NOW]}
             onChange={onChangeInput}
             value={form['startDate']}
-            min={dayjs().format('YYYY-MM-DD')}
+            min={dayjs.utc().format('YYYY-MM-DD')}
           />
         </div>
 
