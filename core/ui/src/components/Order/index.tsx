@@ -35,13 +35,13 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectCompon
       window.location.href = url.replace(':tokenMint', order.tokenMint);
     } else {
       setOrderCandyShop(
-        new CandyShop(
-          new web3.PublicKey(order.candyShopCreatorAddress),
-          new web3.PublicKey(order.treasuryMint),
-          candyShop.programId,
-          candyShop.env,
-          candyShop.settings
-        )
+        new CandyShop({
+          candyShopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress),
+          treasuryMint: new web3.PublicKey(order.treasuryMint),
+          candyShopProgramId: candyShop.programId,
+          env: candyShop.env,
+          settings: candyShop.settings
+        })
       );
 
       setSelection(order);
