@@ -1,5 +1,5 @@
 import * as anchor from '@project-serum/anchor';
-import { SYSVAR_CLOCK_PUBKEY, Transaction, PublicKey } from '@solana/web3.js';
+import { PublicKey, SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
 import {
   AUCTION_HOUSE_PROGRAM_ID,
   BuyNowAuctionParams,
@@ -15,9 +15,8 @@ import {
   sendTx,
   treasuryMintIsNative
 } from '../../..';
-import { checkIfBidExists, getBid } from '../../../utils';
+import { getBid } from '../../../utils';
 import { requestExtraComputeIx } from '../../requestExtraComputeIx';
-import { withdrawBid } from './withdraw';
 
 export const buyNowAuction = async ({
   candyShop,
@@ -143,22 +142,6 @@ export const buyNowAuction = async ({
   transaction.add(ix);
   const txId = await sendTx(buyer, transaction, program);
   console.log('Buy Now called with txId ==', txId);
-
-  if (await checkIfBidExists(bid, program.provider.connection)) {
-    console.log("withdrawing user's bid after buy now");
-    await withdrawBid({
-      auction,
-      authority,
-      candyShop,
-      buyer,
-      treasuryMint,
-      nftMint,
-      metadata,
-      auctionHouse,
-      feeAccount,
-      program
-    });
-  }
 
   return txId;
 };
