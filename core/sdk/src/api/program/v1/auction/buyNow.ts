@@ -14,9 +14,9 @@ import {
   getRemainigAccountsForExecuteSaleIx,
   sendTx,
   treasuryMintIsNative
-} from '../..';
-import { checkIfBidExists, getBid } from '../../utils';
-import { requestExtraComputeIx } from './requestExtraComputeIx';
+} from '../../..';
+import { checkIfBidExists, getBid } from '../../../utils';
+import { requestExtraComputeIx } from '../../requestExtraComputeIx';
 import { withdrawBid } from './withdraw';
 
 export const buyNowAuction = async ({
@@ -160,9 +160,5 @@ export const buyNowAuction = async ({
     });
   }
 
-  return {
-    buyerReceiptTokenAccount,
-    sellerPaymentReceiptAccount,
-    txId
-  };
+  return txId;
 };

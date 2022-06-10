@@ -14,8 +14,8 @@ import {
   getAuctionHouseTradeState,
   sendTx,
   treasuryMintIsNative
-} from '../..';
-import { CandyShopError, CandyShopErrorType, Metadata, parseMetadata } from '../../../utils';
+} from '../../..';
+import { CandyShopError, CandyShopErrorType, Metadata, parseMetadata } from '../../../../utils';
 
 export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionParams) {
   const {
@@ -27,7 +27,6 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     auctionHouseTreasury,
     metadata,
     authority,
-    authorityBump,
     auctionHouse,
     feeAccount,
     candyShop,
@@ -90,7 +89,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
   );
 
   const ix = await program.methods
-    .buyWithProxy(price, amount, buyTradeStateBump, buyerEscrowBump, authorityBump)
+    .buyWithProxy(price, amount, buyTradeStateBump, buyerEscrowBump)
     .accounts({
       wallet: wallet.publicKey,
       paymentAccount,
@@ -104,10 +103,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
       auctionHouseFeeAccount: feeAccount,
       buyerTradeState: buyTradeState,
       candyShop,
-      ahProgram: AUCTION_HOUSE_PROGRAM_ID,
-      tokenProgram: TOKEN_PROGRAM_ID,
-      systemProgram: web3.SystemProgram.programId,
-      rent: web3.SYSVAR_RENT_PUBKEY
+      ahProgram: AUCTION_HOUSE_PROGRAM_ID
     })
     .instruction();
 
@@ -185,7 +181,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
   }
 
   const ix2 = await program.methods
-    .executeSaleWithProxy(price, amount, buyerEscrowBump, freeTradeStateBump, programAsSignerBump, authorityBump, true)
+    .executeSaleWithProxy(price, amount, buyerEscrowBump, freeTradeStateBump, programAsSignerBump, true)
     .accounts({
       buyer: wallet.publicKey,
       seller: counterParty,
@@ -205,11 +201,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
       freeTradeState: freeTradeState,
       candyShop,
       ahProgram: AUCTION_HOUSE_PROGRAM_ID,
-      tokenProgram: TOKEN_PROGRAM_ID,
-      systemProgram: web3.SystemProgram.programId,
-      associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-      programAsSigner: programAsSigner,
-      rent: web3.SYSVAR_RENT_PUBKEY
+      programAsSigner: programAsSigner
     })
     .remainingAccounts(remainingAccounts)
     .instruction();

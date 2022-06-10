@@ -12,7 +12,7 @@ import {
   sendTx,
   treasuryMintIsNative,
   WithdrawBidParams
-} from '../..';
+} from '../../..';
 
 export const withdrawBid = async ({
   auction,
@@ -90,10 +90,5 @@ export const withdrawBid = async ({
   const txId = await sendTx(buyer, transaction, program);
   console.log('Bid withdrawn with txId ==', txId);
 
-  return {
-    escrowPaymentAccount,
-    bidTradeState,
-    bidTradeStateBump,
-    txId
-  };
+  return txId;
 };

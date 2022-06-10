@@ -1,7 +1,13 @@
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import * as anchor from '@project-serum/anchor';
 import { Command } from 'commander';
-import { CANDY_SHOP_PROGRAM_ID, loadKey, loadTokenAccountMints, findAssociatedTokenAddress } from './helper/account';
+import {
+  CANDY_SHOP_PROGRAM_ID,
+  CANDY_SHOP_V2_PROGRAM_ID,
+  loadKey,
+  loadTokenAccountMints,
+  findAssociatedTokenAddress
+} from './helper/account';
 
 const CMD = new Command();
 
@@ -15,7 +21,8 @@ function programCommand(name: string) {
       'devnet' //mainnet-beta, testnet, devnet
     )
     .option('-r, --rpc-url <string>', '(optional) Solana mainnet RPC url')
-    .requiredOption('-k, --keypair <path>', 'path to Solana wallet keypair');
+    .requiredOption('-k, --keypair <path>', 'path to Solana wallet keypair')
+    .requiredOption('-v, --version <v1 | v2>', 'version of the program');
 }
 
 programCommand('sellMany')
@@ -27,19 +34,22 @@ programCommand('sellMany')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl } = cmd.opts();
+    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl, version } = cmd.opts();
+
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
     let wallet = loadKey(keypair);
 
-    const candyShop = new CandyShop(
-      new anchor.web3.PublicKey(shopCreator),
-      new anchor.web3.PublicKey(treasuryMint),
-      CANDY_SHOP_PROGRAM_ID,
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
+      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
+      candyShopProgramId,
       env,
-      {
+      settings: {
         mainnetConnectionUrl: rpcUrl
-      }
-    );
+      },
+      isEnterprise: false
+    });
 
     let tokenMints = loadTokenAccountMints(tokenAccountMintList);
 
@@ -69,19 +79,22 @@ programCommand('cancelMany')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl } = cmd.opts();
+    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl, version } = cmd.opts();
 
     let wallet = loadKey(keypair);
 
-    const candyShop = new CandyShop(
-      new anchor.web3.PublicKey(shopCreator),
-      new anchor.web3.PublicKey(treasuryMint),
-      CANDY_SHOP_PROGRAM_ID,
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
+
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
+      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
+      candyShopProgramId,
       env,
-      {
+      settings: {
         mainnetConnectionUrl: rpcUrl
-      }
-    );
+      },
+      isEnterprise: false
+    });
 
     let tokenMints = loadTokenAccountMints(tokenAccountMintList);
 
@@ -111,19 +124,22 @@ programCommand('sell')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl, version } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
-    const candyShop = new CandyShop(
-      new anchor.web3.PublicKey(shopCreator),
-      new anchor.web3.PublicKey(treasuryMint),
-      CANDY_SHOP_PROGRAM_ID,
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
+
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
+      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
+      candyShopProgramId,
       env,
-      {
+      settings: {
         mainnetConnectionUrl: rpcUrl
-      }
-    );
+      },
+      isEnterprise: false
+    });
 
     let tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
@@ -149,19 +165,22 @@ programCommand('cancel')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl, version } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
-    const candyShop = new CandyShop(
-      new anchor.web3.PublicKey(shopCreator),
-      new anchor.web3.PublicKey(treasuryMint),
-      CANDY_SHOP_PROGRAM_ID,
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
+
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
+      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
+      candyShopProgramId,
       env,
-      {
+      settings: {
         mainnetConnectionUrl: rpcUrl
-      }
-    );
+      },
+      isEnterprise: false
+    });
 
     let tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
@@ -189,19 +208,23 @@ programCommand('buy')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, seller, tokenAccount, tokenAccountMint, treasuryMint, shopCreator, price, rpcUrl } = cmd.opts();
+    let { keypair, env, seller, tokenAccount, tokenAccountMint, treasuryMint, shopCreator, price, rpcUrl, version } =
+      cmd.opts();
 
     const wallet = loadKey(keypair);
 
-    const candyShop = new CandyShop(
-      new anchor.web3.PublicKey(shopCreator),
-      new anchor.web3.PublicKey(treasuryMint),
-      CANDY_SHOP_PROGRAM_ID,
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
+
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
+      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
+      candyShopProgramId,
       env,
-      {
+      settings: {
         mainnetConnectionUrl: rpcUrl
-      }
-    );
+      },
+      isEnterprise: false
+    });
 
     const txHash = await candyShop.buy({
       seller: new anchor.web3.PublicKey(seller),
@@ -239,20 +262,24 @@ programCommand('createAuction')
       tickSize,
       buyNowPrice,
       shopCreator,
-      startTime
+      startTime,
+      version
     } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
-    const candyShop = new CandyShop(
-      new anchor.web3.PublicKey(shopCreator),
-      new anchor.web3.PublicKey(treasuryMint),
-      CANDY_SHOP_PROGRAM_ID,
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
+
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
+      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
+      candyShopProgramId,
       env,
-      {
+      settings: {
         mainnetConnectionUrl: rpcUrl
-      }
-    );
+      },
+      isEnterprise: false
+    });
 
     let tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
@@ -281,19 +308,22 @@ programCommand('cancelAuction')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
-    const candyShop = new CandyShop(
-      new anchor.web3.PublicKey(shopCreator),
-      new anchor.web3.PublicKey(treasuryMint),
-      CANDY_SHOP_PROGRAM_ID,
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
+
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
+      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
+      candyShopProgramId,
       env,
-      {
+      settings: {
         mainnetConnectionUrl: rpcUrl
-      }
-    );
+      },
+      isEnterprise: false
+    });
 
     let tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
@@ -318,19 +348,22 @@ programCommand('makeBid')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, price } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, price, version } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
-    const candyShop = new CandyShop(
-      new anchor.web3.PublicKey(shopCreator),
-      new anchor.web3.PublicKey(treasuryMint),
-      CANDY_SHOP_PROGRAM_ID,
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
+
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
+      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
+      candyShopProgramId,
       env,
-      {
+      settings: {
         mainnetConnectionUrl: rpcUrl
-      }
-    );
+      },
+      isEnterprise: false
+    });
 
     let tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
@@ -355,19 +388,22 @@ programCommand('withdrawBid')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
-    const candyShop = new CandyShop(
-      new anchor.web3.PublicKey(shopCreator),
-      new anchor.web3.PublicKey(treasuryMint),
-      CANDY_SHOP_PROGRAM_ID,
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
+
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
+      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
+      candyShopProgramId,
       env,
-      {
+      settings: {
         mainnetConnectionUrl: rpcUrl
-      }
-    );
+      },
+      isEnterprise: false
+    });
 
     let tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
@@ -391,19 +427,22 @@ programCommand('buyNow')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
-    const candyShop = new CandyShop(
-      new anchor.web3.PublicKey(shopCreator),
-      new anchor.web3.PublicKey(treasuryMint),
-      CANDY_SHOP_PROGRAM_ID,
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
+
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
+      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
+      candyShopProgramId,
       env,
-      {
+      settings: {
         mainnetConnectionUrl: rpcUrl
-      }
-    );
+      },
+      isEnterprise: false
+    });
 
     let tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
@@ -427,19 +466,22 @@ programCommand('settleAndDistribute')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
-    const candyShop = new CandyShop(
-      new anchor.web3.PublicKey(shopCreator),
-      new anchor.web3.PublicKey(treasuryMint),
-      CANDY_SHOP_PROGRAM_ID,
+    const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
+
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
+      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
+      candyShopProgramId,
       env,
-      {
+      settings: {
         mainnetConnectionUrl: rpcUrl
-      }
-    );
+      },
+      isEnterprise: false
+    });
 
     let tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),

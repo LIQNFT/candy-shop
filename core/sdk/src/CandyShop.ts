@@ -12,11 +12,16 @@ import { BN, Idl, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import {
   buyAndExecuteSale,
+  buyAndExecuteSaleV1,
   BuyAndExecuteSaleTransactionParams,
   cancelAuction,
+  cancelAuctionV1,
   CancelAuctionParams,
   cancelOrder,
+  cancelOrderV1,
+  CancelTransactionParams,
   createAuction,
+  createAuctionV1,
   CreateAuctionParams,
   getAuction,
   getAuctionHouse,
@@ -28,18 +33,28 @@ import {
   getMetadataAccount,
   insBuyAndExecuteSale,
   sellNft,
+  sellNftV1,
+  SellTransactionParams,
   bidAuction,
+  bidAuctionV1,
   BidAuctionParams,
   withdrawBid,
+  withdrawBidV1,
   WithdrawBidParams,
   settleAndDistributeProceeds,
+  settleAndDistributeProceedsV1,
   SettleAndDistributeProceedParams,
   buyNowAuction,
-  BuyNowAuctionParams
+  buyNowAuctionV1,
+  BuyNowAuctionParams,
+  updateCandyShop,
+  updateCandyShopV1,
+  UpdateCandyShopParams
 } from './api';
-import candyShopIdl from './candy_shop.json';
+import candyShopIdl from './idl/candy_shop.json';
+import candyShopV2Idl from './idl/candy_shop_v2.json';
 import { OrdersFilterQuery, TradeQuery } from './api/backend';
-import { CANDY_SHOP_INS_PROGRAM_ID, CANDY_SHOP_PROGRAM_ID } from './api/constants';
+import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from './api/constants';
 import {
   fetchNFTByMintAddress,
   fetchOrderByShopAndMintAddress,
@@ -61,11 +76,12 @@ import {
   CandyShopWithdrawAuctionBidParams,
   CandyShopSettleAndDistributeParams,
   CandyShopBuyNowParams,
-  CandyShopUpdateParams
+  CandyShopUpdateParams,
+  CandyShopConstructorParams,
+  CandyShopVersion
 } from './CandyShopModel';
 import { configBaseUrl } from './config';
 import { CandyShopError, CandyShopErrorType } from './utils';
-import { updateCandyShop } from './api/program/marketplace/updateCandyShop';
 
 const Logger = 'CandyShop';
 
@@ -89,30 +105,33 @@ export class CandyShop {
   private _env: web3.Cluster;
   private _settings: CandyShopSettings;
   private _baseUnitsPerCurrency: number;
+  private _isEnterprise: boolean;
+  private _version: CandyShopVersion;
   private _program: Program | undefined;
 
   /**
-   * Initiate the CandyShop object
+   * Instantiate a CandyShop object
    *
    * @constructor
-   * @param candyShopCreatorAddress creator address (i.e. your wallet address)
-   * @param treasuryMint treasury mint (i.e. currency to buy and sell with)
-   * @param candyShopProgramId Candy Shop program id
-   * @param env web3.Cluster mainnet, devnet
-   * @param settings optional, additional shop settings
+   * @param {CandyShopConstructorParams} params
    */
-  constructor(
-    candyShopCreatorAddress: web3.PublicKey,
-    treasuryMint: web3.PublicKey,
-    candyShopProgramId: web3.PublicKey,
-    env: web3.Cluster,
-    settings?: Partial<CandyShopSettings>
-  ) {
+  // Changed constructor params to object, can revert if it will cause too many issues
+  constructor(params: CandyShopConstructorParams) {
+    const { candyShopCreatorAddress, candyShopProgramId, treasuryMint, env, settings, isEnterprise } = params;
+
+    this.verifyProgramId(candyShopProgramId);
+
+    if (isEnterprise && !candyShopProgramId.equals(CANDY_SHOP_V2_PROGRAM_ID)) {
+      throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
+    }
+
     this._candyShopAddress = getCandyShopSync(candyShopCreatorAddress, treasuryMint, candyShopProgramId)[0];
     this._candyShopCreatorAddress = candyShopCreatorAddress;
     this._treasuryMint = treasuryMint;
     this._programId = candyShopProgramId;
     this._env = env;
+    this._isEnterprise = isEnterprise ? true : false;
+    this._version = candyShopProgramId.equals(CANDY_SHOP_V2_PROGRAM_ID) ? CandyShopVersion.V2 : CandyShopVersion.V1;
     this._settings = {
       currencySymbol: settings?.currencySymbol ?? DEFAULT_CURRENCY_SYMBOL,
       currencyDecimals: settings?.currencyDecimals ?? DEFAULT_CURRENCY_DECIMALS,
@@ -127,6 +146,18 @@ export class CandyShop {
     console.log('CandyShop constructor: init CandyShop=', this);
     configBaseUrl(env);
   }
+
+  verifyProgramId(programId: web3.PublicKey) {
+    switch (programId.toString()) {
+      case CANDY_SHOP_PROGRAM_ID.toString():
+        break;
+      case CANDY_SHOP_V2_PROGRAM_ID.toString():
+        break;
+      default:
+        throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
+    }
+  }
+
   /**
    * Get JSON rpc connection
    */
@@ -141,7 +172,6 @@ export class CandyShop {
       this._settings.connectionConfig || options.commitment
     );
   }
-
   /**
    * Gets anchor Program object for Candy Shop program
    *
@@ -160,20 +190,10 @@ export class CandyShop {
     );
     console.log(`${Logger}: fetching idl for programId`, this._programId.toString());
 
+    const idl = this._programId.equals(CANDY_SHOP_V2_PROGRAM_ID) ? candyShopV2Idl : candyShopIdl;
     // Directly use the JSON file here temporarily
-    if (this.programId.equals(CANDY_SHOP_PROGRAM_ID)) {
-      // @ts-ignore
-      this._program = new Program(candyShopIdl, this._programId, provider);
-    } else {
-      // TODO: remove when CandyShop V2 is deployed
-      const idl = await Program.fetchIdl(this._programId, provider);
-      if (idl) {
-        this._program = new Program(idl, this._programId, provider);
-        return this._program;
-      } else {
-        throw new Error('Idl not found');
-      }
-    }
+    // @ts-ignore
+    this._program = new Program(idl, this._programId, provider);
     return this._program;
   }
 
@@ -207,6 +227,14 @@ export class CandyShop {
 
   get programId(): web3.PublicKey {
     return this._programId;
+  }
+
+  get isEnterprise(): boolean {
+    return this._isEnterprise;
+  }
+
+  get version(): CandyShopVersion {
+    return this._version;
   }
 
   get baseUnitsPerCurrency(): number {
@@ -255,7 +283,7 @@ export class CandyShop {
       sellerFeeBasisPoint: sellerFeeBasisPoint ? sellerFeeBasisPoint.toString() : null
     });
 
-    const tx = await updateCandyShop({
+    const updateCandyShopParams: UpdateCandyShopParams = {
       wallet,
       treasuryMint: this._treasuryMint,
       sellerFeeBasisPoint,
@@ -266,9 +294,11 @@ export class CandyShop {
       auctionHouseAuthority,
       authorityBump,
       program
-    });
+    };
 
-    return tx.txId;
+    const txHash = await call(updateCandyShopParams, this._version, updateCandyShopV1, updateCandyShop);
+
+    return txHash;
   }
 
   /**
@@ -315,7 +345,12 @@ export class CandyShop {
       amount: new BN(1),
       program
     };
-    const txHash = await buyAndExecuteSales(this._programId, buyTxHashParams);
+    const txHash = await buyAndExecuteSales(this._isEnterprise, {
+      params: buyTxHashParams,
+      version: this._version,
+      v1Func: buyAndExecuteSaleV1,
+      v2Func: buyAndExecuteSale
+    });
 
     return txHash;
   }
@@ -345,7 +380,7 @@ export class CandyShop {
 
     const [metadata] = await getMetadataAccount(tokenMint);
 
-    const txHash = await sellNft({
+    const sellTxParams: SellTransactionParams = {
       wallet,
       tokenAccount,
       tokenAccountMint: tokenMint,
@@ -359,7 +394,10 @@ export class CandyShop {
       price,
       amount: new BN(1),
       program
-    });
+    };
+
+    const txHash = await call(sellTxParams, this._version, sellNftV1, sellNft);
+
     return txHash;
   }
   /**
@@ -396,7 +434,7 @@ export class CandyShop {
       price
     );
 
-    const txHash = await cancelOrder({
+    const cancelTxParams: CancelTransactionParams = {
       wallet,
       tokenAccount,
       tokenAccountMint: tokenMint,
@@ -410,7 +448,9 @@ export class CandyShop {
       price,
       amount: new BN(1),
       program
-    });
+    };
+
+    const txHash = await call(cancelTxParams, this._version, cancelOrderV1, cancelOrder);
 
     return txHash;
   }
@@ -450,7 +490,7 @@ export class CandyShop {
       this._programId
     );
 
-    const tx = await createAuction({
+    const createAuctionParams: CreateAuctionParams = {
       seller: wallet,
       auction,
       authority: auctionHouseAuthority,
@@ -464,8 +504,11 @@ export class CandyShop {
       tickSize,
       buyNowPrice,
       program
-    } as CreateAuctionParams);
-    return tx.txId;
+    };
+
+    const txHash = await call(createAuctionParams, this._version, createAuctionV1, createAuction);
+
+    return txHash;
   }
 
   /**
@@ -501,7 +544,7 @@ export class CandyShop {
       this._programId
     );
 
-    const tx = await cancelAuction({
+    const cancelAuctionParams: CancelAuctionParams = {
       seller: wallet,
       auction,
       authority: auctionHouseAuthority,
@@ -510,8 +553,11 @@ export class CandyShop {
       treasuryMint: this._treasuryMint,
       nftMint: tokenMint,
       program
-    } as CancelAuctionParams);
-    return tx.txId;
+    };
+
+    const txHash = await call(cancelAuctionParams, this._version, cancelAuctionV1, cancelAuction);
+
+    return txHash;
   }
 
   /**
@@ -549,7 +595,7 @@ export class CandyShop {
 
     const [metadata] = await getMetadataAccount(tokenMint);
 
-    const tx = await bidAuction({
+    const bidParams: BidAuctionParams = {
       auction,
       authority: auctionHouseAuthority,
       candyShop: this._candyShopAddress,
@@ -561,8 +607,11 @@ export class CandyShop {
       feeAccount,
       bidPrice,
       program
-    } as BidAuctionParams);
-    return tx.txId;
+    };
+
+    const txHash = await call(bidParams, this._version, bidAuctionV1, bidAuction);
+
+    return txHash;
   }
 
   /**
@@ -599,7 +648,7 @@ export class CandyShop {
 
     const [metadata] = await getMetadataAccount(tokenMint);
 
-    const tx = await withdrawBid({
+    const withdrawBidParams: WithdrawBidParams = {
       auction,
       authority: auctionHouseAuthority,
       candyShop: this._candyShopAddress,
@@ -610,8 +659,11 @@ export class CandyShop {
       auctionHouse,
       feeAccount,
       program
-    } as WithdrawBidParams);
-    return tx.txId;
+    };
+
+    const txHash = await call(withdrawBidParams, this._version, withdrawBidV1, withdrawBid);
+
+    return txHash;
   }
 
   /**
@@ -644,7 +696,7 @@ export class CandyShop {
 
     const [metadata] = await getMetadataAccount(tokenMint);
 
-    const tx = await buyNowAuction({
+    const buyNowParams: BuyNowAuctionParams = {
       auction,
       auctionBump,
       authority: auctionHouseAuthority,
@@ -658,8 +710,11 @@ export class CandyShop {
       treasuryAccount,
       program,
       env: this._env
-    } as BuyNowAuctionParams);
-    return tx.txId;
+    };
+
+    const txHash = await call(buyNowParams, this._version, buyNowAuctionV1, buyNowAuction);
+
+    return txHash;
   }
 
   /**
@@ -692,7 +747,7 @@ export class CandyShop {
 
     const [metadata] = await getMetadataAccount(tokenMint);
 
-    const tx = await settleAndDistributeProceeds({
+    const settleAndDistributeParams: SettleAndDistributeProceedParams = {
       auction,
       auctionBump,
       authority: auctionHouseAuthority,
@@ -706,8 +761,16 @@ export class CandyShop {
       treasuryAccount,
       program,
       env: this._env
-    } as SettleAndDistributeProceedParams);
-    return tx.txId;
+    };
+
+    const txHash = await call(
+      settleAndDistributeParams,
+      this._version,
+      settleAndDistributeProceedsV1,
+      settleAndDistributeProceeds
+    );
+
+    return txHash;
   }
 
   /**
@@ -785,15 +848,46 @@ function getNodeWallet(wallet: web3.Keypair) {
 }
 
 /**
- * Get tx hash from different executions by programId
+ * Get tx hash from different executions
  *
- * @param {PublicKey} programId
+ * @param {boolean} isEneterprise
  * @param {BuyAndExecuteSaleTransactionParams} params required params for buy/sell transaction
- * @returns
  */
-function buyAndExecuteSales(programId: web3.PublicKey, params: BuyAndExecuteSaleTransactionParams): Promise<string> {
-  if (programId.equals(CANDY_SHOP_INS_PROGRAM_ID)) {
+function buyAndExecuteSales(
+  isEneterprise: boolean,
+  callParams: {
+    params: BuyAndExecuteSaleTransactionParams;
+    version: CandyShopVersion;
+    v1Func: (params: any) => Promise<string>;
+    v2Func: (params: any) => Promise<string>;
+  }
+): Promise<string> {
+  const { params, version, v1Func, v2Func } = callParams;
+
+  if (isEneterprise) {
     return insBuyAndExecuteSale(params);
   }
-  return buyAndExecuteSale(params);
+  return call(params, version, v1Func, v2Func);
+}
+
+/**
+ * Chooses to call either v1 or v2 version of passed fuction based on candy shop version
+ *
+ * @param {any} params argument to the function to call
+ * @param {CandyShopVersion} version version of the candy shop
+ * @param {function} v1Func function to call if using v1 candy shop
+ * @param {function} v2Func function to call if using v1 candy shop
+ */
+// Please feel free to come up with better name :)
+function call(
+  params: any,
+  version: CandyShopVersion,
+  v1Func: (params: any) => Promise<string>,
+  v2Func: (params: any) => Promise<string>
+): Promise<string> {
+  if (version === CandyShopVersion.V1) {
+    return v1Func(params);
+  } else {
+    return v2Func(params);
+  }
 }

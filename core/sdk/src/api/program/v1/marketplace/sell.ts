@@ -8,8 +8,8 @@ import {
   SellTransactionParams,
   sendTx,
   treasuryMintIsNative
-} from '../..';
-import { safeAwait } from '../../../utils';
+} from '../../..';
+import { safeAwait } from '../../../../utils';
 
 export async function sellNft(params: SellTransactionParams): Promise<string> {
   const {
@@ -81,10 +81,7 @@ export async function sellNft(params: SellTransactionParams): Promise<string> {
       freeSellerTradeState: freeTradeState,
       candyShop,
       ahProgram: AUCTION_HOUSE_PROGRAM_ID,
-      tokenProgram: TOKEN_PROGRAM_ID,
-      systemProgram: anchor.web3.SystemProgram.programId,
-      programAsSigner,
-      rent: anchor.web3.SYSVAR_RENT_PUBKEY
+      programAsSigner
     })
     .instruction();
 

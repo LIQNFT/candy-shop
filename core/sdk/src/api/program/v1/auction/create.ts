@@ -6,7 +6,7 @@ import {
   CreateAuctionParams,
   checkCreationParams,
   checkCanExecSettle
-} from '../..';
+} from '../../..';
 
 export const createAuction = async (params: CreateAuctionParams) => {
   const {
@@ -53,10 +53,5 @@ export const createAuction = async (params: CreateAuctionParams) => {
   const txId = await sendTx(seller, transaction, program);
   console.log('Auction created with txId ==', txId);
 
-  return {
-    auction,
-    auctionBump,
-    auctionEscrow,
-    txId
-  };
+  return txId;
 };

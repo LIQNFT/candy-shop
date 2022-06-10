@@ -6,9 +6,9 @@ export const AUCTION_HOUSE_PROGRAM_ID = new web3.PublicKey('hausS13jsjafwWwGqZTU
 
 export const LIQNFT_TREASURY_ACCOUNT = new web3.PublicKey('91jjF761KfDyXE6uFRe3zyRESPwQtewo8hxHc3yFQaRF');
 
-export const CANDY_SHOP_INS_PROGRAM_ID = new web3.PublicKey('cseLFQDeAfo96uQhA6MhiCzHzhmWu47VopVVvYmRDyE');
-
 export const CANDY_SHOP_PROGRAM_ID = new web3.PublicKey('csa8JpYfKSZajP7JzxnJipUL3qagub1z29hLvp578iN');
+
+export const CANDY_SHOP_V2_PROGRAM_ID = new web3.PublicKey('csbMUULiQfGjT8ezT16EoEBaiarS6VWRevTw1JMydrS');
 
 export const COMPUTE_BUDGET_PROGRAM_ID = new web3.PublicKey('ComputeBudget111111111111111111111111111111');
 

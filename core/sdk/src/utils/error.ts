@@ -1,4 +1,5 @@
 export enum CandyShopErrorType {
+  IncorrectProgramId = 'IncorrectProgramId',
   TransactionFailed = 'TransactionFailed',
   InsufficientBalance = 'InsufficientBalance',
   NFTUnavailable = 'NFTUnavailable',
@@ -25,6 +26,7 @@ export enum CandyShopErrorType {
 }
 
 export const CandyShopErrorMsgMap = {
+  [CandyShopErrorType.IncorrectProgramId]: 'Must use v2 program address to make use of enterprise functionality.',
   [CandyShopErrorType.TransactionFailed]: 'Transaction failed. Please try again later.',
   [CandyShopErrorType.InsufficientBalance]: 'Insufficient balance.',
   [CandyShopErrorType.NFTUnavailable]: 'The NFT is no longer for sale.',
