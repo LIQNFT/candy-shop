@@ -15,14 +15,13 @@ const USER_2 = new Uint8Array([
   229, 136, 245, 189, 228, 216, 86, 212, 56, 203, 149, 135
 ]);
 
-// TODO: add creator
 const CREATOR_ADDRESS = new web3.PublicKey('B2B2XZpk2a9hvpNBpXYNdZxg3Sy5WJb34wdoDgb5VFJ8');
 const TREASURY_MINT = new web3.PublicKey('So11111111111111111111111111111111111111112');
 const CANDY_SHOP_PROGRAM_ID = new web3.PublicKey('csbMUULiQfGjT8ezT16EoEBaiarS6VWRevTw1JMydrS');
 
-const TOKEN_ACCOUNT = new web3.PublicKey('Eakkca8Ms9W82uzPyzVRRkSdgRY9rczEaua8rwycu4hq');
+const TOKEN_ACCOUNT = new web3.PublicKey('EYWjrsPJvQtpyLehyyjV9LgBxjvkZEeExkvTLZTD9atf');
 
-const TOKEN_MINT = new web3.PublicKey('6zZmfagbCiuWuZMidxiPsdBTbwqnMbHDUDrfL161LXNd');
+const TOKEN_MINT = new web3.PublicKey('4ZJn2E8DNhoXNpLfKfGByX6M41npfzsLnJr9e2co4jT9');
 
 const PRICE = new BN('100000000');
 
