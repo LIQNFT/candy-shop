@@ -21,7 +21,6 @@ import { DEFAULT_FORM_CONFIG, LS_CANDY_FORM } from './constant/formConfiguration
 import { CandyShopDataValidator } from '../core/ui';
 import { CandyShop } from '../core/sdk';
 import { ConfigureShop } from './ConfigureShop';
-import { DEFAULT_CANDY_FORM, LS_CANDY_FORM } from './constant';
 
 const disableStyle = { pointerEvent: 'none', color: 'black', paddingRight: 20, fontWeight: 'bold' };
 const normalStyle = { paddingRight: 20 };
