@@ -81,8 +81,10 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
   };
 
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = e.target;
-    validateInput(name, Number(value) > 0 ? '' : VALIDATE_MESSAGE[name]);
+    const { value, name } = e.target as { value: any; name: keyof FormType };
+    if (name !== 'startDate') {
+      validateInput(name, Number(value) > 0 ? '' : VALIDATE_MESSAGE[name]);
+    }
     if (name === 'buyNowPrice' && form.buyNow) {
       const minBuyNowPrice = Number(form.startingBid) + Number(form.tickSize);
 
