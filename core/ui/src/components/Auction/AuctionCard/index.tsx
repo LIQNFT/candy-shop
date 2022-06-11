@@ -81,9 +81,7 @@ export const AuctionCard: React.FC<AuctionCardProps> = ({ auction, candyShop, wa
       {selected && candyShop ? (
         <AuctionModal
           auction={auction}
-          onClose={() => {
-            setSelected(false);
-          }}
+          onClose={() => setSelected(false)}
           wallet={wallet}
           candyShop={candyShop}
           walletConnectComponent={walletConnectComponent}
