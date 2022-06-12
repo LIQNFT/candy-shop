@@ -16,7 +16,6 @@ import {
   treasuryMintIsNative
 } from '../../..';
 import { getBid } from '../../../utils';
-import { requestExtraComputeIx } from '../../requestExtraComputeIx';
 
 export const buyNowAuction = async ({
   candyShop,
@@ -134,10 +133,6 @@ export const buyNowAuction = async ({
     })
     .remainingAccounts(remainingAccounts)
     .instruction();
-
-  if (env === 'mainnet-beta') {
-    transaction.add(requestExtraComputeIx(400000));
-  }
 
   transaction.add(ix);
   const txId = await sendTx(buyer, transaction, program);
