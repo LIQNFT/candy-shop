@@ -1,6 +1,6 @@
 import * as anchor from '@project-serum/anchor';
-import { SYSVAR_CLOCK_PUBKEY, Transaction, PublicKey } from '@solana/web3.js';
 import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { PublicKey, SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
 import {
   AUCTION_HOUSE_PROGRAM_ID,
   checkAHFeeAccountBalance,
@@ -17,7 +17,6 @@ import {
   SettleAndDistributeProceedParams,
   treasuryMintIsNative
 } from '../../..';
-import { requestExtraComputeIx } from '../../requestExtraComputeIx';
 
 export const settleAndDistributeProceeds = async ({
   settler,
@@ -130,10 +129,6 @@ export const settleAndDistributeProceeds = async ({
 
   let transaction = new Transaction();
 
-  if (env === 'mainnet-beta') {
-    transaction.add(requestExtraComputeIx(400000));
-  }
-
   transaction.add(ix1);
   const tx1 = await sendTx(settler, transaction, program);
   console.log('Auction settled with txId ==', tx1);
@@ -158,10 +153,6 @@ export const settleAndDistributeProceeds = async ({
       clock: SYSVAR_CLOCK_PUBKEY
     })
     .instruction();
-
-  if (env === 'mainnet-beta') {
-    transaction.add(requestExtraComputeIx(400000));
-  }
 
   transaction = new Transaction();
   transaction.add(ix2);
