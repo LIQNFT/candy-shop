@@ -70,19 +70,31 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
   const ModalAlertElement = () => {
     if (!bidInfo) return null;
 
-    if (auction.highestBidBuyer && auction.highestBidBuyer === walletPublicKey?.toString()) {
-      return <div className="candy-auction-modal-notice">You are currently the highest bidder!</div>;
+    if (
+      auction.highestBidBuyer &&
+      auction.highestBidBuyer === walletPublicKey?.toString() &&
+      bidInfo.status !== BidStatus.WON
+    ) {
+      return <div className="candy-auction-modal-notice">Congratulations, you are currently the highest bidder!</div>;
+    }
+
+    if (
+      auction.highestBidBuyer &&
+      auction.highestBidBuyer === walletPublicKey?.toString() &&
+      bidInfo.status === BidStatus.WON
+    ) {
+      return <div className="candy-auction-modal-notice">Congratulations, you have won the auction!</div>;
     }
 
     if (bidInfo.status !== BidStatus.WITHDRAWN) {
       return (
         <div className="candy-auction-modal-notice">
+          <button className="candy-button candy-button-outlined" style={{ marginRight: 15 }} onClick={onWithdrew}>
+            Retrieve Funds
+          </button>
           {auction.status === AuctionStatus.STARTED
             ? 'You have been outbid! Retrieve your funds here or place a higher bid below.'
             : 'You have been outbid! Retrieve your funds here'}
-          <button className="candy-button candy-button-outlined" style={{ marginLeft: 5 }} onClick={onWithdrew}>
-            Retrieve Funds
-          </button>
         </div>
       );
     }
