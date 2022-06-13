@@ -1,6 +1,6 @@
 {
   "name": "@liqnft/candy-shop-types",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "dist/index.js",
   "author": "RustySol",
   "license": "MIT",
