@@ -6,5 +6,6 @@ export interface ShopStatus {
 export enum ShopStatusType {
   Order = 'ORDER',
   Trade = 'TRADE',
-  UserNft = 'USER_NFT'
+  UserNft = 'USER_NFT',
+  Auction = 'AUCTION'
 }

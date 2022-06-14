@@ -6,8 +6,9 @@ import { IconActivity } from 'assets/IconActivity';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { CandyShop } from '@liqnft/candy-shop-sdk';
-import { Trade, ListBase } from '@liqnft/candy-shop-types';
+import { Trade, ListBase, ShopStatusType } from '@liqnft/candy-shop-types';
 import { useValidateStatus } from 'hooks/useValidateStatus';
+import { useUpdateSubject } from 'public/Context';
 import { ActivityActionsStatus } from 'constant';
 
 import dayjs from 'dayjs';
@@ -33,6 +34,7 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers }) =>
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [offset, setOffset] = useState<number>(0);
 
+  useUpdateSubject(ShopStatusType.Trade);
   const updateActivityStatus = useValidateStatus(ActivityActionsStatus);
 
   const getTrades = useCallback(

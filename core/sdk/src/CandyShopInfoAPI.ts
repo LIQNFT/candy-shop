@@ -13,7 +13,8 @@ import {
   Trade,
   WhitelistNft,
   CandyShop as CandyShopResponse,
-  ShopStatus
+  ShopStatus,
+  ShopStatusQuery
 } from '@liqnft/candy-shop-types';
 import {
   fetchNftByMint,
@@ -76,7 +77,7 @@ export function fetchShopByShopAddress(candyShopAddress: web3.PublicKey): Promis
 
 export function fetchShopStatusByShopAddress(
   candyShopAddress: web3.PublicKey,
-  walletAddress?: string
+  query: ShopStatusQuery
 ): Promise<SingleBase<ShopStatus[]>> {
-  return fetchShopStatusByShopId(axiosInstance, candyShopAddress.toString(), walletAddress);
+  return fetchShopStatusByShopId(axiosInstance, candyShopAddress.toString(), query);
 }

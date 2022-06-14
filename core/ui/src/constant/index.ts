@@ -13,3 +13,4 @@ export const StatActionsStatus = [ShopStatusType.Order];
 export const OrdersActionsStatus = [ShopStatusType.Order];
 export const SellActionsStatus = [ShopStatusType.Order];
 export const ActivityActionsStatus = [ShopStatusType.Trade];
+export const AuctionActionsStatus = [ShopStatusType.Auction];

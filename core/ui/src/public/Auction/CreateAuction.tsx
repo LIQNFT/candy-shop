@@ -13,13 +13,10 @@ import { Order, SingleBase, CandyShop as CandyShopResponse } from '@liqnft/candy
 
 import { Empty } from 'components/Empty';
 import { Card } from 'components/Card';
-
 import { LoadingSkeleton } from 'components/LoadingSkeleton';
 import { AuctionForm, FormType, CreateAuctionConfirm } from 'components/Auction';
 import { IconTick } from 'assets/IconTick';
-
 import { LoadStatus } from 'constant';
-
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
