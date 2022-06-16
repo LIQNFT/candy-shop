@@ -11,4 +11,5 @@ export interface CandyShop {
   logoURI: string;
   txHashAtCreation: string;
   hasWhitelist: number;
+  allowSellAnyNft: number;
 }
