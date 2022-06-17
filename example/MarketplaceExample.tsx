@@ -3,8 +3,8 @@ import React from 'react';
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 
-import { CandyShop } from '@liqnft/candy-shop-sdk';
-import { Orders, Stat, OrderDetail, Sell, Activity } from '@liqnft/candy-shop';
+import { CandyShop } from '../core/sdk/.';
+import { Orders, Stat, OrderDetail, Sell, Activity } from '../core/ui/.';
 
 import 'antd/dist/antd.min.css';
 interface MarketplaceExampleProps {
