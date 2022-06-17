@@ -1,6 +1,5 @@
 import * as anchor from '@project-serum/anchor';
 import { web3 } from '@project-serum/anchor';
-import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import {
   AUCTION_HOUSE_PROGRAM_ID,
   BuyAndExecuteSaleTransactionParams,
@@ -12,9 +11,11 @@ import {
   getAuctionHouseEscrow,
   getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
+  insBuyAndExecuteSale,
   sendTx,
   treasuryMintIsNative
 } from '../../..';
+import { CandyShopVersion } from '../../../../CandyShopModel';
 import { CandyShopError, CandyShopErrorType, Metadata, parseMetadata } from '../../../../utils';
 
 export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionParams) {
@@ -221,4 +222,49 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
 
   console.log('sale executed');
   return buyAndExecuteTx;
+}
+
+/**
+ * Get tx hash from different executions
+ *
+ * @param {boolean} isEnterprise
+ * @param {BuyAndExecuteSaleTransactionParams} params required params for buy/sell transaction
+ */
+export function buyAndExecuteSales(
+  isEnterprise: boolean,
+  callParams: {
+    params: BuyAndExecuteSaleTransactionParams;
+    version: CandyShopVersion;
+    v1Func: (params: any) => Promise<string>;
+    v2Func: (params: any) => Promise<string>;
+  }
+): Promise<string> {
+  const { params, version, v1Func, v2Func } = callParams;
+
+  if (isEnterprise) {
+    return insBuyAndExecuteSale(params);
+  }
+  return call(params, version, v1Func, v2Func);
+}
+
+/**
+ * Chooses to call either v1 or v2 version of passed fuction based on candy shop version
+ *
+ * @param {any} params argument to the function to call
+ * @param {CandyShopVersion} version version of the candy shop
+ * @param {function} v1Func function to call if using v1 candy shop
+ * @param {function} v2Func function to call if using v1 candy shop
+ */
+// Please feel free to come up with better name :)
+export function call(
+  params: any,
+  version: CandyShopVersion,
+  v1Func: (params: any) => Promise<string>,
+  v2Func: (params: any) => Promise<string>
+): Promise<string> {
+  if (version === CandyShopVersion.V1) {
+    return v1Func(params);
+  } else {
+    return v2Func(params);
+  }
 }

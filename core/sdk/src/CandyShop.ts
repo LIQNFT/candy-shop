@@ -11,9 +11,6 @@ import {
 import { BN, Idl, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import {
-  buyAndExecuteSale,
-  buyAndExecuteSaleV1,
-  BuyAndExecuteSaleTransactionParams,
   cancelAuction,
   cancelAuctionV1,
   CancelAuctionParams,
@@ -31,7 +28,6 @@ import {
   getAuctionHouseTreasuryAcct,
   getCandyShopSync,
   getMetadataAccount,
-  insBuyAndExecuteSale,
   sellNft,
   sellNftV1,
   SellTransactionParams,
@@ -49,10 +45,10 @@ import {
   BuyNowAuctionParams,
   updateCandyShop,
   updateCandyShopV1,
-  UpdateCandyShopParams
+  UpdateCandyShopParams,
+  call,
+  getProgram
 } from './api';
-import candyShopIdl from './idl/candy_shop.json';
-import candyShopV2Idl from './idl/candy_shop_v2.json';
 import { OrdersFilterQuery, TradeQuery } from './api/backend';
 import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from './api/constants';
 import {
@@ -80,6 +76,7 @@ import {
   CandyShopConstructorParams,
   CandyShopVersion
 } from './CandyShopModel';
+import { CandyShopTrade } from './CandyShopTrade';
 import { configBaseUrl } from './config';
 import { CandyShopError, CandyShopErrorType } from './utils';
 
@@ -92,7 +89,6 @@ const DEFAULT_PRICE_DECIMALS_MIN = 0;
 const DEFAULT_VOLUME_DECIMALS = 1;
 const DEFAULT_VOLUME_DECIMALS_MIN = 0;
 const DEFAULT_MAINNET_CONNECTION_URL = 'https://ssc-dao.genesysgo.net/';
-let staticNodeWallet: any = null;
 
 /**
  * @class CandyShop
@@ -177,24 +173,9 @@ export class CandyShop {
    *
    * @param {AnchorWallet | web3.Keypair} wallet Wallet or keypair of connected user
    */
-  async getStaticProgram(wallet: AnchorWallet | web3.Keypair): Promise<Program<Idl>> {
+  getStaticProgram(wallet: AnchorWallet | web3.Keypair): Program<Idl> {
     if (this._program) return this._program;
-
-    const options = Provider.defaultOptions();
-    const connection = this.connection();
-    const provider = new Provider(
-      connection,
-      // check the instance type
-      wallet instanceof web3.Keypair ? getNodeWallet(wallet) : wallet,
-      options
-    );
-    console.log(`${Logger}: fetching idl for programId`, this._programId.toString());
-
-    const idl = this._programId.equals(CANDY_SHOP_V2_PROGRAM_ID) ? candyShopV2Idl : candyShopIdl;
-    // Directly use the JSON file here temporarily
-    // @ts-ignore
-    this._program = new Program(idl, this._programId, provider);
-    return this._program;
+    return getProgram(this.connection(), this._programId, wallet);
   }
 
   get currencyDecimals(): number {
@@ -269,7 +250,6 @@ export class CandyShop {
   public async updateCandyShop(params: CandyShopUpdateParams): Promise<string> {
     const { wallet, sellerFeeBasisPoint, requiresSignOff, canChangeSalePrice, split } = params;
 
-    const program = await this.getStaticProgram(wallet);
     const [auctionHouseAuthority, authorityBump] = await getAuctionHouseAuthority(
       this._candyShopCreatorAddress,
       this._treasuryMint,
@@ -293,7 +273,7 @@ export class CandyShop {
       auctionHouse,
       auctionHouseAuthority,
       authorityBump,
-      program
+      program: this.getStaticProgram(wallet)
     };
 
     const txHash = await call(updateCandyShopParams, this._version, updateCandyShopV1, updateCandyShop);
@@ -315,43 +295,20 @@ export class CandyShop {
       tokenMint: tokenMint.toString(),
       price
     });
-    const program = await this.getStaticProgram(wallet);
-    const [auctionHouseAuthority, authorityBump] = await getAuctionHouseAuthority(
-      this._candyShopCreatorAddress,
-      this._treasuryMint,
-      this._programId
-    );
-
-    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
-    const [feeAccount] = await getAuctionHouseFeeAcct(auctionHouse);
-    const [treasuryAccount] = await getAuctionHouseTreasuryAcct(auctionHouse);
-
-    const [metadata] = await getMetadataAccount(tokenMint);
-
-    const buyTxHashParams: BuyAndExecuteSaleTransactionParams = {
-      wallet,
-      counterParty: seller,
-      tokenAccount,
-      tokenAccountMint: tokenMint,
-      treasuryMint: this._treasuryMint,
-      auctionHouseTreasury: treasuryAccount,
-      metadata,
-      authority: auctionHouseAuthority,
-      authorityBump,
-      auctionHouse,
-      feeAccount,
-      candyShop: this._candyShopAddress,
-      price,
-      amount: new BN(1),
-      program
-    };
-    const txHash = await buyAndExecuteSales(this._isEnterprise, {
-      params: buyTxHashParams,
-      version: this._version,
-      v1Func: buyAndExecuteSaleV1,
-      v2Func: buyAndExecuteSale
+    const txHash = await CandyShopTrade.buy({
+      connection: this.connection(),
+      shopAddress: this._candyShopAddress,
+      candyShopProgramId: this._programId,
+      shopCreatorAddress: this._candyShopCreatorAddress,
+      shopTreasuryMint: this._treasuryMint,
+      isEnterprise: this._isEnterprise,
+      candyShopVersion: this._version,
+      wallet: wallet,
+      tokenAccount: tokenAccount,
+      tokenMint: tokenMint,
+      seller: seller,
+      price: price
     });
-
     return txHash;
   }
   /**
@@ -367,7 +324,6 @@ export class CandyShop {
       tokenAccount: tokenAccount.toString(),
       price
     });
-    const program = await this.getStaticProgram(wallet);
     const [auctionHouseAuthority, authorityBump] = await getAuctionHouseAuthority(
       this._candyShopCreatorAddress,
       this._treasuryMint,
@@ -393,7 +349,7 @@ export class CandyShop {
       candyShop: this._candyShopAddress,
       price,
       amount: new BN(1),
-      program
+      program: this.getStaticProgram(wallet)
     };
 
     const txHash = await call(sellTxParams, this._version, sellNftV1, sellNft);
@@ -830,64 +786,5 @@ export class CandyShop {
    */
   public fetchShopByShopId(): Promise<SingleBase<CandyShopResponse>> {
     return fetchShopByShopAddress(this._candyShopAddress);
-  }
-}
-
-/**
- * Get NodeWallet from specified keypair
- *
- * @param {Keypair} wallet keypair wallet will be created for
- * @returns
- */
-function getNodeWallet(wallet: web3.Keypair) {
-  if (!staticNodeWallet) {
-    const NodeWallet = require('@project-serum/anchor/dist/cjs/nodewallet').default;
-    staticNodeWallet = new NodeWallet(wallet);
-  }
-  return staticNodeWallet;
-}
-
-/**
- * Get tx hash from different executions
- *
- * @param {boolean} isEneterprise
- * @param {BuyAndExecuteSaleTransactionParams} params required params for buy/sell transaction
- */
-function buyAndExecuteSales(
-  isEneterprise: boolean,
-  callParams: {
-    params: BuyAndExecuteSaleTransactionParams;
-    version: CandyShopVersion;
-    v1Func: (params: any) => Promise<string>;
-    v2Func: (params: any) => Promise<string>;
-  }
-): Promise<string> {
-  const { params, version, v1Func, v2Func } = callParams;
-
-  if (isEneterprise) {
-    return insBuyAndExecuteSale(params);
-  }
-  return call(params, version, v1Func, v2Func);
-}
-
-/**
- * Chooses to call either v1 or v2 version of passed fuction based on candy shop version
- *
- * @param {any} params argument to the function to call
- * @param {CandyShopVersion} version version of the candy shop
- * @param {function} v1Func function to call if using v1 candy shop
- * @param {function} v2Func function to call if using v1 candy shop
- */
-// Please feel free to come up with better name :)
-function call(
-  params: any,
-  version: CandyShopVersion,
-  v1Func: (params: any) => Promise<string>,
-  v2Func: (params: any) => Promise<string>
-): Promise<string> {
-  if (version === CandyShopVersion.V1) {
-    return v1Func(params);
-  } else {
-    return v2Func(params);
   }
 }

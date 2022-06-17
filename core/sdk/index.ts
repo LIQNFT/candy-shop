@@ -1,4 +1,5 @@
 export * from './src/CandyShop';
+export * from './src/CandyShopTrade';
 export * from './src/CandyShopInfoAPI';
 export * from './src/CandyShopAuctionAPI';
 export * from './src/CandyShopModel';
