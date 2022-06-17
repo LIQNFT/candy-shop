@@ -3,7 +3,7 @@
   "version": "0.2.2",
   "main": "dist/index.js",
   "author": "RustySol",
-  "license": "MIT",
+  "license": "BUSL-1.1",
   "scripts": {
     "build": "tsc"
   },
