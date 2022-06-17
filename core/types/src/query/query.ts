@@ -1,5 +1,5 @@
 import { NftAttribute } from '../nft';
-import { Side, Status } from '../response';
+import { Side, Status, ShopStatusType } from '../response';
 
 // GET /api/order/{storeId}
 export interface OrderQs {
@@ -25,4 +25,9 @@ export interface TradeQs {
 export interface ShopQs {
   offset?: number;
   limit?: number;
+}
+
+export interface ShopStatusQuery {
+  walletAddress?: string;
+  targets?: ShopStatusType[];
 }

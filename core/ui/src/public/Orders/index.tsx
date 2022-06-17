@@ -9,9 +9,9 @@ import { ORDER_FETCH_LIMIT, SORT_OPTIONS } from 'constant/Orders';
 import { OrdersActionsStatus } from 'constant';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { useValidateStatus } from 'hooks/useValidateStatus';
-import { useUpdateCandyShopContext } from 'public/Context';
+import { useUpdateSubject } from 'public/Context';
 import { CollectionFilter, ShopFilter, OrderDefaultFilter } from 'model';
-import { ListBase, Order } from '@liqnft/candy-shop-types';
+import { ListBase, Order, ShopStatusType } from '@liqnft/candy-shop-types';
 import './index.less';
 
 interface OrdersProps {
@@ -61,7 +61,7 @@ export const Orders: React.FC<OrdersProps> = ({
   const loadingMountRef = useRef(false);
 
   const updateOrderStatus = useValidateStatus(OrdersActionsStatus);
-  useUpdateCandyShopContext(candyShop.candyShopAddress);
+  useUpdateSubject(ShopStatusType.Order, candyShop.candyShopAddress);
 
   const fetchOrders = useCallback(
     (offset: number) => {
