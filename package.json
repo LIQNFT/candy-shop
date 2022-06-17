@@ -1,11 +1,11 @@
 {
   "private": true,
   "workspaces": [
-    "@liqnft/candy-shop-types",
-    "@liqnft/candy-shop",
-    "example",
-    "@liqnft/candy-shop-sdk",
-    "cli"
+    "core/cli",
+    "core/types",
+    "core/sdk",
+    "core/ui",
+    "example"
   ],
   "scripts": {
     "start": "parcel example/index.html",
@@ -38,10 +38,5 @@
     "prettier": "^2.6.2",
     "typescript": ">=3.0.0",
     "util": "^0.12.4"
-  },
-  "alias": {
-    "react": "./core/ui/node_modules/react",
-    "react-dom": "./core/ui/node_modules/react-dom/profiling",
-    "scheduler/tracing": "./core/ui/node_modules/scheduler/tracing-profiling"
   }
 }

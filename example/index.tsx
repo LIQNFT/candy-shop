@@ -18,8 +18,8 @@ import { MarketplaceExample } from './MarketplaceExample';
 import { AuctionExample } from './AuctionExample';
 import { TORUS_WALLET_CLIENT_ID } from './constant/clientId';
 import { DEFAULT_FORM_CONFIG, LS_CANDY_FORM } from './constant/formConfiguration';
-import { CandyShopDataValidator } from '../core/ui';
-import { CandyShop } from '../core/sdk';
+import { CandyShopDataValidator } from '@liqnft/candy-shop';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { ConfigureShop } from './ConfigureShop';
 
 const disableStyle = { pointerEvent: 'none', color: 'black', paddingRight: 20, fontWeight: 'bold' };
