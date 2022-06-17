@@ -1556,25 +1556,6 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-6.10.0.tgz#c012c1ecc1a0e53d50e6af381618dca5268461c1"
   integrity sha512-lLseUPEhSFUXYTKj6q7s2O3s2vW2ebgA11vMAlKodXGf5AFw4zUoEbTz9CoFOC9jS6xY4Qr8BmRnxP/odT4Uuw==
 
-"@liqnft/candy-shop-sdk@0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-sdk/-/candy-shop-sdk-0.5.2.tgz#2eca12ad7a533ef2d878529a03212800d27c8a2c"
-  integrity sha512-7ZXxr7mVz5Cc1NUNhGuWNcUbhFX6sJ5R5nvvyKNg2ukMhK7fgFCBcFnmjj+qLGuDeYjbGXiIOS8N1yiExlUiYw==
-  dependencies:
-    "@liqnft/candy-shop-types" "0.2.1"
-    "@project-serum/anchor" "^0.23.0"
-    "@solana/spl-token" "^0.2.0"
-    "@solana/wallet-adapter-react" "^0.15.4"
-    axios "^0.26.1"
-    crc-32 "^1.2.2"
-    idb "^7.0.1"
-    qs "^6.10.3"
-
-"@liqnft/candy-shop-types@0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.2.1.tgz#6a212b1f206da19c106e5e048af180fe8446a227"
-  integrity sha512-Q4FJ30nyu7QKfqxUKSbVJhgGA2P2OlZEuYTkhVYTTJh+K4iClMDqRm6PZmMiNrP/Bw6LMMQkYgmOzuoiuuUpkw==
-
 "@metaplex-foundation/mpl-auction@^0.0.2":
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/@metaplex-foundation/mpl-auction/-/mpl-auction-0.0.2.tgz#3de3c982e88d6a88f0ef05be73453cf3cfaccf26"
