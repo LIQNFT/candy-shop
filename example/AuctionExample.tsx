@@ -1,10 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 
-import { CandyShop, SingleTokenInfo } from '../core/sdk/.';
-import { CreateAuction, Auctions } from '../core/ui/.';
+import { CandyShop, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
+import { CreateAuction, Auctions } from '@liqnft/candy-shop';
 
 import 'antd/dist/antd.min.css';
 
