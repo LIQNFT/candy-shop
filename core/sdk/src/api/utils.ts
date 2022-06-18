@@ -1,4 +1,4 @@
-import { web3, BN, Program } from '@project-serum/anchor';
+import { web3, BN, Program, Idl, Provider } from '@project-serum/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
@@ -15,7 +15,8 @@ import {
   CANDY_STORE,
   FEE_PAYER,
   TREASURY,
-  WALLET
+  WALLET,
+  CANDY_SHOP_V2_PROGRAM_ID
 } from './constants';
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
 import { CandyShopError, CandyShopErrorType } from '../utils/error';
@@ -24,8 +25,46 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { awaitTransactionSignatureConfirmation } from './program';
 import { SPL_CREATORS_LIMIT, FEE_ACCOUNT_MIN_BAL, NATIVE_CREATORS_LIMIT } from './constants';
 
+import candyShopIdl from '../idl/candy_shop.json';
+import candyShopV2Idl from '../idl/candy_shop_v2.json';
+
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
 const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);
+
+/**
+ * Get NodeWallet from specified keypair
+ *
+ * @param {Keypair} wallet keypair wallet will be created for
+ * @returns
+ */
+const getNodeWallet = (wallet: web3.Keypair) => {
+  const NodeWallet = require('@project-serum/anchor/dist/cjs/nodewallet').default;
+  return new NodeWallet(wallet);
+};
+
+/**
+ * Gets anchor Program object for Candy Shop program
+ *
+ * @param {AnchorWallet | web3.Keypair} wallet Wallet or keypair of connected user
+ */
+export const getProgram = (
+  connection: web3.Connection,
+  candyShopProgramId: web3.PublicKey,
+  wallet: AnchorWallet | web3.Keypair
+): Program<Idl> => {
+  const options = Provider.defaultOptions();
+  const provider = new Provider(
+    connection,
+    // check the instance type
+    wallet instanceof web3.Keypair ? getNodeWallet(wallet) : wallet,
+    options
+  );
+
+  const idl = candyShopProgramId.equals(CANDY_SHOP_V2_PROGRAM_ID) ? candyShopV2Idl : candyShopIdl;
+  // Directly use the JSON file here temporarily
+  // @ts-ignore
+  return new Program(idl, candyShopProgramId, provider);
+};
 
 export const getAuction = (candyShop: web3.PublicKey, mint: web3.PublicKey, marketProgramId: web3.PublicKey) => {
   return web3.PublicKey.findProgramAddress(

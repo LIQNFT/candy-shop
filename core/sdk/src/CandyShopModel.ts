@@ -106,13 +106,12 @@ export interface CandyShopActionParams {
 /**
  * Arguments required for calling Candy Shop buy action
  *
- * @property {PublicKey} seller
+ * @property {PublicKey} seller Public key of seller of NFT
  */
+
 export interface CandyShopBuyParams extends CandyShopActionParams {
-  /** Public key of seller of NFT */
   seller: web3.PublicKey;
 }
-
 /**
  * Arguments required for calling Candy Shop sell action
  */
@@ -122,6 +121,16 @@ export interface CandyShopSellParams extends CandyShopActionParams {}
  * Arguments required for calling Candy Shop cancel action
  */
 export interface CandyShopCancelParams extends CandyShopActionParams {}
+
+export interface CandyShopTradeBuyParams extends CandyShopBuyParams {
+  connection: web3.Connection;
+  shopAddress: web3.PublicKey;
+  shopCreatorAddress: web3.PublicKey;
+  candyShopProgramId: web3.PublicKey;
+  shopTreasuryMint: web3.PublicKey;
+  isEnterprise: boolean;
+  candyShopVersion: CandyShopVersion;
+}
 
 /**
  * General arguments required for calling Auction actions
