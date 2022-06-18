@@ -1,5 +1,5 @@
 import { DBSchema } from 'idb';
-import { SingleTokenInfo } from '../utils';
+import { SingleTokenInfo } from '../vendor';
 
 export const USER_NFT_OBJECT_STORE = 'UserNFT';
 

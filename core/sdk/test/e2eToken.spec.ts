@@ -1,7 +1,7 @@
 import { BN, web3 } from '@project-serum/anchor';
 import { approve, createTransferInstruction, getAccount, getAssociatedTokenAddress } from '@solana/spl-token';
 import assert from 'assert';
-import { safeAwait } from '../src/utils';
+import { safeAwait } from '../src/vendor';
 import { CandyShop } from '../src/CandyShop';
 // 3NjzSLrnFDwzxJtEzxHUTV5nGYQPHm49EfUFD9fhaDwp
 const USER_1 = new Uint8Array([

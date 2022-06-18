@@ -2,7 +2,7 @@
  * A helper to handle idb library to store/retrieve data from IndexedDB in simplest way.
  */
 import { openDB, IDBPDatabase, deleteDB } from 'idb';
-import { safeAwait, SingleTokenInfo } from '../utils';
+import { safeAwait, SingleTokenInfo } from '../vendor';
 import { CandyShopDB, USER_NFT_OBJECT_STORE } from './idb-model';
 
 const Logger = 'CandyShopSDK/idb-handler';

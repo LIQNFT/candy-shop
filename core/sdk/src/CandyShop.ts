@@ -3,23 +3,16 @@ import {
   ListBase,
   Nft,
   Order,
+  OrdersFilterQuery,
   ShopStats,
   SingleBase,
   Trade,
+  TradeQuery,
   WhitelistNft
 } from '@liqnft/candy-shop-types';
 import { BN, Idl, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import {
-  cancelAuction,
-  cancelAuctionV1,
-  CancelAuctionParams,
-  cancelOrder,
-  cancelOrderV1,
-  CancelTransactionParams,
-  createAuction,
-  createAuctionV1,
-  CreateAuctionParams,
   getAuction,
   getAuctionHouse,
   getAuctionHouseAuthority,
@@ -28,29 +21,12 @@ import {
   getAuctionHouseTreasuryAcct,
   getCandyShopSync,
   getMetadataAccount,
-  sellNft,
-  sellNftV1,
-  SellTransactionParams,
-  bidAuction,
-  bidAuctionV1,
-  BidAuctionParams,
-  withdrawBid,
-  withdrawBidV1,
-  WithdrawBidParams,
-  settleAndDistributeProceeds,
-  settleAndDistributeProceedsV1,
-  SettleAndDistributeProceedParams,
-  buyNowAuction,
-  buyNowAuctionV1,
-  BuyNowAuctionParams,
-  updateCandyShop,
-  updateCandyShopV1,
-  UpdateCandyShopParams,
-  call,
-  getProgram
-} from './api';
-import { OrdersFilterQuery, TradeQuery } from './api/backend';
-import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from './api/constants';
+  supply,
+  getProgram,
+  CandyShopError,
+  CandyShopErrorType
+} from './vendor';
+import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from './factory/constants';
 import {
   fetchNFTByMintAddress,
   fetchOrderByShopAndMintAddress,
@@ -77,8 +53,33 @@ import {
   CandyShopVersion
 } from './CandyShopModel';
 import { CandyShopTrade } from './CandyShopTrade';
-import { configBaseUrl } from './config';
-import { CandyShopError, CandyShopErrorType } from './utils';
+import { configBaseUrl } from './vendor/config';
+import {
+  bidAuction,
+  BidAuctionParams,
+  bidAuctionV1,
+  buyNowAuction,
+  BuyNowAuctionParams,
+  buyNowAuctionV1,
+  CancelAuctionParams,
+  cancelAuctionV1,
+  cancelOrder,
+  cancelOrderV1,
+  CancelTransactionParams,
+  CreateAuctionParams,
+  createAuctionV1,
+  sellNft,
+  sellNftV1,
+  SellTransactionParams,
+  SettleAndDistributeProceedParams,
+  settleAndDistributeProceeds,
+  settleAndDistributeProceedsV1,
+  UpdateCandyShopParams,
+  updateCandyShopV1,
+  withdrawBid,
+  WithdrawBidParams,
+  withdrawBidV1
+} from './factory/program';
 
 const Logger = 'CandyShop';
 
@@ -276,7 +277,7 @@ export class CandyShop {
       program: this.getStaticProgram(wallet)
     };
 
-    const txHash = await call(updateCandyShopParams, this._version, updateCandyShopV1, updateCandyShop);
+    const txHash = await supply(updateCandyShopParams, this._version, updateCandyShopV1, this.updateCandyShop);
 
     return txHash;
   }
@@ -352,7 +353,7 @@ export class CandyShop {
       program: this.getStaticProgram(wallet)
     };
 
-    const txHash = await call(sellTxParams, this._version, sellNftV1, sellNft);
+    const txHash = await supply(sellTxParams, this._version, sellNftV1, sellNft);
 
     return txHash;
   }
@@ -406,7 +407,7 @@ export class CandyShop {
       program
     };
 
-    const txHash = await call(cancelTxParams, this._version, cancelOrderV1, cancelOrder);
+    const txHash = await supply(cancelTxParams, this._version, cancelOrderV1, cancelOrder);
 
     return txHash;
   }
@@ -462,7 +463,7 @@ export class CandyShop {
       program
     };
 
-    const txHash = await call(createAuctionParams, this._version, createAuctionV1, createAuction);
+    const txHash = await supply(createAuctionParams, this._version, createAuctionV1, this.createAuction);
 
     return txHash;
   }
@@ -511,7 +512,7 @@ export class CandyShop {
       program
     };
 
-    const txHash = await call(cancelAuctionParams, this._version, cancelAuctionV1, cancelAuction);
+    const txHash = await supply(cancelAuctionParams, this._version, cancelAuctionV1, this.cancelAuction);
 
     return txHash;
   }
@@ -565,7 +566,7 @@ export class CandyShop {
       program
     };
 
-    const txHash = await call(bidParams, this._version, bidAuctionV1, bidAuction);
+    const txHash = await supply(bidParams, this._version, bidAuctionV1, bidAuction);
 
     return txHash;
   }
@@ -617,7 +618,7 @@ export class CandyShop {
       program
     };
 
-    const txHash = await call(withdrawBidParams, this._version, withdrawBidV1, withdrawBid);
+    const txHash = await supply(withdrawBidParams, this._version, withdrawBidV1, withdrawBid);
 
     return txHash;
   }
@@ -668,7 +669,7 @@ export class CandyShop {
       env: this._env
     };
 
-    const txHash = await call(buyNowParams, this._version, buyNowAuctionV1, buyNowAuction);
+    const txHash = await supply(buyNowParams, this._version, buyNowAuctionV1, buyNowAuction);
 
     return txHash;
   }
@@ -719,7 +720,7 @@ export class CandyShop {
       env: this._env
     };
 
-    const txHash = await call(
+    const txHash = await supply(
       settleAndDistributeParams,
       this._version,
       settleAndDistributeProceedsV1,
