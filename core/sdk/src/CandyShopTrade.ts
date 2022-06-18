@@ -1,17 +1,15 @@
 import { BN } from '@project-serum/anchor';
 import {
-  buyAndExecuteSale,
   buyAndExecuteSales,
-  BuyAndExecuteSaleTransactionParams,
-  buyAndExecuteSaleV1,
   getAuctionHouse,
   getAuctionHouseAuthority,
   getAuctionHouseFeeAcct,
   getAuctionHouseTreasuryAcct,
   getMetadataAccount,
   getProgram
-} from './api';
+} from './vendor';
 import { CandyShopTradeBuyParams } from './CandyShopModel';
+import { buyAndExecuteSale, BuyAndExecuteSaleTransactionParams, buyAndExecuteSaleV1 } from './factory/program';
 
 /**
  * A abstract class to provide static trading methods without CandyShop instance but partial information from shop.

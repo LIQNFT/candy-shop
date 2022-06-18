@@ -14,7 +14,9 @@ import {
   WhitelistNft,
   CandyShop as CandyShopResponse,
   ShopStatus,
-  ShopStatusQuery
+  ShopStatusQuery,
+  OrdersFilterQuery,
+  TradeQuery
 } from '@liqnft/candy-shop-types';
 import {
   fetchNftByMint,
@@ -25,11 +27,9 @@ import {
   fetchShopWhitelistNftByShopId,
   fetchStatsById,
   fetchTradeById,
-  OrdersFilterQuery,
-  TradeQuery,
   fetchShopStatusByShopId
-} from './api/backend';
-import axiosInstance from './config';
+} from './factory/backend';
+import axiosInstance from './vendor/config';
 
 export function fetchStatsByShopAddress(candyShopAddress: web3.PublicKey): Promise<ShopStats> {
   return fetchStatsById(axiosInstance, candyShopAddress.toString());

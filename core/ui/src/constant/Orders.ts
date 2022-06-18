@@ -1,4 +1,4 @@
-import { OrderSortBy } from '@liqnft/candy-shop-sdk';
+import { OrderSortBy } from '@liqnft/candy-shop-types';
 
 export const ORDER_FETCH_LIMIT = 12;
 export const BACKGROUND_UPDATE_LIMIT = ORDER_FETCH_LIMIT * 2;

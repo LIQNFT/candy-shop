@@ -1,6 +1,31 @@
 import { NftAttribute } from '../nft';
 import { Side, Status, ShopStatusType } from '../response';
 
+type SortBy = {
+  column: string;
+  order: 'asc' | 'desc';
+};
+
+export type OrderSortBy = SortBy;
+
+type attributeType = { [key: string]: string };
+
+export interface OrdersFilterQuery {
+  sortBy?: SortBy | SortBy[];
+  offset?: number;
+  limit?: number;
+  identifiers?: number[];
+  sellerAddress?: string;
+  attribute?: attributeType | attributeType[];
+  candyShopAddress?: string;
+}
+
+export type TradeQuery = {
+  offset?: number;
+  limit?: number;
+  identifiers?: number[];
+};
+
 // GET /api/order/{storeId}
 export interface OrderQs {
   offset?: number;
