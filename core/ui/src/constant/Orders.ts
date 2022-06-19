@@ -69,3 +69,10 @@ export const FILTER_ATTRIBUTES_MOCK = [
     placeholder: 'Select Material'
   }
 ];
+
+export enum ModalType {
+  DISPLAY,
+  PROCESSING,
+  CONFIRMED,
+  PAYMENT
+}

@@ -1,16 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { CandyShopPay, fetchNFTByMintAddress, getCandyShopSync } from '@liqnft/candy-shop-sdk';
+import { CandyShopPay, fetchNFTByMintAddress } from '@liqnft/candy-shop-sdk';
 import { Nft, Order as OrderSchema, SingleBase } from '@liqnft/candy-shop-types';
 import { web3 } from '@project-serum/anchor';
-import { Modal } from 'components/Modal';
+
 import { NftAttributes } from 'components/NftAttributes';
 import { NftStat } from 'components/NftStat';
 import { NftVerification } from 'components/Tooltip/NftVerification';
 import { Viewer } from 'components/Viewer';
-import { useCandyShopPayContext } from 'contexts/CandyShopPayProvider';
+
 import { ShopExchangeInfo } from 'model';
 import { getPrice } from 'utils/getPrice';
-import { StripePayment } from 'components/Payment';
+import { Processing } from 'components/Processing';
+import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 
 const Logger = 'CandyShopUI/BuyModalDetail';
 
@@ -23,7 +24,11 @@ export interface BuyModalDetailProps {
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
   shopProgramId: string;
+  shopAddress: string;
   sellerUrl?: string;
+  onPayment: () => void;
+  setPaymentPrice: React.Dispatch<React.SetStateAction<number | undefined>>;
+  paymentPrice?: number;
 }
 
 export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
@@ -34,26 +39,24 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   exchangeInfo,
   shopPriceDecimalsMin,
   shopPriceDecimals,
-  shopProgramId,
-  sellerUrl
+  shopAddress,
+  sellerUrl,
+  onPayment,
+  setPaymentPrice,
+  paymentPrice
 }) => {
   const [loadingNftInfo, setLoadingNftInfo] = useState(false);
   const [nftInfo, setNftInfo] = useState<Nft>();
 
   const [creditCardPayAvailable, setCreditCardPayAvailable] = useState<boolean>(false);
-  const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
+  const [loadPrice, setLoadPrice] = useState<boolean>(false);
+  const [countdownElement, setCountdownElement] = useState<HTMLSpanElement | null>(null);
 
-  const stripePublicKey = useCandyShopPayContext()?.stripePublicKey;
-
-  const orderShopId = getCandyShopSync(
-    new web3.PublicKey(order.candyShopCreatorAddress),
-    new web3.PublicKey(order.treasuryMint),
-    new web3.PublicKey(order.programId)
-  )[0].toString();
+  const timeoutRef = useUnmountTimeout();
 
   const getCreditCardPayAvailability = useCallback(() => {
     CandyShopPay.checkPaymentAvailability({
-      shopId: orderShopId,
+      shopId: shopAddress,
       tokenAccount: order.tokenAccount
     })
       .then((res: SingleBase<string>) => {
@@ -74,12 +77,21 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
         );
         setCreditCardPayAvailable(false);
       });
-  }, [order, orderShopId]);
+  }, [shopAddress, order]);
+
+  const getTokenPrice = useCallback(() => {
+    return CandyShopPay.fetchTokenPrice({ shopId: shopAddress, tokenAccount: order.tokenAccount })
+      .then((res) => {
+        setPaymentPrice(Number(res.result));
+      })
+      .catch((err) => {
+        console.log(`${Logger}: fetchTokenPrice failed: `, err);
+      });
+  }, [setPaymentPrice, order.tokenAccount, shopAddress]);
 
   useEffect(() => {
-    getCreditCardPayAvailability();
     setLoadingNftInfo(true);
-
+    getCreditCardPayAvailability();
     fetchNFTByMintAddress(order.tokenMint)
       .then((nft) => setNftInfo(nft))
       .catch((err) => {
@@ -90,13 +102,32 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
       });
   }, [order.tokenMint, getCreditCardPayAvailability]);
 
-  const onClickedCardPayment = () => {
-    setShowPaymentModal(true);
-  };
+  useEffect(() => {
+    if (!creditCardPayAvailable) return;
+    getTokenPrice();
 
-  const onClosedCardPayment = () => {
-    setShowPaymentModal(false);
-  };
+    if (!countdownElement) return;
+    let time = 2;
+    // let timeout: NodeJS.Timeout;
+    const callback = () => {
+      timeoutRef.current = setTimeout(() => {
+        countdownElement.innerText = `(${time.toString()}s)`;
+        if (time === 0) {
+          setLoadPrice(true);
+          getTokenPrice().then(() => {
+            time = 3;
+            setLoadPrice(false);
+            callback();
+          });
+        } else {
+          callback();
+          time--;
+        }
+      }, 1000);
+    };
+
+    callback();
+  }, [countdownElement, creditCardPayAvailable, getTokenPrice, timeoutRef]);
 
   const orderPrice = getPrice(shopPriceDecimalsMin, shopPriceDecimals, order, exchangeInfo);
 
@@ -113,18 +144,38 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
         <div className="candy-buy-modal-control">
           <div>
             <div className="candy-label">PRICE</div>
-            <div className="candy-price">{orderPrice ? `${orderPrice} ${exchangeInfo.symbol}` : 'N/A'}</div>
+            <div className="candy-price">
+              {orderPrice ? `${orderPrice} ${exchangeInfo.symbol}` : 'N/A'}
+              <span className="candy-price-timeout">
+                {creditCardPayAvailable && paymentPrice ? (
+                  loadPrice ? (
+                    <Processing />
+                  ) : (
+                    <>
+                      <span className="candy-price-usd">&nbsp;| ${paymentPrice} USD</span>
+                      <span ref={(ref) => setCountdownElement(ref)} id="stripe-timeout">
+                        (3s)
+                      </span>
+                    </>
+                  )
+                ) : null}
+              </span>
+            </div>
           </div>
           {walletPublicKey && (
             <div>
               <button className="candy-button candy-buy-modal-button" onClick={buy}>
                 Buy Now
               </button>
-              {creditCardPayAvailable && (
-                <button className="candy-button candy-buy-modal-button" onClick={onClickedCardPayment}>
-                  Pay by Credit Card
-                </button>
-              )}
+
+              <button
+                className={`candy-button candy-pay-credit-button ${
+                  creditCardPayAvailable && paymentPrice ? '' : 'disabled'
+                }`}
+                onClick={() => creditCardPayAvailable && onPayment()}
+              >
+                Buy with Credit Card
+              </button>
             </div>
           )}
           {!walletPublicKey && walletConnectComponent}
@@ -143,18 +194,6 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
         />
         <NftAttributes loading={loadingNftInfo} attributes={nftInfo?.attributes} />
       </div>
-
-      {stripePublicKey && showPaymentModal && walletPublicKey && order && (
-        <Modal onCancel={onClosedCardPayment} width={600}>
-          <StripePayment
-            stripePublicKey={stripePublicKey}
-            shopProgramId={shopProgramId}
-            shopAddress={orderShopId}
-            walletAddress={walletPublicKey.toString()}
-            order={order}
-          ></StripePayment>
-        </Modal>
-      )}
     </>
   );
 };

@@ -9,7 +9,12 @@ import {
   PaymentIntentInfo,
   SingleBase
 } from '@liqnft/candy-shop-types';
-import { checkPaymentAvailability, confirmPaymentIntents, createPaymentIntents } from './factory/backend/PaymentAPI';
+import {
+  checkPaymentAvailability,
+  confirmPaymentIntents,
+  createPaymentIntents,
+  fetchTokenPrice
+} from './factory/backend/PaymentAPI';
 import axiosInstance from './vendor/config';
 
 export abstract class CandyShopPay {
@@ -23,5 +28,9 @@ export abstract class CandyShopPay {
 
   static confirmPayment(params: ConfirmStripePaymentParams): Promise<SingleBase<PaymentIntentInfo>> {
     return confirmPaymentIntents(axiosInstance, params);
+  }
+
+  static fetchTokenPrice(params: PaymentAvailabilityParams): Promise<SingleBase<any>> {
+    return fetchTokenPrice(axiosInstance, params);
   }
 }

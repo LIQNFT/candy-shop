@@ -1,3 +1,5 @@
+@import '../../variable.less';
+
 .candy-modal {
   padding-bottom: 20px;
   z-index: 1000;
@@ -8,22 +10,22 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.45);
 
-  &-content {
+  .candy-modal-content {
     color: black;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-
     padding: 40px;
     max-width: 90vw;
-    max-height: 80vh;
     overflow-y: auto;
-
     border-radius: 16px;
     border: 2px solid #000;
     background-color: #fff;
     box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
+    @media @desktopXM {
+      padding: 30px 40px 10px;
+    }
   }
 
   &-close-btn {
