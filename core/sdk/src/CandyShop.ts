@@ -106,6 +106,70 @@ export class CandyShop {
   private _version: CandyShopVersion;
   private _program: Program | undefined;
 
+  get currencyDecimals(): number {
+    return this._settings.currencyDecimals;
+  }
+
+  get settings(): Partial<CandyShopSettings> {
+    return this._settings;
+  }
+
+  get env(): web3.Cluster {
+    return this._env;
+  }
+
+  get treasuryMint(): web3.PublicKey {
+    return this._treasuryMint;
+  }
+
+  get connectedPublicKey(): web3.PublicKey | undefined {
+    return this._program?.provider.wallet.publicKey;
+  }
+
+  get candyShopAddress(): web3.PublicKey {
+    return this._candyShopAddress;
+  }
+
+  get candyShopCreatorAddress(): web3.PublicKey {
+    return this._candyShopCreatorAddress;
+  }
+
+  get programId(): web3.PublicKey {
+    return this._programId;
+  }
+
+  get isEnterprise(): boolean {
+    return this._isEnterprise;
+  }
+
+  get version(): CandyShopVersion {
+    return this._version;
+  }
+
+  get baseUnitsPerCurrency(): number {
+    return this._baseUnitsPerCurrency;
+  }
+
+  get currencySymbol(): string {
+    return this._settings.currencySymbol;
+  }
+
+  get priceDecimals(): number {
+    return this._settings.priceDecimals;
+  }
+
+  get priceDecimalsMin(): number {
+    return this._settings.priceDecimalsMin;
+  }
+
+  get volumeDecimals(): number {
+    return this._settings.volumeDecimals;
+  }
+
+  get volumeDecimalsMin(): number {
+    return this._settings.volumeDecimalsMin;
+  }
+
   /**
    * Instantiate a CandyShop object
    *
@@ -177,70 +241,6 @@ export class CandyShop {
   getStaticProgram(wallet: AnchorWallet | web3.Keypair): Program<Idl> {
     if (this._program) return this._program;
     return getProgram(this.connection(), this._programId, wallet);
-  }
-
-  get currencyDecimals(): number {
-    return this._settings.currencyDecimals;
-  }
-
-  get settings(): Partial<CandyShopSettings> {
-    return this._settings;
-  }
-
-  get env(): web3.Cluster {
-    return this._env;
-  }
-
-  get treasuryMint(): web3.PublicKey {
-    return this._treasuryMint;
-  }
-
-  get connectedPublicKey(): web3.PublicKey | undefined {
-    return this._program?.provider.wallet.publicKey;
-  }
-
-  get candyShopAddress(): web3.PublicKey {
-    return this._candyShopAddress;
-  }
-
-  get candyShopCreatorAddress(): web3.PublicKey {
-    return this._candyShopCreatorAddress;
-  }
-
-  get programId(): web3.PublicKey {
-    return this._programId;
-  }
-
-  get isEnterprise(): boolean {
-    return this._isEnterprise;
-  }
-
-  get version(): CandyShopVersion {
-    return this._version;
-  }
-
-  get baseUnitsPerCurrency(): number {
-    return this._baseUnitsPerCurrency;
-  }
-
-  get currencySymbol(): string {
-    return this._settings.currencySymbol;
-  }
-
-  get priceDecimals(): number {
-    return this._settings.priceDecimals;
-  }
-
-  get priceDecimalsMin(): number {
-    return this._settings.priceDecimalsMin;
-  }
-
-  get volumeDecimals(): number {
-    return this._settings.volumeDecimals;
-  }
-
-  get volumeDecimalsMin(): number {
-    return this._settings.volumeDecimalsMin;
   }
 
   /**

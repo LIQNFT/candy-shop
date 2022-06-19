@@ -1,9 +1,10 @@
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import React, { useState } from 'react';
+
 import { web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-
-import React, { useState } from 'react';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
+
 import { getExchangeInfo } from 'utils/getExchangeInfo';
 import { getPrice } from 'utils/getPrice';
 
@@ -49,7 +50,7 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectCompon
   };
 
   const exchangeInfo = getExchangeInfo(order, candyShop);
-  const orderPrice = getPrice(candyShop, order, exchangeInfo);
+  const orderPrice = getPrice(candyShop.priceDecimalsMin, candyShop.priceDecimals, order, exchangeInfo);
   const isUserListing = wallet?.publicKey && order.walletAddress === wallet.publicKey.toString();
 
   return (
@@ -79,9 +80,15 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectCompon
           order={selection}
           onClose={onClose}
           wallet={wallet}
-          candyShop={orderCandyShop}
           walletConnectComponent={walletConnectComponent}
           exchangeInfo={exchangeInfo}
+          shopAddress={candyShop.candyShopAddress}
+          candyShopProgramId={candyShop.programId}
+          connection={candyShop.connection()}
+          isEnterprise={candyShop.isEnterprise}
+          candyShopVersion={candyShop.version}
+          shopPriceDecimalsMin={candyShop.priceDecimalsMin}
+          shopPriceDecimals={candyShop.priceDecimals}
         />
       ) : null}
 

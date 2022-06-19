@@ -1,4 +1,4 @@
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { fetchNFTByMintAddress } from '@liqnft/candy-shop-sdk';
 import { Nft, Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { web3 } from '@project-serum/anchor';
 import { NftAttributes } from 'components/NftAttributes';
@@ -13,8 +13,9 @@ export interface BuyModalDetailProps {
   buy: () => void;
   walletPublicKey: web3.PublicKey | undefined;
   walletConnectComponent: React.ReactElement;
-  candyShop: CandyShop;
   exchangeInfo: ShopExchangeInfo;
+  shopPriceDecimalsMin: number;
+  shopPriceDecimals: number;
 }
 
 const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
@@ -22,16 +23,17 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   buy,
   walletPublicKey,
   walletConnectComponent,
-  candyShop,
-  exchangeInfo
+  exchangeInfo,
+  shopPriceDecimalsMin,
+  shopPriceDecimals
 }) => {
   const [loadingNftInfo, setLoadingNftInfo] = useState(false);
   const [nftInfo, setNftInfo] = useState<Nft | null>(null);
 
   useEffect(() => {
     setLoadingNftInfo(true);
-    candyShop
-      .nftInfo(order.tokenMint)
+
+    fetchNFTByMintAddress(order.tokenMint)
       .then((nft) => setNftInfo(nft))
       .catch((err) => {
         console.info('fetchNftByMint failed:', err);
@@ -39,9 +41,9 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
       .finally(() => {
         setLoadingNftInfo(false);
       });
-  }, [order.tokenMint, candyShop]);
+  }, [order.tokenMint]);
 
-  const orderPrice = getPrice(candyShop, order, exchangeInfo);
+  const orderPrice = getPrice(shopPriceDecimalsMin, shopPriceDecimals, order, exchangeInfo);
 
   return (
     <>
