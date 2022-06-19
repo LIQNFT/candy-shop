@@ -12,3 +12,5 @@ export * from './public/Modal';
 
 export { TransactionState, OrderDefaultFilter } from './model';
 export { CandyContext, CandyShopDataValidator } from './public/Context/CandyShopDataValidator';
+/* Don't export every usages from contexts */
+export { CandyShopPayProvider, CandyShopPayProviderProps } from './contexts/CandyShopPayProvider';

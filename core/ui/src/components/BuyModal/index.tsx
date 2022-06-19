@@ -106,6 +106,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             shopPriceDecimals={shopPriceDecimals}
             sellerUrl={sellerUrl}
             candyShop={candyShop}
+            shopProgramId={candyShopProgramId.toString()}
           />
         )}
         {state === TransactionState.PROCESSING && <Processing text="Processing purchase" />}

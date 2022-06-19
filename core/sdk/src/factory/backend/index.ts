@@ -6,3 +6,4 @@ export * from './StatsAPI';
 export * from './TradeAPI';
 export * from './AuctionAPI';
 export * from './DropAPI';
+export * from './PaymentAPI';

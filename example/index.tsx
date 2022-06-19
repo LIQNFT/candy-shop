@@ -18,7 +18,7 @@ import { MarketplaceExample } from './MarketplaceExample';
 import { AuctionExample } from './AuctionExample';
 import { TORUS_WALLET_CLIENT_ID } from './constant/clientId';
 import { DEFAULT_FORM_CONFIG, LS_CANDY_FORM } from './constant/formConfiguration';
-import { CandyShopDataValidator } from '../core/ui';
+import { CandyShopDataValidator, CandyShopPayProvider } from '../core/ui';
 import { CandyShop } from '../core/sdk';
 import { ConfigureShop } from './ConfigureShop';
 import { DropExample } from './DropExample';
@@ -46,7 +46,10 @@ const initiateRoutePage = () => {
 const App = () => {
   const [candyForm, setCandyForm] = useState(() => {
     const formLocalStorage = localStorage.getItem(LS_CANDY_FORM);
-    if (formLocalStorage) return JSON.parse(formLocalStorage);
+    if (formLocalStorage) {
+      console.log('debugger: formLocalStorage=', JSON.parse(formLocalStorage));
+      return JSON.parse(formLocalStorage);
+    }
     return DEFAULT_FORM_CONFIG;
   });
   const [pageRoute, setPageRoute] = useState<PageRoute>(initiateRoutePage());
@@ -92,6 +95,7 @@ const App = () => {
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
+          <CandyShopPayProvider stripePublicKey={JSON.parse(candyForm.paymentProvider).stripePublicKey}>
             <CandyShopDataValidator>
               <>
                 <div
@@ -141,6 +145,7 @@ const App = () => {
                 )}
               </>
             </CandyShopDataValidator>
+            </CandyShopPayProvider>
           </WalletModalProvider>
         </WalletProvider>
       </ConnectionProvider>
