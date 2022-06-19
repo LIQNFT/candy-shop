@@ -27,3 +27,10 @@ export enum OrderDefaultFilter {
   COLLECTION = 'collection',
   SHOP = 'shop'
 }
+
+export enum NFTPaymentStatus {
+  Init = 'Init',
+  Processing = 'Processing',
+  Succeed = 'Succeed',
+  Failed = 'Failed'
+}
