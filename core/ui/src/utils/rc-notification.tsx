@@ -20,7 +20,7 @@ Notification.newInstance(
   }
 );
 
-export const notification = (content: string, type: NotificationType): void => {
+export const notification = (content: string, type: NotificationType, durationSec?: number): void => {
   notificationIns.notice({
     content: (
       <div className="candy-notification-content">
@@ -35,7 +35,7 @@ export const notification = (content: string, type: NotificationType): void => {
         </div>
       </div>
     ),
-    duration: 3,
+    duration: durationSec ?? 3,
     prefixCls: 'candy'
   });
 };
