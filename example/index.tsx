@@ -18,7 +18,7 @@ import { MarketplaceExample } from './MarketplaceExample';
 import { AuctionExample } from './AuctionExample';
 import { TORUS_WALLET_CLIENT_ID } from './constant/clientId';
 import { DEFAULT_FORM_CONFIG, LS_CANDY_FORM } from './constant/formConfiguration';
-import { CandyShopDataValidator } from '../core/ui';
+import { CandyShopDataValidator, CandyShopPayProvider } from '../core/ui';
 import { CandyShop } from '../core/sdk';
 import { ConfigureShop } from './ConfigureShop';
 
@@ -33,11 +33,13 @@ enum Page {
 const App = () => {
   const [candyForm, setCandyForm] = useState(() => {
     const formLocalStorage = localStorage.getItem(LS_CANDY_FORM);
-    if (formLocalStorage) return JSON.parse(formLocalStorage);
+    if (formLocalStorage) {
+      console.log('debugger: formLocalStorage=', JSON.parse(formLocalStorage));
+      return JSON.parse(formLocalStorage);
+    }
     return DEFAULT_FORM_CONFIG;
   });
   const [page, setPage] = useState<Page>(window.location.pathname === '/auction' ? Page.Auction : Page.MarketPlace);
-
   const endpoint = useMemo(() => web3.clusterApiUrl(candyForm.network), [candyForm.network]);
   const wallets = useMemo(
     () => [
@@ -79,47 +81,49 @@ const App = () => {
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
-            <CandyShopDataValidator>
-              <>
-                <div
-                  style={{
-                    padding: '10px 10px 50px 20px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                  }}
-                >
-                  <div>
-                    <Link
-                      style={page === Page.Auction ? normalStyle : disableStyle}
-                      to="/"
-                      onClick={() => setPage(Page.MarketPlace)}
-                    >
-                      Marketplace Example
-                    </Link>
-                    <Link
-                      style={page === Page.Auction ? disableStyle : normalStyle}
-                      to="/auction"
-                      onClick={() => setPage(Page.Auction)}
-                    >
-                      Auction Example
-                    </Link>
+            <CandyShopPayProvider stripePublicKey={JSON.parse(candyForm.paymentProvider).stripePublicKey}>
+              <CandyShopDataValidator>
+                <>
+                  <div
+                    style={{
+                      padding: '10px 10px 50px 20px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <div>
+                      <Link
+                        style={page === Page.Auction ? normalStyle : disableStyle}
+                        to="/"
+                        onClick={() => setPage(Page.MarketPlace)}
+                      >
+                        Marketplace Example
+                      </Link>
+                      <Link
+                        style={page === Page.Auction ? disableStyle : normalStyle}
+                        to="/auction"
+                        onClick={() => setPage(Page.Auction)}
+                      >
+                        Auction Example
+                      </Link>
+                    </div>
+                    <div>
+                      <ConfigureShop setCandyForm={setCandyForm} candyForm={candyForm} />
+                      <WalletMultiButton />
+                    </div>
                   </div>
-                  <div>
-                    <ConfigureShop setCandyForm={setCandyForm} candyForm={candyForm} />
-                    <WalletMultiButton />
-                  </div>
-                </div>
-                {candyShop ? (
-                  <Switch>
-                    <Route path="/auction" component={() => <AuctionExample candyShop={candyShop} />} />
-                    <Route path="/" component={() => <MarketplaceExample candyShop={candyShop} />} />
-                  </Switch>
-                ) : (
-                  <div style={{ paddingTop: '30px', textAlign: 'center' }}>Error: Invalid shop configuration</div>
-                )}
-              </>
-            </CandyShopDataValidator>
+                  {candyShop ? (
+                    <Switch>
+                      <Route path="/auction" component={() => <AuctionExample candyShop={candyShop} />} />
+                      <Route path="/" component={() => <MarketplaceExample candyShop={candyShop} />} />
+                    </Switch>
+                  ) : (
+                    <div style={{ paddingTop: '30px', textAlign: 'center' }}>Error: Invalid shop configuration</div>
+                  )}
+                </>
+              </CandyShopDataValidator>
+            </CandyShopPayProvider>
           </WalletModalProvider>
         </WalletProvider>
       </ConnectionProvider>
