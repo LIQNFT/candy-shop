@@ -1,27 +1,17 @@
-import React, { useState } from 'react';
-import { web3, BN } from '@project-serum/anchor';
+import { CandyShopTrade, CandyShopTradeBuyParams, CandyShopVersion } from '@liqnft/candy-shop-sdk';
+import { Order as OrderSchema } from '@liqnft/candy-shop-types';
+import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Modal } from 'components/Modal';
 import { Processing } from 'components/Processing';
-import { getAccount } from '@solana/spl-token';
-
+import { TIMEOUT_EXTRA_LOADING } from 'constant';
+import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
+import { ShopExchangeInfo, TransactionState } from 'model';
+import React, { useState } from 'react';
+import { ErrorMsgMap, ErrorType, handleError } from 'utils/ErrorHandler';
+import { notification, NotificationType } from 'utils/rc-notification';
 import BuyModalConfirmed from './BuyModalConfirmed';
 import BuyModalDetail from './BuyModalDetail';
-
-import { ShopExchangeInfo, TransactionState } from 'model';
-import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
-import {
-  CandyShopTrade,
-  CandyShopTradeBuyParams,
-  CandyShopVersion,
-  getAtaForMint,
-  WRAPPED_SOL_MINT
-} from '@liqnft/candy-shop-sdk';
-import { Order as OrderSchema } from '@liqnft/candy-shop-types';
-import { handleError, ErrorType, ErrorMsgMap } from 'utils/ErrorHandler';
-import { notification, NotificationType } from 'utils/rc-notification';
-import { TIMEOUT_EXTRA_LOADING } from 'constant';
-
 import './style.less';
 
 export interface BuyModalProps {

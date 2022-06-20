@@ -1,18 +1,13 @@
-import React, { useState } from 'react';
-
-import { web3 } from '@project-serum/anchor';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
-
-import { getExchangeInfo } from 'utils/getExchangeInfo';
-import { getPrice } from 'utils/getPrice';
-
-import { LiqImage } from 'components/LiqImage';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { IconPlayer } from 'assets/IconPlayer';
 import { BuyModal } from 'components/BuyModal';
 import { CancelModal } from 'components/CancelModal';
-import { IconPlayer } from 'assets/IconPlayer';
-
+import { LiqImage } from 'components/LiqImage';
+import React, { useState } from 'react';
+import { getExchangeInfo } from 'utils/getExchangeInfo';
+import { getPrice } from 'utils/getPrice';
 import './index.less';
 
 export interface OrderProps {
@@ -25,7 +20,6 @@ export interface OrderProps {
 
 export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectComponent, url, candyShop }) => {
   const [selection, setSelection] = useState<OrderSchema>();
-  const [orderCandyShop, setOrderCandyShop] = useState<CandyShop>(candyShop);
 
   const onClose = () => {
     setSelection(undefined);
@@ -35,16 +29,6 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectCompon
     if (url) {
       window.location.href = url.replace(':tokenMint', order.tokenMint);
     } else {
-      setOrderCandyShop(
-        new CandyShop({
-          candyShopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress),
-          treasuryMint: new web3.PublicKey(order.treasuryMint),
-          candyShopProgramId: candyShop.programId,
-          env: candyShop.env,
-          settings: candyShop.settings
-        })
-      );
-
       setSelection(order);
     }
   };
@@ -95,10 +79,15 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectCompon
       {selection && isUserListing && wallet ? (
         <CancelModal
           onClose={onClose}
-          candyShop={orderCandyShop}
           order={selection}
           wallet={wallet}
           exchangeInfo={exchangeInfo}
+          shopAddress={candyShop.candyShopAddress}
+          candyShopProgramId={candyShop.programId}
+          connection={candyShop.connection()}
+          candyShopVersion={candyShop.version}
+          shopPriceDecimalsMin={candyShop.priceDecimalsMin}
+          shopPriceDecimals={candyShop.priceDecimals}
         />
       ) : null}
     </>

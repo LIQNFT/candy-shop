@@ -1,15 +1,12 @@
-import React, { useState } from 'react';
-
+import { CandyShop, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
+import { CandyShop as CandyShopResponse, Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CancelModal } from 'components/CancelModal';
-import { SellModal } from 'components/SellModal';
 import { Card } from 'components/Card';
-
-import { SingleTokenInfo, CandyShop } from '@liqnft/candy-shop-sdk';
-import { Order as OrderSchema, CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
-
-import './index.less';
+import { SellModal } from 'components/SellModal';
+import React, { useState } from 'react';
 import { getExchangeInfo } from 'utils/getExchangeInfo';
+import './index.less';
 
 export interface NftProps {
   nft: SingleTokenInfo;
@@ -48,7 +45,20 @@ export const Nft = ({ nft, wallet, sellDetail, shop, candyShop }: NftProps): JSX
       />
 
       {selection && !sellDetail && (
-        <SellModal onCancel={onClose} nft={selection} candyShop={candyShop} wallet={wallet} shop={shop} />
+        <SellModal
+          onCancel={onClose}
+          nft={selection}
+          wallet={wallet}
+          shop={shop}
+          connection={candyShop.connection()}
+          shopAddress={candyShop.candyShopAddress}
+          candyShopProgramId={candyShop.programId}
+          candyShopVersion={candyShop.version}
+          baseUnitsPerCurrency={candyShop.baseUnitsPerCurrency}
+          shopTreasuryMint={candyShop.treasuryMint}
+          shopCreatorAddress={candyShop.candyShopCreatorAddress}
+          currencySymbol={candyShop.currencySymbol}
+        />
       )}
 
       {selection && sellDetail ? (
@@ -56,8 +66,13 @@ export const Nft = ({ nft, wallet, sellDetail, shop, candyShop }: NftProps): JSX
           onClose={onClose}
           order={sellDetail}
           wallet={wallet}
-          candyShop={candyShop}
           exchangeInfo={exchangeInfo}
+          shopAddress={candyShop.candyShopAddress}
+          candyShopProgramId={candyShop.programId}
+          connection={candyShop.connection()}
+          candyShopVersion={candyShop.version}
+          shopPriceDecimalsMin={candyShop.priceDecimalsMin}
+          shopPriceDecimals={candyShop.priceDecimals}
         />
       ) : null}
     </>
