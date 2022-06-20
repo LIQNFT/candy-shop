@@ -43,13 +43,13 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
           onChangeStep(TransactionState.CONFIRMED);
         }, TIMEOUT_EXTRA_LOADING);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         handleError({ error: err });
         onChangeStep(TransactionState.DISPLAY);
       });
   };
 
-  const orderPrice = getPrice(candyShop, order, exchangeInfo);
+  const orderPrice = getPrice(candyShop.priceDecimalsMin, candyShop.priceDecimals, order, exchangeInfo);
 
   return (
     <div className="candy-cancel-modal">

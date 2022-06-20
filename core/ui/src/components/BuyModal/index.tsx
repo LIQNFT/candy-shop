@@ -10,7 +10,13 @@ import BuyModalDetail from './BuyModalDetail';
 
 import { ShopExchangeInfo, TransactionState } from 'model';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
-import { CandyShop, getAtaForMint, WRAPPED_SOL_MINT } from '@liqnft/candy-shop-sdk';
+import {
+  CandyShopTrade,
+  CandyShopTradeBuyParams,
+  CandyShopVersion,
+  getAtaForMint,
+  WRAPPED_SOL_MINT
+} from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { handleError, ErrorType, ErrorMsgMap } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
@@ -23,8 +29,14 @@ export interface BuyModalProps {
   onClose: () => void;
   wallet: AnchorWallet | undefined;
   walletConnectComponent: React.ReactElement;
-  candyShop: CandyShop;
   exchangeInfo: ShopExchangeInfo;
+  shopAddress: web3.PublicKey;
+  candyShopProgramId: web3.PublicKey;
+  connection: web3.Connection;
+  isEnterprise: boolean;
+  candyShopVersion: CandyShopVersion;
+  shopPriceDecimalsMin: number;
+  shopPriceDecimals: number;
 }
 
 export const BuyModal: React.FC<BuyModalProps> = ({
@@ -32,8 +44,14 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   onClose,
   wallet,
   walletConnectComponent,
-  candyShop,
-  exchangeInfo
+  exchangeInfo,
+  shopAddress,
+  candyShopProgramId,
+  connection,
+  isEnterprise,
+  candyShopVersion,
+  shopPriceDecimalsMin,
+  shopPriceDecimals
 }) => {
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
   const [hash, setHash] = useState(''); // txHash
@@ -47,7 +65,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
     }
     setState(TransactionState.PROCESSING);
     // check balance before proceed
-    let balance: BN;
+    /*let balance: BN;
     const connection = candyShop.connection();
 
     if (candyShop.treasuryMint.equals(WRAPPED_SOL_MINT)) {
@@ -66,16 +84,25 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       } catch (err) {
         balance = new BN('0');
       }
-    }
+    }*/
 
-    return candyShop
-      .buy({
-        seller: new web3.PublicKey(order.walletAddress),
-        tokenAccount: new web3.PublicKey(order.tokenAccount),
-        tokenMint: new web3.PublicKey(order.tokenMint),
-        price: new BN(order.price),
-        wallet
-      })
+    const tradeBuyParams: CandyShopTradeBuyParams = {
+      tokenAccount: new web3.PublicKey(order.tokenAccount),
+      tokenMint: new web3.PublicKey(order.tokenMint),
+      price: new BN(order.price),
+      wallet: wallet,
+      seller: new web3.PublicKey(order.walletAddress),
+      connection: connection,
+      shopAddress: shopAddress,
+      candyShopProgramId: candyShopProgramId,
+      isEnterprise: isEnterprise,
+      candyShopVersion: candyShopVersion,
+      // Replace with the order's
+      shopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress),
+      shopTreasuryMint: new web3.PublicKey(order.treasuryMint)
+    };
+
+    return CandyShopTrade.buy(tradeBuyParams)
       .then((txHash) => {
         setHash(txHash);
         console.log('Buy order made with transaction hash', txHash);
@@ -99,8 +126,9 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             buy={buy}
             walletPublicKey={wallet?.publicKey}
             walletConnectComponent={walletConnectComponent}
-            candyShop={candyShop}
             exchangeInfo={exchangeInfo}
+            shopPriceDecimalsMin={shopPriceDecimalsMin}
+            shopPriceDecimals={shopPriceDecimals}
           />
         )}
         {state === TransactionState.PROCESSING && <Processing text="Processing purchase" />}
@@ -110,8 +138,9 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             order={order}
             txHash={hash}
             onClose={onClose}
-            candyShop={candyShop}
             exchangeInfo={exchangeInfo}
+            shopPriceDecimalsMin={shopPriceDecimalsMin}
+            shopPriceDecimals={shopPriceDecimals}
           />
         )}
       </div>

@@ -1,5 +1,5 @@
 import { CandyShop } from '@liqnft/candy-shop-sdk';
-import { Nft, Order as OrderSchema } from '@liqnft/candy-shop-types';
+import { Nft, SingleBase, Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import BuyModalConfirmed from 'components/BuyModal/BuyModalConfirmed';
@@ -43,7 +43,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
         symbol: candyShop.currencySymbol,
         decimals: candyShop.currencyDecimals
       };
-  const orderPrice = getPrice(candyShop, order, exchangeInfo);
+  const orderPrice = getPrice(candyShop.priceDecimalsMin, candyShop.priceDecimals, order, exchangeInfo);
   const isUserListing = wallet?.publicKey && order && order.walletAddress === wallet.publicKey.toString();
 
   useEffect(() => {
@@ -51,11 +51,11 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
       setLoadingOrder(true);
       candyShop
         .activeOrderByMintAddress(tokenMint)
-        .then((res) => {
+        .then((res: SingleBase<OrderSchema>) => {
           if (!res.success) throw new Error('Order not found');
           setOrder(res.result);
         })
-        .catch((err) => {
+        .catch((err: Error) => {
           console.log('OrderDetail: activeOrderByMintAddress failed=', err);
         })
         .finally(() => {
@@ -68,8 +68,8 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
       setLoadingNftInfo(true);
       candyShop
         .nftInfo(order.tokenMint)
-        .then((nft) => setNftInfo(nft))
-        .catch((err) => {
+        .then((nft: Nft) => setNftInfo(nft))
+        .catch((err: Error) => {
           console.info('fetchNftByMint failed:', err);
         })
         .finally(() => {
@@ -89,12 +89,12 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
           price: new BN(order.price),
           wallet
         })
-        .then((txHash) => {
+        .then((txHash: any) => {
           setHash(txHash);
           console.log('Buy made with transaction hash', txHash);
           setState(TransactionState.CONFIRMED);
         })
-        .catch((err) => {
+        .catch((err: Error) => {
           console.log({ err });
           handleError({ error: err });
           setState(TransactionState.DISPLAY);
@@ -176,8 +176,9 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
                 order={order}
                 txHash={hash}
                 onClose={goToMarketplace}
-                candyShop={candyShop}
                 exchangeInfo={exchangeInfo}
+                shopPriceDecimalsMin={candyShop.priceDecimalsMin}
+                shopPriceDecimals={candyShop.priceDecimals}
               />
             </div>
           </Modal>
