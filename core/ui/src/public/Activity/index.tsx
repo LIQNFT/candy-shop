@@ -134,7 +134,7 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers }) =>
                   {`${(Number(trade.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
                     minimumFractionDigits: candyShop.priceDecimalsMin,
                     maximumFractionDigits: candyShop.priceDecimals
-                  })} SOL`}
+                  })} ${candyShop.currencySymbol}`}
                 </div>
                 <div>
                   <ExplorerLink type="address" address={trade.sellerAddress} />
