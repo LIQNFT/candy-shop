@@ -17,7 +17,6 @@ import {
   getAuctionHouse,
   getAuctionHouseAuthority,
   getAuctionHouseFeeAcct,
-  getAuctionHouseTradeState,
   getAuctionHouseTreasuryAcct,
   getCandyShopSync,
   getMetadataAccount,
@@ -63,14 +62,8 @@ import {
   buyNowAuctionV1,
   CancelAuctionParams,
   cancelAuctionV1,
-  cancelOrder,
-  cancelOrderV1,
-  CancelTransactionParams,
   CreateAuctionParams,
   createAuctionV1,
-  sellNft,
-  sellNftV1,
-  SellTransactionParams,
   SettleAndDistributeProceedParams,
   settleAndDistributeProceeds,
   settleAndDistributeProceedsV1,
@@ -325,36 +318,18 @@ export class CandyShop {
       tokenAccount: tokenAccount.toString(),
       price
     });
-    const [auctionHouseAuthority, authorityBump] = await getAuctionHouseAuthority(
-      this._candyShopCreatorAddress,
-      this._treasuryMint,
-      this._programId
-    );
-
-    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
-
-    const [feeAccount] = await getAuctionHouseFeeAcct(auctionHouse);
-
-    const [metadata] = await getMetadataAccount(tokenMint);
-
-    const sellTxParams: SellTransactionParams = {
-      wallet,
-      tokenAccount,
-      tokenAccountMint: tokenMint,
-      treasuryMint: this._treasuryMint,
-      metadata,
-      authority: auctionHouseAuthority,
-      authorityBump,
-      auctionHouse,
-      feeAccount,
-      candyShop: this._candyShopAddress,
-      price,
-      amount: new BN(1),
-      program: this.getStaticProgram(wallet)
-    };
-
-    const txHash = await supply(sellTxParams, this._version, sellNftV1, sellNft);
-
+    const txHash = await CandyShopTrade.sell({
+      connection: this.connection(),
+      tokenAccount: tokenAccount,
+      tokenMint: tokenMint,
+      price: price,
+      wallet: wallet,
+      shopAddress: this._candyShopAddress,
+      candyShopProgramId: this._programId,
+      shopTreasuryMint: this._treasuryMint,
+      shopCreatorAddress: this._candyShopCreatorAddress,
+      candyShopVersion: this._version
+    });
     return txHash;
   }
   /**
@@ -370,45 +345,18 @@ export class CandyShop {
       tokenMint: tokenMint.toString(),
       price
     });
-    const program = await this.getStaticProgram(wallet);
-    const [auctionHouseAuthority, authorityBump] = await getAuctionHouseAuthority(
-      this._candyShopCreatorAddress,
-      this._treasuryMint,
-      this._programId
-    );
-
-    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
-
-    const [feeAccount] = await getAuctionHouseFeeAcct(auctionHouse);
-
-    const [tradeState] = await getAuctionHouseTradeState(
-      auctionHouse,
-      wallet.publicKey,
-      tokenAccount,
-      this._treasuryMint,
-      tokenMint,
-      new BN(1),
-      price
-    );
-
-    const cancelTxParams: CancelTransactionParams = {
-      wallet,
-      tokenAccount,
-      tokenAccountMint: tokenMint,
-      treasuryMint: this._treasuryMint,
-      authority: auctionHouseAuthority,
-      authorityBump,
-      auctionHouse,
-      feeAccount,
-      tradeState,
-      candyShop: this._candyShopAddress,
-      price,
-      amount: new BN(1),
-      program
-    };
-
-    const txHash = await supply(cancelTxParams, this._version, cancelOrderV1, cancelOrder);
-
+    const txHash = await CandyShopTrade.cancel({
+      connection: this.connection(),
+      tokenAccount: tokenAccount,
+      tokenMint: tokenMint,
+      price: price,
+      wallet: wallet,
+      shopAddress: this._candyShopAddress,
+      candyShopProgramId: this._programId,
+      shopTreasuryMint: this._treasuryMint,
+      shopCreatorAddress: this._candyShopCreatorAddress,
+      candyShopVersion: this._version
+    });
     return txHash;
   }
   /**

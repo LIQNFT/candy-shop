@@ -132,6 +132,24 @@ export interface CandyShopTradeBuyParams extends CandyShopBuyParams {
   candyShopVersion: CandyShopVersion;
 }
 
+export interface CandyShopTradeSellParams extends CandyShopSellParams {
+  connection: web3.Connection;
+  shopAddress: web3.PublicKey;
+  shopCreatorAddress: web3.PublicKey;
+  candyShopProgramId: web3.PublicKey;
+  shopTreasuryMint: web3.PublicKey;
+  candyShopVersion: CandyShopVersion;
+}
+
+export interface CandyShopTradeCancelParams extends CandyShopCancelParams {
+  connection: web3.Connection;
+  shopAddress: web3.PublicKey;
+  shopCreatorAddress: web3.PublicKey;
+  candyShopProgramId: web3.PublicKey;
+  shopTreasuryMint: web3.PublicKey;
+  candyShopVersion: CandyShopVersion;
+}
+
 /**
  * General arguments required for calling Auction actions
  *
