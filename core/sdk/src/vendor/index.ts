@@ -1,7 +1,6 @@
-/* Public vendor to be exposed in src/index.ts */
+/* Public vendor methods to be exposed in src/index.ts */
 export * from './token';
 export * from './utils';
-export * from './supplier';
 export * from './error';
 export * from './config';
 

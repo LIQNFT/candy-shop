@@ -20,11 +20,11 @@ import {
   getAuctionHouseTreasuryAcct,
   getCandyShopSync,
   getMetadataAccount,
-  supply,
   getProgram,
   CandyShopError,
   CandyShopErrorType
 } from './vendor';
+import { supply } from './vendor/shipping';
 import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from './factory/constants';
 import {
   fetchNFTByMintAddress,
