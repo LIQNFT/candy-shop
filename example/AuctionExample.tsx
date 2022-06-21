@@ -21,10 +21,8 @@ export const AuctionExample: React.FC<AuctionExampleProps> = ({ candyShop }) => 
 
   return (
     <div style={{ paddingBottom: 50, textAlign: 'center' }}>
-      <p style={{ fontSize: 16, color: 'red', fontWeight: 'bold', maxWidth: 1000, margin: '0px auto 30px' }}>
-        Note: Auctions are now available on devnet, feel free to try it out and give us feedback. We aim to launch on
-        mainnet in mid June. To create an auction on your Candy Shop, click the Settings button on the top right and
-        enter your creator address
+      <p style={{ fontSize: 16, fontWeight: 'bold', maxWidth: 1000, margin: '0px auto 30px' }}>
+        Note: To create an auction in your shop, click the Config button on the top right and enter your creator address
       </p>
       <CreateAuction
         candyShop={candyShop}
