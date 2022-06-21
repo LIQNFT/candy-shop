@@ -1,14 +1,16 @@
+/*  This file should not be exposed in src/index.ts */
 import { CandyShopVersion } from '../CandyShopModel';
 import { BuyAndExecuteSaleTransactionParams } from '../factory/program/model';
 import { insBuyAndExecuteSale } from '../factory/program/v2/marketplace';
 
 /**
- * Get tx hash from different executions
+ * Get txHash from different executions for proceeding to buy
  *
  * @param {boolean} isEnterprise
  * @param {BuyAndExecuteSaleTransactionParams} params required params for buy/sell transaction
+ * @return {string} txHash
  */
-export function buyAndExecuteSales(
+export function proceedToBuy(
   isEnterprise: boolean,
   callParams: {
     params: BuyAndExecuteSaleTransactionParams;
@@ -26,12 +28,13 @@ export function buyAndExecuteSales(
 }
 
 /**
- * Chooses to call either v1 or v2 version of passed function based on candy shop version
+ * Get txHash by calling either v1 or v2 version of passed function based on candy shop version
  *
  * @param {any} params argument to the function to call
  * @param {CandyShopVersion} version version of the candy shop
  * @param {function} v1Func function to call if using v1 candy shop
  * @param {function} v2Func function to call if using v1 candy shop
+ * @return {string} txHash
  */
 // Please feel free to come up with better name :)
 export function supply(

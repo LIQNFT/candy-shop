@@ -12,16 +12,15 @@ import {
   SellTransactionParams
 } from './factory/program';
 import {
-  buyAndExecuteSales,
   getAuctionHouse,
   getAuctionHouseAuthority,
   getAuctionHouseFeeAcct,
   getAuctionHouseTradeState,
   getAuctionHouseTreasuryAcct,
   getMetadataAccount,
-  getProgram,
-  supply
+  getProgram
 } from './vendor';
+import { proceedToBuy, supply } from './vendor/shipping';
 
 /**
  * A abstract class to provide static trading methods without CandyShop instance but partial information from shop.
@@ -72,7 +71,7 @@ export abstract class CandyShopTrade {
       amount: new BN(1),
       program: getProgram(connection, candyShopProgramId, wallet)
     };
-    const txHash = await buyAndExecuteSales(isEnterprise, {
+    const txHash = await proceedToBuy(isEnterprise, {
       params: buyTxHashParams,
       version: candyShopVersion,
       v1Func: buyAndExecuteSaleV1,
