@@ -54,27 +54,6 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       return;
     }
     setState(TransactionState.PROCESSING);
-    // check balance before proceed
-    /*let balance: BN;
-    const connection = candyShop.connection();
-
-    if (candyShop.treasuryMint.equals(WRAPPED_SOL_MINT)) {
-      const account = await connection.getAccountInfo(wallet.publicKey);
-      if (!account) {
-        notification(ErrorMsgMap[ErrorType.GetAccountInfoFailed], NotificationType.Error);
-        return;
-      }
-      balance = new BN(account.lamports.toString());
-    } else {
-      // prettier-ignore
-      const ata = (await getAtaForMint(candyShop.treasuryMint, wallet.publicKey))[0];
-      try {
-        const account = await getAccount(connection, ata);
-        balance = new BN(account.amount.toString());
-      } catch (err) {
-        balance = new BN('0');
-      }
-    }*/
 
     const tradeBuyParams: CandyShopTradeBuyParams = {
       tokenAccount: new web3.PublicKey(order.tokenAccount),
