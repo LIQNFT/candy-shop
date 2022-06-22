@@ -14,6 +14,7 @@ interface InfiniteOrderListProps {
   hasNextPage: boolean;
   loadNextPage: () => void;
   candyShop: CandyShop;
+  sellerUrl?: string;
 }
 
 export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
@@ -23,7 +24,8 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
   url,
   hasNextPage,
   loadNextPage,
-  candyShop
+  candyShop,
+  sellerUrl
 }) => {
   return (
     <InfiniteScroll
@@ -51,6 +53,7 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
               wallet={wallet}
               url={url}
               candyShop={candyShop}
+              sellerUrl={sellerUrl}
             />
           </div>
         ))}

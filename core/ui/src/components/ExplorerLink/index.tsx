@@ -1,10 +1,6 @@
-import { web3 } from '@project-serum/anchor';
 import React from 'react';
-
-// shorten the checksummed version of the input address to have 4 characters at start and end
-function shortenAddress(address: string, chars = 4): string {
-  return `${address.slice(0, chars)}...${address.slice(-chars)}`;
-}
+import { web3 } from '@project-serum/anchor';
+import { shortenAddress } from 'utils/format';
 
 export const ExplorerLink = (props: {
   address: string | web3.PublicKey;

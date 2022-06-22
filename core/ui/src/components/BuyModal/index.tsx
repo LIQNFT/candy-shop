@@ -27,6 +27,7 @@ export interface BuyModalProps {
   candyShopVersion: CandyShopVersion;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
+  sellerUrl?: string;
 }
 
 export const BuyModal: React.FC<BuyModalProps> = ({
@@ -41,7 +42,8 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   isEnterprise,
   candyShopVersion,
   shopPriceDecimalsMin,
-  shopPriceDecimals
+  shopPriceDecimals,
+  sellerUrl
 }) => {
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
   const [hash, setHash] = useState(''); // txHash
@@ -98,6 +100,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             exchangeInfo={exchangeInfo}
             shopPriceDecimalsMin={shopPriceDecimalsMin}
             shopPriceDecimals={shopPriceDecimals}
+            sellerUrl={sellerUrl}
           />
         )}
         {state === TransactionState.PROCESSING && <Processing text="Processing purchase" />}

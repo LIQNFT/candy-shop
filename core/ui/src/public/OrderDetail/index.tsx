@@ -1,15 +1,18 @@
-import { CandyShop } from '@liqnft/candy-shop-sdk';
-import { Nft, SingleBase, Order as OrderSchema } from '@liqnft/candy-shop-types';
+import React, { useEffect, useState } from 'react';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
+
+import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { Nft, SingleBase, Order as OrderSchema } from '@liqnft/candy-shop-types';
+
 import BuyModalConfirmed from 'components/BuyModal/BuyModalConfirmed';
-import { ExplorerLink } from 'components/ExplorerLink';
 import { Modal } from 'components/Modal';
 import { NftAttributes } from 'components/NftAttributes';
 import { Processing } from 'components/Processing';
 import { Viewer } from 'components/Viewer';
+import { NftStat } from 'components/NftStat';
+
 import { TransactionState } from 'model';
-import React, { useEffect, useState } from 'react';
 import { handleError } from 'utils/ErrorHandler';
 import { getExchangeInfo } from 'utils/getExchangeInfo';
 import { getPrice } from 'utils/getPrice';
@@ -21,6 +24,7 @@ interface OrderDetailProps {
   walletConnectComponent: React.ReactElement;
   wallet: AnchorWallet | undefined;
   candyShop: CandyShop;
+  sellerUrl?: string;
 }
 
 export const OrderDetail: React.FC<OrderDetailProps> = ({
@@ -28,10 +32,11 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   backUrl = '/',
   walletConnectComponent,
   wallet,
-  candyShop
+  candyShop,
+  sellerUrl
 }) => {
-  const [loadingOrder, setLoadingOrder] = useState(false);
-  const [loadingNftInfo, setLoadingNftInfo] = useState(false);
+  const [loadingOrder, setLoadingOrder] = useState<boolean>(false);
+  const [loadingNftInfo, setLoadingNftInfo] = useState<boolean>(false);
   const [order, setOrder] = useState<OrderSchema>();
   const [nftInfo, setNftInfo] = useState<Nft>();
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
@@ -123,30 +128,14 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
             <div className="candy-label">DESCRIPTION</div>
             <div className="candy-value">{order?.nftDescription}</div>
           </div>
-          <div className="candy-stat-horizontal">
-            <div>
-              <div className="candy-label">MINT ADDRESS</div>
-              <div className="candy-value">
-                <ExplorerLink type="address" address={order?.tokenMint || ''} />
-              </div>
-            </div>
-            <div className="candy-stat-horizontal-line" />
-            {order?.edition ? (
-              <>
-                <div>
-                  <div className="candy-label">EDITION</div>
-                  <div className="candy-value">{order?.edition}</div>
-                </div>
-                <div className="candy-stat-horizontal-line" />
-              </>
-            ) : null}
-            <div>
-              <div className="candy-label">OWNER</div>
-              <div className="candy-value">
-                <ExplorerLink type="address" address={order?.walletAddress || ''} />
-              </div>
-            </div>
-          </div>
+          {order?.tokenMint ? (
+            <NftStat
+              owner={order.walletAddress}
+              edition={order.edition}
+              tokenMint={order.tokenMint}
+              sellerUrl={sellerUrl}
+            />
+          ) : null}
           <NftAttributes loading={loadingNftInfo} attributes={nftInfo?.attributes} />
 
           {!wallet ? (

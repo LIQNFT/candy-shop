@@ -1,3 +1,7 @@
+import React, { useCallback, useEffect, useState } from 'react';
+import { BN, web3 } from '@project-serum/anchor';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
+
 import {
   CandyShopTrade,
   CandyShopTradeSellParams,
@@ -7,20 +11,19 @@ import {
   SingleTokenInfo
 } from '@liqnft/candy-shop-sdk';
 import { CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
-import { BN, web3 } from '@project-serum/anchor';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
-import IconTick from 'assets/IconTick';
+
 import { LiqImage } from 'components/LiqImage';
 import { Modal } from 'components/Modal';
 import { NftStat } from 'components/NftStat';
 import { Processing } from 'components/Processing';
 import { Tooltip } from 'components/Tooltip';
-import { TIMEOUT_EXTRA_LOADING } from 'constant';
+
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 import { TransactionState } from 'model';
-import React, { useCallback, useEffect, useState } from 'react';
 import { ErrorMsgMap, ErrorType, handleError } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
+import { TIMEOUT_EXTRA_LOADING } from 'constant';
+import IconTick from 'assets/IconTick';
 import './style.less';
 
 export interface SellModalProps {
