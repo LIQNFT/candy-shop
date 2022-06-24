@@ -12,6 +12,7 @@ export interface CandyShop {
   txHashAtCreation: string;
   hasWhitelist: number;
   allowSellAnyNft: number;
+  imageUrl: string;
   websiteUrl: string;
   discordUrl: string;
   twitterUrl: string;
