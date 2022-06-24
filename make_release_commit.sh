@@ -77,7 +77,7 @@ make_commit_mgs() {
         commit_content="${commit_content}${ui_msg}"
     fi
     
-    commit_title="${commit_title}Version"
+    commit_title="${commit_title}version"
     git commit -m "${commit_title} ${commit_content}"
 }
 
