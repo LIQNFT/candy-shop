@@ -4,6 +4,7 @@ import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { IconPlayer } from 'assets/IconPlayer';
 import { LiqImage } from 'components/LiqImage';
+import { NftVerification } from 'components/Tooltip/NftVerification';
 import { getExchangeInfo } from 'utils/getExchangeInfo';
 import { getPrice } from 'utils/getPrice';
 import './index.less';
@@ -42,8 +43,11 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, url, candyShop, onO
       />
       <div className="candy-order-info">
         {order?.nftAnimationLink?.includes('ext=mp4') && <IconPlayer className="candy-order-player-icon" />}
-        <div className="candy-order-name candy-line-limit-1">
-          {`${order?.name}${order?.edition !== 0 ? ` #${order?.edition}` : ''}`}
+        <div className="candy-order-name-container">
+          <div className="candy-order-name candy-line-limit-1">
+            {`${order?.name}${order?.edition !== 0 ? ` #${order?.edition}` : ''}`}
+          </div>
+          {order.verifiedNftCollection ? <NftVerification /> : null}
         </div>
         <div className="candy-order-ticker candy-line-limit-1">{order?.ticker}</div>
         <div className="candy-order-price candy-line-limit-1">
