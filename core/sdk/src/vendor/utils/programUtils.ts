@@ -27,9 +27,10 @@ import { awaitTransactionSignatureConfirmation } from './transactionUtils';
 import { CandyShopError, CandyShopErrorType } from '../error';
 import { safeAwait } from './promiseUtils';
 import { Creator, Metadata, parseMetadata } from '../token/parseData';
+import { CandyShopVersion } from '../../CandyShopModel';
 
 const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
-const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);
+export const MetadataProgramPubkey = new web3.PublicKey(METADATA_PROGRAM_ID);
 
 /**
  * Get NodeWallet from specified keypair
@@ -40,6 +41,10 @@ const metadataProgramId = new web3.PublicKey(METADATA_PROGRAM_ID);
 const getNodeWallet = (wallet: web3.Keypair) => {
   const NodeWallet = require('@project-serum/anchor/dist/cjs/nodewallet').default;
   return new NodeWallet(wallet);
+};
+
+export const getCandyShopVersion = (shopProgramId: web3.PublicKey) => {
+  return shopProgramId.equals(CANDY_SHOP_V2_PROGRAM_ID) ? CandyShopVersion.V2 : CandyShopVersion.V1;
 };
 
 /**
@@ -191,8 +196,8 @@ export const getAtaForMint = (mint: web3.PublicKey, buyer: web3.PublicKey): Prom
 
 export const getMetadataAccount = (tokenMint: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
   return web3.PublicKey.findProgramAddress(
-    [Buffer.from('metadata'), metadataProgramId.toBuffer(), tokenMint.toBuffer()],
-    metadataProgramId
+    [Buffer.from('metadata'), MetadataProgramPubkey.toBuffer(), tokenMint.toBuffer()],
+    MetadataProgramPubkey
   );
 };
 

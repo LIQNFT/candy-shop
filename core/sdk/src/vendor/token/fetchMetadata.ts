@@ -5,9 +5,7 @@ import * as crc32 from 'crc-32';
 import { CandyShopError, CandyShopErrorType } from '../error';
 import { safeAwait } from '../utils/promiseUtils';
 import { Metadata, parseEdition, parseMetadata } from './parseData';
-
-const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
-const MetadataProgramPubkey = new web3.PublicKey(METADATA_PROGRAM_ID);
+import { MetadataProgramPubkey } from '../utils/programUtils';
 
 interface NFTMetadataInfo {
   nftImage: string;

@@ -129,7 +129,6 @@ export interface CandyShopTradeBuyParams extends CandyShopBuyParams {
   candyShopProgramId: web3.PublicKey;
   shopTreasuryMint: web3.PublicKey;
   isEnterprise: boolean;
-  candyShopVersion: CandyShopVersion;
 }
 
 export interface CandyShopTradeSellParams extends CandyShopSellParams {
@@ -138,7 +137,6 @@ export interface CandyShopTradeSellParams extends CandyShopSellParams {
   shopCreatorAddress: web3.PublicKey;
   candyShopProgramId: web3.PublicKey;
   shopTreasuryMint: web3.PublicKey;
-  candyShopVersion: CandyShopVersion;
 }
 
 export interface CandyShopTradeCancelParams extends CandyShopCancelParams {
@@ -147,7 +145,6 @@ export interface CandyShopTradeCancelParams extends CandyShopCancelParams {
   shopCreatorAddress: web3.PublicKey;
   candyShopProgramId: web3.PublicKey;
   shopTreasuryMint: web3.PublicKey;
-  candyShopVersion: CandyShopVersion;
 }
 
 /**

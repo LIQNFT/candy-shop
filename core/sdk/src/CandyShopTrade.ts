@@ -17,6 +17,7 @@ import {
   getAuctionHouseFeeAcct,
   getAuctionHouseTradeState,
   getAuctionHouseTreasuryAcct,
+  getCandyShopVersion,
   getMetadataAccount,
   getProgram
 } from './vendor';
@@ -38,8 +39,7 @@ export abstract class CandyShopTrade {
       candyShopProgramId,
       shopTreasuryMint,
       shopCreatorAddress,
-      isEnterprise,
-      candyShopVersion
+      isEnterprise
     } = params;
 
     const [auctionHouseAuthority, authorityBump] = await getAuctionHouseAuthority(
@@ -73,7 +73,7 @@ export abstract class CandyShopTrade {
     };
     const txHash = await proceedToBuy(isEnterprise, {
       params: buyTxHashParams,
-      version: candyShopVersion,
+      version: getCandyShopVersion(candyShopProgramId),
       v1Func: buyAndExecuteSaleV1,
       v2Func: buyAndExecuteSale
     });
@@ -91,8 +91,7 @@ export abstract class CandyShopTrade {
       shopAddress,
       candyShopProgramId,
       shopTreasuryMint,
-      shopCreatorAddress,
-      candyShopVersion
+      shopCreatorAddress
     } = params;
 
     const [auctionHouseAuthority, authorityBump] = await getAuctionHouseAuthority(
@@ -122,6 +121,7 @@ export abstract class CandyShopTrade {
       program: getProgram(connection, candyShopProgramId, wallet)
     };
 
+    const candyShopVersion = getCandyShopVersion(candyShopProgramId);
     const txHash = await supply(sellTxParams, candyShopVersion, sellNftV1, sellNft);
 
     return txHash;
@@ -137,8 +137,7 @@ export abstract class CandyShopTrade {
       shopAddress,
       candyShopProgramId,
       shopTreasuryMint,
-      shopCreatorAddress,
-      candyShopVersion
+      shopCreatorAddress
     } = params;
 
     const [auctionHouseAuthority, authorityBump] = await getAuctionHouseAuthority(
@@ -176,6 +175,7 @@ export abstract class CandyShopTrade {
       program: getProgram(connection, candyShopProgramId, wallet)
     };
 
+    const candyShopVersion = getCandyShopVersion(candyShopProgramId);
     const txHash = await supply(cancelTxParams, candyShopVersion, cancelOrderV1, cancelOrder);
 
     return txHash;
