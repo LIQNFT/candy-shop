@@ -22,7 +22,8 @@ import {
   getMetadataAccount,
   getProgram,
   CandyShopError,
-  CandyShopErrorType
+  CandyShopErrorType,
+  getCandyShopVersion
 } from './vendor';
 import { supply } from './vendor/shipping';
 import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from './factory/constants';
@@ -185,7 +186,7 @@ export class CandyShop {
     this._programId = candyShopProgramId;
     this._env = env;
     this._isEnterprise = isEnterprise ? true : false;
-    this._version = candyShopProgramId.equals(CANDY_SHOP_V2_PROGRAM_ID) ? CandyShopVersion.V2 : CandyShopVersion.V1;
+    this._version = getCandyShopVersion(candyShopProgramId);
     this._settings = {
       currencySymbol: settings?.currencySymbol ?? DEFAULT_CURRENCY_SYMBOL,
       currencyDecimals: settings?.currencyDecimals ?? DEFAULT_CURRENCY_DECIMALS,
@@ -296,7 +297,6 @@ export class CandyShop {
       shopCreatorAddress: this._candyShopCreatorAddress,
       shopTreasuryMint: this._treasuryMint,
       isEnterprise: this._isEnterprise,
-      candyShopVersion: this._version,
       wallet: wallet,
       tokenAccount: tokenAccount,
       tokenMint: tokenMint,
@@ -327,8 +327,7 @@ export class CandyShop {
       shopAddress: this._candyShopAddress,
       candyShopProgramId: this._programId,
       shopTreasuryMint: this._treasuryMint,
-      shopCreatorAddress: this._candyShopCreatorAddress,
-      candyShopVersion: this._version
+      shopCreatorAddress: this._candyShopCreatorAddress
     });
     return txHash;
   }
@@ -354,8 +353,7 @@ export class CandyShop {
       shopAddress: this._candyShopAddress,
       candyShopProgramId: this._programId,
       shopTreasuryMint: this._treasuryMint,
-      shopCreatorAddress: this._candyShopCreatorAddress,
-      candyShopVersion: this._version
+      shopCreatorAddress: this._candyShopCreatorAddress
     });
     return txHash;
   }
