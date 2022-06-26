@@ -16,6 +16,7 @@ export interface BuyModalDetailProps {
   exchangeInfo: ShopExchangeInfo;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
+  sellerUrl?: string;
 }
 
 const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
@@ -25,7 +26,8 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   walletConnectComponent,
   exchangeInfo,
   shopPriceDecimalsMin,
-  shopPriceDecimals
+  shopPriceDecimals,
+  sellerUrl
 }) => {
   const [loadingNftInfo, setLoadingNftInfo] = useState(false);
   const [nftInfo, setNftInfo] = useState<Nft | null>(null);
@@ -71,7 +73,12 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
             <div className="candy-value">{order?.nftDescription}</div>
           </div>
         )}
-        <NftStat owner={order.walletAddress} tokenMint={order.tokenMint} edition={order.edition} />
+        <NftStat
+          owner={order.walletAddress}
+          tokenMint={order.tokenMint}
+          edition={order.edition}
+          sellerUrl={sellerUrl}
+        />
         <NftAttributes loading={loadingNftInfo} attributes={nftInfo?.attributes} />
       </div>
     </>

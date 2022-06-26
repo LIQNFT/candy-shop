@@ -2,6 +2,8 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 
+const NUMBER_OF_CHAR = 4;
+
 type FormType = {
   auctionHour: string;
   auctionMinute: string;
@@ -48,4 +50,8 @@ export const convertTime12to24 = (hour: string, min: string, clockFormat: string
     hour = (parseInt(hour, 10) + 12).toString();
   }
   return `${hour}:${min}`;
+};
+
+export const shortenAddress = (address: string, chars = NUMBER_OF_CHAR): string => {
+  return `${address.slice(0, chars)}...${address.slice(-chars)}`;
 };

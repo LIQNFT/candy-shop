@@ -25,6 +25,7 @@ interface OrdersProps {
   style?: { [key: string]: string | number };
   candyShop: CandyShop;
   sellerAddress?: string;
+  sellerUrl?: string;
 }
 
 /**
@@ -40,7 +41,8 @@ export const Orders: React.FC<OrdersProps> = ({
   candyShop,
   sellerAddress,
   shopFilters,
-  defaultFilter
+  defaultFilter,
+  sellerUrl
 }) => {
   const [sortedByOption, setSortedByOption] = useState(SORT_OPTIONS[0]);
   const [orders, setOrders] = useState<any[]>([]);
@@ -135,6 +137,7 @@ export const Orders: React.FC<OrdersProps> = ({
       hasNextPage={hasNextPage}
       loadNextPage={loadNextPage(startIndex)}
       candyShop={candyShop}
+      sellerUrl={sellerUrl}
     />
   );
 

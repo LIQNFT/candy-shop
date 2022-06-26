@@ -16,9 +16,10 @@ export interface OrderProps {
   walletConnectComponent: React.ReactElement;
   url?: string;
   candyShop: CandyShop;
+  sellerUrl?: string;
 }
 
-export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectComponent, url, candyShop }) => {
+export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectComponent, url, candyShop, sellerUrl }) => {
   const [selection, setSelection] = useState<OrderSchema>();
 
   const onClose = () => {
@@ -73,6 +74,7 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, walletConnectCompon
           candyShopVersion={candyShop.version}
           shopPriceDecimalsMin={candyShop.priceDecimalsMin}
           shopPriceDecimals={candyShop.priceDecimals}
+          sellerUrl={sellerUrl}
         />
       ) : null}
 

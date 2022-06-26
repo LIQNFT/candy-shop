@@ -1,13 +1,15 @@
 import React from 'react';
 import { ExplorerLink } from 'components/ExplorerLink';
+import { shortenAddress } from 'utils/format';
 
 export interface NftStatProps {
   tokenMint: string;
   edition?: number | string | null;
   owner?: string;
+  sellerUrl?: string;
 }
 
-export const NftStat: React.FC<NftStatProps> = ({ tokenMint, edition, owner }) => {
+export const NftStat: React.FC<NftStatProps> = ({ tokenMint, edition, owner, sellerUrl }) => {
   return (
     <div className="candy-stat-horizontal">
       <div>
@@ -31,7 +33,18 @@ export const NftStat: React.FC<NftStatProps> = ({ tokenMint, edition, owner }) =
           <div>
             <div className="candy-label">OWNER</div>
             <div className="candy-value">
-              <ExplorerLink type="address" address={owner} />
+              {sellerUrl ? (
+                <a
+                  href={sellerUrl.replace('{{sellerAddress}}', owner)}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  title="Seller profile"
+                >
+                  {shortenAddress(owner)}
+                </a>
+              ) : (
+                <ExplorerLink type="address" address={owner} />
+              )}
             </div>
           </div>
         </>
