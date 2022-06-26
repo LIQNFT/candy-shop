@@ -1,6 +1,7 @@
 export interface CandyShop {
   candyShopAddress: string;
   candyShopName: string;
+  programId: string;
   treasuryAddress: string;
   treasuryMint: string;
   feeAccountAddress: string;
