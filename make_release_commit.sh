@@ -81,6 +81,21 @@ make_commit_mgs() {
     git commit -m "${commit_title} ${commit_content}"
 }
 
+# Once @liqnft/candy-shop-sdk updated, core/ui will align the dependency as well.
+# But it's not the bump for core/ui, need to differentiate the cases to reflect the truth.
+check_ui_bump() {
+    cd $CORE_UI_PATH
+    # Check the exact diff from core/ui/package.json
+    git_diff_ui_arr=( $(git diff --no-ext-diff --unified=0 --exit-code -a --no-prefix package.json) )
+    for diff in "${git_diff_ui_arr[@]}"
+    do
+        if [[ $diff == *"version"* ]]
+        then
+            ui_update=true
+        fi
+    done
+}
+
 if [ $git_file_changes_arr_len -gt 0 ]
 then
     echo "File changes, making commit"
@@ -96,7 +111,7 @@ then
             sdk_update=true
         elif [[ $file == *"core/ui"* ]]
         then
-            ui_update=true
+            check_ui_bump
         fi
     done
 
