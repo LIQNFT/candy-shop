@@ -90,8 +90,7 @@ export const SellModal: React.FC<SellModalProps> = ({
       shopAddress: shopAddress,
       candyShopProgramId: candyShopProgramId,
       shopTreasuryMint,
-      shopCreatorAddress,
-      candyShopVersion
+      shopCreatorAddress
     };
 
     return CandyShopTrade.sell(tradeSellParams)

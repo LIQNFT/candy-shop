@@ -67,7 +67,6 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       shopAddress: shopAddress,
       candyShopProgramId: candyShopProgramId,
       isEnterprise: isEnterprise,
-      candyShopVersion: candyShopVersion,
       // Replace with the order's
       shopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress),
       shopTreasuryMint: new web3.PublicKey(order.treasuryMint)

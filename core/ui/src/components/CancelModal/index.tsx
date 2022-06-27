@@ -55,8 +55,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
       shopAddress: shopAddress,
       candyShopProgramId: candyShopProgramId,
       shopTreasuryMint: new web3.PublicKey(order.treasuryMint),
-      shopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress),
-      candyShopVersion: candyShopVersion
+      shopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress)
     };
 
     return CandyShopTrade.cancel(tradeCancelParams)
