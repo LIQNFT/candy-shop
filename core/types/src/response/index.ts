@@ -10,3 +10,4 @@ export * from './shopCandyMachine';
 export * from './auction';
 export * from './auctionBid';
 export * from './nftCollection';
+export * from './candyShopProfile';
