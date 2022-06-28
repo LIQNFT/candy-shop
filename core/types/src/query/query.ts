@@ -22,6 +22,7 @@ export interface OrdersFilterQuery extends CommonQuery {
   attribute?: attributeType | attributeType[];
   candyShopAddress?: string;
   collectionId?: number;
+  nftName?: string;
 }
 
 export interface TradeQuery extends CommonQuery {

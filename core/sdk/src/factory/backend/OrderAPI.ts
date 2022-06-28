@@ -15,7 +15,8 @@ export async function fetchOrdersByStoreId(
     sellerAddress,
     candyShopAddress,
     attribute: attributeQuery,
-    collectionId
+    collectionId,
+    nftName
   } = ordersFilterQuery;
   let queryParams: any = {};
   let attribute: any = undefined;
@@ -51,7 +52,8 @@ export async function fetchOrdersByStoreId(
         walletAddress: sellerAddress,
         candyShopAddress,
         attribute,
-        collectionId
+        collectionId,
+        nftName
       })
     );
   } else {
@@ -61,7 +63,8 @@ export async function fetchOrdersByStoreId(
       walletAddress: sellerAddress,
       candyShopAddress,
       attribute,
-      collectionId
+      collectionId,
+      nftName
     });
   }
 
