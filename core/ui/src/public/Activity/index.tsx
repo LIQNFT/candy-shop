@@ -51,6 +51,7 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
           if (hasMore) {
             setOffset(offset + count + 1);
           }
+
           setHasMore(hasMore);
           setTrades((list) => {
             if (firstLoad) return result || [];
@@ -135,7 +136,7 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
                   {`${(Number(trade.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
                     minimumFractionDigits: candyShop.priceDecimalsMin,
                     maximumFractionDigits: candyShop.priceDecimals
-                  })} ${candyShop.currencySymbol}`}
+                  })} ${trade.shopSymbol}`}
                 </div>
                 <div>
                   <ExplorerLink type="address" address={trade.sellerAddress} />
