@@ -8,6 +8,30 @@
     .infinite-scroll-component {
       overflow: unset !important;
     }
+
+    .candy-orders-sort {
+      display: flex;
+      margin-bottom: 16px;
+
+      .candy-search {
+        margin-left: 10px;
+        margin-bottom: 0;
+
+        input {
+          border: 2px solid #000;
+          height: 100%;
+          width: 250px;
+        }
+      }
+
+      &-right {
+        justify-content: flex-end;
+        align-items: stretch;
+        .candy-search {
+          margin-right: 10px;
+        }
+      }
+    }
   }
 
   &-filter {
@@ -90,15 +114,6 @@
       > * {
         width: 100%;
       }
-    }
-  }
-
-  &-sort {
-    display: flex;
-    margin-bottom: 16px;
-
-    &-right {
-      justify-content: flex-end;
     }
   }
 }
