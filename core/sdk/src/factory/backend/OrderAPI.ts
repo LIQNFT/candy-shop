@@ -15,7 +15,8 @@ export async function fetchOrdersByStoreId(
     sellerAddress,
     candyShopAddress,
     attribute: attributeQuery,
-    collectionId
+    collectionId,
+    name
   } = ordersFilterQuery;
   let queryParams: any = {};
   let attribute: any = undefined;
@@ -63,6 +64,10 @@ export async function fetchOrdersByStoreId(
       attribute,
       collectionId
     });
+  }
+
+  if (name && typeof name === 'string') {
+    console.log('Search name', name);
   }
 
   return axiosInstance

@@ -75,6 +75,10 @@ export const Orders: React.FC<OrdersProps> = ({
   const updateOrderStatus = useValidateStatus(OrdersActionsStatus);
   useUpdateSubject(ShopStatusType.Order, candyShop.candyShopAddress);
 
+  const onSearchNft = useCallback((nftName: string) => {
+    setKeyword(nftName);
+  }, []);
+
   const fetchOrders = useCallback(
     (offset: number) => {
       candyShop
@@ -86,7 +90,8 @@ export const Orders: React.FC<OrdersProps> = ({
           identifiers: getUniqueIdentifiers(identifiers, collectionFilter?.identifier),
           attribute: collectionFilter?.attribute,
           collectionId: selectedCollection?.id,
-          candyShopAddress: selectedShop?.candyShopAddress || shopFilter?.shopId
+          candyShopAddress: selectedShop?.candyShopAddress || shopFilter?.shopId,
+          name: keyword
         })
         .then((res: ListBase<Order>) => {
           if (!res.success) {
@@ -272,6 +277,7 @@ export const Orders: React.FC<OrdersProps> = ({
       <div className="candy-orders-container" style={style}>
         <div className="candy-container">
           <div className="candy-orders-sort">
+            <Search onSearch={onSearchNft} />
             <Dropdown
               items={SORT_OPTIONS}
               selectedItem={sortedByOption}
