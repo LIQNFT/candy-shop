@@ -31,3 +31,4 @@ export const FEE_ACCOUNT_MIN_BAL = 0.05 * web3.LAMPORTS_PER_SOL;
 
 export const NATIVE_CREATORS_LIMIT = 5;
 export const SPL_CREATORS_LIMIT = 2;
+export const FETCH_LIST_LIMIT = 10;

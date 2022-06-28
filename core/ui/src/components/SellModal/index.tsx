@@ -49,7 +49,6 @@ export const SellModal: React.FC<SellModalProps> = ({
   connection,
   shopAddress,
   candyShopProgramId,
-  candyShopVersion,
   baseUnitsPerCurrency,
   shopTreasuryMint,
   shopCreatorAddress,
