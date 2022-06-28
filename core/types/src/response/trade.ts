@@ -11,5 +11,6 @@ export interface Trade {
   txHashAtCreation: string;
   nftName: string;
   nftImageUrl: string;
+  shopSymbol: string;
   createdAt: Date;
 }
