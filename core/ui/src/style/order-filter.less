@@ -1,0 +1,27 @@
+@import '../variable.less';
+
+.candy-collection-filter {
+  .candy-filter-options {
+    list-style-type: none;
+    max-height: 680px;
+    overflow: auto;
+  }
+
+  .candy-filter-load {
+    color: @primary-color;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: transparent;
+
+    &-disable {
+      color: @gray-medium-alt;
+      pointer-events: none;
+    }
+  }
+
+  .candy-processing {
+    margin: 20px;
+  }
+}
