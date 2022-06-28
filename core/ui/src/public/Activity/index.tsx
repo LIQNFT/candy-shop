@@ -6,7 +6,7 @@ import { IconActivity } from 'assets/IconActivity';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { CandyShop } from '@liqnft/candy-shop-sdk';
-import { Trade, ListBase, ShopStatusType } from '@liqnft/candy-shop-types';
+import { Trade, ListBase, ShopStatusType, SortBy } from '@liqnft/candy-shop-types';
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { useUpdateSubject } from 'public/Context';
 import { ActivityActionsStatus } from 'constant';
@@ -20,6 +20,7 @@ import './style.less';
 interface ActivityProps {
   candyShop: CandyShop;
   identifiers?: number[];
+  orderBy?: SortBy[] | SortBy;
 }
 
 const LIMIT = 10;
@@ -29,7 +30,7 @@ const DO_NOTHING_FUNC = () => {
 
 const Logger = 'CandyShopUI/Activity';
 
-export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers }) => {
+export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orderBy }) => {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [offset, setOffset] = useState<number>(0);
@@ -40,7 +41,7 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers }) =>
   const getTrades = useCallback(
     (offset: number, limit: number, firstLoad?: boolean) => () => {
       candyShop
-        .transactions({ identifiers, offset, limit })
+        .transactions({ identifiers, offset, limit, sortBy: orderBy })
         .then((res: ListBase<Trade>) => {
           const { result, offset, totalCount, count, success } = res;
           if (!success) {
@@ -69,7 +70,7 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers }) =>
           console.log(`${Logger}: candyShop.transactions failed, error=`, error);
         });
     },
-    [candyShop, identifiers]
+    [candyShop, identifiers, orderBy]
   );
 
   useEffect(() => {

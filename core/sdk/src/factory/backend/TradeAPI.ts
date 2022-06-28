@@ -8,7 +8,7 @@ export async function fetchTradeById(
   queryDto?: TradeQuery
 ): Promise<ListBase<Trade>> {
   let queryString: string = '';
-  const { offset, limit = 10, identifiers } = queryDto || {};
+  const { offset, limit = 10, identifiers, sortBy } = queryDto || {};
   let queryObj: any = {};
 
   if (identifiers) {
@@ -17,6 +17,11 @@ export async function fetchTradeById(
   }
   if (offset) {
     queryObj = { ...queryObj, offset, limit };
+  }
+
+  if (sortBy) {
+    const sortByArr = Array.isArray(sortBy) ? sortBy : [sortBy];
+    queryObj.orderByArr = sortByArr.map((item) => JSON.stringify(item));
   }
 
   queryString = qs.stringify(queryObj, { indices: false });

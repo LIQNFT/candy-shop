@@ -1,12 +1,12 @@
 import { NftAttribute } from '../nft';
 import { Side, Status, ShopStatusType } from '../response';
 
-type SortBy = {
+export interface SortBy {
   column: string;
   order: 'asc' | 'desc';
-};
+}
 
-export type OrderSortBy = SortBy;
+export interface OrderSortBy extends SortBy {}
 
 type attributeType = { [key: string]: string };
 

@@ -5,6 +5,7 @@ import { useAnchorWallet } from '@solana/wallet-adapter-react';
 
 import { CandyShop } from '../core/sdk/.';
 import { Orders, Stat, OrderDetail, Sell, Activity } from '../core/ui/.';
+import { SortBy } from '../core/types';
 
 import 'antd/dist/antd.min.css';
 interface MarketplaceExampleProps {
@@ -46,10 +47,15 @@ export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ candySho
       />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', margin: '80px 0 30px' }}>Activity</h1>
-      <Activity candyShop={candyShop} />
+      <Activity candyShop={candyShop} orderBy={ORDER_ACTIVITY} />
     </div>
   );
 };
+
+const ORDER_ACTIVITY: SortBy[] = [
+  { column: 'price', order: 'desc' },
+  { column: 'nftName', order: 'asc' }
+];
 
 const FILTERS = [
   { name: 'Puppies', collectionId: '1', identifier: 2036309415 },
