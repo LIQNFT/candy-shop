@@ -16,7 +16,7 @@ export async function fetchOrdersByStoreId(
     candyShopAddress,
     attribute: attributeQuery,
     collectionId,
-    name
+    nftName
   } = ordersFilterQuery;
   let queryParams: any = {};
   let attribute: any = undefined;
@@ -52,7 +52,8 @@ export async function fetchOrdersByStoreId(
         walletAddress: sellerAddress,
         candyShopAddress,
         attribute,
-        collectionId
+        collectionId,
+        nftName
       })
     );
   } else {
@@ -62,12 +63,9 @@ export async function fetchOrdersByStoreId(
       walletAddress: sellerAddress,
       candyShopAddress,
       attribute,
-      collectionId
+      collectionId,
+      nftName
     });
-  }
-
-  if (name && typeof name === 'string') {
-    console.log('Search name', name);
   }
 
   return axiosInstance

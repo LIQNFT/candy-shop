@@ -22,7 +22,7 @@ export interface OrdersFilterQuery extends QueryParams {
   attribute?: attributeType | attributeType[];
   candyShopAddress?: string;
   collectionId?: number;
-  name?: string;
+  nftName?: string;
 }
 
 export interface TradeQuery extends QueryParams {

@@ -12,6 +12,7 @@ import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { useUpdateSubject } from 'public/Context';
 import { CollectionFilter, ShopFilter, OrderDefaultFilter } from 'model';
+import { Search } from 'components/Search';
 import {
   ListBase,
   NftCollection,
@@ -67,6 +68,7 @@ export const Orders: React.FC<OrdersProps> = ({
       return shopFilters?.find((shop) => shop.shopId === defaultFilter.shop);
     }
   });
+  const [nftKeyword, setNftKeyword] = useState<string>();
   const [selectedCollection, setSelectedCollection] = useState<NftCollection>();
   const [selectedShop, setSelectedShop] = useState<CandyShopResponse>();
 
@@ -76,7 +78,7 @@ export const Orders: React.FC<OrdersProps> = ({
   useUpdateSubject(ShopStatusType.Order, candyShop.candyShopAddress);
 
   const onSearchNft = useCallback((nftName: string) => {
-    setKeyword(nftName);
+    setNftKeyword(nftName);
   }, []);
 
   const fetchOrders = useCallback(
@@ -91,7 +93,7 @@ export const Orders: React.FC<OrdersProps> = ({
           attribute: collectionFilter?.attribute,
           collectionId: selectedCollection?.id,
           candyShopAddress: selectedShop?.candyShopAddress || shopFilter?.shopId,
-          name: keyword
+          nftName: nftKeyword
         })
         .then((res: ListBase<Order>) => {
           if (!res.success) {
@@ -133,7 +135,8 @@ export const Orders: React.FC<OrdersProps> = ({
       shopFilter?.shopId,
       sortedByOption,
       selectedCollection,
-      selectedShop
+      selectedShop,
+      nftKeyword
     ]
   );
 
@@ -192,7 +195,6 @@ export const Orders: React.FC<OrdersProps> = ({
 
   if (filters || shopFilters) {
     const onClickAll = () => {
-      console.log('SELECT ALL');
       setSelectedCollection(undefined);
       setCollectionFilter(undefined);
 
@@ -202,11 +204,11 @@ export const Orders: React.FC<OrdersProps> = ({
     const showAll = Boolean(filters && shopFilters);
     const selectAll = showAll && !selectedCollection && !selectedShop && !shopFilter && !collectionFilter;
 
-    console.log({ selectedCollection, collectionFilter, selectedShop, shopFilter, selectAll });
     return (
       <div className="candy-orders-container" style={style}>
         <div className="candy-container">
           <div className="candy-orders-sort candy-orders-sort-right">
+            <Search onSearch={onSearchNft} placeholder="Search NFT name" />
             <Dropdown
               items={SORT_OPTIONS}
               selectedItem={sortedByOption}
@@ -277,13 +279,13 @@ export const Orders: React.FC<OrdersProps> = ({
       <div className="candy-orders-container" style={style}>
         <div className="candy-container">
           <div className="candy-orders-sort">
-            <Search onSearch={onSearchNft} />
             <Dropdown
               items={SORT_OPTIONS}
               selectedItem={sortedByOption}
               onSelectItem={(item) => setSortedByOption(item)}
               defaultValue={SORT_OPTIONS[0]}
             />
+            <Search onSearch={onSearchNft} placeholder="Search NFT name" />
           </div>
           {loading ? <LoadingSkeleton /> : orders.length ? infiniteOrderListView : emptyView}
           <PoweredBy />
