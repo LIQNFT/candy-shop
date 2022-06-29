@@ -16,6 +16,7 @@ export interface Order {
   side: Side;
   // NFT collection name, e.g. SMB
   ticker: string;
+  verifiedNftCollection: number;
   // Name of the NFT listed in the order
   name: string;
   price: string;
