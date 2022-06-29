@@ -1,7 +1,7 @@
 {
   "name": "cli",
   "version": "0.5.0",
-  "license": "BUSL-1.1",
+  "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "build": "rm -rf dist && tsc"
   },
