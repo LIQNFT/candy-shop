@@ -102,7 +102,7 @@ export const Orders: React.FC<OrdersProps> = ({
             return newOrderList;
           });
         })
-        .catch((err) => {
+        .catch((err: Error) => {
           console.info('fetchOrdersByStoreId failed: ', err);
         })
         .finally(() => {

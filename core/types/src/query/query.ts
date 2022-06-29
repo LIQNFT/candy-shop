@@ -24,6 +24,7 @@ export type TradeQuery = {
   offset?: number;
   limit?: number;
   identifiers?: number[];
+  sortBy?: SortBy[] | SortBy;
 };
 
 // GET /api/order/{storeId}
