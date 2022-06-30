@@ -3,7 +3,7 @@
   "version": "0.5.10",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "license": "BUSL-1.1",
+  "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "build": "rm -rf dist && tsc",
     "test": "ts-mocha test/**/*.spec.ts"

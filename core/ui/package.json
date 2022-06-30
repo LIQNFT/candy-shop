@@ -6,7 +6,7 @@
   "module": "dist/index.cjs.js",
   "types": "dist/index.d.ts",
   "author": "LIQNFT",
-  "license": "BUSL-1.1",
+  "license": "SEE LICENSE IN LICENSE",
   "peerDependencies": {
     "react": ">=17",
     "react-dom": ">=17"
