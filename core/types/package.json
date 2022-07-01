@@ -2,6 +2,7 @@
   "name": "@liqnft/candy-shop-types",
   "version": "0.2.10",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "RustySol",
   "license": "SEE LICENSE IN LICENSE",
   "scripts": {

@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es2016",
+    "target": "es6",
     "module": "commonjs",
-    "resolveJsonModule": true,
+    "moduleResolution": "node",
     "declaration": true,
     "outDir": "dist",
     "esModuleInterop": true,
