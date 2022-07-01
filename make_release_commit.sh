@@ -55,7 +55,7 @@ make_commit_mgs() {
     NEWLINE=$'\n'
     commit_title="Bump core "
     commit_content="${NEWLINE}"
-    
+
     if [[ "$type_update" = true ]]
     then
         commit_title="${commit_title}[types] "
@@ -79,6 +79,13 @@ make_commit_mgs() {
     
     commit_title="${commit_title}version"
     git commit -m "${commit_title} ${commit_content}"
+
+    # Add tags
+    if [[ "$ui_update" = true ]]
+    then
+        commit_tag="v$ui_pkg_version"
+        git tag -a commit_tag
+    fi
 }
 
 # Once @liqnft/candy-shop-sdk updated, core/ui will align the dependency as well.

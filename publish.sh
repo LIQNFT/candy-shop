@@ -53,6 +53,8 @@ publish_pkg () {
     fi
     if [[ $1 == "ui" ]]
     then
+        # update version of core/types in ui if there's new ver of @liqnft/candy-shop-types
+        yarn add $TYPE_PKG_NAME@latest --exact
         # update version of core/sdk in ui if there's new ver of @liqnft/candy-shop-sdk
         yarn add $SDK_PKG_NAME@latest --exact
     fi
