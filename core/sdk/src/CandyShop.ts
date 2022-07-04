@@ -187,7 +187,7 @@ export class CandyShop {
     this._candyShopCreatorAddress = candyShopCreatorAddress;
     this._treasuryMint = treasuryMint;
     this._programId = candyShopProgramId;
-    this._env = env;
+    this._env = env ?? 'devnet';
     this._isEnterprise = isEnterprise ? true : false;
     this._version = getCandyShopVersion(candyShopProgramId);
     this._settings = {
