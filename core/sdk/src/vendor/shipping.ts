@@ -33,7 +33,7 @@ export function proceedToBuy(
  * @param {any} params argument to the function to call
  * @param {CandyShopVersion} version version of the candy shop
  * @param {function} v1Func function to call if using v1 candy shop
- * @param {function} v2Func function to call if using v1 candy shop
+ * @param {function} v2Func function to call if using v2 candy shop
  * @return {string} txHash
  */
 // Please feel free to come up with better name :)
