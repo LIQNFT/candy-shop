@@ -55,24 +55,27 @@ import {
 import { CandyShopTrade } from './CandyShopTrade';
 import { configBaseUrl } from './vendor/config';
 import {
-  bidAuction,
   BidAuctionParams,
   bidAuctionV1,
-  buyNowAuction,
+  bidAuction,
   BuyNowAuctionParams,
   buyNowAuctionV1,
+  buyNowAuction,
   CancelAuctionParams,
   cancelAuctionV1,
+  cancelAuction,
   CreateAuctionParams,
   createAuctionV1,
+  createAuction,
   SettleAndDistributeProceedParams,
-  settleAndDistributeProceeds,
   settleAndDistributeProceedsV1,
+  settleAndDistributeProceeds,
   UpdateCandyShopParams,
   updateCandyShopV1,
-  withdrawBid,
+  updateCandyShop,
   WithdrawBidParams,
-  withdrawBidV1
+  withdrawBidV1,
+  withdrawBid
 } from './factory/program';
 
 const Logger = 'CandyShop';
@@ -271,7 +274,7 @@ export class CandyShop {
       program: this.getStaticProgram(wallet)
     };
 
-    const txHash = await supply(updateCandyShopParams, this._version, updateCandyShopV1, this.updateCandyShop);
+    const txHash = await supply(updateCandyShopParams, this._version, updateCandyShopV1, updateCandyShop);
 
     return txHash;
   }
@@ -364,7 +367,6 @@ export class CandyShop {
    */
   public async createAuction(params: CandyShopCreateAuctionParams): Promise<string> {
     const { tokenAccount, tokenMint, startingBid, startTime, biddingPeriod, buyNowPrice, wallet, tickSize } = params;
-
     if (wallet.publicKey.toString() !== this.candyShopCreatorAddress.toString()) {
       throw new CandyShopError(CandyShopErrorType.NonShopOwner);
     }
@@ -409,7 +411,7 @@ export class CandyShop {
       program
     };
 
-    const txHash = await supply(createAuctionParams, this._version, createAuctionV1, this.createAuction);
+    const txHash = await supply(createAuctionParams, this._version, createAuctionV1, createAuction);
 
     return txHash;
   }
@@ -458,7 +460,7 @@ export class CandyShop {
       program
     };
 
-    const txHash = await supply(cancelAuctionParams, this._version, cancelAuctionV1, this.cancelAuction);
+    const txHash = await supply(cancelAuctionParams, this._version, cancelAuctionV1, cancelAuction);
 
     return txHash;
   }
