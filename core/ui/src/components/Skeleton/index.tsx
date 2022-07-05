@@ -1,7 +1,7 @@
 import React from 'react';
 import './index.less';
 
-export const Skeleton = () => {
+export const Skeleton: React.FC = () => {
   return (
     <div className="candy-skeleton">
       <div className="candy-skeleton-container">
