@@ -1,4 +1,4 @@
-import { CandyShopTrade, CandyShopTradeBuyParams, CandyShopVersion } from '@liqnft/candy-shop-sdk';
+import { CandyShopTrade, CandyShopTradeBuyParams } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
@@ -24,7 +24,6 @@ export interface BuyModalProps {
   candyShopProgramId: web3.PublicKey;
   connection: web3.Connection;
   isEnterprise: boolean;
-  candyShopVersion: CandyShopVersion;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
   sellerUrl?: string;
@@ -40,7 +39,6 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   candyShopProgramId,
   connection,
   isEnterprise,
-  candyShopVersion,
   shopPriceDecimalsMin,
   shopPriceDecimals,
   sellerUrl
