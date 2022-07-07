@@ -10,8 +10,8 @@ import { ShopExchangeInfo, TransactionState } from 'model';
 import React, { useState } from 'react';
 import { ErrorMsgMap, ErrorType, handleError } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
-import BuyModalConfirmed from './BuyModalConfirmed';
-import BuyModalDetail from './BuyModalDetail';
+import { BuyModalConfirmed } from './BuyModalConfirmed';
+import { BuyModalDetail } from './BuyModalDetail';
 import './style.less';
 
 export interface BuyModalProps {

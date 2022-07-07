@@ -20,6 +20,7 @@
   }
 
   &-inner {
+    z-index: 1;
     position: absolute;
     bottom: 125%;
     left: 50%;
@@ -28,10 +29,16 @@
     background-color: @popover-background;
     transition: 0.1s all cubic-bezier(0.05, 1.09, 0.83, 0.67);
     color: #fff;
+    font-weight: 400;
     border-radius: 8px;
     width: max-content;
     max-width: 300px;
     visibility: hidden;
+    font-size: 14px;
+  }
+
+  &-label {
+    display: flex;
   }
 
   &-label::after {

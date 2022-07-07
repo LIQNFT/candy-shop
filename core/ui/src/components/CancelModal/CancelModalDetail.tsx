@@ -1,5 +1,6 @@
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { ExplorerLink } from 'components/ExplorerLink';
+import { NftVerification } from 'components/Tooltip/NftVerification';
 import { Viewer } from 'components/Viewer';
 import { ShopExchangeInfo } from 'model';
 import React from 'react';
@@ -29,7 +30,10 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
       </div>
 
       <div className="candy-cancel-modal-container">
-        <div className="candy-title">{order.name}</div>
+        <div className="candy-cancel-title">
+          <div className="candy-title">{order.name}</div>
+          {order.verifiedNftCollection ? <NftVerification size={24} /> : null}
+        </div>
         <div className="candy-cancel-modal-control">
           <div>
             <div className="candy-label">PRICE</div>

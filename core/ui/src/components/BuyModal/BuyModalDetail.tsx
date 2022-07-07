@@ -1,11 +1,12 @@
+import React, { useEffect, useState } from 'react';
 import { fetchNFTByMintAddress } from '@liqnft/candy-shop-sdk';
 import { Nft, Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { web3 } from '@project-serum/anchor';
 import { NftAttributes } from 'components/NftAttributes';
 import { NftStat } from 'components/NftStat';
+import { NftVerification } from 'components/Tooltip/NftVerification';
 import { Viewer } from 'components/Viewer';
 import { ShopExchangeInfo } from 'model';
-import React, { useEffect, useState } from 'react';
 import { getPrice } from 'utils/getPrice';
 
 export interface BuyModalDetailProps {
@@ -19,7 +20,7 @@ export interface BuyModalDetailProps {
   sellerUrl?: string;
 }
 
-const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
+export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   order,
   buy,
   walletPublicKey,
@@ -30,15 +31,15 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   sellerUrl
 }) => {
   const [loadingNftInfo, setLoadingNftInfo] = useState(false);
-  const [nftInfo, setNftInfo] = useState<Nft | null>(null);
+  const [nftInfo, setNftInfo] = useState<Nft>();
 
   useEffect(() => {
     setLoadingNftInfo(true);
 
     fetchNFTByMintAddress(order.tokenMint)
-      .then((nft) => setNftInfo(nft))
-      .catch((err) => {
-        console.info('fetchNftByMint failed:', err);
+      .then((nft: Nft) => setNftInfo(nft))
+      .catch((error: Error) => {
+        console.info('fetchNftByMint failed:', error);
       })
       .finally(() => {
         setLoadingNftInfo(false);
@@ -53,7 +54,10 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
         <Viewer order={order} />
       </div>
       <div className="candy-buy-modal-container">
-        <div className="candy-title">{order?.name}</div>
+        <div className="candy-buy-modal-title">
+          {order?.name}
+          {order.verifiedNftCollection ? <NftVerification size={24} /> : null}
+        </div>
         <div className="candy-buy-modal-control">
           <div>
             <div className="candy-label">PRICE</div>
@@ -84,5 +88,3 @@ const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
     </>
   );
 };
-
-export default BuyModalDetail;

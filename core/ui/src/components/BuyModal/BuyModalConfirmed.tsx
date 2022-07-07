@@ -19,7 +19,7 @@ interface BuyModalConfirmedProps {
   shopPriceDecimals: number;
 }
 
-const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
+export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
   order,
   txHash,
   walletPublicKey,
@@ -81,5 +81,3 @@ const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
     </div>
   );
 };
-
-export default BuyModalConfirmed;

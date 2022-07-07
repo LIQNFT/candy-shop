@@ -32,7 +32,7 @@ export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ candySho
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Order Detail</h1>
       <OrderDetail
-        tokenMint={'CKon3nX3K3xFAzrp44kxW3RCvMTAU4ChcTswxaYt1BWU'}
+        tokenMint={'5vGqYy1Vqg5a338gSMtBjh8qUumACWZAUVALD9KrHWDi'}
         backUrl={'/'}
         walletConnectComponent={<WalletMultiButton />}
         wallet={wallet}
