@@ -16,6 +16,7 @@ import {
 } from '../../../../vendor';
 import { getBid } from '../../../../vendor/utils/programUtils';
 import { BuyNowAuctionParams } from '../../model';
+import { requestExtraComputeIx } from './requestExtraComputeIx';
 
 export const buyNowAuction = async ({
   candyShop,
@@ -95,6 +96,8 @@ export const buyNowAuction = async ({
   const [bid] = await getBid(auction, buyer.publicKey, program.programId);
 
   const transaction = new Transaction();
+
+  transaction.add(requestExtraComputeIx(400000));
 
   const ix = await program.methods
     .buyNow(

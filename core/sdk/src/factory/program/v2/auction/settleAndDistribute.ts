@@ -17,6 +17,7 @@ import {
   checkSettleParams
 } from '../../../../vendor';
 import { SettleAndDistributeProceedParams } from '../../model';
+import { requestExtraComputeIx } from './requestExtraComputeIx';
 
 export const settleAndDistributeProceeds = async ({
   settler,
@@ -128,6 +129,8 @@ export const settleAndDistributeProceeds = async ({
     .instruction();
 
   let transaction = new Transaction();
+
+  transaction.add(requestExtraComputeIx(400000));
 
   transaction.add(ix1);
   const tx1 = await sendTx(settler, transaction, program);

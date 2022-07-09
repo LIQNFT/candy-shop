@@ -13,6 +13,7 @@
     "@project-serum/anchor": "^0.23.0",
     "@solana/spl-token": "^0.2.0",
     "@solana/wallet-adapter-react": "^0.15.4",
+    "@solana/web3.js": "^1.47.3",
     "axios": "^0.26.1",
     "crc-32": "^1.2.2",
     "idb": "^7.0.1",
