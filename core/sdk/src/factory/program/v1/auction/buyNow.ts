@@ -12,6 +12,7 @@ import {
   treasuryMintIsNative
 } from '../../../../vendor';
 import { getBid } from '../../../../vendor/utils/programUtils';
+import { requestExtraComputeIx } from './requestExtraComputeIx';
 import {
   checkAHFeeAccountBalance,
   checkBidPeriod,
@@ -97,6 +98,8 @@ export const buyNowAuction = async ({
   const [bid] = await getBid(auction, buyer.publicKey, program.programId);
 
   const transaction = new Transaction();
+
+  transaction.add(requestExtraComputeIx(400000));
 
   const ix = await program.methods
     .buyNow(
