@@ -28,7 +28,13 @@ export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ candySho
         />
       </div>
 
-      <Orders wallet={wallet} walletConnectComponent={<WalletMultiButton />} candyShop={candyShop} filters={FILTERS} />
+      <Orders
+        wallet={wallet}
+        walletConnectComponent={<WalletMultiButton />}
+        candyShop={candyShop}
+        filters={FILTERS}
+        shopFilters
+      />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Order Detail</h1>
       <OrderDetail

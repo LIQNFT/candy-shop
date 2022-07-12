@@ -10,27 +10,26 @@ export interface OrderSortBy extends SortBy {}
 
 type attributeType = { [key: string]: string };
 
-export interface OrdersFilterQuery {
-  sortBy?: SortBy | SortBy[];
+interface CommonQuery {
   offset?: number;
   limit?: number;
+}
+
+export interface OrdersFilterQuery extends CommonQuery {
+  sortBy?: SortBy | SortBy[];
   identifiers?: number[];
   sellerAddress?: string;
   attribute?: attributeType | attributeType[];
   candyShopAddress?: string;
+  collectionId?: number;
 }
 
-export type TradeQuery = {
-  offset?: number;
-  limit?: number;
+export interface TradeQuery extends CommonQuery {
   identifiers?: number[];
   sortBy?: SortBy[] | SortBy;
-};
+}
 
-// GET /api/order/{storeId}
-export interface OrderQs {
-  offset?: number;
-  limit?: number;
+export interface OrderQs extends CommonQuery {
   filterArr?: OrderFilter[];
 }
 
@@ -41,19 +40,18 @@ export interface OrderFilter {
   candyShopAddress?: string;
 }
 
-// GET /api/trade/{storeId}
-export interface TradeQs {
-  offset?: number;
-  limit?: number;
-}
+export interface TradeQs extends CommonQuery {}
 
-// GET /api/shop
-export interface ShopQs {
-  offset?: number;
-  limit?: number;
-}
+export interface ShopQs extends CommonQuery {}
 
 export interface ShopStatusQuery {
   walletAddress?: string;
   targets?: ShopStatusType[];
 }
+
+export interface CollectionQuery extends CommonQuery {
+  shopId?: string;
+  name?: string;
+}
+
+export interface ShopQuery extends CommonQuery {}

@@ -14,6 +14,20 @@
     display: flex;
     flex-flow: row wrap;
 
+    .candy-filter-all {
+      padding: 8px 0 8px 8px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      cursor: pointer;
+
+      &.candy-filter-all-active {
+        font-weight: bold;
+        color: @primary-color;
+        background-color: #f4edfe;
+        padding: 8px;
+      }
+    }
+
     > .candy-filter {
       text-align: left;
       width: 220px;
@@ -22,13 +36,20 @@
         list-style-type: none;
 
         li {
-          line-height: 22px;
-          font-size: 14px;
           cursor: pointer;
+          transition: 0.2s all ease-in-out;
+          padding: 8px 0 8px 8px;
+          border-radius: 4px;
+
+          &:hover {
+            background-color: #f4edfe;
+          }
         }
 
         li.selected {
-          font-weight: bold;
+          font-weight: 500;
+          background-color: #f4edfe;
+          color: @primary-color;
         }
       }
 

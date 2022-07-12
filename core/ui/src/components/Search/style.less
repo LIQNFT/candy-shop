@@ -1,0 +1,24 @@
+@import '../../variable.less';
+
+.candy-search {
+  position: relative;
+  margin-bottom: 10px;
+
+  input {
+    padding: 4px 4px 4px 24px;
+    border-radius: 8px;
+    outline: none;
+    border: 2px solid @gray-medium-alt;
+
+    &::placeholder {
+      color: @gray-medium-alt;
+    }
+  }
+
+  svg {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}

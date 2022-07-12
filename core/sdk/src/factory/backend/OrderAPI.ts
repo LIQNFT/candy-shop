@@ -14,7 +14,8 @@ export async function fetchOrdersByStoreId(
     identifiers,
     sellerAddress,
     candyShopAddress,
-    attribute: attributeQuery
+    attribute: attributeQuery,
+    collectionId
   } = ordersFilterQuery;
   let queryParams: any = {};
   let attribute: any = undefined;
@@ -49,7 +50,8 @@ export async function fetchOrdersByStoreId(
         identifier,
         walletAddress: sellerAddress,
         candyShopAddress,
-        attribute
+        attribute,
+        collectionId
       })
     );
   } else {
@@ -58,7 +60,8 @@ export async function fetchOrdersByStoreId(
       status: Status.OPEN,
       walletAddress: sellerAddress,
       candyShopAddress,
-      attribute
+      attribute,
+      collectionId
     });
   }
 

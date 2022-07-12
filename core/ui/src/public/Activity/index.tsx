@@ -10,6 +10,7 @@ import { Trade, ListBase, ShopStatusType, SortBy } from '@liqnft/candy-shop-type
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { useUpdateSubject } from 'public/Context';
 import { ActivityActionsStatus } from 'constant';
+import { removeDuplicate } from 'utils/array';
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -55,16 +56,7 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
           setHasMore(hasMore);
           setTrades((list) => {
             if (firstLoad) return result || [];
-            const duplicateTradeList = [...list, ...result];
-            const newTradeList: Trade[] = [];
-            const memo: any = {};
-
-            duplicateTradeList.forEach((trade) => {
-              if (memo[trade.txHashAtCreation]) return;
-              newTradeList.push(trade);
-              memo[trade.tokenMint] = true;
-            });
-            return newTradeList;
+            return removeDuplicate<Trade>(list, result, 'txHashAtCreation');
           });
         })
         .catch((error: any) => {
