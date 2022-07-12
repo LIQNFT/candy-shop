@@ -54,4 +54,6 @@ export interface CollectionQuery extends CommonQuery {
   name?: string;
 }
 
-export interface ShopQuery extends CommonQuery {}
+export interface ShopQuery extends CommonQuery {
+  name?: string;
+}
