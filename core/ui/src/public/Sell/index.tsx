@@ -78,13 +78,14 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
     }
   }, [wallet?.publicKey, sellUpdateStatus, candyShop]);
 
-  const getShopIdentifiers = useCallback(async (): Promise<string[]> => {
+  const getShopIdentifiers = useCallback(async (): Promise<string[] | undefined> => {
+    if (shop?.allowSellAnyNft !== 0) return undefined;
     return candyShop
       .shopWlNfts()
       .then((nfts: ListBase<WhitelistNft>) =>
         nfts.result.reduce((arr: string[], item: WhitelistNft) => arr.concat(item.identifier), [])
       );
-  }, [candyShop]);
+  }, [candyShop, shop?.allowSellAnyNft]);
 
   const getUserNFTFromBatch = useCallback((batchNFTs: SingleTokenInfo[]) => {
     if (!firstBatchNFTLoaded.current) {
@@ -128,8 +129,10 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
   );
 
   // fetch current wallet nfts when mount and when publicKey was changed.
+  // shopLoading !== LoadStatus.Loaded: make sure API fetchShopByShopAddress response first, then handle progressiveLoadUserNFTs function
+  // TODO: refactor this function to: fetchShopByShopAddress().then(shop => progressiveLoadUserNFTs(shop)).then()
   useEffect(() => {
-    if (!walletPublicKey) {
+    if (!walletPublicKey || shopLoading !== LoadStatus.Loaded) {
       return;
     }
     if (loadingNFTStatus === LoadStatus.ToLoad) {
@@ -148,7 +151,7 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
           setNFTLoadingStatus(LoadStatus.Loaded);
         });
     }
-  }, [candyShop, loadingNFTStatus, walletPublicKey, progressiveLoadUserNFTs]);
+  }, [candyShop, loadingNFTStatus, walletPublicKey, progressiveLoadUserNFTs, shopLoading]);
 
   useEffect(() => {
     if (!walletPublicKey) {

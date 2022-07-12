@@ -1,6 +1,11 @@
 import * as anchor from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { SingleTokenInfo, singleTokenInfoPromise, SingleTokenInfoPromiseParam } from './fetchMetadata';
+import {
+  SingleTokenInfo,
+  singleTokenInfoPromise,
+  SingleTokenInfoPromiseParam,
+  isValidWhitelistNft
+} from './fetchMetadata';
 import { web3 } from '@project-serum/anchor';
 import { deleteCandyShopIDB, retrieveWalletNftFromIDB, storeWalletNftToIDB } from '../../idb';
 import { sleepPromise } from '../utils/promiseUtils';
@@ -47,7 +52,7 @@ export interface CacheNFTParam {
 export const fetchNftsFromWallet = async (
   connection: anchor.web3.Connection,
   walletAddress: anchor.web3.PublicKey,
-  identifiers: string[],
+  identifiers: string[] | undefined,
   fetchNFTBatchParam?: FetchNFTBatchParam,
   cacheNFTParam?: CacheNFTParam
 ): Promise<SingleTokenInfo[]> => {
@@ -132,7 +137,11 @@ const removeOutdatedNftFromIDB = async (
   // Remove nft that token amount is zero by comparing all singleTokenInfoParams
   let removal = [...cachedTokens];
   for (const singleTokenParam of singleTokenInfoParams) {
-    removal = removal.filter((token) => token.tokenAccountAddress !== singleTokenParam.tokenAccountAddress);
+    removal = removal.filter(
+      (token) =>
+        (token.metadata && !isValidWhitelistNft(singleTokenParam.identifiers, token.metadata)) ||
+        token.tokenAccountAddress !== singleTokenParam.tokenAccountAddress
+    );
   }
   if (removal.length > 0) {
     cachedTokens = cachedTokens.filter((token) => !removal.includes(token));
