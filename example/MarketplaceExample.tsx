@@ -8,7 +8,6 @@ import { SortBy } from '../core/types';
 import { Activity, OrderDetail, Orders, Sell, Stat } from '../core/ui/.';
 
 import 'antd/dist/antd.min.css';
-import { TestBuyModal } from './TestBuyModal';
 interface MarketplaceExampleProps {
   candyShop: CandyShop;
 }
@@ -44,8 +43,6 @@ export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ candySho
         wallet={wallet}
         candyShop={candyShop}
       />
-
-      <TestBuyModal candyShop={candyShop} style={{ marginBottom: 30 }} />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Sell</h1>
       <Sell

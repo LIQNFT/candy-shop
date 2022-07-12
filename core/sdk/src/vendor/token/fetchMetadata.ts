@@ -27,7 +27,7 @@ export interface SingleTokenInfo {
 export interface SingleTokenInfoPromiseParam {
   connection: web3.Connection;
   tokenAccountAddress: string;
-  identifiers: string[];
+  identifiers: string[] | undefined;
 }
 
 interface NftMetadataCreator {
@@ -82,7 +82,7 @@ export const singleTokenInfoPromise = async (param: SingleTokenInfoPromiseParam)
     return null;
   }
 
-  if (identifiers.length > 0 && !isValidCollection(identifiers, tokenInfo)) {
+  if (!isValidWhitelistNft(identifiers, tokenInfo)) {
     return null;
   }
   const nftMetaDataInfo = await fetchMetadataInfoByUri(tokenInfo.data.uri);
@@ -158,7 +158,8 @@ const fetchMetadataInfoByUri = async (nftUri: string): Promise<NFTMetadataInfo |
   return nftMetaDataInfo;
 };
 
-const isValidCollection = (identifiers: string[], tokenInfo: Metadata) => {
+export const isValidWhitelistNft = (identifiers: string[] | undefined, tokenInfo: Metadata) => {
+  if (identifiers === undefined) return true;
   const creators = tokenInfo.data.creators?.map((creator) => ({
     address: new web3.PublicKey(creator.address).toString(),
     verified: creator.verified,
