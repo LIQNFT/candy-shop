@@ -21,6 +21,7 @@ function programCommand(name: string) {
       'devnet' //mainnet-beta, testnet, devnet
     )
     .option('-r, --rpc-url <string>', '(optional) Solana mainnet RPC url')
+    .option('-ie, --is-enterprise', '(optional) Indiicates whether shop is enterprise or not')
     .requiredOption('-k, --keypair <path>', 'path to Solana wallet keypair')
     .requiredOption('-v, --version <v1 | v2>', 'version of the program');
 }
@@ -34,7 +35,8 @@ programCommand('sellMany')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl, version } = cmd.opts();
+    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl, version, isEnterprise } =
+      cmd.opts();
 
     const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
@@ -48,7 +50,7 @@ programCommand('sellMany')
       settings: {
         mainnetConnectionUrl: rpcUrl
       },
-      isEnterprise: false
+      isEnterprise: isEnterprise ? true : false
     });
 
     let tokenMints = loadTokenAccountMints(tokenAccountMintList);
@@ -79,7 +81,8 @@ programCommand('cancelMany')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl, version } = cmd.opts();
+    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl, version, isEnterprise } =
+      cmd.opts();
 
     let wallet = loadKey(keypair);
 
@@ -93,7 +96,7 @@ programCommand('cancelMany')
       settings: {
         mainnetConnectionUrl: rpcUrl
       },
-      isEnterprise: false
+      isEnterprise: isEnterprise ? true : false
     });
 
     let tokenMints = loadTokenAccountMints(tokenAccountMintList);
@@ -124,7 +127,8 @@ programCommand('sell')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl, version } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl, version, isEnterprise } =
+      cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -138,7 +142,7 @@ programCommand('sell')
       settings: {
         mainnetConnectionUrl: rpcUrl
       },
-      isEnterprise: false
+      isEnterprise: isEnterprise ? true : false
     });
 
     let tokenAccount = await findAssociatedTokenAddress(
@@ -165,7 +169,8 @@ programCommand('cancel')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl, version } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl, version, isEnterprise } =
+      cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -179,7 +184,7 @@ programCommand('cancel')
       settings: {
         mainnetConnectionUrl: rpcUrl
       },
-      isEnterprise: false
+      isEnterprise: isEnterprise ? true : false
     });
 
     let tokenAccount = await findAssociatedTokenAddress(
@@ -208,8 +213,19 @@ programCommand('buy')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, seller, tokenAccount, tokenAccountMint, treasuryMint, shopCreator, price, rpcUrl, version } =
-      cmd.opts();
+    let {
+      keypair,
+      env,
+      seller,
+      tokenAccount,
+      tokenAccountMint,
+      treasuryMint,
+      shopCreator,
+      price,
+      rpcUrl,
+      version,
+      isEnterprise
+    } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -223,7 +239,7 @@ programCommand('buy')
       settings: {
         mainnetConnectionUrl: rpcUrl
       },
-      isEnterprise: false
+      isEnterprise: isEnterprise ? true : false
     });
 
     const txHash = await candyShop.buy({
@@ -263,7 +279,8 @@ programCommand('createAuction')
       buyNowPrice,
       shopCreator,
       startTime,
-      version
+      version,
+      isEnterprise
     } = cmd.opts();
 
     const wallet = loadKey(keypair);
@@ -278,7 +295,7 @@ programCommand('createAuction')
       settings: {
         mainnetConnectionUrl: rpcUrl
       },
-      isEnterprise: false
+      isEnterprise: isEnterprise ? true : false
     });
 
     let tokenAccount = await findAssociatedTokenAddress(
@@ -308,7 +325,7 @@ programCommand('cancelAuction')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version, isEnterprise } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -322,7 +339,7 @@ programCommand('cancelAuction')
       settings: {
         mainnetConnectionUrl: rpcUrl
       },
-      isEnterprise: false
+      isEnterprise: isEnterprise ? true : false
     });
 
     let tokenAccount = await findAssociatedTokenAddress(
@@ -348,7 +365,8 @@ programCommand('makeBid')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, price, version } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, price, version, isEnterprise } =
+      cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -362,7 +380,7 @@ programCommand('makeBid')
       settings: {
         mainnetConnectionUrl: rpcUrl
       },
-      isEnterprise: false
+      isEnterprise: isEnterprise ? true : false
     });
 
     let tokenAccount = await findAssociatedTokenAddress(
@@ -388,7 +406,7 @@ programCommand('withdrawBid')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version, isEnterprise } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -402,7 +420,7 @@ programCommand('withdrawBid')
       settings: {
         mainnetConnectionUrl: rpcUrl
       },
-      isEnterprise: false
+      isEnterprise: isEnterprise ? true : false
     });
 
     let tokenAccount = await findAssociatedTokenAddress(
@@ -427,7 +445,7 @@ programCommand('buyNow')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version, isEnterprise } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -441,7 +459,7 @@ programCommand('buyNow')
       settings: {
         mainnetConnectionUrl: rpcUrl
       },
-      isEnterprise: false
+      isEnterprise: isEnterprise ? true : false
     });
 
     let tokenAccount = await findAssociatedTokenAddress(
@@ -466,7 +484,7 @@ programCommand('settleAndDistribute')
   .action(async (name, cmd) => {
     console.log(name);
 
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version } = cmd.opts();
+    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version, isEnterprise } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -480,7 +498,7 @@ programCommand('settleAndDistribute')
       settings: {
         mainnetConnectionUrl: rpcUrl
       },
-      isEnterprise: false
+      isEnterprise: isEnterprise ? true : false
     });
 
     let tokenAccount = await findAssociatedTokenAddress(
