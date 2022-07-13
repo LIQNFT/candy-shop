@@ -95,11 +95,9 @@ export const buyNowAuction = async ({
     isNative
   );
 
-  const [bid] = await getBid(auction, buyer.publicKey, program.programId);
-
   const transaction = new Transaction();
 
-  transaction.add(requestExtraComputeIx(400000));
+  transaction.add(requestExtraComputeIx(800_000));
 
   const ix = await program.methods
     .buyNow(

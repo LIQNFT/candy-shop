@@ -97,7 +97,7 @@ export const buyNowAuction = async ({
 
   const transaction = new Transaction();
 
-  transaction.add(requestExtraComputeIx(400000));
+  transaction.add(requestExtraComputeIx(800_000));
 
   const ix = await program.methods
     .buyNow(
