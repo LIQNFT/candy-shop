@@ -12,6 +12,7 @@ import {
 } from '../../../../vendor';
 import { checkAHFeeAccountBalance, checkBidParams } from '../../../../vendor/utils/validationUtils';
 import { BidAuctionParams } from '../../model';
+import { requestExtraComputeIx } from './requestExtraComputeIx';
 
 export const bidAuction = async (params: BidAuctionParams) => {
   const {
@@ -53,6 +54,8 @@ export const bidAuction = async (params: BidAuctionParams) => {
   ]);
 
   const transaction = new Transaction();
+
+  transaction.add(requestExtraComputeIx(1_400_000));
 
   const ix = await program.methods
     .makeBid(bidPrice, bidWalletBump, bidTradeStateBump, escrowPaymentAccountBump)

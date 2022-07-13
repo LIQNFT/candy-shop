@@ -130,7 +130,7 @@ export const settleAndDistributeProceeds = async ({
 
   let transaction = new Transaction();
 
-  transaction.add(requestExtraComputeIx(400000));
+  transaction.add(requestExtraComputeIx(1_400_000));
 
   transaction.add(ix1);
   const tx1 = await sendTx(settler, transaction, program);
