@@ -1,3 +1,5 @@
+@import '../../variable.less';
+
 .candy-powered-by {
   display: block;
   text-align: right;
@@ -8,5 +10,24 @@
   @media only screen and (max-width: 768px) {
     padding-left: 15px;
     padding-right: 15px;
+  }
+}
+
+.candy-powered-by-buy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: @primary-color;
+  font-weight: 600;
+  margin: 0 auto;
+  width: fit-content;
+  margin-top: 10px;
+
+  &:hover {
+    color: @primary-color;
+  }
+
+  svg {
+    margin-left: 8px;
   }
 }

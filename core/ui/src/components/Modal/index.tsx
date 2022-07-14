@@ -6,9 +6,10 @@ export interface ModalProps {
   children: any;
   onCancel: (...args: any) => void;
   width?: number;
+  className?: string;
 }
 
-export const Modal: React.FC<ModalProps> = ({ children, onCancel, width = 1000 }: ModalProps) => {
+export const Modal: React.FC<ModalProps> = ({ children, onCancel, width = 1000, className = '' }: ModalProps) => {
   useEffect(() => {
     window.addEventListener('click', onCancel);
     return window.removeEventListener('click', onCancel);
@@ -16,7 +17,7 @@ export const Modal: React.FC<ModalProps> = ({ children, onCancel, width = 1000 }
 
   return (
     <div
-      className="candy-modal"
+      className={`candy-modal ${className}`}
       onClick={() => {
         onCancel();
       }}

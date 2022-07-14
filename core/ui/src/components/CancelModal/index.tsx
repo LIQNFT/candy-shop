@@ -3,6 +3,7 @@ import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Modal } from 'components/Modal';
+import { PoweredByInBuyModal } from 'components/PoweredBy/PowerByInBuyModal';
 import { Processing } from 'components/Processing';
 import { TIMEOUT_EXTRA_LOADING } from 'constant';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
@@ -36,7 +37,6 @@ export const CancelModal: React.FC<CancelModalProps> = ({
   connection,
   shopAddress,
   candyShopProgramId,
-  candyShopVersion,
   shopPriceDecimalsMin,
   shopPriceDecimals
 }) => {
@@ -72,7 +72,11 @@ export const CancelModal: React.FC<CancelModalProps> = ({
   };
 
   return (
-    <Modal onCancel={onClose} width={state !== TransactionState.DISPLAY ? 600 : 1000}>
+    <Modal
+      className="candy-buy-modal-container"
+      onCancel={onClose}
+      width={state !== TransactionState.DISPLAY ? 600 : 1000}
+    >
       {state === TransactionState.DISPLAY && wallet && (
         <CancelModalDetail
           order={order}
@@ -84,6 +88,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
       )}
       {state === TransactionState.PROCESSING && <Processing text="Canceling your sale" />}
       {state === TransactionState.CONFIRMED && <CancelModalConfirm order={order} onCancel={onClose} />}
+      <PoweredByInBuyModal />
     </Modal>
   );
 };
