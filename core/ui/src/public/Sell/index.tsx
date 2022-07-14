@@ -78,6 +78,11 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
     }
   }, [wallet?.publicKey, sellUpdateStatus, candyShop]);
 
+  /**
+   * getShopIdentifiers values:
+   * undefined: that shop allow to sell any NFTs
+   * []: that shop only allow to sell whitelisted NFTs and has empty whitelisted Identifiers
+   * */
   const getShopIdentifiers = useCallback(async (): Promise<string[] | undefined> => {
     if (shop?.allowSellAnyNft !== 0) return undefined;
     return candyShop
