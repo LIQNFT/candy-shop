@@ -3,6 +3,7 @@ import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Modal } from 'components/Modal';
+import { PoweredByInBuyModal } from 'components/PoweredBy/PowerByInBuyModal';
 import { Processing } from 'components/Processing';
 import { TIMEOUT_EXTRA_LOADING } from 'constant';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
@@ -86,7 +87,11 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   };
 
   return (
-    <Modal onCancel={onClose} width={state !== TransactionState.DISPLAY ? 600 : 1000}>
+    <Modal
+      className="candy-buy-modal-container"
+      onCancel={onClose}
+      width={state !== TransactionState.DISPLAY ? 600 : 1000}
+    >
       <div className="candy-buy-modal">
         {state === TransactionState.DISPLAY && (
           <BuyModalDetail
@@ -113,6 +118,8 @@ export const BuyModal: React.FC<BuyModalProps> = ({
           />
         )}
       </div>
+
+      <PoweredByInBuyModal />
     </Modal>
   );
 };
