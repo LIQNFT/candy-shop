@@ -11,7 +11,6 @@ export interface CandyShop {
   decimals: number;
   logoURI: string;
   txHashAtCreation: string;
-  hasWhitelist: number;
   allowSellAnyNft: number;
   imageUrl: string;
   websiteUrl: string;
