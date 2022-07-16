@@ -16,6 +16,7 @@ interface CollectionFilterProps {
   selectedManual?: CollectionFilterType;
   shopId?: string;
   showAllFilters: boolean;
+  search?: boolean;
 }
 
 const Logger = 'CandyShopUI/Collection';
@@ -28,7 +29,8 @@ export const CollectionFilter: React.FC<CollectionFilterProps> = ({
   filters,
   selectedManual,
   shopId,
-  showAllFilters
+  showAllFilters,
+  search
 }) => {
   const [options, setOptions] = useState<NftCollection[]>([]);
   const [offset, setOffset] = useState<number>(0);
@@ -107,9 +109,9 @@ export const CollectionFilter: React.FC<CollectionFilterProps> = ({
   if (Array.isArray(filters)) {
     return (
       <>
-        <div className="candy-filter-title">By Collection</div>
+        <div className="candy-filter-subtitle">Collections</div>
         <ul>
-          <Search onSearch={onSearch} placeholder="Search collections" />
+          {search && <Search onSearch={onSearch} placeholder="Search collections" />}
           {selectedManual ? (
             <div className="candy-filter-selected-name">
               {selectedManual.name}
@@ -141,8 +143,8 @@ export const CollectionFilter: React.FC<CollectionFilterProps> = ({
 
   return (
     <div className="candy-collection-filter">
-      <div className="candy-filter-title">By Collection</div>
-      <Search onSearch={onSearch} placeholder="Search collections" />
+      <div className="candy-filter-subtitle">Collections</div>
+      {search && <Search onSearch={onSearch} placeholder="Search collections" />}
       {selected ? (
         <div className="candy-filter-selected-name">
           {selected.name}

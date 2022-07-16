@@ -44,16 +44,14 @@
     flex-flow: row wrap;
 
     .candy-filter-all {
-      padding: 8px 0 8px 8px;
-      border-radius: 4px;
-      margin-bottom: 20px;
+      padding: 4px 8px;
+      margin-bottom: 15px;
       cursor: pointer;
 
       &.candy-filter-all-active {
         font-weight: bold;
         color: @primary-color;
         background-color: #f4edfe;
-        padding: 8px;
       }
     }
 
@@ -67,12 +65,7 @@
         li {
           cursor: pointer;
           transition: 0.2s all ease-in-out;
-          padding: 8px 0 8px 8px;
-          border-radius: 4px;
-
-          &:hover {
-            background-color: #f4edfe;
-          }
+          padding: 4px 8px;
         }
 
         li.selected {
@@ -85,8 +78,17 @@
       .candy-filter-title {
         font-weight: bold;
         font-size: 16px;
+        line-height: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid @gray-medium-alt;
+        margin-bottom: 15px;
+      }
+
+      .candy-filter-subtitle {
+        font-weight: bold;
+        font-size: 16px;
         line-height: 26px;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
       }
 
       .candy-filter-attribute {
