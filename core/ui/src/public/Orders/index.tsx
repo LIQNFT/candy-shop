@@ -40,6 +40,8 @@ interface OrdersProps {
   candyShop: CandyShop;
   sellerAddress?: string;
   sellerUrl?: string;
+  search?: boolean;
+  filterSearch?: boolean;
 }
 
 /**
@@ -56,7 +58,9 @@ export const Orders: React.FC<OrdersProps> = ({
   sellerAddress,
   shopFilters,
   defaultFilter,
-  sellerUrl
+  sellerUrl,
+  search,
+  filterSearch
 }) => {
   const [sortedByOption, setSortedByOption] = useState(SORT_OPTIONS[0]);
   const [orders, setOrders] = useState<any[]>([]);
@@ -219,7 +223,7 @@ export const Orders: React.FC<OrdersProps> = ({
       <div className="candy-orders-container" style={style}>
         <div className="candy-container">
           <div className="candy-orders-sort candy-orders-sort-right">
-            <Search onSearch={onSearchNft} placeholder="Search NFT name" />
+            {search && <Search onSearch={onSearchNft} placeholder="Search NFTs" />}
             <Dropdown
               items={SORT_OPTIONS}
               selectedItem={sortedByOption}
@@ -251,6 +255,7 @@ export const Orders: React.FC<OrdersProps> = ({
                   selectedManual={collectionFilter}
                   shopId={selectedShop?.candyShopAddress || shopFilter?.shopId}
                   showAllFilters={showAll}
+                  search={filterSearch}
                 />
               )}
               {Boolean(shopFilters) === true && (
@@ -261,6 +266,7 @@ export const Orders: React.FC<OrdersProps> = ({
                   filters={shopFilters}
                   selectedManual={shopFilter}
                   showAllFilters={showAll}
+                  search={filterSearch}
                 />
               )}
 
@@ -296,7 +302,7 @@ export const Orders: React.FC<OrdersProps> = ({
               onSelectItem={(item) => setSortedByOption(item)}
               defaultValue={SORT_OPTIONS[0]}
             />
-            <Search onSearch={onSearchNft} placeholder="Search NFT name" />
+            <Search onSearch={onSearchNft} placeholder="Search NFTs" />
           </div>
           {loading ? <LoadingSkeleton /> : orders.length ? infiniteOrderListView : emptyView}
           <PoweredBy />

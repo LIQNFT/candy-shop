@@ -16,6 +16,7 @@ interface ShopFilterProps {
   filters?: ShopFilterInfo[] | boolean;
   selectedManual?: ShopFilterInfo;
   showAllFilters: boolean;
+  search?: boolean;
 }
 
 const Logger = 'CandyShopUI/ShopFilter';
@@ -27,7 +28,8 @@ export const ShopFilter: React.FC<ShopFilterProps> = ({
   candyShop,
   filters,
   selectedManual,
-  showAllFilters
+  showAllFilters,
+  search
 }) => {
   const [options, setOptions] = useState<CandyShopResponse[]>([]);
   const [offset, setOffset] = useState<number>(0);
@@ -92,8 +94,8 @@ export const ShopFilter: React.FC<ShopFilterProps> = ({
   if (Array.isArray(filters)) {
     return (
       <>
-        <div className="candy-filter-title">By Shop</div>
-        <Search onSearch={onSearch} placeholder="Search shops" />
+        <div className="candy-filter-subtitle">Shops</div>
+        {search && <Search onSearch={onSearch} placeholder="Search shops" />}
         {selected ? (
           <div className="candy-filter-selected-name">
             {selected.candyShopName}
@@ -124,8 +126,8 @@ export const ShopFilter: React.FC<ShopFilterProps> = ({
 
   return (
     <div className="candy-collection-filter">
-      <div className="candy-filter-title">By Shop</div>
-      <Search onSearch={onSearch} placeholder="Search shops" />
+      <div className="candy-filter-subtitle">Shops</div>
+      {search && <Search onSearch={onSearch} placeholder="Search shops" />}
       {selected ? (
         <div className="candy-filter-selected-name">
           {selected.candyShopName}
