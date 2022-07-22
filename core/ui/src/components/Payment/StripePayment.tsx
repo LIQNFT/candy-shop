@@ -24,7 +24,6 @@ const Logger = 'CandyShopUI/StripePayment';
 
 interface StripePaymentProps {
   stripePublicKey: string;
-  shopProgramId: string;
   shopAddress: string;
   walletAddress: string;
   order: Order;
@@ -37,7 +36,6 @@ interface StripePaymentProps {
 
 export const StripePayment: React.FC<StripePaymentProps> = ({
   stripePublicKey,
-  shopProgramId,
   shopAddress,
   walletAddress,
   order,
@@ -52,7 +50,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
   useEffect(() => {
     const params: CreatePaymentParams = {
-      shopProgramId: shopProgramId,
+      shopProgramId: order.programId,
       shopId: shopAddress,
       shopCreatorAddress: order.candyShopCreatorAddress,
       buyerWalletAddress: walletAddress,
@@ -77,7 +75,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         console.error(`${Logger}: createPayment failed, error=`, err);
         notification(err.message, NotificationType.Error, 5);
       });
-  }, [order, paymentPrice, shopAddress, shopProgramId, walletAddress]);
+  }, [order, paymentPrice, shopAddress, walletAddress]);
 
   const onClickedPayCallback = (params: ConfirmStripePaymentParams) => {
     onProcessingPay(BuyModalType.PROCESSING);

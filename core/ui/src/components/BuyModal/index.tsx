@@ -1,4 +1,4 @@
-import { CandyShopTrade, CandyShopTradeBuyParams } from '@liqnft/candy-shop-sdk';
+import { CandyShopTrade, CandyShopTradeBuyParams, getCandyShopSync } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
@@ -10,7 +10,7 @@ import { TIMEOUT_EXTRA_LOADING } from 'constant';
 import { useCandyShopPayContext } from 'contexts/CandyShopPayProvider';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 import { ShopExchangeInfo, BuyModalType, PaymentError } from 'model';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ErrorMsgMap, ErrorType, handleError } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
 import { BuyModalConfirmed } from './BuyModalConfirmed';
@@ -29,7 +29,6 @@ export interface BuyModalProps {
   wallet: AnchorWallet | undefined;
   walletConnectComponent: React.ReactElement;
   exchangeInfo: ShopExchangeInfo;
-  shopAddress: web3.PublicKey;
   candyShopProgramId: web3.PublicKey;
   connection: web3.Connection;
   isEnterprise: boolean;
@@ -44,8 +43,6 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   wallet,
   walletConnectComponent,
   exchangeInfo,
-  shopAddress,
-  candyShopProgramId,
   connection,
   isEnterprise,
   shopPriceDecimalsMin,
@@ -54,12 +51,22 @@ export const BuyModal: React.FC<BuyModalProps> = ({
 }) => {
   const [state, setState] = useState<BuyModalType>(BuyModalType.DISPLAY);
   const [hash, setHash] = useState(''); // txHash
-
-  const timeoutRef = useUnmountTimeout();
-  const stripePublicKey = useCandyShopPayContext()?.stripePublicKey;
   const [processingText, setProcessingText] = useState<ProcessingText>(ProcessingText.BUY);
   const [paymentPrice, setPaymentPrice] = useState<number>();
   const [paymentError, setPaymentError] = useState<PaymentError>();
+
+  const timeoutRef = useUnmountTimeout();
+  const stripePublicKey = useCandyShopPayContext()?.stripePublicKey;
+
+  const shopAddress = useMemo(
+    () =>
+      getCandyShopSync(
+        new web3.PublicKey(order.candyShopCreatorAddress),
+        new web3.PublicKey(order.treasuryMint),
+        new web3.PublicKey(order.programId)
+      )[0].toString(),
+    [order]
+  );
 
   const buy = async () => {
     if (!wallet) {
@@ -75,10 +82,9 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       wallet: wallet,
       seller: new web3.PublicKey(order.walletAddress),
       connection: connection,
-      shopAddress: shopAddress,
-      candyShopProgramId: candyShopProgramId,
+      shopAddress: new web3.PublicKey(shopAddress),
+      candyShopProgramId: new web3.PublicKey(order.programId),
       isEnterprise: isEnterprise,
-      // Replace with the order's
       shopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress),
       shopTreasuryMint: new web3.PublicKey(order.treasuryMint)
     };
@@ -125,11 +131,10 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             shopPriceDecimalsMin={shopPriceDecimalsMin}
             shopPriceDecimals={shopPriceDecimals}
             sellerUrl={sellerUrl}
-            shopProgramId={candyShopProgramId.toString()}
-            shopAddress={shopAddress.toString()}
-            onPayment={() => setState(BuyModalType.PAYMENT)}
+            shopAddress={shopAddress}
             setPaymentPrice={setPaymentPrice}
             paymentPrice={paymentPrice}
+            onPayment={() => setState(BuyModalType.PAYMENT)}
           />
         )}
         {state === BuyModalType.PROCESSING && <Processing text={processingText} />}
@@ -150,8 +155,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
         {state === BuyModalType.PAYMENT && stripePublicKey && wallet?.publicKey && order && paymentPrice && (
           <StripePayment
             stripePublicKey={stripePublicKey}
-            shopProgramId={candyShopProgramId.toString()}
-            shopAddress={shopAddress.toString()}
+            shopAddress={shopAddress}
             walletAddress={wallet.publicKey.toString()}
             order={order}
             shopPriceDecimals={shopPriceDecimals}

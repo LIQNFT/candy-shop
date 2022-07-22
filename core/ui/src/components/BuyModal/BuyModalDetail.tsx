@@ -10,7 +10,6 @@ import { Viewer } from 'components/Viewer';
 
 import { ShopExchangeInfo } from 'model';
 import { getPrice } from 'utils/getPrice';
-import { Processing } from 'components/Processing';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 
 const Logger = 'CandyShopUI/BuyModalDetail';
@@ -23,7 +22,6 @@ export interface BuyModalDetailProps {
   exchangeInfo: ShopExchangeInfo;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
-  shopProgramId: string;
   shopAddress: string;
   sellerUrl?: string;
   onPayment: () => void;
@@ -49,7 +47,6 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   const [nftInfo, setNftInfo] = useState<Nft>();
 
   const [creditCardPayAvailable, setCreditCardPayAvailable] = useState<boolean>(false);
-  const [loadPrice, setLoadPrice] = useState<boolean>(false);
   const [countdownElement, setCountdownElement] = useState<HTMLSpanElement | null>(null);
 
   const timeoutRef = useUnmountTimeout();
@@ -113,10 +110,8 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
       timeoutRef.current = setTimeout(() => {
         countdownElement.innerText = `(${time.toString()}s)`;
         if (time === 0) {
-          setLoadPrice(true);
           getTokenPrice().then(() => {
             time = 3;
-            setLoadPrice(false);
             callback();
           });
         } else {
@@ -148,16 +143,12 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
               {orderPrice ? `${orderPrice} ${exchangeInfo.symbol}` : 'N/A'}
               <span className="candy-price-timeout">
                 {creditCardPayAvailable && paymentPrice ? (
-                  loadPrice ? (
-                    <Processing />
-                  ) : (
-                    <>
-                      <span className="candy-price-usd">&nbsp;| ${paymentPrice} USD</span>
-                      <span ref={(ref) => setCountdownElement(ref)} id="stripe-timeout">
-                        (3s)
-                      </span>
-                    </>
-                  )
+                  <>
+                    <span className="candy-price-usd">&nbsp;| ${paymentPrice} USD</span>
+                    <span ref={(ref) => setCountdownElement(ref)} id="stripe-timeout">
+                      (3s)
+                    </span>
+                  </>
                 ) : null}
               </span>
             </div>
