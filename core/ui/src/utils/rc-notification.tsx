@@ -2,7 +2,7 @@ import React from 'react';
 
 import Notification from 'rc-notification';
 import IconSuccess from 'assets/IconSuccess';
-import IconError from 'assets/IconError';
+import { IconError } from 'assets/IconError';
 
 export enum NotificationType {
   Success = 'Success',

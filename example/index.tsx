@@ -40,7 +40,6 @@ const App = () => {
     return DEFAULT_FORM_CONFIG;
   });
   const [page, setPage] = useState<Page>(window.location.pathname === '/auction' ? Page.Auction : Page.MarketPlace);
-
   const endpoint = useMemo(() => web3.clusterApiUrl(candyForm.network), [candyForm.network]);
   const wallets = useMemo(
     () => [

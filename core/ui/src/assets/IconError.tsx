@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Icon(): JSX.Element {
+export function IconError(): JSX.Element {
   return (
     <svg
       viewBox="64 64 896 896"

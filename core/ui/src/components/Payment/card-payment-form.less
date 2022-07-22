@@ -3,14 +3,64 @@
 .card-payment-modal-container {
   width: 100%;
   height: 100%;
+
+  label {
+    text-align: left;
+  }
 }
 
 .card-payment-modal-button {
-  margin-top: 24px;
+  display: flex;
+  flex-direction: row-reverse;
+
+  button {
+    margin-top: 24px;
+    padding: 10px 60px;
+    border-radius: 40px;
+  }
+}
+.stripe-error-message {
+  color: @lnft-red;
+  display: block;
+  text-align: left;
+  font-size: 12px;
+  width: max-content;
 }
 
-.card-element-base-style {
-  padding-top: 16px;
+.stripe-input {
+  padding: 8px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  height: 40px;
+
+  &.error {
+    border-color: @lnft-red;
+  }
+}
+
+.candy-stripe-input {
+  margin-bottom: 8px;
+
+  input {
+    height: 42px;
+    border: 2px solid #e0e0e0;
+    padding-left: 8px;
+    border-radius: 8px;
+  }
+
+  input::-webkit-input-placeholder {
+    color: @gray-medium-alt;
+  }
+  input::placeholder {
+    color: @gray-medium-alt;
+  }
+
+  &.error {
+    input {
+      border-color: @lnft-red;
+    }
+  }
 }
 
 input,

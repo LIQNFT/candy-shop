@@ -33,7 +33,14 @@ export async function createPaymentIntents(
 export function confirmPaymentIntents(
   axiosInstance: AxiosInstance,
   requestBody: ConfirmStripePaymentParams
-): Promise<SingleBase<PaymentIntentInfo>> {
+): Promise<any> {
   const url = `${PaymentRouter}/confirm`;
+
   return axiosInstance.post(url, requestBody).then((res) => res.data);
+}
+
+export async function fetchTokenPrice(axiosInstance: AxiosInstance, params: PaymentAvailabilityParams): Promise<any> {
+  const { shopId, tokenAccount } = params;
+  const url = `${PaymentRouter}/price/shop/${shopId}/token/${tokenAccount}`;
+  return axiosInstance.get(url).then((res) => res.data);
 }
