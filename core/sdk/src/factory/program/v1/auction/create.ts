@@ -3,7 +3,7 @@ import {
   getAtaForMint,
   getAuctionHouseAuthority,
   sendTx,
-  checkCanExecSettle,
+  checkCreators,
   checkCreationParams
 } from '../../../../vendor';
 import { CreateAuctionParams } from '../../model';
@@ -25,7 +25,7 @@ export const createAuction = async (params: CreateAuctionParams) => {
   } = params;
 
   checkCreationParams(startTime, startingBid, buyNowPrice, tickSize);
-  await checkCanExecSettle(treasuryMint, nftMint, program.provider.connection);
+  await checkCreators(treasuryMint, nftMint, program.provider.connection, false);
 
   const [[auctionEscrow], [tokenAccount], [authority]] = await Promise.all([
     getAtaForMint(nftMint, auction),

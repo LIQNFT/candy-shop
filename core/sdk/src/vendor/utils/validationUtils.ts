@@ -1,7 +1,13 @@
 import { BN, Program, web3 } from '@project-serum/anchor';
 import { getAccount } from '@solana/spl-token';
 import { CandyShopError, CandyShopErrorType } from '../error';
-import { FEE_ACCOUNT_MIN_BAL, NATIVE_CREATORS_LIMIT, SPL_CREATORS_LIMIT } from '../../factory/constants';
+import {
+  FEE_ACCOUNT_MIN_BAL,
+  NATIVE_AUCTION_CREATORS_LIMIT,
+  NATIVE_MARKETPLACE_CREATORS_LIMIT,
+  SPL_AUCTION_CREATORS_LIMIT,
+  SPL_MARKETPLACE_CREATORS_LIMIT
+} from '../../factory/constants';
 import {
   getAuctionData,
   getAuctionHouseProgramAsSigner,
@@ -180,15 +186,22 @@ export const checkSettleParams = async (auction: web3.PublicKey, program: Progra
   }
 };
 
-export const checkCanExecSettle = async (
+export const checkCreators = async (
   treasuryMint: web3.PublicKey,
   nftMint: web3.PublicKey,
-  connection: web3.Connection
+  connection: web3.Connection,
+  isMarketplace: boolean
 ) => {
   const isNative = treasuryMintIsNative(treasuryMint);
   const [nftMetadata] = await getMetadataAccount(nftMint);
   const creators = await getNftCreators(nftMetadata, connection);
-  const creatorsLimit = isNative ? NATIVE_CREATORS_LIMIT : SPL_CREATORS_LIMIT;
+  const creatorsLimit = isMarketplace
+    ? isNative
+      ? NATIVE_MARKETPLACE_CREATORS_LIMIT
+      : SPL_MARKETPLACE_CREATORS_LIMIT
+    : isNative
+    ? NATIVE_AUCTION_CREATORS_LIMIT
+    : SPL_AUCTION_CREATORS_LIMIT;
 
   if (creators.length > creatorsLimit) {
     throw new CandyShopError(CandyShopErrorType.TooManyCreators);
