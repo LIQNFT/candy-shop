@@ -68,7 +68,6 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
           setPaymentId(res.result.paymentId);
         } else {
           console.log(`${Logger}: createPayment failed, reason=`, res.msg);
-          setPaymentId('RANDOM');
           if (res.msg) {
             notification(res.msg, NotificationType.Error, 5);
           }
@@ -77,7 +76,6 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
       .catch((err: Error) => {
         console.error(`${Logger}: createPayment failed, error=`, err);
         notification(err.message, NotificationType.Error, 5);
-        setPaymentId('RANDOM');
       });
   }, [order, paymentPrice, shopAddress, shopProgramId, walletAddress]);
 
