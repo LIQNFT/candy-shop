@@ -47,5 +47,5 @@ export interface Order {
   treasuryMint: string;
   candyShopCreatorAddress: string;
   symbol?: string;
-  decimals?: number;
+  decimals: number;
 }
