@@ -4,7 +4,8 @@ import {
   PaymentIntentInfo,
   PaymentAvailabilityParams,
   CreatePaymentParams,
-  ConfirmStripePaymentParams
+  ConfirmStripePaymentParams,
+  GetQuotePriceQuery
 } from '@liqnft/candy-shop-types';
 
 /**
@@ -36,4 +37,18 @@ export function confirmPaymentIntents(
 ): Promise<SingleBase<PaymentIntentInfo>> {
   const url = `${PaymentRouter}/confirm`;
   return axiosInstance.post(url, requestBody).then((res) => res.data);
+}
+
+export async function fetchTokenFiatMoneyPrice(
+  axiosInstance: AxiosInstance,
+  params: PaymentAvailabilityParams,
+  quotePriceQuery?: GetQuotePriceQuery
+): Promise<SingleBase<string>> {
+  const { shopId, tokenAccount } = params;
+  const { quoteCurrencyType } = quotePriceQuery || {};
+
+  const url = `${PaymentRouter}/price/shop/${shopId}/token/${tokenAccount}${
+    quoteCurrencyType ? `?quoteCurrencyType=${quoteCurrencyType}` : ''
+  }`;
+  return axiosInstance.get(url).then((res) => res.data);
 }

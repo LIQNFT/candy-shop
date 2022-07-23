@@ -14,7 +14,6 @@ interface MarketplaceExampleProps {
 
 export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ candyShop }) => {
   const wallet = useAnchorWallet();
-
   return (
     <div style={{ paddingBottom: 50, textAlign: 'center' }}>
       <div style={{ marginBottom: 50 }}>
