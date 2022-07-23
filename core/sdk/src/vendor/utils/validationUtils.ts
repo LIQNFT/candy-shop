@@ -17,6 +17,11 @@ import {
 } from './programUtils';
 import { safeAwait } from './promiseUtils';
 
+export enum TransactionType {
+  Marketplace = 'Marketplace',
+  Auction = 'Auction'
+}
+
 export const checkTradeStateExist = async (
   connection: web3.Connection,
   sellTradeState: web3.PublicKey,
@@ -190,18 +195,12 @@ export const checkCreators = async (
   treasuryMint: web3.PublicKey,
   nftMint: web3.PublicKey,
   connection: web3.Connection,
-  isMarketplace: boolean
+  transactionType: TransactionType
 ) => {
   const isNative = treasuryMintIsNative(treasuryMint);
   const [nftMetadata] = await getMetadataAccount(nftMint);
   const creators = await getNftCreators(nftMetadata, connection);
-  const creatorsLimit = isMarketplace
-    ? isNative
-      ? NATIVE_MARKETPLACE_CREATORS_LIMIT
-      : SPL_MARKETPLACE_CREATORS_LIMIT
-    : isNative
-    ? NATIVE_AUCTION_CREATORS_LIMIT
-    : SPL_AUCTION_CREATORS_LIMIT;
+  const creatorsLimit = getCreatorLimit(isNative, transactionType);
 
   if (creators.length > creatorsLimit) {
     throw new CandyShopError(CandyShopErrorType.TooManyCreators);
@@ -212,5 +211,16 @@ export const checkAHFeeAccountBalance = async (feeAccount: web3.PublicKey, conne
   const feeAccountInfo = await connection.getAccountInfo(feeAccount);
   if (!feeAccountInfo || feeAccountInfo.lamports < FEE_ACCOUNT_MIN_BAL) {
     throw new CandyShopError(CandyShopErrorType.InsufficientFeeAccountBalance);
+  }
+};
+
+const getCreatorLimit = (isNative: boolean, transactionType: TransactionType) => {
+  switch (transactionType) {
+    case TransactionType.Marketplace:
+      return isNative ? NATIVE_MARKETPLACE_CREATORS_LIMIT : SPL_MARKETPLACE_CREATORS_LIMIT;
+    case TransactionType.Auction:
+      return isNative ? NATIVE_AUCTION_CREATORS_LIMIT : SPL_AUCTION_CREATORS_LIMIT;
+    default:
+      throw new CandyShopError(CandyShopErrorType.NotReachable);
   }
 };
