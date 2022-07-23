@@ -10,5 +10,8 @@ export const DEFAULT_FORM_CONFIG = {
   network: WalletAdapterNetwork.Devnet,
   settings: JSON.stringify({
     mainnetConnectionUrl: 'https://ssc-dao.genesysgo.net/'
+  }),
+  paymentProvider: JSON.stringify({
+    stripePublicKey: 'stripe_pub_key'
   })
 };

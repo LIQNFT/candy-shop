@@ -13,7 +13,8 @@ enum InputType {
   CREATOR_ADDRESS = 'CREATOR_ADDRESS',
   TREASURY_MINT = 'TREASURY_MINT',
   PROGRAM_ID = 'PROGRAM_ID',
-  SETTINGS = 'SETTINGS'
+  SETTINGS = 'SETTINGS',
+  PAYMENT_PROVIDER = 'PAYMENT_PROVIDER'
 }
 
 export const ConfigureShop: React.FC<ConfigureShopProps> = ({ setCandyForm, candyForm }) => {
@@ -27,6 +28,11 @@ export const ConfigureShop: React.FC<ConfigureShopProps> = ({ setCandyForm, cand
       mainnetConnectionUrl: 'https://ssc-dao.genesysgo.net/'
     })
   );
+  const [paymentProviderObject, setPaymentProviderObject] = useState<string>(
+    JSON.stringify({
+      stripePublicKey: 'stripe_pub_key'
+    })
+  );
 
   const onCreateNewCandyShop = () => {
     const data = {
@@ -34,7 +40,8 @@ export const ConfigureShop: React.FC<ConfigureShopProps> = ({ setCandyForm, cand
       treasuryMint: treasuryMintInput,
       programId: programIdInput,
       network: networkInput,
-      settings: settingsInput
+      settings: settingsInput,
+      paymentProvider: paymentProviderObject
     };
     setCandyForm(data);
     localStorage.setItem(LS_CANDY_FORM, JSON.stringify(data));
@@ -46,12 +53,13 @@ export const ConfigureShop: React.FC<ConfigureShopProps> = ({ setCandyForm, cand
   };
 
   const onUpdateFormState = useCallback((data) => {
-    const { treasuryMint, creatorAddress, programId, network, settings } = data;
+    const { treasuryMint, creatorAddress, programId, network, settings, paymentProvider } = data;
     setCreatorAddressInput(creatorAddress);
     setTreasuryMintInput(treasuryMint);
     setProgramIdInput(programId);
     setNetworkInput(network);
     setSettingsInput(settings);
+    setPaymentProviderObject(paymentProvider);
   }, []);
 
   const handleInputChange = (e: any, type: InputType) => {
@@ -70,6 +78,10 @@ export const ConfigureShop: React.FC<ConfigureShopProps> = ({ setCandyForm, cand
       }
       case InputType.SETTINGS: {
         setSettingsInput(e.target.value);
+        break;
+      }
+      case InputType.PAYMENT_PROVIDER: {
+        setPaymentProviderObject(e.target.value);
         break;
       }
       default: {
@@ -149,6 +161,13 @@ export const ConfigureShop: React.FC<ConfigureShopProps> = ({ setCandyForm, cand
           placeholder="Candy Shop Settings"
           value={settingsInput}
           onChange={(e) => handleInputChange(e, InputType.SETTINGS)}
+        />
+        <div style={{ fontSize: 16, lineHeight: '24px', fontWeight: 500 }}>Candy Shop Payment Provider</div>
+        <Input.TextArea
+          rows={3}
+          placeholder="Candy Shop Payment Provider object"
+          value={paymentProviderObject}
+          onChange={(e) => handleInputChange(e, InputType.PAYMENT_PROVIDER)}
         />
       </Modal>
     </>

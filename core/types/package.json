@@ -5,7 +5,7 @@
   "author": "RustySol",
   "license": "SEE LICENSE IN LICENSE",
   "scripts": {
-    "build": "tsc"
+    "build": "rm -rf dist && tsc"
   },
   "devDependencies": {
     "tslint": "^6.1.3",
