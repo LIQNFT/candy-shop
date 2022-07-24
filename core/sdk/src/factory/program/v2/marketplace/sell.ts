@@ -29,7 +29,7 @@ export async function sellNft(params: SellTransactionParams): Promise<string> {
     program
   } = params;
 
-  checkCreators(treasuryMint, tokenAccountMint, program.provider.connection, TransactionType.Marketplace);
+  await checkCreators(treasuryMint, tokenAccountMint, program.provider.connection, TransactionType.Marketplace);
 
   const [tradeState, tradeStateBump] = await getAuctionHouseTradeState(
     auctionHouse,
