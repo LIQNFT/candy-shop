@@ -1,7 +1,13 @@
 import { BN, Program, web3 } from '@project-serum/anchor';
 import { getAccount } from '@solana/spl-token';
 import { CandyShopError, CandyShopErrorType } from '../error';
-import { FEE_ACCOUNT_MIN_BAL, NATIVE_CREATORS_LIMIT, SPL_CREATORS_LIMIT } from '../../factory/constants';
+import {
+  FEE_ACCOUNT_MIN_BAL,
+  NATIVE_AUCTION_CREATORS_LIMIT,
+  NATIVE_MARKETPLACE_CREATORS_LIMIT,
+  SPL_AUCTION_CREATORS_LIMIT,
+  SPL_MARKETPLACE_CREATORS_LIMIT
+} from '../../factory/constants';
 import {
   getAuctionData,
   getAuctionHouseProgramAsSigner,
@@ -10,6 +16,11 @@ import {
   treasuryMintIsNative
 } from './programUtils';
 import { safeAwait } from './promiseUtils';
+
+export enum TransactionType {
+  Marketplace = 'Marketplace',
+  Auction = 'Auction'
+}
 
 export const checkTradeStateExist = async (
   connection: web3.Connection,
@@ -180,15 +191,16 @@ export const checkSettleParams = async (auction: web3.PublicKey, program: Progra
   }
 };
 
-export const checkCanExecSettle = async (
+export const checkCreators = async (
   treasuryMint: web3.PublicKey,
   nftMint: web3.PublicKey,
-  connection: web3.Connection
+  connection: web3.Connection,
+  transactionType: TransactionType
 ) => {
   const isNative = treasuryMintIsNative(treasuryMint);
   const [nftMetadata] = await getMetadataAccount(nftMint);
   const creators = await getNftCreators(nftMetadata, connection);
-  const creatorsLimit = isNative ? NATIVE_CREATORS_LIMIT : SPL_CREATORS_LIMIT;
+  const creatorsLimit = getCreatorLimit(isNative, transactionType);
 
   if (creators.length > creatorsLimit) {
     throw new CandyShopError(CandyShopErrorType.TooManyCreators);
@@ -199,5 +211,16 @@ export const checkAHFeeAccountBalance = async (feeAccount: web3.PublicKey, conne
   const feeAccountInfo = await connection.getAccountInfo(feeAccount);
   if (!feeAccountInfo || feeAccountInfo.lamports < FEE_ACCOUNT_MIN_BAL) {
     throw new CandyShopError(CandyShopErrorType.InsufficientFeeAccountBalance);
+  }
+};
+
+const getCreatorLimit = (isNative: boolean, transactionType: TransactionType) => {
+  switch (transactionType) {
+    case TransactionType.Marketplace:
+      return isNative ? NATIVE_MARKETPLACE_CREATORS_LIMIT : SPL_MARKETPLACE_CREATORS_LIMIT;
+    case TransactionType.Auction:
+      return isNative ? NATIVE_AUCTION_CREATORS_LIMIT : SPL_AUCTION_CREATORS_LIMIT;
+    default:
+      throw new CandyShopError(CandyShopErrorType.NotReachable);
   }
 };
