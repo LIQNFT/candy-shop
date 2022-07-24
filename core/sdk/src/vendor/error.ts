@@ -22,7 +22,8 @@ export enum CandyShopErrorType {
   BuyNowUnavailable = 'BuyNowUnavailable',
   AuctionNotOver = 'AuctionNotOver',
   InsufficientFeeAccountBalance = 'InsufficientFeeAccountBalance',
-  TooManyCreators = 'TooManyCreators'
+  TooManyCreators = 'TooManyCreators',
+  NotReachable = 'NotReachable'
 }
 
 export const CandyShopErrorMsgMap = {
@@ -40,7 +41,7 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.AuctionDoesNotExist]: 'Auction does not exist.',
   [CandyShopErrorType.BidDoesNotExist]: 'Bid does not exist.',
   [CandyShopErrorType.AuctionHasNoBids]: 'Auctions without bids cannot be settled.',
-  [CandyShopErrorType.BuyNowUnavailable]: 'Buy now is unavailabel on this auction.',
+  [CandyShopErrorType.BuyNowUnavailable]: 'Buy now is unavailable on this auction.',
   [CandyShopErrorType.CannotCancel]: 'This auction cannot be cancelled at this time.',
   [CandyShopErrorType.BidTooHigh]:
     'Bid price is higher than auction buy now price. Please call that instruction instead.',
@@ -53,7 +54,8 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.AuctionNotOver]: 'Attempted to settle and auction that is not over.',
   [CandyShopErrorType.InsufficientFeeAccountBalance]:
     'Please contact shop owner to top up shop syrup balance. Min balance requirement 0.05 SOL.',
-  [CandyShopErrorType.TooManyCreators]: 'Nft has too many listed creators.'
+  [CandyShopErrorType.TooManyCreators]: 'Nft has too many listed creators.',
+  [CandyShopErrorType.NotReachable]: 'Unknown error. Please contact CandyShop team for further info.'
 };
 
 export class CandyShopError extends Error {
