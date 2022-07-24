@@ -23,7 +23,8 @@ export enum CandyShopErrorType {
   AuctionNotOver = 'AuctionNotOver',
   InsufficientFeeAccountBalance = 'InsufficientFeeAccountBalance',
   TooManyCreators = 'TooManyCreators',
-  NotReachable = 'NotReachable'
+  NotReachable = 'NotReachable',
+  InvalidNftBasisPoints = 'InvalidNftBasisPoints'
 }
 
 export const CandyShopErrorMsgMap = {
@@ -55,7 +56,8 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.InsufficientFeeAccountBalance]:
     'Please contact shop owner to top up shop syrup balance. Min balance requirement 0.05 SOL.',
   [CandyShopErrorType.TooManyCreators]: 'Nft has too many listed creators.',
-  [CandyShopErrorType.NotReachable]: 'Unknown error. Please contact CandyShop team for further info.'
+  [CandyShopErrorType.NotReachable]: 'Unknown error. Please contact CandyShop team for further info.',
+  [CandyShopErrorType.InvalidNftBasisPoints]: 'Listed seller fee basis points in nft metadata is too high.'
 };
 
 export class CandyShopError extends Error {

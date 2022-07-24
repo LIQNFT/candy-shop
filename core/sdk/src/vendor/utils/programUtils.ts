@@ -290,7 +290,7 @@ export const treasuryMintIsNative = (treasuryMint: web3.PublicKey) => {
   return treasuryMint.equals(WRAPPED_SOL_MINT);
 };
 
-export const getNftCreators = async (metadata: web3.PublicKey, connection: web3.Connection) => {
+const getNftMetadata = async (metadata: web3.PublicKey, connection: web3.Connection) => {
   const metadataObj = await connection.getAccountInfo(metadata);
 
   if (!metadataObj?.data) {
@@ -299,11 +299,27 @@ export const getNftCreators = async (metadata: web3.PublicKey, connection: web3.
 
   const metadataDecoded: Metadata = parseMetadata(Buffer.from(metadataObj.data));
 
-  if (!metadataDecoded || !metadataDecoded.data || !metadataDecoded.data.creators) {
+  if (!metadataDecoded || !metadataDecoded.data) {
+    throw new Error(CandyShopErrorType.InvalidNFTMetadata);
+  }
+
+  return metadataDecoded;
+};
+
+export const getNftCreators = async (metadata: web3.PublicKey, connection: web3.Connection) => {
+  const metadataDecoded = await getNftMetadata(metadata, connection);
+
+  if (!metadataDecoded.data.creators) {
     throw new Error(CandyShopErrorType.InvalidNFTMetadata);
   }
 
   return metadataDecoded.data.creators;
+};
+
+export const getNftBasisPoints = async (metadata: web3.PublicKey, connection: web3.Connection) => {
+  const metadataDecoded = await getNftMetadata(metadata, connection);
+
+  return metadataDecoded.data.sellerFeeBasisPoints;
 };
 
 export const getRemainingAccountsForExecuteSaleIx = async (

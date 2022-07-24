@@ -4,8 +4,10 @@ import {
   getAuctionHouseAuthority,
   sendTx,
   checkCreators,
+  checkNftBasisPoints,
   checkCreationParams,
-  TransactionType
+  TransactionType,
+  getMetadataAccount
 } from '../../../../vendor';
 import { CreateAuctionParams } from '../../model';
 
@@ -28,11 +30,14 @@ export const createAuction = async (params: CreateAuctionParams) => {
   checkCreationParams(startTime, startingBid, buyNowPrice, tickSize);
   await checkCreators(treasuryMint, nftMint, program.provider.connection, TransactionType.Auction);
 
-  const [[auctionEscrow], [tokenAccount], [authority]] = await Promise.all([
+  const [[auctionEscrow], [tokenAccount], [authority], [metadata]] = await Promise.all([
     getAtaForMint(nftMint, auction),
     getAtaForMint(nftMint, seller.publicKey),
-    getAuctionHouseAuthority(seller.publicKey, treasuryMint, program.programId)
+    getAuctionHouseAuthority(seller.publicKey, treasuryMint, program.programId),
+    getMetadataAccount(nftMint)
   ]);
+
+  await checkNftBasisPoints(metadata, program.provider.connection);
 
   const transaction = new Transaction();
 
@@ -44,6 +49,7 @@ export const createAuction = async (params: CreateAuctionParams) => {
       tokenAccount,
       wallet: seller.publicKey,
       nftMint,
+      metadata,
       candyShop,
       authority,
       clock: SYSVAR_CLOCK_PUBKEY

@@ -6,7 +6,8 @@ import {
   NATIVE_AUCTION_CREATORS_LIMIT,
   NATIVE_MARKETPLACE_CREATORS_LIMIT,
   SPL_AUCTION_CREATORS_LIMIT,
-  SPL_MARKETPLACE_CREATORS_LIMIT
+  SPL_MARKETPLACE_CREATORS_LIMIT,
+  MAX_NFT_SFBP
 } from '../../factory/constants';
 import {
   getAuctionData,
@@ -16,6 +17,7 @@ import {
   treasuryMintIsNative
 } from './programUtils';
 import { safeAwait } from './promiseUtils';
+import { getNftBasisPoints } from '.';
 
 export enum TransactionType {
   Marketplace = 'Marketplace',
@@ -222,5 +224,12 @@ const getCreatorLimit = (isNative: boolean, transactionType: TransactionType) =>
       return isNative ? NATIVE_AUCTION_CREATORS_LIMIT : SPL_AUCTION_CREATORS_LIMIT;
     default:
       throw new CandyShopError(CandyShopErrorType.NotReachable);
+  }
+};
+
+export const checkNftBasisPoints = async (metadataKey: web3.PublicKey, connection: web3.Connection) => {
+  const sfbp = await getNftBasisPoints(metadataKey, connection);
+  if (sfbp > MAX_NFT_SFBP) {
+    throw new CandyShopError(CandyShopErrorType.InvalidNftBasisPoints);
   }
 };

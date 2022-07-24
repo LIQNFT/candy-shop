@@ -9,6 +9,7 @@ import {
   treasuryMintIsNative,
   safeAwait,
   checkCreators,
+  checkNftBasisPoints,
   TransactionType
 } from '../../../../vendor';
 import { SellTransactionParams } from '../../model';
@@ -30,6 +31,7 @@ export async function sellNft(params: SellTransactionParams): Promise<string> {
   } = params;
 
   await checkCreators(treasuryMint, tokenAccountMint, program.provider.connection, TransactionType.Marketplace);
+  await checkNftBasisPoints(metadata, program.provider.connection);
 
   const [tradeState, tradeStateBump] = await getAuctionHouseTradeState(
     auctionHouse,

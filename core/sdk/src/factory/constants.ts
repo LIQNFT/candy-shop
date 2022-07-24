@@ -34,3 +34,4 @@ export const SPL_MARKETPLACE_CREATORS_LIMIT = 3;
 export const NATIVE_AUCTION_CREATORS_LIMIT = 5;
 export const SPL_AUCTION_CREATORS_LIMIT = 2;
 export const FETCH_LIST_LIMIT = 10;
+export const MAX_NFT_SFBP = 5000;
