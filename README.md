@@ -4,7 +4,7 @@ Candy Shop is an open source JavaScript library that allows anyone to launch an 
 
 - [Website](https://candy.liqnft.com)
 - [Documentation](https://liqnft.gitbook.io/docs/candy-shop/)
-- [Starter Repo](https://github.com/LIQNFT/candy-machine-v2-with-marketplace) (React app with various shop configurations out of the box)
+- [Starter Repo](https://github.com/LIQNFT/candy-shop-storefront) (React app with various shop configurations out of the box)
 - [Demo](https://master.d22tqykss69onq.amplifyapp.com/) (corresponds to code in `/example` folder)
 - [Support](https://discord.gg/vBBFrRznNK)
 - [Contribute](https://github.com/LIQNFT/candy-shop/wiki/Contribute-to-Candy-Shop)
