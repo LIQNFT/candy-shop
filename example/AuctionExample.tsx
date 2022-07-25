@@ -1,10 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 
 import { CandyShop, SingleTokenInfo } from '../core/sdk/.';
 import { CreateAuction, Auctions } from '../core/ui/.';
+import { AuctionStatus } from '../core/types/.';
 
 import 'antd/dist/antd.min.css';
 
@@ -18,7 +18,6 @@ export const AuctionExample: React.FC<AuctionExampleProps> = ({ candyShop }) => 
   const onCreatedAuctionSuccessCallback = (auctionedToken: SingleTokenInfo) => {
     console.log('AuctionExample: onCreatedAuction, token=', auctionedToken);
   };
-
   return (
     <div style={{ paddingBottom: 50, textAlign: 'center' }}>
       <p style={{ fontSize: 16, fontWeight: 'bold', maxWidth: 1000, margin: '0px auto 30px' }}>
@@ -33,7 +32,14 @@ export const AuctionExample: React.FC<AuctionExampleProps> = ({ candyShop }) => 
       />
 
       <h1 style={{ marginTop: 40, marginBottom: 40 }}>Auctions</h1>
-      <Auctions candyShop={candyShop} wallet={wallet} walletConnectComponent={<WalletMultiButton />} />
+      <Auctions
+        candyShop={candyShop}
+        wallet={wallet}
+        walletConnectComponent={<WalletMultiButton />}
+        statusFilters={AUCTION_FILTER}
+      />
     </div>
   );
 };
+
+const AUCTION_FILTER = [AuctionStatus.CREATED, AuctionStatus.STARTED, AuctionStatus.EXPIRED, AuctionStatus.COMPLETE];

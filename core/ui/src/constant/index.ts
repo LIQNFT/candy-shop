@@ -1,4 +1,4 @@
-import { ShopStatusType } from '@liqnft/candy-shop-types';
+import { AuctionStatus, ShopStatusType } from '@liqnft/candy-shop-types';
 
 export enum LoadStatus {
   ToLoad = 'ToLoad',
@@ -14,3 +14,10 @@ export const OrdersActionsStatus = [ShopStatusType.Order];
 export const SellActionsStatus = [ShopStatusType.Order];
 export const ActivityActionsStatus = [ShopStatusType.Trade];
 export const AuctionActionsStatus = [ShopStatusType.Auction];
+
+export const DEFAULT_LIST_AUCTION_STATUS = [
+  AuctionStatus.CREATED,
+  AuctionStatus.STARTED,
+  AuctionStatus.EXPIRED,
+  AuctionStatus.COMPLETE
+];

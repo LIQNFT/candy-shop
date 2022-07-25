@@ -7,7 +7,7 @@ import { AuctionCard } from 'components/Auction';
 import { Auction, AuctionStatus, ListBase, ShopStatusType } from '@liqnft/candy-shop-types';
 import { Empty } from 'components/Empty';
 import { ORDER_FETCH_LIMIT, BACKGROUND_UPDATE_LIMIT } from 'constant/Orders';
-import { AuctionActionsStatus } from 'constant';
+import { AuctionActionsStatus, DEFAULT_LIST_AUCTION_STATUS } from 'constant';
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { useUpdateSubject } from 'public/Context';
 
@@ -17,16 +17,15 @@ interface AuctionsProps {
   wallet?: AnchorWallet;
   walletConnectComponent: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
   candyShop: CandyShop;
+  statusFilters?: AuctionStatus[];
 }
 
-const LIST_AUCTION_STATUS = [
-  AuctionStatus.CREATED,
-  AuctionStatus.STARTED,
-  AuctionStatus.EXPIRED,
-  AuctionStatus.COMPLETE
-];
-
-export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wallet, candyShop }) => {
+export const Auctions: React.FC<AuctionsProps> = ({
+  walletConnectComponent,
+  wallet,
+  candyShop,
+  statusFilters = DEFAULT_LIST_AUCTION_STATUS
+}) => {
   const [auctionedNfts, setAuctionedNfts] = useState<Auction[]>([]);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
   const [startIndex, setStartIndex] = useState(0);
@@ -50,7 +49,7 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
       fetchAuctionsByShopAddress(candyShop.candyShopAddress.toString(), {
         offset: startIndex,
         limit: ORDER_FETCH_LIMIT,
-        status: LIST_AUCTION_STATUS,
+        status: statusFilters,
         walletAddress: walletKeyString
       })
         .then((data: ListBase<Auction>) => {
@@ -78,7 +77,7 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
           setLoading(false);
         });
     },
-    [candyShop.candyShopAddress, walletKeyString]
+    [candyShop.candyShopAddress, statusFilters, walletKeyString]
   );
 
   useEffect(() => {
@@ -91,36 +90,31 @@ export const Auctions: React.FC<AuctionsProps> = ({ walletConnectComponent, wall
         fetchAuctionsByShopAddress(candyShop.candyShopAddress.toString(), {
           offset: idx * BACKGROUND_UPDATE_LIMIT,
           limit: BACKGROUND_UPDATE_LIMIT,
-          status: LIST_AUCTION_STATUS,
+          status: statusFilters,
           walletAddress: walletKeyString
         })
       )
     )
       .then((responses: ListBase<Auction>[]) => {
         const memo: { [key: string]: true } = {};
-        const newList = responses.reduce((acc: Auction[], res: ListBase<Auction>) => {
-          if (!res.result?.length) return acc;
-          res.result.forEach((auction) => {
-            if (memo[auction.tokenAccount]) return;
-            memo[auction.tokenAccount] = true;
-            acc.push(auction);
-          });
-          return acc;
-        }, []);
 
-        setAuctionedNfts((list: Auction[]) => {
-          list.forEach((auction: Auction) => {
-            if (memo[auction.tokenAccount]) return;
-            newList.push(auction);
-          });
-          return newList;
-        });
+        setAuctionedNfts(
+          responses.reduce((acc: Auction[], res: ListBase<Auction>) => {
+            if (!res.result?.length) return acc;
+            res.result.forEach((auction) => {
+              if (memo[auction.tokenAccount]) return;
+              memo[auction.tokenAccount] = true;
+              acc.push(auction);
+            });
+            return acc;
+          }, [])
+        );
         setStartIndex(batches.length * BACKGROUND_UPDATE_LIMIT);
       })
       .catch((err: any) => {
         console.log(`${Logger} BackgroundUpdate failed, error=`, err);
       });
-  }, [candyShop.candyShopAddress, startIndex, updateStatus, walletKeyString]);
+  }, [candyShop.candyShopAddress, startIndex, statusFilters, updateStatus, walletKeyString]);
 
   useEffect(() => {
     fetchAuctions(0);
