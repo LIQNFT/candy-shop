@@ -98,7 +98,7 @@ export const CollectionFilter: React.FC<CollectionFilterProps> = ({
     if (!Array.isArray(filters)) return [];
     if (!keyword) return filters;
 
-    const keywordList = keyword.split(' ');
+    const keywordList = keyword.toLowerCase().split(' ');
     return filters.filter((item) => {
       const name = (item.name as string).toLowerCase();
       return keywordList.some((word) => name.includes(word));
