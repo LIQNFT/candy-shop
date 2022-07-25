@@ -302,7 +302,7 @@ export const Orders: React.FC<OrdersProps> = ({
               onSelectItem={(item) => setSortedByOption(item)}
               defaultValue={SORT_OPTIONS[0]}
             />
-            <Search onSearch={onSearchNft} placeholder="Search NFTs" />
+            {search && <Search onSearch={onSearchNft} placeholder="Search NFTs" />}
           </div>
           {loading ? <LoadingSkeleton /> : orders.length ? infiniteOrderListView : emptyView}
           <PoweredBy />
