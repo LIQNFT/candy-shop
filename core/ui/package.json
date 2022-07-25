@@ -1,6 +1,6 @@
 {
   "name": "@liqnft/candy-shop",
-  "version": "0.5.12",
+  "version": "0.5.13",
   "description": "Your own decentralized and escrowless marketplace in minutes",
   "main": "dist/index.es.js",
   "module": "dist/index.cjs.js",
