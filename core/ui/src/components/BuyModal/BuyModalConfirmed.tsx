@@ -1,12 +1,12 @@
 import React from 'react';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
-
 import { web3 } from '@project-serum/anchor';
 import { formatDate } from 'utils/timer';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { LiqImage } from 'components/LiqImage';
-import IconTick from 'assets/IconTick';
-import { ShopExchangeInfo } from 'model';
+import { IconTick } from 'assets/IconTick';
+import { IconError } from 'assets/IconError';
+import { ShopExchangeInfo, PaymentErrorDetails } from 'model';
 import { getPrice } from 'utils/getPrice';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 
@@ -19,7 +19,26 @@ interface BuyModalConfirmedProps {
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
   candyShop: CandyShop;
+  paymentPrice?: number;
+  error?: PaymentErrorDetails;
 }
+
+const PaymentErrorMessage: React.FC<{ error: PaymentErrorDetails }> = ({ error }) => {
+  const { content, moreInfo } = error;
+  return (
+    <>
+      <div>{content}</div>
+      {moreInfo?.content ? (
+        <div>
+          {moreInfo.content}.
+          <a href={moreInfo.link} target="_blank" rel="noreferrer noopener">
+            {moreInfo.linkText}
+          </a>
+        </div>
+      ) : null}
+    </>
+  );
+};
 
 export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
   order,
@@ -29,7 +48,9 @@ export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
   exchangeInfo,
   shopPriceDecimalsMin,
   shopPriceDecimals,
-  candyShop
+  candyShop,
+  paymentPrice,
+  error
 }) => {
   const walletAddress = walletPublicKey?.toBase58();
 
@@ -38,9 +59,14 @@ export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
   return (
     <div className="candy-buy-modal-confirmed">
       <div className="candy-buy-modal-confirmed-header">
-        <IconTick />
-        <div>Transaction Confirmed</div>
+        {error ? <IconError /> : <IconTick />}
+        <div>{error ? 'Transaction could not be completed' : 'Transaction Confirmed'}</div>
       </div>
+      {error ? (
+        <div className="candy-buy-confirmed-error-message">
+          <PaymentErrorMessage error={error} />
+        </div>
+      ) : null}
       <div className="candy-buy-modal-confirmed-container">
         <div className="candy-buy-modal-confirmed-thumbnail">
           <LiqImage src={order?.nftImageLink} alt={order?.name} fit="contain" />
@@ -50,8 +76,11 @@ export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
             <div className="candy-buy-modal-name">{order?.name}</div>
             <div className="candy-buy-modal-ticker">{order?.ticker}</div>
           </div>
-          <div>
+          <div style={{ display: 'flex' }}>
             <div className="candy-buy-modal-price">{orderPrice ? `${orderPrice} ${exchangeInfo.symbol}` : 'N/A'}</div>
+            <span className="candy-payment-confirmed-price">
+              ~$ <span>{paymentPrice} USD</span>
+            </span>
           </div>
         </div>
       </div>
@@ -81,20 +110,28 @@ export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
             )}
           </div>
         </div>
-        <div className="candy-buy-modal-confirmed-item">
-          <div className="candy-label">TRANSACTION HASH</div>
-          <div className="candy-value">
-            <ExplorerLink type="tx" address={txHash} source={candyShop.explorerLink} env={candyShop.env} />
-          </div>
-        </div>
-        <div className="candy-buy-modal-confirmed-item">
-          <div className="candy-label">CONFIRMED ON</div>
-          <div className="candy-value">{formatDate(new Date())}</div>
-        </div>
+        {error ? (
+          <div style={{ width: '100%', height: '40px' }} />
+        ) : (
+          <>
+            <div className="candy-buy-modal-confirmed-item">
+              <div className="candy-label">TRANSACTION HASH</div>
+              <div className="candy-value">
+                <ExplorerLink type="tx" address={txHash} />
+              </div>
+            </div>
+            <div className="candy-buy-modal-confirmed-item">
+              <div className="candy-label">CONFIRMED ON</div>
+              <div className="candy-value">{formatDate(new Date())}</div>
+            </div>
+          </>
+        )}
       </div>
-      <button className="candy-button" onClick={onClose}>
-        Continue Shopping
-      </button>
+      {error ? null : (
+        <button className="candy-button" onClick={onClose}>
+          Continue Shopping
+        </button>
+      )}
     </div>
   );
 };

@@ -34,3 +34,22 @@ export enum NFTPaymentStatus {
   Succeed = 'Succeed',
   Failed = 'Failed'
 }
+
+export enum BuyModalState {
+  DISPLAY,
+  PROCESSING,
+  CONFIRMED,
+  PAYMENT,
+  PAYMENT_ERROR
+}
+
+interface PaymentErrorMoreInfo {
+  content: string;
+  linkText: string;
+  link: string;
+}
+export interface PaymentErrorDetails {
+  title: string;
+  content: string;
+  moreInfo?: PaymentErrorMoreInfo;
+}

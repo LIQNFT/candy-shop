@@ -1,4 +1,5 @@
-import { CandyShop, CandyShopTrade, CandyShopTradeCancelParams, CandyShopVersion } from '@liqnft/candy-shop-sdk';
+import React, { useState } from 'react';
+import { CandyShop, CandyShopTrade, CandyShopTradeCancelParams, CandyShopVersion, getCandyShopSync } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
@@ -8,7 +9,6 @@ import { Processing } from 'components/Processing';
 import { TIMEOUT_EXTRA_LOADING } from 'constant';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 import { ShopExchangeInfo, TransactionState } from 'model';
-import React, { useState } from 'react';
 import { handleError } from 'utils/ErrorHandler';
 import { CancelModalConfirm } from './CancelModalConfirm';
 import { CancelModalDetail } from './CancelModalDetail';
@@ -22,8 +22,6 @@ export interface CancelModalProps {
   wallet: AnchorWallet;
   exchangeInfo: ShopExchangeInfo;
   connection: web3.Connection;
-  shopAddress: web3.PublicKey;
-  candyShopProgramId: web3.PublicKey;
   candyShopVersion: CandyShopVersion;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
@@ -36,14 +34,17 @@ export const CancelModal: React.FC<CancelModalProps> = ({
   wallet,
   exchangeInfo,
   connection,
-  shopAddress,
-  candyShopProgramId,
   shopPriceDecimalsMin,
   shopPriceDecimals,
   candyShop
 }) => {
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
   const timeoutRef = useUnmountTimeout();
+  const shopAddress = getCandyShopSync(
+    new web3.PublicKey(order.candyShopCreatorAddress),
+    new web3.PublicKey(order.treasuryMint),
+    new web3.PublicKey(order.programId)
+  )[0].toString();
 
   const cancel = async () => {
     setState(TransactionState.PROCESSING);
@@ -54,8 +55,8 @@ export const CancelModal: React.FC<CancelModalProps> = ({
       tokenMint: new web3.PublicKey(order.tokenMint),
       price: new BN(order.price),
       wallet: wallet,
-      shopAddress: shopAddress,
-      candyShopProgramId: candyShopProgramId,
+      shopAddress: new web3.PublicKey(shopAddress),
+      candyShopProgramId: new web3.PublicKey(order.programId),
       shopTreasuryMint: new web3.PublicKey(order.treasuryMint),
       shopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress)
     };
