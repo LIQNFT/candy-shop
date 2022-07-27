@@ -1,4 +1,5 @@
 import { Side, Status, ShopStatusType, DropStatus } from '../response';
+import { PaymentCurrencyType } from '../payment';
 
 export interface NftAttributeQuery {
   [trait_type: string]: string;
@@ -74,4 +75,7 @@ export interface DropActivityQuery extends CommonQuery {
 }
 export interface AuctionBidQuery extends CommonQuery {
   orderByArr?: SortBy;
+}
+export interface GetQuotePriceQuery {
+  quoteCurrencyType?: PaymentCurrencyType;
 }

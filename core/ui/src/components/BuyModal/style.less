@@ -1,8 +1,73 @@
+@import '../../variable.less';
+
+#stripe-timeout {
+  font-size: 10px;
+  margin-left: 4px;
+  vertical-align: bottom;
+}
+
+.candy-price-usd {
+  color: @gray-medium;
+  font-weight: 600;
+  font-size: 18px;
+}
+.candy-buy-stripe {
+  .candy-label {
+    margin-top: 20px;
+  }
+
+  .candy-stripe-note {
+    color: @lnft-red;
+  }
+
+  .candy-stripe-terms {
+    margin: 20px 0;
+    a {
+      color: @primary-color;
+    }
+  }
+
+  .candy-stripe-block {
+    border-radius: 16px;
+    background: rgba(236, 68, 47, 0.1);
+    border: 1px solid #ec442f;
+    padding: 20px 25px;
+    margin-bottom: 30px;
+
+    span {
+      font-weight: 600;
+      font-size: 18px;
+      display: block;
+      margin-top: 8px;
+    }
+  }
+
+  .candy-stripe-logo {
+    margin-top: 10px;
+    margin-bottom: 15px;
+    text-align: left;
+  }
+
+  @media @desktopXM {
+    .candy-stripe-block {
+      padding: 5px 10px;
+      margin-bottom: 5px;
+    }
+    .candy-stripe-logo {
+      margin: 0 0 10px;
+    }
+    .candy-stripe-terms {
+      margin: 0;
+    }
+  }
+}
+
 .candy-buy-modal {
   display: flex;
   gap: 24px;
   font-size: 16px;
   line-height: 24px;
+  min-height: 530px;
   align-items: center;
 
   .candy-buy-modal-thumbnail {
@@ -18,26 +83,26 @@
     }
   }
 
+  .candy-buy-modal-title {
+    font-size: 24px;
+    line-height: 34px;
+    font-weight: bold;
+    vertical-align: middle;
+    text-align: left;
+    display: flex;
+    align-items: center;
+
+    .candy-tooltip {
+      display: inline-block;
+      vertical-align: sub;
+      margin-left: 4px;
+    }
+  }
+
   .candy-buy-modal-container {
     flex: 1;
     padding-top: 20px;
     padding-bottom: 20px;
-
-    .candy-buy-modal-title {
-      font-size: 24px;
-      line-height: 34px;
-      font-weight: bold;
-      vertical-align: middle;
-      text-align: left;
-      display: flex;
-      align-items: center;
-
-      .candy-tooltip {
-        display: inline-block;
-        vertical-align: sub;
-        margin-left: 4px;
-      }
-    }
 
     .candy-buy-modal-control {
       display: flex;
@@ -60,6 +125,50 @@
           margin-right: 10px;
         }
       }
+
+      .candy-pay-credit-button {
+        border: 2px solid @primary-color;
+        margin-top: 20px;
+        color: @primary-color;
+        background: #fff;
+        height: 56px;
+        border-radius: 40px;
+        transition: 0.3s all ease-in-out;
+        width: 100%;
+
+        &:hover {
+          opacity: 0.6;
+        }
+
+        &.disabled {
+          border-color: @gray-medium;
+          background: #e0e0e0;
+          pointer-events: none;
+          color: @gray-medium;
+        }
+      }
+
+      .candy-price {
+        display: flex;
+        align-items: center;
+        width: max-content;
+
+        .candy-price-timeout {
+          min-width: 150px;
+        }
+
+        .candy-processing {
+          min-width: 150px;
+          margin: 0;
+          padding-left: 16px;
+
+          .candy-loading {
+            width: 8px;
+            height: 8px;
+            margin: 0;
+          }
+        }
+      }
     }
   }
 
@@ -68,9 +177,22 @@
     font-size: 16px;
     line-height: 24px;
   }
+  .candy-payment-confirmed-price {
+    margin-left: 4px;
+    color: @gray-medium;
+    font-weight: 600;
+    font-size: 14px;
+    > span {
+      font-size: 12px;
+    }
+  }
 
   .candy-buy-modal-confirmed {
     width: 100%;
+
+    .candy-buy-confirmed-error-message {
+      padding: 20px 0;
+    }
 
     &-flex {
       display: flex;

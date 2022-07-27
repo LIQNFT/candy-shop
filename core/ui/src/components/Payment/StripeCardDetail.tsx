@@ -1,17 +1,16 @@
 import './card-payment-form.less';
-import React from 'react';
-import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import React, { useState } from 'react';
+import { useElements, useStripe, CardCvcElement, CardNumberElement, CardExpiryElement } from '@stripe/react-stripe-js';
 import {
   CreatePaymentMethodCardData,
-  CreatePaymentMethodData,
   PaymentMethod,
   PaymentMethodResult,
   StripeCardNumberElementOptions,
-  StripeElementClasses,
-  StripeElementStyle
+  StripeError
 } from '@stripe/stripe-js';
-import { ConfirmStripePaymentParams, PaymentMethodType } from '@liqnft/candy-shop-types';
+import { ConfirmStripePaymentParams } from '@liqnft/candy-shop-types';
 import { LoadingSkeleton } from 'components/LoadingSkeleton';
+import { notification, NotificationType } from 'utils/rc-notification';
 
 const Logger = 'CandyShopUI/CardPaymentModal';
 
@@ -22,82 +21,155 @@ export interface StripeCardDetailProps {
   onClickedPayCallback: (param: ConfirmStripePaymentParams) => void;
 }
 
+enum StripeErrorField {
+  EMAIL = 'email_invalid',
+  NUMBER = 'incomplete_number',
+  EXPIRY = 'incomplete_expiry',
+  CVC = 'incomplete_cvc'
+}
+
 export const StripeCardDetail: React.FC<StripeCardDetailProps> = ({
   paymentId,
   shopAddress,
   tokenAccount,
   onClickedPayCallback
 }) => {
+  const [name, setName] = useState<string>();
+  const [email, setEmail] = useState<string>();
+  const [error, setError] = useState<StripeError>();
+
   const stripe = useStripe();
   const stripeElements = useElements();
 
   if (!stripe || !stripeElements) {
-    console.log(`${Logger}: Loading Stripe.js`);
     return <LoadingSkeleton />;
   }
 
-  const getPaymentMethod = (paymentMethodData: CreatePaymentMethodData): Promise<PaymentMethod> => {
-    return stripe.createPaymentMethod(paymentMethodData).then((result: PaymentMethodResult) => {
-      if (result.error) {
-        throw result.error;
-      }
-      if (!result.paymentMethod) {
-        throw Error('Undefined PaymentMethod');
-      }
-      return result.paymentMethod;
-    });
-  };
-
-  // TODO: Check element change to enable/disable Pay button
-
-  const getConfirmPaymentParams = async () => {
-    const cardPaymentElement = stripeElements.getElement(PaymentMethodType.CARD);
+  const onPay = () => {
+    const cardPaymentElement = stripeElements.getElement('cardNumber');
     if (!cardPaymentElement) {
-      throw Error('Abort submit payment, StripePaymentElement is null');
+      return notification('Abort submit payment, StripePaymentElement is null', NotificationType.Error);
     }
+
     const paymentMethodData: CreatePaymentMethodCardData = {
       type: 'card',
-      card: cardPaymentElement
+      card: cardPaymentElement,
+      billing_details: { name, email }
     };
-    const paymentMethod = await getPaymentMethod(paymentMethodData);
-    const params: ConfirmStripePaymentParams = {
-      paymentId: paymentId,
-      paymentMethodId: paymentMethod.id,
-      shopId: shopAddress,
-      tokenAccount: tokenAccount
-    };
-    return params;
-  };
 
-  const onClickedPay = () => {
-    getConfirmPaymentParams()
-      .then((res: ConfirmStripePaymentParams) => {
-        onClickedPayCallback(res);
+    stripe
+      .createPaymentMethod(paymentMethodData)
+      .then((result: PaymentMethodResult) => {
+        if (result.error) {
+          throw result.error;
+        }
+        if (!result.paymentMethod) {
+          throw Error('Undefined PaymentMethod');
+        }
+        return result.paymentMethod;
       })
-      .catch((err: Error) => {
-        console.log(`${Logger}: getConfirmPaymentParams failed, err=`, err);
+      .then((paymentMethod: PaymentMethod) => {
+        const params: ConfirmStripePaymentParams = {
+          paymentId,
+          paymentMethodId: paymentMethod.id,
+          shopId: shopAddress,
+          tokenAccount
+        };
+        onClickedPayCallback(params);
+      })
+      .catch((error: StripeError) => {
+        console.log(`${Logger}: getConfirmPaymentParams failed, err=`, error);
+        setError(error);
       });
-  };
-
-  // TODO: Customize CardElement styling by overriding stripe's style
-  const cardElementCustomClassName: StripeElementClasses = {
-    base: 'card-element-base-style'
-  };
-
-  const cardElementStyle: StripeElementStyle = {};
-  const cardElementOptions: StripeCardNumberElementOptions = {
-    showIcon: true,
-    classes: cardElementCustomClassName,
-    style: cardElementStyle
   };
 
   return (
     <div className="card-payment-modal-container">
-      <div className="candy-title">Credit Card</div>
-      <CardElement options={cardElementOptions}></CardElement>
-      <button className="candy-button card-payment-modal-button" onClick={onClickedPay}>
-        Pay
-      </button>
+      <label htmlFor="stripe-name">Name</label>
+      <div className="candy-stripe-input">
+        <input
+          id="stripe-name"
+          placeholder={`Enter your name`}
+          onChange={(e: any) => setName(e.target.value)}
+          value={name}
+        />
+      </div>
+
+      <label htmlFor="stripe-email">Email Address</label>
+      <div className={`candy-stripe-input ${error?.code === StripeErrorField.EMAIL ? 'error' : ''}`}>
+        <input
+          id="stripe-email"
+          placeholder={`Enter your email`}
+          onChange={(e: any) => setEmail(e.target.value)}
+          value={email}
+        />
+
+        {error?.code === StripeErrorField.EMAIL ? <span className="stripe-error-message">{error.message}</span> : null}
+      </div>
+      <label htmlFor="stripe-card-number">Credit Card Number*</label>
+      <div className={`stripe-input ${error?.code === StripeErrorField.NUMBER ? 'error' : ''}`}>
+        <CardNumberElement id="stripe-card-number" options={numberOptions} />
+      </div>
+      {error?.code === StripeErrorField.NUMBER ? <span className="stripe-error-message">{error.message}</span> : null}
+
+      <div style={{ display: 'flex' }}>
+        <div style={{ width: '40%', marginRight: '8px' }}>
+          <label htmlFor="stripe-exp">Expiration Date*</label>
+          <div className={`stripe-input ${error?.code === StripeErrorField.EXPIRY ? 'error' : ''}`}>
+            <CardExpiryElement id="stripe-exp" options={expOptions} />
+          </div>
+          {error?.code === StripeErrorField.EXPIRY ? (
+            <span className="stripe-error-message">{error.message}</span>
+          ) : null}
+        </div>
+        <div style={{ flexGrow: 1 }}>
+          <label htmlFor="stripe-cvc">CVC*</label>
+          <div className={`stripe-input ${error?.code === StripeErrorField.CVC ? 'error' : ''}`}>
+            <CardCvcElement id="stripe-cvc" options={cvcOptions} />
+          </div>
+          {error?.code === StripeErrorField.CVC ? <span className="stripe-error-message">{error.message}</span> : null}
+        </div>
+      </div>
+
+      <div className="candy-stripe-terms">
+        By proceeding with this transaction, I agree to the{' '}
+        <a href="https://liqnft.gitbook.io/docs/candy-shop/terms-of-service" target="_blank" rel="noreferrer noopener">
+          CandyShop Terms & Conditions.
+        </a>{' '}
+        I acknowledge that transactions on the blockchain are final and non-refundable.
+      </div>
+      <div className="card-payment-modal-button">
+        <button className="candy-button" onClick={onPay}>
+          Confirm
+        </button>
+      </div>
     </div>
   );
+};
+
+const numberOptions: StripeCardNumberElementOptions = {
+  placeholder: '0000-0000-0000-0000',
+  showIcon: true,
+  style: {
+    base: {
+      fontSize: '16px',
+      padding: '8px'
+    }
+  }
+};
+const expOptions: StripeCardNumberElementOptions = {
+  style: {
+    base: {
+      fontSize: '16px',
+      padding: '8px'
+    }
+  }
+};
+const cvcOptions: StripeCardNumberElementOptions = {
+  style: {
+    base: {
+      fontSize: '16px',
+      padding: '8px'
+    }
+  }
 };
