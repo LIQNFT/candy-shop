@@ -1,4 +1,5 @@
 import { NftAttribute } from '../nft';
+import { PaymentCurrencyType } from '../payment';
 import { Side, Status, ShopStatusType } from '../response';
 
 export interface SortBy {
@@ -57,4 +58,8 @@ export interface CollectionQuery extends CommonQuery {
 
 export interface ShopQuery extends CommonQuery {
   name?: string;
+}
+
+export interface GetQuotePriceQuery {
+  quoteCurrencyType?: PaymentCurrencyType;
 }
