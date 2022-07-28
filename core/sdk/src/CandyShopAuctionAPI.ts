@@ -1,5 +1,5 @@
 import { Auction, AuctionBid, ListBase, SingleBase } from '@liqnft/candy-shop-types';
-import { AuctionQuery, fetchAuctionBid, fetchAuctionsByShop } from './factory/backend';
+import { AuctionQuery, fetchAuctionBid, fetchAuctionHistoryByAddress, fetchAuctionsByShop } from './factory/backend';
 import axiosInstance from './vendor/config';
 
 export function fetchAuctionsByShopAddress(shopId: string, queryDto?: AuctionQuery): Promise<ListBase<Auction>> {
@@ -11,4 +11,8 @@ export function fetchAuctionBidByWalletAddress(
   walletAddress: string
 ): Promise<SingleBase<AuctionBid>> {
   return fetchAuctionBid(axiosInstance, auctionAddress, walletAddress);
+}
+
+export function fetchAuctionHistory(auctionAddress: string): Promise<ListBase<AuctionBid>> {
+  return fetchAuctionHistoryByAddress(axiosInstance, auctionAddress);
 }
