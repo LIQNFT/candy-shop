@@ -1,5 +1,5 @@
 export interface NftCollection {
-  id: number;
+  id: string;
   candyShopAddress: string;
   name: string;
   ticker: string;

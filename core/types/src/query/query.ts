@@ -21,7 +21,7 @@ export interface OrdersFilterQuery extends CommonQuery {
   sellerAddress?: string;
   attribute?: attributeType | attributeType[];
   candyShopAddress?: string;
-  collectionId?: number;
+  collectionId?: string;
   nftName?: string;
 }
 
