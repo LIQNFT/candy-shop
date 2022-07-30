@@ -8,7 +8,7 @@ import { NftStat } from 'components/NftStat';
 import { NftVerification } from 'components/Tooltip/NftVerification';
 import { Viewer } from 'components/Viewer';
 
-import { ShopExchangeInfo } from 'model';
+import { CreditCardPayAvailability, ShopExchangeInfo } from 'model';
 import { getPrice } from 'utils/getPrice';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 
@@ -26,8 +26,8 @@ export interface BuyModalDetailProps {
   candyShop: CandyShop;
   onPayment: () => void;
   setCountdownElement: React.Dispatch<React.SetStateAction<null | HTMLSpanElement>>;
-  paymentPrice: number;
-  creditCardPayAvailable: boolean;
+  paymentPrice?: number;
+  creditCardPayAvailable: CreditCardPayAvailability;
 }
 
 export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
@@ -53,8 +53,8 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   useEffect(() => {
     setLoadingNftInfo(true);
     fetchNFTByMintAddress(order.tokenMint)
-      .then((nft) => setNftInfo(nft))
-      .catch((err) => {
+      .then((nft: Nft) => setNftInfo(nft))
+      .catch((err: Error) => {
         console.info(`${Logger}: fetchNFTByMintAddress failed:`, err);
       })
       .finally(() => {
@@ -63,7 +63,7 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   }, [order.tokenMint]);
 
   const onBuyWithCreditCard = () => {
-    if (!creditCardPayAvailable) return;
+    if (creditCardPayAvailable === CreditCardPayAvailability.Unsupported) return;
     timeoutRef.current && clearTimeout(timeoutRef.current);
     onPayment();
   };
@@ -86,7 +86,7 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
             <div className="candy-price">
               {orderPrice ? `${orderPrice} ${exchangeInfo.symbol}` : 'N/A'}
               <span className="candy-price-timeout">
-                {creditCardPayAvailable && paymentPrice ? (
+                {paymentPrice ? (
                   <>
                     <span className="candy-price-usd">&nbsp;| ${paymentPrice} USD</span>
                     <span ref={setCountdownElement} id="stripe-timeout">
@@ -103,14 +103,16 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
                 Buy Now
               </button>
 
-              <button
-                className={`candy-button candy-pay-credit-button ${
-                  creditCardPayAvailable && paymentPrice ? '' : 'disabled'
-                }`}
-                onClick={onBuyWithCreditCard}
-              >
-                Buy with Credit Card
-              </button>
+              {creditCardPayAvailable !== CreditCardPayAvailability.Unsupported && (
+                <button
+                  className={`candy-button candy-pay-credit-button ${
+                    creditCardPayAvailable !== CreditCardPayAvailability.Disabled && paymentPrice ? '' : 'disabled'
+                  }`}
+                  onClick={onBuyWithCreditCard}
+                >
+                  Buy with Credit Card
+                </button>
+              )}
             </div>
           )}
           {!walletPublicKey && walletConnectComponent}
