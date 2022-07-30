@@ -4,7 +4,7 @@ import { ListBase, NftCollection } from '@liqnft/candy-shop-types';
 import { Processing } from 'components/Processing';
 import { CollectionFilter as CollectionFilterType } from 'model';
 import { Search } from 'components/Search';
-import { removeDuplicate } from 'utils/array';
+import { removeDuplicate } from 'utils/helperFunc';
 import { LoadStatus } from 'constant';
 import '../../style/order-filter.less';
 

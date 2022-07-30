@@ -5,7 +5,7 @@ import { LoadStatus } from 'constant';
 import { ListBase, CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
 import { Processing } from 'components/Processing';
 import { ShopFilter as ShopFilterInfo } from 'model';
-import { removeDuplicate } from 'utils/array';
+import { removeDuplicate } from 'utils/helperFunc';
 
 import '../../style/order-filter.less';
 

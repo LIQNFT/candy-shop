@@ -1,4 +1,4 @@
-import { SingleBase, ListBase, Auction, AuctionBid, AuctionStatus } from '@liqnft/candy-shop-types';
+import { SingleBase, ListBase, Auction, AuctionBid, AuctionStatus, AuctionBidQuery } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
 
@@ -23,17 +23,15 @@ export function fetchAuctionsByShop(
   if (offset !== undefined) {
     queryObj = { offset, limit };
   }
-
   if (status?.length) {
     queryObj = { ...queryObj, status };
   }
-
   if (walletAddress) {
     queryObj = { ...queryObj, walletAddress };
   }
-
   const queryString = qs.stringify(queryObj, { indices: false });
-  return axiosInstance.get<ListBase<Auction>>(`/auction/${shopId}?${queryString}`).then((response) => response.data);
+  const url = `/auction/${shopId}?${queryString}`;
+  return axiosInstance.get<ListBase<Auction>>(url).then((response) => response.data);
 }
 
 export function fetchAuctionBid(
@@ -42,18 +40,31 @@ export function fetchAuctionBid(
   walletAddress: string
 ): Promise<SingleBase<AuctionBid>> {
   console.log(`${Logger}: fetching Auction bid by auctionAddress=${auctionAddress}, walletAddress=${walletAddress}`);
-  return axiosInstance.get(`/auction/${auctionAddress}/wallet/${walletAddress}`).then((res) => res.data);
+  const url = `/auction/${auctionAddress}/wallet/${walletAddress}`;
+  return axiosInstance.get(url).then((res) => res.data);
 }
 
 export function fetchAuction(axiosInstance: AxiosInstance, auctionAddress: string): Promise<SingleBase<Auction>> {
   console.log(`${Logger}: fetching Auction detail, auctionAddress=${auctionAddress}`);
-  return axiosInstance.get(`/auction/${auctionAddress}`).then((res) => res.data);
+  const url = `/auction/${auctionAddress}`;
+  return axiosInstance.get(url).then((res) => res.data);
 }
 
 export function fetchAuctionHistoryByAddress(
   axiosInstance: AxiosInstance,
-  auctionAddress: string
+  auctionAddress: string,
+  auctionBidQuery?: AuctionBidQuery
 ): Promise<ListBase<AuctionBid>> {
-  console.log(`${Logger}: fetching Auction bid history by auctionAddress=`, auctionAddress);
-  return axiosInstance.get(`/auction/history/${auctionAddress}`).then((res) => res.data);
+  let queryString = '';
+
+  if (auctionBidQuery) {
+    if (auctionBidQuery.orderByArr) {
+      queryString = qs.stringify({ ...auctionBidQuery, orderByArr: JSON.stringify(auctionBidQuery.orderByArr) });
+    } else {
+      queryString = qs.stringify(auctionBidQuery);
+    }
+  }
+  console.log(`${Logger}: fetching Auction bid history by auctionAddress=`, auctionAddress, `query=`, queryString);
+  const url = `/auction/history/${auctionAddress}?${queryString}`;
+  return axiosInstance.get(url).then((res) => res.data);
 }

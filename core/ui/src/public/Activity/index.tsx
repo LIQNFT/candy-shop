@@ -10,7 +10,7 @@ import { Trade, ListBase, ShopStatusType, SortBy } from '@liqnft/candy-shop-type
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { useUpdateSubject } from 'public/Context/CandyShopDataValidator';
 import { ActivityActionsStatus } from 'constant';
-import { removeDuplicate } from 'utils/array';
+import { removeDuplicate, EMPTY_FUNCTION } from 'utils/helperFunc';
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -25,9 +25,6 @@ interface ActivityProps {
 }
 
 const LIMIT = 10;
-const DO_NOTHING_FUNC = () => {
-  // this prevent double call api transaction in useEffect and infinity lib
-};
 
 const Logger = 'CandyShopUI/Activity';
 
@@ -103,7 +100,7 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
 
         <InfiniteScroll
           dataLength={trades.length}
-          next={offset === 0 ? DO_NOTHING_FUNC : getTrades(offset, LIMIT)}
+          next={offset === 0 ? EMPTY_FUNCTION : getTrades(offset, LIMIT)}
           loader={<Processing />}
           hasMore={hasMore}
         >

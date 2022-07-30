@@ -60,3 +60,6 @@ export interface ShopQuery extends CommonQuery {
 }
 
 export interface DropQuery extends CommonQuery {}
+export interface AuctionBidQuery extends CommonQuery {
+  orderByArr?: SortBy;
+}

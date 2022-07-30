@@ -23,7 +23,7 @@ import { ShopFilter as ShopFilterComponent } from 'components/ShopFilter';
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { useUpdateSubject } from 'public/Context/CandyShopDataValidator';
 import { CollectionFilter, ShopFilter, OrderDefaultFilter } from 'model';
-import { removeDuplicate } from 'utils/array';
+import { removeDuplicate } from 'utils/helperFunc';
 import { OrdersActionsStatus } from 'constant';
 import { ORDER_FETCH_LIMIT, SORT_OPTIONS } from 'constant/Orders';
 import './index.less';

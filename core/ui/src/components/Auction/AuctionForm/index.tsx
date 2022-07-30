@@ -9,6 +9,7 @@ import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 
 import './style.less';
+import { EMPTY_FUNCTION } from 'utils/helperFunc';
 
 interface AuctionFormProps {
   onSubmit: (...args: any) => void;
@@ -304,7 +305,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
               id="auctionClockFormat"
               name="auctionClockFormat"
               onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Clock format is required.')}
-              onChange={DO_NOTHING}
+              onChange={EMPTY_FUNCTION}
             />
           </div>
         </div>
@@ -318,10 +319,6 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
       </div>
     </form>
   );
-};
-
-const DO_NOTHING = () => {
-  //
 };
 
 const PERIODS = [

@@ -3,8 +3,8 @@ import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 
 import { CandyShop, SingleTokenInfo } from '../core/sdk/.';
-import { CreateAuction, Auctions } from '../core/ui/.';
-import { AuctionStatus } from '../core/types/.';
+import { CreateAuction, Auctions, AuctionActivity } from '../core/ui/.';
+import { AuctionStatus, SortBy } from '../core/types/.';
 
 import 'antd/dist/antd.min.css';
 
@@ -38,8 +38,17 @@ export const AuctionExample: React.FC<AuctionExampleProps> = ({ candyShop }) => 
         walletConnectComponent={<WalletMultiButton />}
         statusFilters={AUCTION_FILTER}
       />
+
+      <h1 style={{ marginTop: 40, marginBottom: 40 }}>Auction Activities</h1>
+      <AuctionActivity
+        candyShop={candyShop}
+        auctionAddress="91cr87Pib1ue3obYrZnDmzsa4KAok6UvRFi2F2c6LxQa"
+        orderBy={AUCTION_ORDER}
+      />
     </div>
   );
 };
+
+const AUCTION_ORDER: SortBy = { column: 'price', order: 'desc' };
 
 const AUCTION_FILTER = [AuctionStatus.CREATED, AuctionStatus.STARTED, AuctionStatus.EXPIRED, AuctionStatus.COMPLETE];
