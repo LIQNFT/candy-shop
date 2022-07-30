@@ -8,7 +8,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { Trade, ListBase, ShopStatusType, SortBy } from '@liqnft/candy-shop-types';
 import { useValidateStatus } from 'hooks/useValidateStatus';
-import { useUpdateSubject } from 'public/Context';
+import { useUpdateSubject } from 'public/Context/CandyShopDataValidator';
 import { ActivityActionsStatus } from 'constant';
 import { removeDuplicate } from 'utils/array';
 
@@ -36,7 +36,7 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [offset, setOffset] = useState<number>(0);
 
-  useUpdateSubject(ShopStatusType.Trade);
+  useUpdateSubject({ subject: ShopStatusType.Trade, candyShopAddress: candyShop.candyShopAddress });
   const updateActivityStatus = useValidateStatus(ActivityActionsStatus);
 
   const getTrades = useCallback(

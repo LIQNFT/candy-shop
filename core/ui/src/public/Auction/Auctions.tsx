@@ -9,7 +9,7 @@ import { Empty } from 'components/Empty';
 import { ORDER_FETCH_LIMIT, BACKGROUND_UPDATE_LIMIT } from 'constant/Orders';
 import { AuctionActionsStatus, DEFAULT_LIST_AUCTION_STATUS } from 'constant';
 import { useValidateStatus } from 'hooks/useValidateStatus';
-import { useUpdateSubject } from 'public/Context';
+import { useUpdateSubject } from 'public/Context/CandyShopDataValidator';
 
 const Logger = 'CandyShopUI/Auctions';
 
@@ -31,7 +31,7 @@ export const Auctions: React.FC<AuctionsProps> = ({
   const [startIndex, setStartIndex] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
 
-  useUpdateSubject(ShopStatusType.Auction, candyShop.candyShopAddress);
+  useUpdateSubject({ subject: ShopStatusType.Auction, candyShopAddress: candyShop.candyShopAddress });
   const updateStatus = useValidateStatus(AuctionActionsStatus);
   const updateStatusRef = useRef<number>(updateStatus);
 

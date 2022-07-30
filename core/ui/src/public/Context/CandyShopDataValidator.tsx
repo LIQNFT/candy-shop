@@ -23,6 +23,7 @@ interface ContextData {
   candyShopAddress?: web3.PublicKey;
   setCandyShopAddress: Dispatch<SetStateAction<web3.PublicKey | undefined>>;
   setSubjects: Dispatch<SetStateAction<any>>;
+  setWalletAddress: Dispatch<SetStateAction<string | undefined>>;
 }
 
 interface CandyProviderProps {
@@ -35,6 +36,7 @@ export const CandyContext = createContext<ContextData | null>(null);
 
 export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children }) => {
   const [candyShopAddress, setCandyShopAddress] = useState<web3.PublicKey>();
+  const [walletAddress, setWalletAddress] = useState<string>();
   /**
    * subject will be increase when some components need to check status is rendered on UI.
    * if subject value is 0: it means we don't need to check status for that subject.
@@ -43,7 +45,8 @@ export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children 
   const [subjects, setSubjects] = useState<Subject>({
     [ShopStatusType.Order]: 0,
     [ShopStatusType.Trade]: 0,
-    [ShopStatusType.Auction]: 0
+    [ShopStatusType.Auction]: 0,
+    [ShopStatusType.UserNft]: 0
   });
 
   const polling = useCallback(
@@ -55,7 +58,10 @@ export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children 
       }
 
       if (targets.length === 0) return;
-      fetchShopStatusByShopAddress(candyShopAddress, { targets })
+      fetchShopStatusByShopAddress(candyShopAddress, {
+        targets,
+        walletAddress
+      })
         .then((res: SingleBase<ShopStatus[]>) => {
           if (res.result) {
             for (const shopStatus of res.result) {
@@ -75,7 +81,7 @@ export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children 
           console.log(`${Logger}: fetchShopStatus failed, error=`, err);
         });
     },
-    [subjects]
+    [subjects, walletAddress]
   );
 
   // polling update shop content
@@ -88,7 +94,7 @@ export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children 
   );
 
   return (
-    <CandyContext.Provider value={{ candyShopAddress, setCandyShopAddress, setSubjects }}>
+    <CandyContext.Provider value={{ candyShopAddress, setCandyShopAddress, setSubjects, setWalletAddress }}>
       {children}
     </CandyContext.Provider>
   );
@@ -111,7 +117,13 @@ export const useUpdateCandyShopContext: (candyShopAddress?: web3.PublicKey) => C
   return context;
 };
 
-export const useUpdateSubject = (subject: ShopStatusType, candyShopAddress?: web3.PublicKey): void => {
+interface UpdateSubjectProps {
+  subject: ShopStatusType;
+  candyShopAddress?: web3.PublicKey;
+  walletAddress?: string;
+}
+
+export const useUpdateSubject = ({ subject, candyShopAddress }: UpdateSubjectProps): void => {
   const { setSubjects } = useUpdateCandyShopContext(candyShopAddress);
 
   useEffect(() => {
@@ -122,4 +134,15 @@ export const useUpdateSubject = (subject: ShopStatusType, candyShopAddress?: web
       setSubjects((obj: Subject) => ({ ...obj, [subject]: (obj[subject] || 0) - 1 }));
     };
   }, [setSubjects, subject]);
+};
+
+export const useUpdateWalletAddress = (walletAddress?: string): void => {
+  const { setWalletAddress } = useUpdateCandyShopContext();
+
+  useEffect(() => {
+    if (!walletAddress) return;
+
+    setWalletAddress(walletAddress);
+    return () => setWalletAddress(undefined);
+  }, [setWalletAddress, walletAddress]);
 };
