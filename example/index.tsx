@@ -47,7 +47,6 @@ const App = () => {
   const [candyForm, setCandyForm] = useState(() => {
     const formLocalStorage = localStorage.getItem(LS_CANDY_FORM);
     if (formLocalStorage) {
-      console.log('debugger: formLocalStorage=', JSON.parse(formLocalStorage));
       return JSON.parse(formLocalStorage);
     }
     return DEFAULT_FORM_CONFIG;

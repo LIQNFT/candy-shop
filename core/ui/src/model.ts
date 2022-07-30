@@ -43,6 +43,12 @@ export enum BuyModalState {
   PAYMENT_ERROR
 }
 
+export enum CreditCardPayAvailability {
+  Unsupported = 'Unsupported',
+  Supported = 'Supported',
+  // Not enough balance
+  Disabled = 'Disabled'
+}
 interface PaymentErrorMoreInfo {
   content: string;
   linkText: string;

@@ -82,7 +82,6 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
     onProcessingPay(BuyModalState.PROCESSING);
     CandyShopPay.confirmPayment(params)
       .then((res: SingleBase<PaymentIntentInfo>) => {
-        console.log('debugger: confirmPayment res=', res);
         if (res.success && res.result) {
           onProcessingPay(BuyModalState.CONFIRMED);
           console.log(`${Logger}: confirmPayment success=`, res.result);
@@ -99,7 +98,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
       })
       .catch((err: any) => {
         onProcessingPay(BuyModalState.PAYMENT, err as PaymentErrorDetails);
-        console.log(`${Logger}: handleCreatePayment failed, err=`, err);
+        console.log(`${Logger}: confirmPayment failed, err=`, err);
         notification(err.message, NotificationType.Error, 5);
       });
   };

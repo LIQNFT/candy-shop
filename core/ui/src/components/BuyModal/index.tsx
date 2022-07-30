@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CandyShopPay, CandyShopTrade, CandyShopTradeBuyParams, getCandyShopSync } from '@liqnft/candy-shop-sdk';
-import { Order as OrderSchema, PaymentCurrencyType, SingleBase } from '@liqnft/candy-shop-types';
+import { Order as OrderSchema, PaymentCurrencyType, PaymentErrorName } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Modal } from 'components/Modal';
@@ -8,7 +8,7 @@ import { StripePayment } from 'components/Payment';
 import { PoweredByInBuyModal } from 'components/PoweredBy/PowerByInBuyModal';
 import { Processing } from 'components/Processing';
 import { useCandyShopPayContext } from 'contexts/CandyShopPayProvider';
-import { ShopExchangeInfo, BuyModalState, PaymentErrorDetails } from 'model';
+import { ShopExchangeInfo, BuyModalState, PaymentErrorDetails, CreditCardPayAvailability } from 'model';
 import { ErrorMsgMap, ErrorType, handleError } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
 import { BuyModalConfirmed } from './BuyModalConfirmed';
@@ -56,7 +56,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   const [processingText, setProcessingText] = useState<ProcessingTextType>(ProcessingTextType.General);
   const [paymentPrice, setPaymentPrice] = useState<number>();
   const [paymentError, setPaymentError] = useState<PaymentErrorDetails>();
-  const [creditCardPayAvailable, setCreditCardPayAvailable] = useState<boolean>();
+  const [creditCardPayAvailable, setCreditCardPayAvailable] = useState<CreditCardPayAvailability>();
   const [countdownElement, setCountdownElement] = useState<HTMLSpanElement | null>(null);
   const timeoutFetchPrice = useRef<NodeJS.Timeout>();
 
@@ -122,37 +122,72 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       setPaymentError(error);
       return;
     }
-
     if (type === BuyModalState.PAYMENT) setState(BuyModalState.PAYMENT);
   };
 
-  const getFiatMoneyPrice = useCallback(() => {
-    return CandyShopPay.getTokenFiatMoneyPrice(
+  // Aggregate checkPaymentAvailability and getTokenFiatMoneyPrice
+  const getPaymentDetail = useCallback(async () => {
+    if (!stripePublicKey) {
+      throw Error('Stripe public key is not provided');
+    }
+    // Prevent to fetch again when updating fiat price
+    if (creditCardPayAvailable === undefined) {
+      const paymentAvailableRes = await CandyShopPay.checkPaymentAvailability({
+        shopId: shopAddress,
+        tokenAccount: order.tokenAccount
+      });
+      // Throw Error to caller if failed
+      if (!paymentAvailableRes.success) {
+        const error = new Error(paymentAvailableRes.msg);
+        error.name = paymentAvailableRes.result;
+        throw error;
+      }
+    }
+    const fiatPriceRes = await CandyShopPay.getTokenFiatMoneyPrice(
       { shopId: shopAddress, tokenAccount: order.tokenAccount },
       { quoteCurrencyType: PaymentCurrencyType.USD }
-    )
-      .then((res: SingleBase<string>) => {
-        if (res.success) {
-          setPaymentPrice(Number(res.result));
-        } else {
-          console.log(`${Logger}: getTokenFiatMoneyPrice failed: `, res);
-          res.msg && notification(res.msg, NotificationType.Error);
-          setPaymentPrice(0);
-        }
-      })
-      .catch((err: Error) => {
-        console.log(`${Logger}: getTokenFiatMoneyPrice failed: `, err);
-        notification(err.message, NotificationType.Error);
-        setPaymentPrice(0);
-      });
-  }, [order.tokenAccount, shopAddress]);
+    );
+    if (!fiatPriceRes.success) {
+      throw Error(fiatPriceRes.msg);
+    }
+    return Number(fiatPriceRes.result);
+  }, [shopAddress, order.tokenAccount, creditCardPayAvailable, stripePublicKey]);
+
+  useEffect(() => {
+    // Only fetch when haven't retrieved the creditCardPayAvailability
+    if (creditCardPayAvailable === undefined) {
+      getPaymentDetail()
+        .then((fiatPrice: number) => {
+          setPaymentPrice(fiatPrice);
+          setCreditCardPayAvailable(CreditCardPayAvailability.Supported);
+        })
+        .catch((error: Error) => {
+          console.log(
+            `${Logger}: getPaymentDetail failed, token= ${order.name} ${order.tokenAccount}, reason=`,
+            error.message
+          );
+          if (error.name === PaymentErrorName.InsufficientPurchaseBalance) {
+            setCreditCardPayAvailable(CreditCardPayAvailability.Disabled);
+            notification(error.message, NotificationType.Error);
+            return;
+          }
+          if (error.name === PaymentErrorName.BelowMinPurchasePrice) {
+            setCreditCardPayAvailable(CreditCardPayAvailability.Disabled);
+            notification(error.message, NotificationType.Error);
+            return;
+          }
+          setCreditCardPayAvailable(CreditCardPayAvailability.Unsupported);
+        });
+    }
+  }, [order.name, order.tokenAccount, getPaymentDetail, creditCardPayAvailable, stripePublicKey]);
 
   const getFiatPriceAndUpdateCountDownElement = useCallback(
     (countdownElement: HTMLElement, time: number) => {
       timeoutFetchPrice.current = setTimeout(() => {
         countdownElement.innerText = `(${time.toString()}s)`;
         if (time === 0) {
-          getFiatMoneyPrice().then(() => {
+          getPaymentDetail().then((fiatPrice: number) => {
+            setPaymentPrice(fiatPrice);
             time = 3;
             getFiatPriceAndUpdateCountDownElement(countdownElement, time);
           });
@@ -162,9 +197,8 @@ export const BuyModal: React.FC<BuyModalProps> = ({
         }
       }, 1000);
     },
-    [getFiatMoneyPrice]
+    [getPaymentDetail]
   );
-
   // handle interval get token price
   useEffect(() => {
     if (!countdownElement) return;
@@ -173,37 +207,18 @@ export const BuyModal: React.FC<BuyModalProps> = ({
     return () => {
       timeoutFetchPrice.current && clearTimeout(timeoutFetchPrice.current);
     };
-  }, [countdownElement, getFiatMoneyPrice, getFiatPriceAndUpdateCountDownElement]);
-
-  useEffect(() => {
-    getFiatMoneyPrice();
-    CandyShopPay.checkPaymentAvailability({
-      shopId: shopAddress,
-      tokenAccount: order.tokenAccount
-    })
-      .then((res: SingleBase<string>) => {
-        if (res.success) {
-          setCreditCardPayAvailable(true);
-        } else {
-          console.log(
-            `${Logger}: checkPaymentAvailability failed, token= ${order.name} ${order.tokenAccount}, reason=`,
-            res.result
-          );
-          setCreditCardPayAvailable(false);
-        }
-      })
-      .catch((err: Error) => {
-        console.log(
-          `${Logger}: checkPaymentAvailability failed, token= ${order.name} ${order.tokenAccount}, error=`,
-          err
-        );
-        setCreditCardPayAvailable(false);
-      });
-  }, [getFiatMoneyPrice, order.name, order.tokenAccount, shopAddress]);
+  }, [
+    creditCardPayAvailable,
+    shopAddress,
+    order.tokenAccount,
+    countdownElement,
+    getFiatPriceAndUpdateCountDownElement
+  ]);
 
   const modalWidth = state === BuyModalState.DISPLAY || state === BuyModalState.PAYMENT ? 1000 : 600;
 
-  if (paymentPrice === undefined || creditCardPayAvailable === undefined) {
+  // Only shows the loading when key is available to determine credit card payment
+  if (creditCardPayAvailable === undefined) {
     return (
       <Modal className="candy-buy-modal-container" onCancel={onClose} width={1000}>
         <div className="candy-buy-modal">
