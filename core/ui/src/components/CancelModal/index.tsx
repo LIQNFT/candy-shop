@@ -23,7 +23,7 @@ export interface CancelModalProps {
   exchangeInfo: ShopExchangeInfo;
   connection: web3.Connection;
   shopAddress: web3.PublicKey;
-  candyShopProgramId: web3.PublicKey;
+  candyShopProgramId: string;
   candyShopVersion: CandyShopVersion;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
@@ -53,7 +53,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
       price: new BN(order.price),
       wallet: wallet,
       shopAddress: shopAddress,
-      candyShopProgramId: candyShopProgramId,
+      candyShopProgramId: new web3.PublicKey(candyShopProgramId),
       shopTreasuryMint: new web3.PublicKey(order.treasuryMint),
       shopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress)
     };

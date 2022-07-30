@@ -22,7 +22,7 @@ export interface BuyModalProps {
   walletConnectComponent: React.ReactElement;
   exchangeInfo: ShopExchangeInfo;
   shopAddress: web3.PublicKey;
-  candyShopProgramId: web3.PublicKey;
+  candyShopProgramId: string;
   connection: web3.Connection;
   isEnterprise: boolean;
   shopPriceDecimalsMin: number;
@@ -64,7 +64,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       seller: new web3.PublicKey(order.walletAddress),
       connection: connection,
       shopAddress: shopAddress,
-      candyShopProgramId: candyShopProgramId,
+      candyShopProgramId: new web3.PublicKey(candyShopProgramId),
       isEnterprise: isEnterprise,
       // Replace with the order's
       shopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress),

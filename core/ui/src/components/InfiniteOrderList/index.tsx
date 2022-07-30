@@ -37,6 +37,7 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
   const exchangeInfo = getExchangeInfo(selectedOrder, candyShop);
   const isUserListing =
     selectedOrder && wallet?.publicKey && selectedOrder.walletAddress === wallet.publicKey.toString();
+  const candyShopProgramId = selectedOrder ? selectedOrder.programId || candyShop.programId.toString() : '';
 
   return (
     <>
@@ -65,7 +66,7 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
           walletConnectComponent={walletConnectComponent}
           exchangeInfo={exchangeInfo}
           shopAddress={candyShop.candyShopAddress}
-          candyShopProgramId={candyShop.programId}
+          candyShopProgramId={candyShopProgramId}
           connection={candyShop.connection()}
           isEnterprise={candyShop.isEnterprise}
           shopPriceDecimalsMin={candyShop.priceDecimalsMin}
@@ -81,7 +82,7 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
           wallet={wallet}
           exchangeInfo={exchangeInfo}
           shopAddress={candyShop.candyShopAddress}
-          candyShopProgramId={candyShop.programId}
+          candyShopProgramId={candyShopProgramId}
           connection={candyShop.connection()}
           candyShopVersion={candyShop.version}
           shopPriceDecimalsMin={candyShop.priceDecimalsMin}
