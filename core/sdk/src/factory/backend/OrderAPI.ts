@@ -102,23 +102,23 @@ export async function fetchOrdersByStoreIdAndWalletAddress(
 ): Promise<Order[]> {
   console.log(`CandyShop: fetching orders by shop address=${storeId}, walletAddress=${walletAddress}`);
   // handles pagination internally
-  const limit = 10;
+  const LIMIT = 12;
   let offset = 0;
   let resCount: number | null = null;
   let orders: Order[] = [];
 
-  while (resCount === null || resCount == limit) {
+  while (resCount === null || resCount == LIMIT) {
     const page: Order[] = await axiosInstance
       .get<ListBase<Order>>(
-        `/order/${storeId}?offset=${offset}&limit=${limit}&filterArr[]=${JSON.stringify({
-          side: 1,
-          status: 0,
+        `/order/${storeId}?offset=${offset}&limit=${LIMIT}&filterArr[]=${JSON.stringify({
+          side: Side.SELL,
+          status: Status.OPEN,
           walletAddress
         })}`
       )
       .then((response) => response.data?.result);
     resCount = page.length;
-    offset = offset + limit;
+    offset = offset + LIMIT;
     orders = orders.concat(page);
   }
 

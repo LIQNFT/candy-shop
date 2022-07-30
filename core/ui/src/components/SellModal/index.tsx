@@ -33,7 +33,7 @@ export interface SellModalProps {
   shop: CandyShopResponse;
   connection: web3.Connection;
   shopAddress: web3.PublicKey;
-  candyShopProgramId: web3.PublicKey;
+  candyShopProgramId: string;
   candyShopVersion: CandyShopVersion;
   baseUnitsPerCurrency: number;
   shopTreasuryMint: web3.PublicKey;
@@ -63,6 +63,8 @@ export const SellModal: React.FC<SellModalProps> = ({
 
   const timeoutRef = useUnmountTimeout();
 
+  console.log({ candyShopProgramId });
+
   // List for sale and move to next step
   const sell = async () => {
     setState(TransactionState.PROCESSING);
@@ -87,7 +89,7 @@ export const SellModal: React.FC<SellModalProps> = ({
       price: new BN(price),
       wallet,
       shopAddress: shopAddress,
-      candyShopProgramId: candyShopProgramId,
+      candyShopProgramId: new web3.PublicKey(candyShopProgramId),
       shopTreasuryMint,
       shopCreatorAddress
     };

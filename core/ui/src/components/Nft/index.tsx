@@ -34,6 +34,8 @@ export const Nft = ({ nft, wallet, sellDetail, shop, candyShop }: NftProps): JSX
         decimals: candyShop.currencyDecimals
       };
 
+  const candyShopProgramId = sellDetail ? sellDetail.programId || candyShop.programId.toString() : '';
+
   return (
     <>
       <Card
@@ -52,7 +54,7 @@ export const Nft = ({ nft, wallet, sellDetail, shop, candyShop }: NftProps): JSX
           shop={shop}
           connection={candyShop.connection()}
           shopAddress={candyShop.candyShopAddress}
-          candyShopProgramId={candyShop.programId}
+          candyShopProgramId={candyShopProgramId}
           candyShopVersion={candyShop.version}
           baseUnitsPerCurrency={candyShop.baseUnitsPerCurrency}
           shopTreasuryMint={candyShop.treasuryMint}
@@ -68,7 +70,7 @@ export const Nft = ({ nft, wallet, sellDetail, shop, candyShop }: NftProps): JSX
           wallet={wallet}
           exchangeInfo={exchangeInfo}
           shopAddress={candyShop.candyShopAddress}
-          candyShopProgramId={sellDetail.programId || candyShop.programId.toString()}
+          candyShopProgramId={candyShopProgramId}
           connection={candyShop.connection()}
           candyShopVersion={candyShop.version}
           shopPriceDecimalsMin={candyShop.priceDecimalsMin}
