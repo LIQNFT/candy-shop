@@ -34,7 +34,7 @@ export abstract class CandyShopPay {
   static getTokenFiatMoneyPrice(
     params: PaymentAvailabilityParams,
     quotePriceQuery: GetQuotePriceQuery | undefined
-  ): Promise<SingleBase<any>> {
+  ): Promise<SingleBase<string>> {
     return fetchTokenFiatMoneyPrice(axiosInstance, params, quotePriceQuery);
   }
 }

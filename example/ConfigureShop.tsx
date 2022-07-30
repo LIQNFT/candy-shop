@@ -30,7 +30,7 @@ export const ConfigureShop: React.FC<ConfigureShopProps> = ({ setCandyForm, cand
   );
   const [paymentProviderObject, setPaymentProviderObject] = useState<string>(
     JSON.stringify({
-      stripePublicKey: 'stripe_pub_key'
+      stripePublicKey: ''
     })
   );
 

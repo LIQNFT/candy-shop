@@ -12,6 +12,6 @@ export const DEFAULT_FORM_CONFIG = {
     mainnetConnectionUrl: 'https://ssc-dao.genesysgo.net/'
   }),
   paymentProvider: JSON.stringify({
-    stripePublicKey: 'stripe_pub_key'
+    stripePublicKey: ''
   })
 };
