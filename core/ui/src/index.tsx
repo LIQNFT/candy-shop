@@ -9,4 +9,4 @@ export * from './public/Auction';
 export * from './public/Modal';
 
 export { TransactionState, OrderDefaultFilter } from './model';
-export { CandyContext, CandyShopDataValidator } from './public/Context';
+export { CandyContext, CandyShopDataValidator } from './public/Context/CandyShopDataValidator';

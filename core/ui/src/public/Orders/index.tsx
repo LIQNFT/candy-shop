@@ -21,7 +21,7 @@ import { CollectionFilter as CollectionFilterComponent } from 'components/Collec
 import { ShopFilter as ShopFilterComponent } from 'components/ShopFilter';
 
 import { useValidateStatus } from 'hooks/useValidateStatus';
-import { useUpdateSubject } from 'public/Context';
+import { useUpdateSubject } from 'public/Context/CandyShopDataValidator';
 import { CollectionFilter, ShopFilter, OrderDefaultFilter } from 'model';
 import { removeDuplicate } from 'utils/array';
 import { OrdersActionsStatus } from 'constant';
@@ -89,7 +89,7 @@ export const Orders: React.FC<OrdersProps> = ({
   const loadingMountRef = useRef(false);
 
   const updateOrderStatus = useValidateStatus(OrdersActionsStatus);
-  useUpdateSubject(ShopStatusType.Order, candyShop.candyShopAddress);
+  useUpdateSubject({ subject: ShopStatusType.Order, candyShopAddress: candyShop.candyShopAddress });
 
   const onSearchNft = useCallback((nftName: string) => {
     setNftKeyword(nftName);
