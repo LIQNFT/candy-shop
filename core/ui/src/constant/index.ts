@@ -7,7 +7,7 @@ export enum LoadStatus {
 }
 export const TIMEOUT_EXTRA_LOADING = 3_000;
 export const POLLING_SHOP_INTERVAL = 3_000;
-export const POLLING_INTERVAL = POLLING_SHOP_INTERVAL + 500;
+export const POLLING_INTERVAL = 1000;
 
 export const StatActionsStatus = [ShopStatusType.Order];
 export const OrdersActionsStatus = [ShopStatusType.Order];
