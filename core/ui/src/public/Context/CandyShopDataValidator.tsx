@@ -24,6 +24,7 @@ interface ContextData {
   setCandyShopAddress: Dispatch<SetStateAction<web3.PublicKey | undefined>>;
   setSubjects: Dispatch<SetStateAction<any>>;
   setWalletAddress: Dispatch<SetStateAction<string | undefined>>;
+  refreshSubject: (subject: ShopStatusType, timestamp: number) => void;
 }
 
 interface CandyProviderProps {
@@ -41,13 +42,16 @@ export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children 
    * subject will be increase when some components need to check status is rendered on UI.
    * if subject value is 0: it means we don't need to check status for that subject.
    * */
-
   const [subjects, setSubjects] = useState<Subject>({
     [ShopStatusType.Order]: 0,
     [ShopStatusType.Trade]: 0,
     [ShopStatusType.Auction]: 0,
     [ShopStatusType.UserNft]: 0
   });
+
+  const refreshSubject = useCallback((subject: ShopStatusType, timestamp: number) => {
+    localStorage.setItem(subject, timestamp.toString());
+  }, []);
 
   const polling = useCallback(
     (candyShopAddress: web3.PublicKey) => {
@@ -70,7 +74,7 @@ export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children 
               const isShopRefreshed = prevTimestamp !== resTimestamp;
               if (isShopRefreshed) {
                 console.log(`%c${Logger}: ${shopStatus.type}`, 'color: #e9ae00', prevTimestamp, res);
-                localStorage.setItem(shopStatus.type, JSON.stringify(shopStatus.timestamp));
+                localStorage.setItem(shopStatus.type, shopStatus.timestamp.toString());
               }
             }
           } else {
@@ -94,7 +98,9 @@ export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children 
   );
 
   return (
-    <CandyContext.Provider value={{ candyShopAddress, setCandyShopAddress, setSubjects, setWalletAddress }}>
+    <CandyContext.Provider
+      value={{ candyShopAddress, setCandyShopAddress, setSubjects, setWalletAddress, refreshSubject }}
+    >
       {children}
     </CandyContext.Provider>
   );
@@ -118,7 +124,7 @@ export const useUpdateCandyShopContext: (candyShopAddress?: web3.PublicKey) => C
 };
 
 interface UpdateSubjectProps {
-  subject: ShopStatusType;
+  subject?: ShopStatusType;
   candyShopAddress?: web3.PublicKey;
   walletAddress?: string;
 }
