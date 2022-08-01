@@ -8,16 +8,18 @@ import {
   PaymentCurrencyType,
   PaymentIntentInfo,
   PaymentMethodType,
+  ShopStatusType,
   SingleBase
 } from '@liqnft/candy-shop-types';
 import { CandyShopPay } from '@liqnft/candy-shop-sdk';
 import { StripeCardDetail } from './StripeCardDetail';
-import { ShopExchangeInfo, BuyModalState, PaymentErrorDetails } from 'model';
-import { notification, NotificationType } from 'utils/rc-notification';
 import { Processing } from 'components/Processing';
 import { Viewer } from 'components/Viewer';
 import { NftVerification } from 'components/Tooltip/NftVerification';
+import { ShopExchangeInfo, BuyModalState, PaymentErrorDetails } from 'model';
+import { notification, NotificationType } from 'utils/rc-notification';
 import { getPrice } from 'utils/getPrice';
+import { useUpdateCandyShopContext } from 'public/Context/CandyShopDataValidator';
 import stripeLogo from '../../assets/stripe.png';
 
 const Logger = 'CandyShopUI/StripePayment';
@@ -47,6 +49,8 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 }) => {
   const stripePromise = loadStripe(stripePublicKey);
   const [paymentId, setPaymentId] = useState<string>();
+
+  const { refreshSubject } = useUpdateCandyShopContext();
 
   useEffect(() => {
     const params: CreatePaymentParams = {
@@ -84,6 +88,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
       .then((res: SingleBase<PaymentIntentInfo>) => {
         if (res.success && res.result) {
           onProcessingPay(BuyModalState.CONFIRMED);
+          refreshSubject(ShopStatusType.UserNft, Date.now());
           console.log(`${Logger}: confirmPayment success=`, res.result);
         } else {
           if (res.msg) {
