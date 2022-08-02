@@ -102,3 +102,29 @@ export interface SettleAndDistributeProceedParams extends AuctionParams {
   treasuryAccount: web3.PublicKey;
   env: string;
 }
+
+export interface EditionDropParams {
+  candyShop: web3.PublicKey;
+  vaultAccount: web3.PublicKey;
+  nftOwnerTokenAccount: web3.PublicKey;
+  masterMint: web3.PublicKey;
+  whitelistMint?: web3.PublicKey;
+  program: Program<anchor.Idl>;
+}
+
+export interface CommitNftParams extends EditionDropParams {
+  nftOwner: AnchorWallet | web3.Keypair;
+  price: BN;
+  startTime: BN;
+  salesPeriod: BN;
+  whitelistTime?: BN;
+  candyShopProgram: Program<Idl>;
+}
+
+export interface MintPrintParams extends EditionDropParams {
+  editionBuyer: AnchorWallet | web3.Keypair;
+  newEditionTokenAccount: web3.PublicKey;
+  newEditionMint: web3.Keypair;
+  auctionHouse: web3.PublicKey;
+  editionNumber: BN;
+}

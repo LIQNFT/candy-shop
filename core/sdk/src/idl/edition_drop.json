@@ -1,0 +1,770 @@
+{
+  "version": "0.1.1",
+  "name": "edition_drop",
+  "instructions": [
+    {
+      "name": "shopCommitNft",
+      "accounts": [
+        {
+          "name": "commitNftCtx",
+          "accounts": [
+            {
+              "name": "masterEditionTokenAccountAuthority",
+              "isMut": true,
+              "isSigner": true
+            },
+            {
+              "name": "masterEditionTokenAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "vaultAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "vaultTokenAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "masterEditionMetadata",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "masterEditionAccount",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "masterEditionMint",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "systemProgram",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "tokenProgram",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "associatedTokenProgram",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "rent",
+              "isMut": false,
+              "isSigner": false
+            }
+          ]
+        },
+        {
+          "name": "candyShop",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "price",
+          "type": "u64"
+        },
+        {
+          "name": "startingTime",
+          "type": "i64"
+        },
+        {
+          "name": "firstSalesPeriod",
+          "type": "i64"
+        },
+        {
+          "name": "whitelistTime",
+          "type": {
+            "option": "i64"
+          }
+        }
+      ]
+    },
+    {
+      "name": "enterpriseCommitNft",
+      "accounts": [
+        {
+          "name": "commitNftCtx",
+          "accounts": [
+            {
+              "name": "masterEditionTokenAccountAuthority",
+              "isMut": true,
+              "isSigner": true
+            },
+            {
+              "name": "masterEditionTokenAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "vaultAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "vaultTokenAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "masterEditionMetadata",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "masterEditionAccount",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "masterEditionMint",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "systemProgram",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "tokenProgram",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "associatedTokenProgram",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "rent",
+              "isMut": false,
+              "isSigner": false
+            }
+          ]
+        },
+        {
+          "name": "candyShop",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "price",
+          "type": "u64"
+        },
+        {
+          "name": "startingTime",
+          "type": "i64"
+        },
+        {
+          "name": "firstSalesPeriod",
+          "type": "i64"
+        },
+        {
+          "name": "whitelistTime",
+          "type": {
+            "option": "i64"
+          }
+        }
+      ]
+    },
+    {
+      "name": "shopMintPrint",
+      "accounts": [
+        {
+          "name": "mintPrintCtx",
+          "accounts": [
+            {
+              "name": "newEditionBuyer",
+              "isMut": true,
+              "isSigner": true
+            },
+            {
+              "name": "vaultAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "vaultTokenAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "masterEditionMetadata",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "masterEditionAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "masterEditionMint",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "masterEditionTokenAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "newEditionMetadata",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "newEditionAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "newEditionMarker",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "newEditionMint",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "newEditionTokenAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "shopTreasuryAddress",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "tokenMetadataProgram",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "systemProgram",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "tokenProgram",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "rent",
+              "isMut": false,
+              "isSigner": false
+            }
+          ]
+        },
+        {
+          "name": "candyShop",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "edition",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "enterpriseMintPrint",
+      "accounts": [
+        {
+          "name": "mintPrintCtx",
+          "accounts": [
+            {
+              "name": "newEditionBuyer",
+              "isMut": true,
+              "isSigner": true
+            },
+            {
+              "name": "vaultAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "vaultTokenAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "masterEditionMetadata",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "masterEditionAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "masterEditionMint",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "masterEditionTokenAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "newEditionMetadata",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "newEditionAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "newEditionMarker",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "newEditionMint",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "newEditionTokenAccount",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "shopTreasuryAddress",
+              "isMut": true,
+              "isSigner": false
+            },
+            {
+              "name": "tokenMetadataProgram",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "systemProgram",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "tokenProgram",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "rent",
+              "isMut": false,
+              "isSigner": false
+            }
+          ]
+        },
+        {
+          "name": "candyShop",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "edition",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "VaultAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "candyShop",
+            "type": "publicKey"
+          },
+          {
+            "name": "nftOwner",
+            "type": "publicKey"
+          },
+          {
+            "name": "price",
+            "type": "u64"
+          },
+          {
+            "name": "maxSupply",
+            "type": "u64"
+          },
+          {
+            "name": "currentSupply",
+            "type": "u64"
+          },
+          {
+            "name": "startingTime",
+            "type": "i64"
+          },
+          {
+            "name": "firstSalesPeriod",
+            "type": "i64"
+          },
+          {
+            "name": "whitelistTime",
+            "type": {
+              "option": "i64"
+            }
+          },
+          {
+            "name": "whitelistMint",
+            "type": {
+              "option": "publicKey"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeesAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "campaignName",
+            "type": {
+              "array": ["u8", 20]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SalesRevenueAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "claimer",
+            "type": "publicKey"
+          },
+          {
+            "name": "campaignName",
+            "type": {
+              "array": ["u8", 20]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "CommitNftBumps",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "vaultAccount",
+            "type": "u8"
+          },
+          {
+            "name": "feesAccount",
+            "type": "u8"
+          },
+          {
+            "name": "salesRevenueAccount",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MintPrintReturnType",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "isNative",
+            "type": "bool"
+          },
+          {
+            "name": "fees",
+            "type": "u64"
+          },
+          {
+            "name": "revenue",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VaultStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Created"
+          },
+          {
+            "name": "WhitelistStarted"
+          },
+          {
+            "name": "SaleStarted"
+          },
+          {
+            "name": "SaleCompleted"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidOwnershipTokenAllocation",
+      "msg": "Invalid ownership token allocation"
+    },
+    {
+      "code": 6001,
+      "name": "CampaignNameTooLong",
+      "msg": "Campaign name too long"
+    },
+    {
+      "code": 6002,
+      "name": "VaultNameTooLong",
+      "msg": "Vault name too long"
+    },
+    {
+      "code": 6003,
+      "name": "WebsiteLinkTooLong",
+      "msg": "Website link too long"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidAmount",
+      "msg": "Invalid amount"
+    },
+    {
+      "code": 6005,
+      "name": "InsufficientBalance",
+      "msg": "Insufficient balance"
+    },
+    {
+      "code": 6006,
+      "name": "MintSupplyNotOne",
+      "msg": "Mint supply not one"
+    },
+    {
+      "code": 6007,
+      "name": "MintSupplyNotFixed",
+      "msg": "Mint supply not fixed"
+    },
+    {
+      "code": 6008,
+      "name": "MintDecimalsNotZero",
+      "msg": "Mint decimal not zero"
+    },
+    {
+      "code": 6009,
+      "name": "SaleNotStarted",
+      "msg": "Sales not started yet"
+    },
+    {
+      "code": 6010,
+      "name": "InvalidStatus",
+      "msg": "Invalid status to update"
+    },
+    {
+      "code": 6011,
+      "name": "SaleEnded",
+      "msg": "Sales ended"
+    },
+    {
+      "code": 6012,
+      "name": "InsufficientOtToken",
+      "msg": "Insufficient ownership token for NFT redemption"
+    },
+    {
+      "code": 6013,
+      "name": "NotOnWhitelist",
+      "msg": "Not on whitelist"
+    },
+    {
+      "code": 6014,
+      "name": "MintCapExceeded",
+      "msg": "Cannot mint more than mint cap"
+    },
+    {
+      "code": 6015,
+      "name": "InvalidStatusForRejection",
+      "msg": "Invalid status for rejection"
+    },
+    {
+      "code": 6016,
+      "name": "MetadataDoesntExist",
+      "msg": "Metadata does not exist"
+    },
+    {
+      "code": 6017,
+      "name": "EditionDoesntExist",
+      "msg": "Edition does not exist"
+    },
+    {
+      "code": 6018,
+      "name": "NotEnoughTokens",
+      "msg": "Not enough tokens to mint a limited edition"
+    },
+    {
+      "code": 6019,
+      "name": "IncorretOwner",
+      "msg": "Incorret owner"
+    },
+    {
+      "code": 6020,
+      "name": "MetadataNotFound",
+      "msg": "Metadata not found"
+    },
+    {
+      "code": 6021,
+      "name": "MasterEditionNotFound",
+      "msg": "Master edition not found"
+    },
+    {
+      "code": 6022,
+      "name": "Uninitialized",
+      "msg": "Uninitialized"
+    },
+    {
+      "code": 6023,
+      "name": "InvalidMint",
+      "msg": "Invalid mint"
+    },
+    {
+      "code": 6024,
+      "name": "MasterEditionSupplyNotSet",
+      "msg": "Master Edition should have supply set"
+    },
+    {
+      "code": 6025,
+      "name": "MasterEditionSupplyCannotBeZero",
+      "msg": "Master Edition max supply cannot be zero"
+    },
+    {
+      "code": 6026,
+      "name": "AlreadyInitialized",
+      "msg": "Already initialized"
+    },
+    {
+      "code": 6027,
+      "name": "NumericalOverflow",
+      "msg": "Invalid numerical inputs"
+    },
+    {
+      "code": 6028,
+      "name": "RedeemConditionNotMet",
+      "msg": "Redeem condition not met"
+    },
+    {
+      "code": 6029,
+      "name": "WhitelistTimeNotSet",
+      "msg": "whitelist time not set"
+    },
+    {
+      "code": 6030,
+      "name": "WhitelistAccountsWronglySupplied",
+      "msg": "missing whitelist accounts"
+    },
+    {
+      "code": 6031,
+      "name": "InvalidWhitelistMint",
+      "msg": "invalid whitelist mint"
+    },
+    {
+      "code": 6032,
+      "name": "InvalidWhitelistTokenAccount",
+      "msg": "invalid whitelist token account"
+    },
+    {
+      "code": 6033,
+      "name": "WhitelistMintNotPresent",
+      "msg": "whitelist mint not present in vault"
+    },
+    {
+      "code": 6034,
+      "name": "InsufficientWhitelistToken",
+      "msg": "insufficient whitelist token"
+    },
+    {
+      "code": 6035,
+      "name": "VaultWhitelistAtaNotInitialized",
+      "msg": "vault whitelist ata not initialized"
+    },
+    {
+      "code": 6036,
+      "name": "InvalidWhitelistMintDecimal",
+      "msg": "invalid whitelist mint decimals"
+    },
+    {
+      "code": 6037,
+      "name": "InvalidWhitelistTime",
+      "msg": "invalid whitelist time"
+    },
+    {
+      "code": 6038,
+      "name": "InvalidEditionIndex",
+      "msg": "invalid edition number"
+    },
+    {
+      "code": 6039,
+      "name": "EditionTaken",
+      "msg": "edition already taken"
+    },
+    {
+      "code": 6040,
+      "name": "InvalidShopKey",
+      "msg": "key of provided candy shop does not match expected value"
+    },
+    {
+      "code": 6041,
+      "name": "MintNonNative",
+      "msg": "Candy Shop treasury mint must be native"
+    },
+    {
+      "code": 6042,
+      "name": "InvalidNftOwner",
+      "msg": "Invalid nft owner provided in remaining accounts"
+    }
+  ],
+  "metadata": {
+    "address": "eddn8tqKsfj3oezin66nmoK5PYrq28dEWMXZYxoQUus"
+  }
+}

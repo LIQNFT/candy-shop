@@ -1,5 +1,7 @@
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { CandyShop, CandyShopError, CandyShopErrorType } from '@liqnft/candy-shop-sdk';
 import * as anchor from '@project-serum/anchor';
+import { getAccount } from '@solana/spl-token';
+import { PublicKey } from '@solana/web3.js';
 import { Command } from 'commander';
 import {
   CANDY_SHOP_PROGRAM_ID,
@@ -510,6 +512,126 @@ programCommand('settleAndDistribute')
       tokenAccount: tokenAccount,
       tokenMint: new anchor.web3.PublicKey(tokenAccountMint),
       wallet
+    });
+
+    console.log('txHash', txHash);
+  });
+
+programCommand('commitEditionDropNft')
+  .description('commit a master edition NFT for edition drop')
+  .requiredOption('-ota, --nft-owner-token-account <string>', 'NFT token account address')
+  .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
+  .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
+  .requiredOption('-p, --price <string>', 'price in token decimals')
+  .requiredOption('-st, --start-time <string>', 'Start Time, unix timestamp')
+  .requiredOption('-sp, --sales-period <string>', 'Sales period, unix timestamp')
+  .option('-wtm, --whitelist-mint <string>', 'whitelist mint')
+  .option('-wtt, --whitelist-time <string>', 'whitelist time, unix timestamp')
+
+  .action(async (name, cmd) => {
+    console.log(name);
+
+    let {
+      keypair,
+      env,
+      nftOwnerTokenAccount,
+      treasuryMint,
+      rpcUrl,
+      shopCreator,
+      price,
+      startTime,
+      salesPeriod,
+      whitelistMint,
+      whitelistTime,
+      version,
+      isEnterprise
+    } = cmd.opts();
+
+    const wallet = loadKey(keypair);
+
+    if (version !== 'v2') {
+      throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
+    }
+
+    // default to v2
+    const candyShopProgramId = CANDY_SHOP_V2_PROGRAM_ID;
+
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
+      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
+      candyShopProgramId,
+      env,
+      settings: {
+        mainnetConnectionUrl: rpcUrl
+      },
+      isEnterprise: isEnterprise ? true : false
+    });
+
+    const tokenAccountInfo = await getAccount(candyShop.connection(), new PublicKey(nftOwnerTokenAccount), 'finalized');
+
+    const txHash = await candyShop.commitMasterNft({
+      nftOwnerTokenAccount: new anchor.web3.PublicKey(nftOwnerTokenAccount),
+      masterMint: tokenAccountInfo.mint,
+      nftOwner: wallet,
+      price: new anchor.BN(price),
+      startTime: new anchor.BN(startTime),
+      salesPeriod: new anchor.BN(salesPeriod),
+      whitelistMint: whitelistMint ? new anchor.web3.PublicKey(whitelistMint) : undefined,
+      whitelistTime: whitelistTime ? new anchor.BN(whitelistTime) : undefined
+    });
+
+    console.log('txHash', txHash);
+  });
+
+programCommand('mintPrint')
+  .description('mint an editioned NFT from the master edition')
+  .requiredOption('-ota, --nft-owner-token-account <string>', 'NFT token account address')
+  .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
+  .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
+  .option('-wtm, --whitelist-mint <string>', 'whitelist mint')
+
+  .action(async (name, cmd) => {
+    console.log(name);
+
+    let {
+      keypair,
+      env,
+      nftOwnerTokenAccount,
+      treasuryMint,
+      whitelistMint,
+      rpcUrl,
+      shopCreator,
+      version,
+      isEnterprise
+    } = cmd.opts();
+
+    const wallet = loadKey(keypair);
+
+    if (version !== 'v2') {
+      throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
+    }
+
+    // default to v2
+    const candyShopProgramId = CANDY_SHOP_V2_PROGRAM_ID;
+
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
+      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
+      candyShopProgramId,
+      env,
+      settings: {
+        mainnetConnectionUrl: rpcUrl
+      },
+      isEnterprise: isEnterprise ? true : false
+    });
+
+    const tokenAccountInfo = await getAccount(candyShop.connection(), new PublicKey(nftOwnerTokenAccount), 'finalized');
+
+    const txHash = await candyShop.mintNewPrint({
+      nftOwnerTokenAccount: new PublicKey(nftOwnerTokenAccount),
+      masterMint: tokenAccountInfo.mint,
+      whitelistMint: whitelistMint ? new PublicKey(whitelistMint) : undefined,
+      editionBuyer: wallet
     });
 
     console.log('txHash', txHash);

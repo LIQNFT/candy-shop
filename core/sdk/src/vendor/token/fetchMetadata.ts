@@ -5,7 +5,7 @@ import * as crc32 from 'crc-32';
 import { CandyShopError, CandyShopErrorType } from '../error';
 import { safeAwait } from '../utils/promiseUtils';
 import { Metadata, parseEdition, parseMetadata } from './parseData';
-import { MetadataProgramPubkey } from '../utils/programUtils';
+import { TOKEN_METADATA_PROGRAM_ID } from '../../factory/constants';
 
 interface NFTMetadataInfo {
   nftImage: string;
@@ -48,8 +48,8 @@ export const getTokenMetadataByMintAddress = async function (
   connection: web3.Connection
 ): Promise<NftMetadata> {
   const [newEditionMetadata] = await web3.PublicKey.findProgramAddress(
-    [Buffer.from('metadata'), MetadataProgramPubkey.toBuffer(), new web3.PublicKey(mintAddress).toBuffer()],
-    MetadataProgramPubkey
+    [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), new web3.PublicKey(mintAddress).toBuffer()],
+    TOKEN_METADATA_PROGRAM_ID
   );
   const newEditionMetadataAccountInfo = await safeAwait(connection.getAccountInfo(newEditionMetadata));
   if (newEditionMetadataAccountInfo.error || !newEditionMetadataAccountInfo.result) {
@@ -108,8 +108,8 @@ const getNFTMetadataAccountInfo = async (
   tokenAccount: Account
 ): Promise<Metadata | undefined> => {
   const [nftMetadataPublicKey] = await web3.PublicKey.findProgramAddress(
-    [Buffer.from('metadata'), MetadataProgramPubkey.toBuffer(), tokenAccount.mint.toBuffer()],
-    MetadataProgramPubkey
+    [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), tokenAccount.mint.toBuffer()],
+    TOKEN_METADATA_PROGRAM_ID
   );
   const nftMetadataAccountInfo = await safeAwait(connection.getAccountInfo(nftMetadataPublicKey));
   if (nftMetadataAccountInfo.error) {
@@ -123,8 +123,13 @@ const getNFTMetadataAccountInfo = async (
 
 const getNFTEditionInfo = async (connection: web3.Connection, tokenAccount: Account): Promise<any> => {
   const [nftEditionPublicKey] = await web3.PublicKey.findProgramAddress(
-    [Buffer.from('metadata'), MetadataProgramPubkey.toBuffer(), tokenAccount.mint.toBuffer(), Buffer.from('edition')],
-    MetadataProgramPubkey
+    [
+      Buffer.from('metadata'),
+      TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+      tokenAccount.mint.toBuffer(),
+      Buffer.from('edition')
+    ],
+    TOKEN_METADATA_PROGRAM_ID
   );
 
   const nftEditionAccountInfo = await safeAwait(connection.getAccountInfo(nftEditionPublicKey));
