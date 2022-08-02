@@ -1,7 +1,7 @@
 import { AccountMeta, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction } from '@solana/web3.js';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { CommitNftParams } from '../../model';
-import { getAtaForMint, sendTx } from '../../../../vendor';
+import { getAtaForMint, getMetadataAccount, getMasterEditionAccount, sendTx, checkCanCommit } from '../../../../vendor';
 
 export const commitNft = async (params: CommitNftParams) => {
   const {
@@ -10,15 +10,16 @@ export const commitNft = async (params: CommitNftParams) => {
     vaultAccount,
     nftOwnerTokenAccount,
     masterMint,
-    masterEditionMetadata,
-    masterEdition,
     price,
     startTime,
     salesPeriod,
     whitelistTime,
     program,
+    candyShopProgram,
     whitelistMint
   } = params;
+
+  await checkCanCommit(candyShop, nftOwner.publicKey, candyShopProgram);
 
   const remainingAccounts: AccountMeta[] = [];
 
@@ -37,7 +38,11 @@ export const commitNft = async (params: CommitNftParams) => {
     });
   }
 
-  const [vaultTokenAccount] = await getAtaForMint(masterMint, vaultAccount);
+  const [[vaultTokenAccount], [masterEditionMetadata], [masterEdition]] = await Promise.all([
+    getAtaForMint(masterMint, vaultAccount),
+    getMetadataAccount(masterMint),
+    getMasterEditionAccount(masterMint)
+  ]);
 
   const transaction = new Transaction();
 

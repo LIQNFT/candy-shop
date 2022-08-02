@@ -1,7 +1,14 @@
 import { AccountMeta, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction } from '@solana/web3.js';
 import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { MintPrintParams } from '../../model';
-import { getAtaForMint, getAuctionHouseTreasuryAcct, sendTx } from '../../../../vendor';
+import {
+  getAtaForMint,
+  getAuctionHouseTreasuryAcct,
+  getMetadataAccount,
+  getMasterEditionAccount,
+  getEditionMarkAccount,
+  sendTx
+} from '../../../../vendor';
 import { TOKEN_METADATA_PROGRAM_ID } from '../../../constants';
 import { Idl, Program } from '@project-serum/anchor';
 
@@ -13,13 +20,8 @@ export const mintPrint = async (params: MintPrintParams & { candyShopProgram: Pr
     auctionHouse,
     nftOwnerTokenAccount,
     masterMint,
-    masterEditionMetadata,
-    masterEdition,
     newEidtionNftOwnerTokenAccount,
     newEditionMint,
-    newEditionMetadata,
-    newEdition,
-    newEditionMark,
     editionNumber,
     program,
     candyShopProgram,
@@ -72,9 +74,22 @@ export const mintPrint = async (params: MintPrintParams & { candyShopProgram: Pr
     });
   }
 
-  const [[vaultTokenAccount], [shopTreasuryAddress]] = await Promise.all([
+  const [
+    [vaultTokenAccount],
+    [shopTreasuryAddress],
+    [masterEditionMetadata],
+    [masterEdition],
+    [newEditionMetadata],
+    [newEdition],
+    [newEditionMark]
+  ] = await Promise.all([
     getAtaForMint(masterMint, vaultAccount),
-    getAuctionHouseTreasuryAcct(auctionHouse)
+    getAuctionHouseTreasuryAcct(auctionHouse),
+    getMetadataAccount(masterMint),
+    getMasterEditionAccount(masterMint),
+    getMetadataAccount(newEditionMint),
+    getMasterEditionAccount(newEditionMint),
+    getEditionMarkAccount(newEditionMint, editionNumber)
   ]);
 
   const transaction = new Transaction();
