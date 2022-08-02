@@ -33,7 +33,7 @@ interface OrdersProps {
   wallet?: AnchorWallet;
   url?: string;
   identifiers?: number[];
-  filters?: CollectionFilter[] | boolean;
+  filters?: CollectionFilter[] | boolean | 'auto';
   defaultFilter?: { [key in OrderDefaultFilter]: string };
   shopFilters?: ShopFilter[] | boolean;
   style?: { [key: string]: string | number };
@@ -44,8 +44,14 @@ interface OrdersProps {
   filterSearch?: boolean;
 }
 
+// TODO: Remove hardcode option, filters, defaultFilter and shopFilters should merge into one config interface
+
 /**
  * React component that displays a list of orders
+ * @param filters:
+ *    - true: list collections from that current shop
+ *    - CollectionFilter: hardcode collections
+ *    - auto: list collection from Shop filter UI, prop shopFilters=true
  */
 export const Orders: React.FC<OrdersProps> = ({
   walletConnectComponent,
@@ -218,6 +224,10 @@ export const Orders: React.FC<OrdersProps> = ({
     };
     const showAll = Boolean(filters && shopFilters);
     const selectAll = showAll && !selectedCollection && !selectedShop && !shopFilter && !collectionFilter;
+    const getStoreId = () => {
+      if (filters === true) return candyShop.candyShopAddress.toString();
+      return selectedShop?.candyShopAddress || shopFilter?.shopId;
+    };
 
     return (
       <div className="candy-orders-container" style={style}>
@@ -253,12 +263,12 @@ export const Orders: React.FC<OrdersProps> = ({
                   candyShop={candyShop}
                   filters={filters}
                   selectedManual={collectionFilter}
-                  shopId={selectedShop?.candyShopAddress || shopFilter?.shopId}
+                  shopId={getStoreId()}
                   showAllFilters={showAll}
                   search={filterSearch}
                 />
               )}
-              {Boolean(shopFilters) === true && (
+              {Boolean(shopFilters) && (
                 <ShopFilterComponent
                   onChange={onChangeShop}
                   candyShop={candyShop}

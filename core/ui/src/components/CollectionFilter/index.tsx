@@ -12,7 +12,7 @@ interface CollectionFilterProps {
   onChange: (item: NftCollection | CollectionFilterType | undefined, type: 'auto' | 'manual') => any;
   selected?: NftCollection;
   candyShop: CandyShop;
-  filters?: CollectionFilterType[] | boolean;
+  filters?: CollectionFilterType[] | boolean | 'auto';
   selectedManual?: CollectionFilterType;
   shopId?: string;
   showAllFilters: boolean;
