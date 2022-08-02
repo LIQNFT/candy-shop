@@ -1,4 +1,4 @@
-import { web3, BN } from '@project-serum/anchor';
+import { web3, BN, Program, Idl } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
 /**
@@ -207,3 +207,34 @@ export interface CandyShopBuyNowParams extends CandyShopAuctionParams {}
  * Arguments required for calling Candy Shop settle auction and distribute proceed actions
  */
 export interface CandyShopSettleAndDistributeParams extends CandyShopAuctionParams {}
+
+interface CandyShopEditionDropParams {
+  nftOwnerTokenAccount: web3.PublicKey;
+  masterMint: web3.PublicKey;
+  whitelistMint?: web3.PublicKey;
+}
+
+export interface CandyShopCommitNftParams extends CandyShopEditionDropParams {
+  nftOwner: AnchorWallet | web3.Keypair;
+  price: BN;
+  startTime: BN;
+  salesPeriod: BN;
+  whitelistTime?: BN;
+}
+
+export interface CandyShopMintPrintParams extends CandyShopEditionDropParams {
+  editionBuyer: AnchorWallet | web3.Keypair;
+}
+
+interface EditionDropParams extends CandyShopEditionDropParams {
+  isEnterprise: boolean;
+  candyShop: web3.PublicKey;
+  connection: web3.Connection;
+  candyShopProgram: Program<Idl>;
+}
+
+export interface EditionDropCommitNftParams extends EditionDropParams, CandyShopCommitNftParams {}
+
+export interface EditionDropMintPrintParams extends EditionDropParams, CandyShopMintPrintParams {
+  auctionHouse: web3.PublicKey;
+}

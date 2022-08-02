@@ -23,11 +23,15 @@ export enum CandyShopErrorType {
   AuctionNotOver = 'AuctionNotOver',
   InsufficientFeeAccountBalance = 'InsufficientFeeAccountBalance',
   TooManyCreators = 'TooManyCreators',
+  CandyShopDoesNotExist = 'CandyShopDoesNotExist',
+  InvalidTreasuryMint = 'InvalidTreasuryMint',
+  InvalidNftOwner = 'InvalidNftOwner',
+  IncorrectCandyShopType = 'IncorrectCandyShopType',
   NotReachable = 'NotReachable'
 }
 
 export const CandyShopErrorMsgMap = {
-  [CandyShopErrorType.IncorrectProgramId]: 'Must use v2 program address to make use of enterprise functionality.',
+  [CandyShopErrorType.IncorrectProgramId]: 'Must use v2 program address to make use of this functionality.',
   [CandyShopErrorType.TransactionFailed]: 'Transaction failed. Please try again later.',
   [CandyShopErrorType.InsufficientBalance]: 'Insufficient balance.',
   [CandyShopErrorType.NFTUnavailable]: 'The NFT is no longer for sale.',
@@ -55,6 +59,10 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.InsufficientFeeAccountBalance]:
     'Please contact shop owner to top up shop syrup balance. Min balance requirement 0.05 SOL.',
   [CandyShopErrorType.TooManyCreators]: 'Nft has too many listed creators.',
+  [CandyShopErrorType.CandyShopDoesNotExist]: 'Candy Shop does not exist.',
+  [CandyShopErrorType.InvalidTreasuryMint]: 'Treasury mint must be wrapped SOL to use edition drop program.',
+  [CandyShopErrorType.InvalidNftOwner]: 'Caller must be Candy Shop creator.',
+  [CandyShopErrorType.IncorrectCandyShopType]: 'Candy Shop is of the incorrect type (enterprise or regular).',
   [CandyShopErrorType.NotReachable]: 'Unknown error. Please contact CandyShop team for further info.'
 };
 

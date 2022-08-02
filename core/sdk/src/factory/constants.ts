@@ -12,6 +12,10 @@ export const CANDY_SHOP_V2_PROGRAM_ID = new web3.PublicKey('csbMUULiQfGjT8ezT16E
 
 export const COMPUTE_BUDGET_PROGRAM_ID = new web3.PublicKey('ComputeBudget111111111111111111111111111111');
 
+export const EDITION_DROP_PROGRAM_ID = new web3.PublicKey('eddn8tqKsfj3oezin66nmoK5PYrq28dEWMXZYxoQUus');
+
+export const TOKEN_METADATA_PROGRAM_ID = new web3.PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
+
 export const BID = 'bid';
 export const WALLET = 'wallet';
 
@@ -26,6 +30,10 @@ export const AUTHORITY = 'authority';
 
 export const ORDER = 'order';
 export type Side = 'sell' | 'buy';
+
+export const EDITION_DROP = 'drop';
+
+export const EDITION_MARKER_BIT_SIZE = 248;
 
 export const FEE_ACCOUNT_MIN_BAL = 0.05 * web3.LAMPORTS_PER_SOL;
 

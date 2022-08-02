@@ -77,6 +77,8 @@ import {
   withdrawBidV1,
   withdrawBid
 } from './factory/program';
+import { CandyShopCommitNftParams, CandyShopMintPrintParams } from '.';
+import { CandyShopDrop } from './CandyShopDrop';
 
 const Logger = 'CandyShop';
 
@@ -674,6 +676,81 @@ export class CandyShop {
       settleAndDistributeProceedsV1,
       settleAndDistributeProceeds
     );
+
+    return txHash;
+  }
+
+  /**
+   * Executes Edition Drop __ShopCommitNft__ or __EnterpriseCommitNft__ action
+   * ref: https://docs.metaplex.com/terminology#master-edition
+   *
+   * @param {CandyShopCommitNftParams} params required parameters for commit nft action
+   */
+  public async commitMasterNft(params: CandyShopCommitNftParams) {
+    const { nftOwnerTokenAccount, masterMint, whitelistMint, nftOwner, price, startTime, salesPeriod, whitelistTime } =
+      params;
+
+    if (this._version !== CandyShopVersion.V2) {
+      throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
+    }
+
+    console.log(`${Logger}: performing commit nft `, {
+      nftMint: masterMint.toString()
+    });
+
+    const txHash = await CandyShopDrop.commitNft({
+      candyShop: this._candyShopAddress,
+      nftOwnerTokenAccount,
+      masterMint,
+      whitelistMint,
+      nftOwner,
+      price,
+      startTime,
+      salesPeriod,
+      whitelistTime,
+      isEnterprise: this._isEnterprise,
+      connection: this.connection(),
+      candyShopProgram: this.getStaticProgram(nftOwner)
+    });
+
+    return txHash;
+  }
+
+  /**
+   * Executes Edition Drop __ShopMintPrint__ or __EnterpriseMintPrint__ action
+   *
+   * @param {CandyShopMintPrintParams} params required parameters for mint print action
+   */
+  public async mintNewPrint(params: CandyShopMintPrintParams) {
+    const { nftOwnerTokenAccount, masterMint, whitelistMint, editionBuyer } = params;
+
+    if (this._version !== CandyShopVersion.V2) {
+      throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
+    }
+
+    console.log(`${Logger}: performing mint print `, {
+      masterNft: masterMint.toString()
+    });
+
+    const [auctionHouseAuthority] = await getAuctionHouseAuthority(
+      this._candyShopCreatorAddress,
+      this._treasuryMint,
+      this.programId
+    );
+
+    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
+
+    const txHash = await CandyShopDrop.mintPrint({
+      candyShop: this._candyShopAddress,
+      nftOwnerTokenAccount,
+      masterMint,
+      whitelistMint,
+      editionBuyer,
+      auctionHouse,
+      isEnterprise: this._isEnterprise,
+      connection: this.connection(),
+      candyShopProgram: this.getStaticProgram(editionBuyer)
+    });
 
     return txHash;
   }

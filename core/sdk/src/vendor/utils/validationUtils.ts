@@ -6,7 +6,8 @@ import {
   NATIVE_AUCTION_CREATORS_LIMIT,
   NATIVE_MARKETPLACE_CREATORS_LIMIT,
   SPL_AUCTION_CREATORS_LIMIT,
-  SPL_MARKETPLACE_CREATORS_LIMIT
+  SPL_MARKETPLACE_CREATORS_LIMIT,
+  WRAPPED_SOL_MINT
 } from '../../factory/constants';
 import {
   getAuctionData,
@@ -16,6 +17,8 @@ import {
   treasuryMintIsNative
 } from './programUtils';
 import { safeAwait } from './promiseUtils';
+import { PublicKey } from '@solana/web3.js';
+import { getCandyShopData } from '.';
 
 export enum TransactionType {
   Marketplace = 'Marketplace',
@@ -222,5 +225,34 @@ const getCreatorLimit = (isNative: boolean, transactionType: TransactionType) =>
       return isNative ? NATIVE_AUCTION_CREATORS_LIMIT : SPL_AUCTION_CREATORS_LIMIT;
     default:
       throw new CandyShopError(CandyShopErrorType.NotReachable);
+  }
+};
+
+export const checkCanCommit = async (candyShop: PublicKey, nftOwner: PublicKey, program: Program) => {
+  const candyShopData = await getCandyShopData(candyShop, false, program);
+
+  // For v1
+  if (!candyShopData.treasuryMint.equals(WRAPPED_SOL_MINT)) {
+    throw new CandyShopError(CandyShopErrorType.InvalidTreasuryMint);
+  }
+
+  if (!candyShopData.creator.equals(nftOwner)) {
+    throw new CandyShopError(CandyShopErrorType.InvalidNftOwner);
+  }
+
+  if (!Object.keys(candyShopData.key).includes('candyShopV1')) {
+    throw new CandyShopError(CandyShopErrorType.IncorrectCandyShopType);
+  }
+};
+
+export const checkCanCommitEnterprise = async (candyShop: PublicKey, nftOwner: PublicKey, program: Program) => {
+  const candyShopData = await getCandyShopData(candyShop, true, program);
+
+  if (!candyShopData.treasuryMint.equals(WRAPPED_SOL_MINT)) {
+    throw new CandyShopError(CandyShopErrorType.InvalidTreasuryMint);
+  }
+
+  if (!Object.keys(candyShopData.key).includes('enterpriseCandyShopV1')) {
+    throw new CandyShopError(CandyShopErrorType.IncorrectCandyShopType);
   }
 };

@@ -1,36 +1,37 @@
-import { web3, BN, Program, Idl, Provider } from '@project-serum/anchor';
+import { BN, Idl, Program, Provider, web3 } from '@project-serum/anchor';
+import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
+  createAssociatedTokenAccountInstruction,
   getAccount,
-  createAssociatedTokenAccountInstruction
+  TOKEN_PROGRAM_ID
 } from '@solana/spl-token';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 import {
   AUCTION,
   AUCTION_HOUSE,
-  WRAPPED_SOL_MINT,
   AUCTION_HOUSE_PROGRAM_ID,
   AUTHORITY,
   BID,
+  CANDY_SHOP_V2_PROGRAM_ID,
   CANDY_STORE,
+  EDITION_DROP,
+  EDITION_DROP_PROGRAM_ID,
+  EDITION_MARKER_BIT_SIZE,
   FEE_PAYER,
+  TOKEN_METADATA_PROGRAM_ID,
   TREASURY,
   WALLET,
-  CANDY_SHOP_V2_PROGRAM_ID
+  WRAPPED_SOL_MINT
 } from '../../factory/constants';
-import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
 
+import { CandyShopVersion } from '../../CandyShopModel';
 import candyShopIdl from '../../idl/candy_shop.json';
 import candyShopV2Idl from '../../idl/candy_shop_v2.json';
-import { awaitTransactionSignatureConfirmation } from './transactionUtils';
 import { CandyShopError, CandyShopErrorType } from '../error';
-import { safeAwait } from './promiseUtils';
 import { Creator, Metadata, parseMetadata } from '../token/parseData';
-import { CandyShopVersion } from '../../CandyShopModel';
-
-const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
-export const MetadataProgramPubkey = new web3.PublicKey(METADATA_PROGRAM_ID);
+import { safeAwait } from './promiseUtils';
+import { awaitTransactionSignatureConfirmation } from './transactionUtils';
 
 /**
  * Get NodeWallet from specified keypair
@@ -38,7 +39,7 @@ export const MetadataProgramPubkey = new web3.PublicKey(METADATA_PROGRAM_ID);
  * @param {Keypair} wallet keypair wallet will be created for
  * @returns
  */
-const getNodeWallet = (wallet: web3.Keypair) => {
+export const getNodeWallet = (wallet: web3.Keypair) => {
   const NodeWallet = require('@project-serum/anchor/dist/cjs/nodewallet').default;
   return new NodeWallet(wallet);
 };
@@ -187,6 +188,13 @@ export const getAuctionHouseEscrow = (
   );
 };
 
+export const getEditionVaultAccount = (candyShop: web3.PublicKey, masterTokenAccount: web3.PublicKey) => {
+  return web3.PublicKey.findProgramAddress(
+    [candyShop.toBuffer(), Buffer.from(EDITION_DROP), masterTokenAccount.toBuffer()],
+    EDITION_DROP_PROGRAM_ID
+  );
+};
+
 export const getAtaForMint = (mint: web3.PublicKey, buyer: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
   return web3.PublicKey.findProgramAddress(
     [buyer.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mint.toBuffer()],
@@ -196,20 +204,77 @@ export const getAtaForMint = (mint: web3.PublicKey, buyer: web3.PublicKey): Prom
 
 export const getMetadataAccount = (tokenMint: web3.PublicKey): Promise<[web3.PublicKey, number]> => {
   return web3.PublicKey.findProgramAddress(
-    [Buffer.from('metadata'), MetadataProgramPubkey.toBuffer(), tokenMint.toBuffer()],
-    MetadataProgramPubkey
+    [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), tokenMint.toBuffer()],
+    TOKEN_METADATA_PROGRAM_ID
   );
 };
 
-export const getSignedTx = (wallet: AnchorWallet | web3.Keypair, transaction: web3.Transaction) => {
+export const getMasterEditionAccount = (tokenMint: web3.PublicKey) => {
+  return web3.PublicKey.findProgramAddress(
+    [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), tokenMint.toBuffer(), Buffer.from('edition')],
+    TOKEN_METADATA_PROGRAM_ID
+  );
+};
+
+export const getEditionMarkAccount = (tokenMint: web3.PublicKey, edition: number) => {
+  const editionNumber = Math.floor(edition / EDITION_MARKER_BIT_SIZE);
+  return web3.PublicKey.findProgramAddress(
+    [
+      Buffer.from('metadata'),
+      TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+      tokenMint.toBuffer(),
+      Buffer.from('edition'),
+      Buffer.from(editionNumber.toString())
+    ],
+    TOKEN_METADATA_PROGRAM_ID
+  );
+};
+
+export const getSignedTx = (
+  wallet: AnchorWallet | web3.Keypair,
+  transaction: web3.Transaction,
+  extraSigners?: web3.Keypair[]
+) => {
   if ('signTransaction' in wallet) {
     return wallet.signTransaction(transaction);
   }
-  transaction.sign({
-    publicKey: wallet.publicKey,
-    secretKey: wallet.secretKey
-  });
+
+  let signers: web3.Signer[] = [
+    {
+      publicKey: wallet.publicKey,
+      secretKey: wallet.secretKey
+    }
+  ];
+
+  if (extraSigners) {
+    const extraKeypairs = extraSigners.map((signer) => {
+      return {
+        publicKey: signer.publicKey,
+        secretKey: signer.secretKey
+      };
+    });
+
+    signers.push(...extraKeypairs);
+  }
+
+  transaction.sign(...signers);
   return transaction;
+};
+
+export const getCandyShopData = async (candyShop: web3.PublicKey, isEnterprise: boolean, program: Program) => {
+  const candyShopData = await (isEnterprise
+    ? safeAwait(program.account.enterpriseCandyShopV1.fetch(candyShop))
+    : safeAwait(program.account.candyShopV1.fetch(candyShop)));
+
+  if (candyShopData.error) {
+    throw candyShopData.error;
+  }
+
+  if (!candyShopData) {
+    throw new CandyShopError(CandyShopErrorType.CandyShopDoesNotExist);
+  }
+
+  return candyShopData.result;
 };
 
 export const getAuctionData = async (auction: web3.PublicKey, program: Program) => {
@@ -273,14 +338,13 @@ export const compileAtaCreationIxs = async (
 export const sendTx = async (
   wallet: AnchorWallet | web3.Keypair,
   transaction: web3.Transaction,
-  program: Program
+  program: Program,
+  extraSigners?: web3.Keypair[]
 ): Promise<string> => {
   const recentBlockhash = await program.provider.connection.getLatestBlockhash('finalized');
   transaction.recentBlockhash = recentBlockhash.blockhash;
   transaction.feePayer = wallet.publicKey;
-
-  const signedTx = await getSignedTx(wallet, transaction);
-
+  const signedTx = await getSignedTx(wallet, transaction, extraSigners);
   const txHash = await awaitTransactionSignatureConfirmation(program.provider.connection, signedTx.serialize());
 
   return txHash;
