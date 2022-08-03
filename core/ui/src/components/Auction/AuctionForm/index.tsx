@@ -219,7 +219,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
           id="auction_period"
           name="auction_period"
           onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Period is required.')}
-          onChange={DO_NOTHING}
+          onChange={EMPTY_FUNCTION}
         />
       </div>
 
