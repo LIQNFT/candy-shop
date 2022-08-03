@@ -1,0 +1,131 @@
+@import '../../../variable.less';
+
+.candy-drop-header {
+  display: flex;
+  margin-bottom: 25px;
+
+  .candy-search {
+    margin-left: auto;
+    margin-right: 0;
+    min-width: 300px;
+    input {
+      min-height: 38px;
+    }
+  }
+}
+
+.candy-edition-infinity-element {
+  padding: 16px 30px 0;
+}
+
+.candy-edition-card {
+  &:hover {
+    z-index: 4;
+  }
+  .candy-card-info {
+    > .name,
+    > .ticker {
+      display: none;
+    }
+  }
+
+  .candy-edition-vault-icon {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    z-index: 2;
+    padding: 5px;
+    background-color: #fff;
+    border: 2px solid #e1cdff;
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      svg path {
+        fill: @primary-color;
+      }
+    }
+
+    svg {
+      width: 16px;
+      transition: 0.3s all ease;
+    }
+  }
+}
+
+.candy-edition-list-footer-card {
+  margin-top: 20px;
+
+  .candy-edition-price {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .candy-edition-slide {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 50px;
+    margin-top: 20px;
+
+    .slide {
+      background: linear-gradient(90deg, #67c8fc 0%, #8c7afc 48.44%, #d765ff 100%);
+      height: 100%;
+      border-radius: 50px;
+    }
+  }
+
+  .available {
+    text-align: left;
+    margin-block: 20px;
+    color: @gray-medium;
+
+    span {
+      color: #000;
+      font-weight: bold;
+    }
+  }
+
+  .timer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    svg {
+      color: @primary-color;
+      margin-right: 10px;
+    }
+  }
+}
+
+.candy-edition-filter {
+  display: flex;
+  padding-left: 30px;
+  margin-bottom: 10px;
+
+  > div {
+    padding: 6px;
+    border-radius: 8px;
+    min-width: 48px;
+    border: 2px solid @gray-light;
+    transition: 0.2s all ease;
+    margin-right: 12px;
+    cursor: pointer;
+
+    &.active,
+    &:hover {
+      border-color: @primary-color;
+      text-shadow: 1px 0 0 currentColor;
+    }
+  }
+}

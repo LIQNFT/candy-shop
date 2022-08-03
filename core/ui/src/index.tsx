@@ -7,6 +7,7 @@ export { Stat } from './public/Stat';
 export { Activity } from './public/Activity';
 export { AuctionActivity } from './public/AuctionActivity';
 export * from './public/Auction';
+export { CreateDrop, Drops } from './public/Drop';
 export * from './public/Modal';
 
 export { TransactionState, OrderDefaultFilter } from './model';

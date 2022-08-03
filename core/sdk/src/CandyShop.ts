@@ -730,7 +730,10 @@ export class CandyShop {
     }
 
     console.log(`${Logger}: performing mint print `, {
-      masterNft: masterMint.toString()
+      masterNft: masterMint.toString(),
+      nftOwner: nftOwnerTokenAccount.toString(),
+      editionBuyer: editionBuyer.publicKey.toString(),
+      whitelistMint: whitelistMint ? whitelistMint.toString() : undefined
     });
 
     const [auctionHouseAuthority] = await getAuctionHouseAuthority(
@@ -738,9 +741,7 @@ export class CandyShop {
       this._treasuryMint,
       this.programId
     );
-
     const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
-
     const txHash = await CandyShopDrop.mintPrint({
       candyShop: this._candyShopAddress,
       nftOwnerTokenAccount,

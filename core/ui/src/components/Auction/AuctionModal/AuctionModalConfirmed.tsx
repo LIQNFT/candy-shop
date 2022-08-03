@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { web3 } from '@project-serum/anchor';
-import { formatDate } from 'utils/format';
+import { formatDate } from 'utils/timer';
 import { Auction } from '@liqnft/candy-shop-types';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { LiqImage } from 'components/LiqImage';

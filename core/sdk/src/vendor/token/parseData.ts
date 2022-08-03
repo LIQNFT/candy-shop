@@ -198,3 +198,25 @@ export const parseEditionMarker = (buffer: Buffer): EditionMarker => {
 export const parseEdition = (buffer: Buffer) => {
   return deserializeUnchecked(METADATA_SCHEMA, Edition, buffer) as Edition;
 };
+
+export interface RawTokenInfo {
+  account: any;
+  uri?: any;
+  tokenMint: string;
+  tokenPubkey: string;
+  metadata?: Metadata;
+  edition?: string;
+  amount: string;
+}
+
+export interface EditionDrop {
+  amount: string;
+  edition: string;
+  maxSupply: number;
+  nftImage: string;
+  tokenAccountAddress: string;
+  tokenMintAddress: string;
+  nftDescription: string;
+  name: string;
+  symbol: string;
+}

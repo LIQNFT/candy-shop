@@ -1,6 +1,6 @@
 import React from 'react';
 
-const IconLink = () => {
+const IconLink: React.FC = () => {
   return (
     <svg
       width="32"
@@ -12,12 +12,7 @@ const IconLink = () => {
     >
       <rect width="32" height="32" fill="url(#pattern0)" />
       <defs>
-        <pattern
-          id="pattern0"
-          patternContentUnits="objectBoundingBox"
-          width="1"
-          height="1"
-        >
+        <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
           <use xlinkHref="#image0_2597_18851" transform="scale(0.00195312)" />
         </pattern>
         <image

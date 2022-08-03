@@ -8,7 +8,9 @@ import {
 } from './fetchMetadata';
 import { web3 } from '@project-serum/anchor';
 import { deleteCandyShopIDB, retrieveWalletNftFromIDB, storeWalletNftToIDB } from '../../idb';
-import { sleepPromise } from '../utils/promiseUtils';
+import { safeAwait, sleepPromise } from '../utils/promiseUtils';
+import { EditionDrop, parseEdition, parseMasterEditionV2, RawTokenInfo } from './parseData';
+import { TOKEN_METADATA_PROGRAM_ID } from '../../factory/constants';
 
 const Logger = 'CandyShopSDK/fetchNfts';
 
@@ -210,4 +212,89 @@ const getValidChunkSize = (chunkSize: number | undefined): number => {
     return DEFAULT_BATCH_SIZE;
   }
   return chunkSize;
+};
+
+export const fetchUserMasterNFTs = async (
+  userWalletPublicKey: web3.PublicKey,
+  connection: web3.Connection
+): Promise<EditionDrop[]> => {
+  const [rawTokens, nftsInfo] = await Promise.all([
+    safeAwait(connection.getParsedTokenAccountsByOwner(userWalletPublicKey, { programId: TOKEN_PROGRAM_ID })),
+    safeAwait(fetchNftsFromWallet(connection, userWalletPublicKey, undefined))
+  ]);
+
+  if (!rawTokens.result || !nftsInfo.result) {
+    if (rawTokens.error) {
+      console.log(`${Logger} connection.getParsedTokenAccountsByOwner failed, error=`, rawTokens.error);
+    }
+    if (nftsInfo.error) {
+      console.log(`${Logger} fetchNftsFromWallet failed, error=`, nftsInfo.error);
+    }
+    return [];
+  }
+
+  const tokenInfoMap: Map<string, RawTokenInfo> = new Map();
+  for (const token of rawTokens.result.value) {
+    if (Number(token.account.data.parsed.info.tokenAmount.amount) > 0) {
+      const item = {
+        account: token.account,
+        tokenPubkey: token.pubkey.toString(),
+        tokenMint: token.account.data.parsed.info.mint,
+        amount: token.account.data.parsed.info.tokenAmount.amount
+      };
+      tokenInfoMap.set(item.tokenPubkey, item);
+    }
+  }
+
+  const nftsInfoMap = new Map<string, SingleTokenInfo>();
+  for (const nft of nftsInfo.result) {
+    nftsInfoMap.set(nft.tokenMintAddress, nft);
+  }
+
+  const nfts = await Promise.all(
+    Array.from(tokenInfoMap.values()).map(async (e) => {
+      const [newEditionPublicKey] = await web3.PublicKey.findProgramAddress(
+        [
+          Buffer.from('metadata'),
+          TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+          new web3.PublicKey(e.tokenMint).toBuffer(),
+          Buffer.from('edition')
+        ],
+        TOKEN_METADATA_PROGRAM_ID
+      );
+
+      const newEditionAccountInfoResult = await safeAwait(connection.getAccountInfo(newEditionPublicKey));
+      if (newEditionAccountInfoResult.error) {
+        console.log(`${Logger} getAccountInfo token=${e.tokenMint} failed, error=`, newEditionAccountInfoResult.error);
+        return undefined;
+      }
+
+      if (!newEditionAccountInfoResult.result) {
+        console.log(`${Logger} getAccountInfo token=${e.tokenMint} empty`);
+        return undefined;
+      }
+
+      const masterEditionInfo = parseMasterEditionV2((newEditionAccountInfoResult.result as any).data);
+      const editionInfo = parseEdition((newEditionAccountInfoResult.result as any).data);
+      return {
+        ...e,
+        maxSupply: masterEditionInfo.maxSupply?.toString(),
+        supply: masterEditionInfo.supply.toString(),
+        edition: editionInfo.edition.toString()
+      };
+    })
+  );
+
+  return nfts.reduce((result: any[], nft) => {
+    if (nft && nft.tokenMint && Number(nft.maxSupply) > 1 && Number(nft.edition) === 0) {
+      const info = nftsInfoMap.get(nft.tokenMint);
+      result.push({
+        ...nft,
+        ...info,
+        name: info?.metadata?.data.name,
+        symbol: info?.metadata?.data.symbol
+      });
+    }
+    return result;
+  }, []);
 };

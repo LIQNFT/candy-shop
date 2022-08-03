@@ -8,7 +8,6 @@ import { NftVerification } from 'components/Tooltip/NftVerification';
 import { Viewer } from 'components/Viewer';
 import { ShopExchangeInfo } from 'model';
 import { getPrice } from 'utils/getPrice';
-import { PoweredByInBuyModal } from 'components/PoweredBy/PowerByInBuyModal';
 
 export interface BuyModalDetailProps {
   order: OrderSchema;
@@ -47,7 +46,7 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
       });
   }, [order.tokenMint]);
 
-  const orderPrice = getPrice(shopPriceDecimalsMin, shopPriceDecimals, order, exchangeInfo);
+  const orderPrice = getPrice(shopPriceDecimalsMin, shopPriceDecimals, order.price, exchangeInfo);
 
   return (
     <>

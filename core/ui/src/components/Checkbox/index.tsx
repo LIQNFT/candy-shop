@@ -7,7 +7,7 @@ import './style.less';
 interface CheckboxProps {
   fill?: string;
   checked: boolean;
-  label?: string;
+  label?: string | React.ReactNode;
   id: string;
   onClick?: any;
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ExplorerLink } from 'components/ExplorerLink';
-import { shortenAddress } from 'utils/format';
+import { shortenAddress } from 'utils/helperFunc';
 
 export interface NftStatProps {
   tokenMint: string;

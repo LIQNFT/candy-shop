@@ -1,0 +1,172 @@
+@import '../../../variable.less';
+
+#disable-input {
+  background-color: rgba(224, 224, 224, 0.5);
+  border-color: rgba(224, 224, 224, 0.5);
+  pointer-events: none;
+}
+
+#edition-form-label {
+  display: flex;
+  align-items: center;
+
+  .candy-icon-question {
+    margin-left: 4px;
+  }
+}
+
+.candy-edition-form {
+  max-width: 600px;
+  margin: 0 auto;
+
+  #totalSupply,
+  #name {
+    #disable-input();
+  }
+
+  /* Remove Arrows/Spinners Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input:focus-visible {
+    outline-color: #7522f5;
+  }
+
+  /* Firefox */
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
+  .candy-edition-form-title {
+    padding: 40px 0;
+  }
+
+  .candy-edition-nft {
+    margin-bottom: 40px;
+  }
+
+  .candy-checkbox-container {
+    margin-bottom: 15px;
+  }
+
+  .candy-edition-period {
+    text-align: left;
+    margin-bottom: 15px;
+
+    label {
+      display: block;
+    }
+
+    div {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      column-gap: 5px;
+    }
+  }
+
+  .candy-edition-radio {
+    border: 2px solid @primary-color;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    background-color: @primary-color-light;
+    color: @primary-color;
+  }
+
+  .candy-edition-radio-disable {
+    border-color: @gray-medium-alt;
+    color: #000;
+    background-color: #fff;
+  }
+
+  .candy-edition-form-item-checkbox {
+    text-align: left;
+    margin: 20px 0;
+  }
+
+  .candy-edition-form-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    margin-bottom: 15px;
+
+    &[data-hidden='true'] {
+      display: none;
+    }
+
+    > label {
+      #edition-form-label();
+    }
+
+    input {
+      width: 100%;
+      border: 2px solid @gray-medium-alt;
+      padding: 8px 12px;
+      border-radius: 4px;
+    }
+
+    .candy-edition-form-sol {
+      position: absolute;
+      top: 37px;
+      right: 10px;
+    }
+  }
+
+  .candy-edition-form-time {
+    display: grid;
+    grid-template-columns: 1fr 5px 1fr 110px;
+    column-gap: 5px;
+    align-items: center;
+    margin-bottom: 15px;
+    &[data-hidden='true'] {
+      display: none;
+    }
+
+    > input {
+      width: 100%;
+      border: 2px solid @gray-medium-alt;
+      padding: 8px 12px;
+      border-radius: 4px;
+    }
+
+    .candy-edition-time-checkbox {
+      display: grid;
+      grid-template-columns: 50px 50px;
+      column-gap: 5px;
+      align-items: center;
+    }
+  }
+
+  .candy-edition-form-price {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 10px;
+  }
+
+  .candy-action-form-fees {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+
+  .candy-edition-time-label {
+    display: block;
+    text-align: left;
+    #edition-form-label();
+  }
+
+  .candy-edition-checkbox-label {
+    #edition-form-label();
+  }
+
+  .candy-edition-buttons {
+    button {
+      margin-right: 15px;
+    }
+  }
+}

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { IconSearch } from 'assets/IconSearch';
+import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 import './style.less';
 
 interface SearchProps {
@@ -9,18 +10,27 @@ interface SearchProps {
 
 const DEBOUNCE_TIME = 300;
 export const Search: React.FC<SearchProps> = ({ onSearch, placeholder = '' }) => {
-  const [keyword, setKeyword] = useState<string>();
+  const [keyword, setKeyword] = useState<string>('');
+  const prevKeyword = useRef(keyword);
+  const onSearchRef = useRef(onSearch);
+  if (onSearch !== onSearchRef.current) {
+    onSearchRef.current = onSearch;
+  }
 
-  useEffect(() => {
-    const timeout = setTimeout(() => onSearch(keyword || ''), DEBOUNCE_TIME);
-    return () => clearTimeout(timeout);
-  }, [keyword, onSearch]);
+  const timeout = useUnmountTimeout();
+
+  if (keyword !== prevKeyword.current) {
+    prevKeyword.current = keyword;
+    timeout.current && clearTimeout(timeout.current);
+    timeout.current = setTimeout(() => onSearchRef.current(keyword), DEBOUNCE_TIME);
+  }
 
   return (
     <div className="candy-search">
       <IconSearch />
       <input
         placeholder={placeholder}
+        value={keyword}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value)}
       />
     </div>

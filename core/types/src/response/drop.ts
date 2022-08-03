@@ -29,8 +29,8 @@ export interface Drop {
   nftTokenAccount: string;
   salesPeriod: string;
   programId: String;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   status: DropStatus;
 
   // Nft Info

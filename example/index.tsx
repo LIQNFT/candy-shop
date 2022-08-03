@@ -21,14 +21,27 @@ import { DEFAULT_FORM_CONFIG, LS_CANDY_FORM } from './constant/formConfiguration
 import { CandyShopDataValidator } from '../core/ui';
 import { CandyShop } from '../core/sdk';
 import { ConfigureShop } from './ConfigureShop';
+import { DropExample } from './DropExample';
 
 const disableStyle = { pointerEvent: 'none', color: 'black', paddingRight: 20, fontWeight: 'bold' };
 const normalStyle = { paddingRight: 20 };
 
-enum Page {
-  MarketPlace,
-  Auction
+enum PageRoute {
+  MarketPlace = '/',
+  Auction = '/auction',
+  EditionDrop = '/edition-drop'
 }
+
+const initiateRoutePage = () => {
+  switch (window.location.pathname) {
+    case PageRoute.Auction:
+      return PageRoute.Auction;
+    case PageRoute.EditionDrop:
+      return PageRoute.EditionDrop;
+    default:
+      return PageRoute.MarketPlace;
+  }
+};
 
 const App = () => {
   const [candyForm, setCandyForm] = useState(() => {
@@ -36,7 +49,7 @@ const App = () => {
     if (formLocalStorage) return JSON.parse(formLocalStorage);
     return DEFAULT_FORM_CONFIG;
   });
-  const [page, setPage] = useState<Page>(window.location.pathname === '/auction' ? Page.Auction : Page.MarketPlace);
+  const [pageRoute, setPageRoute] = useState<PageRoute>(initiateRoutePage());
 
   const endpoint = useMemo(() => web3.clusterApiUrl(candyForm.network), [candyForm.network]);
   const wallets = useMemo(
@@ -91,18 +104,25 @@ const App = () => {
                 >
                   <div>
                     <Link
-                      style={page === Page.Auction ? normalStyle : disableStyle}
-                      to="/"
-                      onClick={() => setPage(Page.MarketPlace)}
+                      style={pageRoute === PageRoute.MarketPlace ? disableStyle : normalStyle}
+                      to={PageRoute.MarketPlace}
+                      onClick={() => setPageRoute(PageRoute.MarketPlace)}
                     >
-                      Marketplace Example
+                      Marketplace
                     </Link>
                     <Link
-                      style={page === Page.Auction ? disableStyle : normalStyle}
-                      to="/auction"
-                      onClick={() => setPage(Page.Auction)}
+                      style={pageRoute === PageRoute.Auction ? disableStyle : normalStyle}
+                      to={PageRoute.Auction}
+                      onClick={() => setPageRoute(PageRoute.Auction)}
                     >
-                      Auction Example
+                      Auction
+                    </Link>
+                    <Link
+                      style={pageRoute === PageRoute.EditionDrop ? disableStyle : normalStyle}
+                      to={PageRoute.EditionDrop}
+                      onClick={() => setPageRoute(PageRoute.EditionDrop)}
+                    >
+                      Edition Drop
                     </Link>
                   </div>
                   <div>
@@ -112,6 +132,7 @@ const App = () => {
                 </div>
                 {candyShop ? (
                   <Switch>
+                    <Route path="/edition-drop" component={() => <DropExample candyShop={candyShop} />} />
                     <Route path="/auction" component={() => <AuctionExample candyShop={candyShop} />} />
                     <Route path="/" component={() => <MarketplaceExample candyShop={candyShop} />} />
                   </Switch>
