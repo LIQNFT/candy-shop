@@ -1,11 +1,18 @@
-import { Program, Provider } from "@project-serum/anchor";
-import { AnchorWallet } from "@solana/wallet-adapter-react";
-import { Connection, Keypair } from "@solana/web3.js";
-import { getNodeWallet, getEditionVaultAccount } from "./vendor";
+import { Program, Provider } from '@project-serum/anchor';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { Connection, Keypair } from '@solana/web3.js';
+import { getNodeWallet, getEditionVaultAccount } from './vendor';
 import editionDropIdl from './idl/edition_drop.json';
-import { EDITION_DROP_PROGRAM_ID } from "./factory/constants";
-import { CommitNftParams, MintPrintParams, enterpriseCommitNft, enterpriseMintPrint, commitNft, mintPrint } from "./factory/program";
-import { EditionDropCommitNftParams, EditionDropMintPrintParams } from ".";
+import { EDITION_DROP_PROGRAM_ID } from './factory/constants';
+import {
+  CommitNftParams,
+  MintPrintParams,
+  enterpriseCommitNft,
+  enterpriseMintPrint,
+  commitNft,
+  mintPrint
+} from './factory/program';
+import { EditionDropCommitNftParams, EditionDropMintPrintParams } from '.';
 
 export abstract class EditionDrop {
   static getProgram(connection: Connection, wallet: AnchorWallet | Keypair) {
@@ -34,7 +41,7 @@ export abstract class EditionDrop {
       startTime,
       salesPeriod,
       whitelistTime,
-      candyShopProgram,
+      candyShopProgram
     } = params;
 
     const [vaultAccount] = await getEditionVaultAccount(candyShop, nftOwnerTokenAccount);
@@ -51,13 +58,13 @@ export abstract class EditionDrop {
       startTime,
       salesPeriod,
       program: this.getProgram(connection, nftOwner),
-      candyShopProgram,      
+      candyShopProgram
     };
 
     let txHash: string;
 
     if (isEnterprise) {
-      txHash = await enterpriseCommitNft(commitNftParams)
+      txHash = await enterpriseCommitNft(commitNftParams);
     } else {
       txHash = await commitNft(commitNftParams);
     }
@@ -78,11 +85,10 @@ export abstract class EditionDrop {
       editionNumber,
       newEidtionNftOwnerTokenAccount,
       auctionHouse,
-      candyShopProgram,
+      candyShopProgram
     } = params;
 
     const [vaultAccount] = await getEditionVaultAccount(candyShop, nftOwnerTokenAccount);
-
 
     const mintPrintParams: MintPrintParams = {
       candyShop,
@@ -101,7 +107,7 @@ export abstract class EditionDrop {
     let txHash: string;
 
     if (isEnterprise) {
-      txHash = await enterpriseMintPrint({ ...mintPrintParams, candyShopProgram })
+      txHash = await enterpriseMintPrint({ ...mintPrintParams, candyShopProgram });
     } else {
       txHash = await mintPrint(mintPrintParams);
     }
