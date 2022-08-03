@@ -31,7 +31,7 @@ export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ candySho
         wallet={wallet}
         walletConnectComponent={<WalletMultiButton />}
         candyShop={candyShop}
-        filters={FILTERS}
+        filters
         filterSearch
         search
       />
@@ -62,21 +62,4 @@ export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ candySho
 const ORDER_ACTIVITY: SortBy[] = [
   { column: 'price', order: 'desc' },
   { column: 'nftName', order: 'asc' }
-];
-
-const FILTERS = [
-  { name: 'Puppies', collectionId: '1', identifier: 2036309415 },
-  { name: 'Shibas', collectionId: '2', identifier: 1235887132 },
-  { name: 'Puppies + Shibas', collectionId: '3', identifier: [1235887132, 2036309415] },
-  {
-    name: 'Purple Puppies',
-    collectionId: '4',
-    identifier: 2036309415,
-    attribute: [{ backgrounds: 'gradient_purple' }]
-  },
-  {
-    name: 'White eye',
-    collectionId: '5',
-    attribute: [{ Shine: 'Shapes' }, { Eyeball: 'White' }]
-  }
 ];
