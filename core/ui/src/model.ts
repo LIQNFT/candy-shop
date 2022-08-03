@@ -5,7 +5,7 @@ export enum TransactionState {
 }
 
 export interface ShopExchangeInfo {
-  symbol: string;
+  symbol?: string;
   decimals: number;
 }
 

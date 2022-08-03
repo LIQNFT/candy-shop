@@ -14,8 +14,9 @@ import { NftVerification } from 'components/Tooltip/NftVerification';
 import { TransactionState } from 'model';
 import { handleError } from 'utils/ErrorHandler';
 import { getExchangeInfo } from 'utils/getExchangeInfo';
-import { getPrice } from 'utils/getPrice';
+
 import './style.less';
+import { Price } from 'components/Price';
 
 interface OrderDetailProps {
   tokenMint: string;
@@ -47,7 +48,6 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
         symbol: candyShop.currencySymbol,
         decimals: candyShop.currencyDecimals
       };
-  const orderPrice = getPrice(candyShop.priceDecimalsMin, candyShop.priceDecimals, order, exchangeInfo);
   const isUserListing = wallet?.publicKey && order && order.walletAddress === wallet.publicKey.toString();
 
   useEffect(() => {
@@ -124,7 +124,9 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
           </div>
           <div className="candy-stat">
             <div className="candy-label">PRICE</div>
-            <div className="candy-price">{orderPrice ? `${orderPrice} ${exchangeInfo.symbol}` : 'N/A'}</div>
+            <div className="candy-price">
+              <Price candyShop={candyShop} value={order?.price} />
+            </div>
           </div>
           <div className="candy-stat">
             <div className="candy-label">DESCRIPTION</div>

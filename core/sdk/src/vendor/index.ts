@@ -5,4 +5,4 @@ export * from './error';
 export * from './config';
 
 /* Control the factory exposure */
-export { WRAPPED_SOL_MINT, AUCTION_HOUSE_PROGRAM_ID } from '../factory/constants';
+export { WRAPPED_SOL_MINT, AUCTION_HOUSE_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from '../factory/constants';

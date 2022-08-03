@@ -7,7 +7,7 @@ import { FormType } from '../AuctionForm';
 import { AuctionNftHeader } from '../AuctionNftHeader';
 
 import { notification, NotificationType } from 'utils/rc-notification';
-import { getStartTime, convertTime12to24 } from 'utils/format';
+import { getStartTime, convertTime12to24 } from 'utils/timer';
 
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -85,7 +85,12 @@ export const CreateAuctionConfirm: React.FC<CreateAuctionProps> = ({
     { name: 'Bidding Period', value: `${auctionForm.biddingPeriod} hour(s)` },
     {
       name: 'Auction Start Date',
-      value: getStartTime(auctionForm)
+      value: getStartTime({
+        hour: auctionForm.auctionHour,
+        minute: auctionForm.auctionMinute,
+        clockFormat: auctionForm.clockFormat,
+        date: auctionForm.startDate
+      })
     }
   ];
 

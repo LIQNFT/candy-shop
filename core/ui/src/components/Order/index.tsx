@@ -29,7 +29,7 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, url, candyShop, onO
   };
 
   const exchangeInfo = getExchangeInfo(order, candyShop);
-  const orderPrice = getPrice(candyShop.priceDecimalsMin, candyShop.priceDecimals, order, exchangeInfo);
+  const orderPrice = getPrice(candyShop.priceDecimalsMin, candyShop.priceDecimals, order.price, exchangeInfo);
   const isUserListing = wallet?.publicKey && order.walletAddress === wallet.publicKey.toString();
 
   return (

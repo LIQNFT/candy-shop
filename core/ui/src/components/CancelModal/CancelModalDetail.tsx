@@ -21,7 +21,7 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
   shopPriceDecimalsMin,
   shopPriceDecimals
 }) => {
-  const orderPrice = getPrice(shopPriceDecimalsMin, shopPriceDecimals, order, exchangeInfo);
+  const orderPrice = getPrice(shopPriceDecimalsMin, shopPriceDecimals, order.price, exchangeInfo);
 
   return (
     <div className="candy-cancel-modal">

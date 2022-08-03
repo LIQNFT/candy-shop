@@ -2,15 +2,13 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 
-const NUMBER_OF_CHAR = 4;
-
-type FormType = {
-  auctionHour: string;
-  auctionMinute: string;
+interface TimeInfo {
+  hour: string;
+  minute: string;
   clockFormat: string;
-  startNow?: boolean;
-  startDate: string;
-};
+  isNow?: boolean;
+  date: string;
+}
 
 // Format date
 export function formatDate(date: string | Date): string {
@@ -19,23 +17,19 @@ export function formatDate(date: string | Date): string {
   return `${data.getDate()}/${data.getMonth()}/${data.getFullYear() % 100} ${data.getHours()}:${data.getMinutes()}`;
 }
 
-export const getStartTime = (auctionForm: FormType): string => {
-  if (!auctionForm.auctionHour || !auctionForm.auctionMinute || !auctionForm.clockFormat) {
+export const getStartTime = (timeData: TimeInfo): string => {
+  if (!timeData.hour || !timeData.minute || !timeData.clockFormat) {
     return dayjs.utc().format('MMMM DD, YYYY HH:mm') + ' UTC';
   }
 
-  if (auctionForm.startNow) {
+  if (timeData.isNow) {
     return dayjs.utc().format('MMMM DD, YYYY HH:mm') + ' UTC';
   }
 
   return (
     dayjs
       .utc(
-        `${auctionForm.startDate} ${convertTime12to24(
-          auctionForm.auctionHour,
-          auctionForm.auctionMinute,
-          auctionForm.clockFormat
-        )}`,
+        `${timeData.date} ${convertTime12to24(timeData.hour, timeData.minute, timeData.clockFormat)}`,
         'YYYY-MM-DD HH:mm'
       )
       .format('MMMM DD, YYYY hh:mmA') + ' UTC'
@@ -50,8 +44,4 @@ export const convertTime12to24 = (hour: string, min: string, clockFormat: string
     hour = (parseInt(hour, 10) + 12).toString();
   }
   return `${hour}:${min}`;
-};
-
-export const shortenAddress = (address: string, chars = NUMBER_OF_CHAR): string => {
-  return `${address.slice(0, chars)}...${address.slice(-chars)}`;
 };

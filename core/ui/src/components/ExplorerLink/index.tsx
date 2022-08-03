@@ -1,6 +1,6 @@
 import React from 'react';
 import { web3 } from '@project-serum/anchor';
-import { shortenAddress } from 'utils/format';
+import { shortenAddress } from 'utils/helperFunc';
 
 export const ExplorerLink = (props: {
   address: string | web3.PublicKey;

@@ -1,8 +1,14 @@
+@import '../../variable.less';
+
 .candy-card {
   position: relative;
   height: auto;
   z-index: 3;
   cursor: pointer;
+
+  &.selected {
+    border-color: @primary-color;
+  }
 
   &-info {
     color: black;

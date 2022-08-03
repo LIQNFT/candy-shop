@@ -79,7 +79,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
           setState(TransactionState.CONFIRMED);
         }, TIMEOUT_EXTRA_LOADING);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         console.log({ err });
         handleError({ error: err });
         setState(TransactionState.DISPLAY);
