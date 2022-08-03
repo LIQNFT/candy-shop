@@ -1,0 +1,63 @@
+@import '../../variable.less';
+
+.candy-activity-auction {
+  padding: 20px 50px;
+  font-size: 16px;
+
+  @media @desktopS {
+    padding: 20px 15px;
+  }
+  .infinite-scroll-component {
+    overflow: unset !important;
+  }
+
+  .candy-activity-auction-item {
+    display: grid;
+    text-align: left;
+    align-items: center;
+
+    grid-template-columns: minmax(300px, 1fr) 1fr 200px;
+    > * {
+      padding: 8px 12px;
+      border-bottom: 1px solid @gray-light;
+      min-height: 67px;
+      display: flex;
+      align-items: center;
+    }
+
+    @media @desktopL {
+      grid-template-columns: minmax(300px, 1fr) 1fr 200px;
+    }
+
+    img {
+      width: 50px;
+      height: 50px;
+      background-color: @gray-light;
+      object-fit: cover;
+      margin-right: 20px;
+    }
+  }
+
+  .candy-activity-auction-header {
+    span {
+      border-bottom: 2px solid @gray-medium;
+      font-size: 14px;
+      color: #757575;
+      font-weight: 700;
+      text-align: left;
+      min-height: unset;
+    }
+  }
+
+  .candy-activity-auction-table-container {
+    overflow: auto;
+
+    .candy-activity-auction-price {
+      white-space: nowrap;
+    }
+  }
+
+  .candy-processing {
+    margin: 60px auto;
+  }
+}
