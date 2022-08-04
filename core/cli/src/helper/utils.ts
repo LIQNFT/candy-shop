@@ -26,3 +26,7 @@ export async function findAssociatedTokenAddress(
     )
   )[0];
 }
+
+export function isEnterprise(isEnterpriseArg: string): boolean {
+  return isEnterpriseArg === 'true';
+}
