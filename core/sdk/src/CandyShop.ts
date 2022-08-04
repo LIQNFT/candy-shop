@@ -740,6 +740,16 @@ export class CandyShop {
 
     const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
 
+    if (this._version !== CandyShopVersion.V2) {
+      throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
+    }
+
+    console.log(`${Logger}: performing mint print `, {
+      masterNft: masterMint.toString(),
+      edittionNft: newEditionMint.toString(),
+      editionNumber: editionNumber.toString()
+    });
+
     const txHash = await CandyShopDrop.mintPrint({
       candyShop: this._candyShopAddress,
       nftOwnerTokenAccount,
