@@ -15,7 +15,7 @@ import { notification, NotificationType } from 'utils/rc-notification';
 const Logger = 'CandyShopUI/CardPaymentModal';
 
 export interface StripeCardDetailProps {
-  paymentId: string;
+  paymentEntityId: string;
   shopAddress: string;
   tokenAccount: string;
   onClickedPayCallback: (param: ConfirmStripePaymentParams) => void;
@@ -29,7 +29,7 @@ enum StripeErrorField {
 }
 
 export const StripeCardDetail: React.FC<StripeCardDetailProps> = ({
-  paymentId,
+  paymentEntityId,
   shopAddress,
   tokenAccount,
   onClickedPayCallback
@@ -70,7 +70,7 @@ export const StripeCardDetail: React.FC<StripeCardDetailProps> = ({
       })
       .then((paymentMethod: PaymentMethod) => {
         const params: ConfirmStripePaymentParams = {
-          paymentId,
+          paymentEntityId,
           paymentMethodId: paymentMethod.id,
           shopId: shopAddress,
           tokenAccount

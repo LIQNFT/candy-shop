@@ -1,7 +1,7 @@
 import { AxiosInstance } from 'axios';
 import {
   SingleBase,
-  PaymentIntentInfo,
+  PaymentInfo,
   PaymentAvailabilityParams,
   CreatePaymentParams,
   ConfirmStripePaymentParams,
@@ -26,7 +26,7 @@ export async function checkPaymentAvailability(
 export async function createPaymentIntents(
   axiosInstance: AxiosInstance,
   requestBody: CreatePaymentParams
-): Promise<SingleBase<PaymentIntentInfo>> {
+): Promise<SingleBase<PaymentInfo>> {
   const url = `${PaymentRouter}/create`;
   return axiosInstance.post(url, requestBody).then((res) => res.data);
 }
@@ -34,7 +34,7 @@ export async function createPaymentIntents(
 export function confirmPaymentIntents(
   axiosInstance: AxiosInstance,
   requestBody: ConfirmStripePaymentParams
-): Promise<SingleBase<PaymentIntentInfo>> {
+): Promise<SingleBase<PaymentInfo>> {
   const url = `${PaymentRouter}/confirm`;
   return axiosInstance.post(url, requestBody).then((res) => res.data);
 }

@@ -7,7 +7,7 @@ import {
   CreatePaymentParams,
   GetQuotePriceQuery,
   PaymentAvailabilityParams,
-  PaymentIntentInfo,
+  PaymentInfo,
   SingleBase
 } from '@liqnft/candy-shop-types';
 import {
@@ -23,11 +23,11 @@ export abstract class CandyShopPay {
     return checkPaymentAvailability(axiosInstance, params);
   }
 
-  static createPayment(params: CreatePaymentParams): Promise<SingleBase<PaymentIntentInfo>> {
+  static createPayment(params: CreatePaymentParams): Promise<SingleBase<PaymentInfo>> {
     return createPaymentIntents(axiosInstance, params);
   }
 
-  static confirmPayment(params: ConfirmStripePaymentParams): Promise<SingleBase<PaymentIntentInfo>> {
+  static confirmPayment(params: ConfirmStripePaymentParams): Promise<SingleBase<PaymentInfo>> {
     return confirmPaymentIntents(axiosInstance, params);
   }
 

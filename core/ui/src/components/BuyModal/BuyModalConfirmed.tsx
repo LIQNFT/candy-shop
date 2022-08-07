@@ -30,9 +30,9 @@ const PaymentErrorMessage: React.FC<{ error: PaymentErrorDetails }> = ({ error }
       <div>{content}</div>
       {moreInfo?.content ? (
         <div>
-          {moreInfo.content}.
+          {moreInfo.content + ' '}
           <a href={moreInfo.link} target="_blank" rel="noreferrer noopener">
-            {moreInfo.linkText}
+            {moreInfo.linkText + '.'}
           </a>
         </div>
       ) : null}

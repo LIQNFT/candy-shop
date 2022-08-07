@@ -122,7 +122,9 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       setPaymentError(error);
       return;
     }
-    if (type === BuyModalState.PAYMENT) setState(BuyModalState.PAYMENT);
+    if (type === BuyModalState.PAYMENT) {
+      setState(BuyModalState.PAYMENT);
+    }
   };
 
   // Aggregate checkPaymentAvailability and getTokenFiatMoneyPrice
