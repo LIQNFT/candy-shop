@@ -25,27 +25,6 @@ export interface CreatePaymentParams {
 export interface ConfirmStripePaymentParams {
   shopId: string;
   tokenAccount: string;
-  paymentId: string;
+  paymentEntityId: string;
   paymentMethodId: string;
-}
-export interface PaymentIntentInfo {
-  paymentId: string;
-}
-
-export enum PaymentErrorName {
-  InvalidBuyerWallet = 'InvalidWallet',
-  NotAllowedShop = 'NotAllowedShop',
-  NotAllowedNft = 'NotAllowedNft',
-  InvalidToken = 'InvalidToken',
-  UnavailableToken = 'UnavailableToken',
-  InsufficientPurchaseBalance = 'InsufficientPurchaseBalance',
-  // TODO: define error to more granular level
-  PurchaseNftError = 'PurchaseNftError',
-  TransferNftError = 'TransferNftError',
-  UnknownNftTransactionError = 'UnknownNftTransactionError',
-  DataServiceError = 'DataServiceError',
-  ExchangeRateError = 'ExchangeRateError',
-  OutdatedPrice = 'OutdatedPrice',
-  UnsupportedCurrency = 'UnsupportedCurrency',
-  BelowMinPurchasePrice = 'BelowMinPurchasePrice'
 }

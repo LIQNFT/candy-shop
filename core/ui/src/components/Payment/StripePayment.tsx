@@ -6,7 +6,7 @@ import {
   CreatePaymentParams,
   Order,
   PaymentCurrencyType,
-  PaymentIntentInfo,
+  PaymentInfo,
   PaymentMethodType,
   ShopStatusType,
   SingleBase
@@ -48,7 +48,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
   paymentPrice
 }) => {
   const stripePromise = loadStripe(stripePublicKey);
-  const [paymentId, setPaymentId] = useState<string>();
+  const [paymentEntityId, setPaymentEntityId] = useState<string>();
 
   const { refreshSubject } = useUpdateCandyShopContext();
 
@@ -65,10 +65,10 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
     };
     // init payment with Stripe
     CandyShopPay.createPayment(params)
-      .then((res: SingleBase<PaymentIntentInfo>) => {
+      .then((res: SingleBase<PaymentInfo>) => {
         if (res.success && res.result) {
           console.log(`${Logger}: createPayment success, res=`, res.result);
-          setPaymentId(res.result.paymentId);
+          setPaymentEntityId(res.result.paymentEntityId);
         } else {
           console.log(`${Logger}: createPayment failed, reason=`, res.msg);
           if (res.msg) {
@@ -85,15 +85,18 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
   const onClickedPayCallback = (params: ConfirmStripePaymentParams) => {
     onProcessingPay(BuyModalState.PROCESSING);
     CandyShopPay.confirmPayment(params)
-      .then((res: SingleBase<PaymentIntentInfo>) => {
+      .then((res: SingleBase<PaymentInfo>) => {
         if (res.success && res.result) {
           onProcessingPay(BuyModalState.CONFIRMED);
           refreshSubject(ShopStatusType.UserNft, Date.now());
-          console.log(`${Logger}: confirmPayment success=`, res.result);
         } else {
           if (res.msg) {
             console.log(`${Logger}: confirmPayment failed, reason=`, res.msg);
-            onProcessingPay(BuyModalState.DISPLAY);
+            const errorDetails: PaymentErrorDetails = {
+              title: 'Payment Error',
+              content: res.msg
+            };
+            onProcessingPay(BuyModalState.PAYMENT_ERROR, errorDetails);
             notification(res.msg, NotificationType.Error, 5);
           }
           if ('errorDetails' in res) {
@@ -101,9 +104,13 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
           }
         }
       })
-      .catch((err: any) => {
-        onProcessingPay(BuyModalState.PAYMENT, err as PaymentErrorDetails);
+      .catch((err: Error) => {
         console.log(`${Logger}: confirmPayment failed, err=`, err);
+        const errorDetails: PaymentErrorDetails = {
+          title: err.name,
+          content: err.message
+        };
+        onProcessingPay(BuyModalState.PAYMENT_ERROR, errorDetails);
         notification(err.message, NotificationType.Error, 5);
       });
   };
@@ -143,10 +150,10 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
           <span>{walletAddress}</span>
         </div>
 
-        {paymentId ? (
+        {paymentEntityId ? (
           <Elements stripe={stripePromise}>
             <StripeCardDetail
-              paymentId={paymentId}
+              paymentEntityId={paymentEntityId}
               shopAddress={shopAddress}
               tokenAccount={order.tokenAccount}
               onClickedPayCallback={onClickedPayCallback}
