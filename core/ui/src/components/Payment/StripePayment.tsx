@@ -119,7 +119,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
   return (
     <div className="candy-buy-modal candy-buy-stripe">
-      <div>
+      <div className="candy-buy-stripe-left">
         <div className="candy-buy-modal-thumbnail">
           <Viewer order={order} />
         </div>
@@ -127,26 +127,26 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
           {order?.name}
           {order.verifiedNftCollection ? <NftVerification size={24} /> : null}
         </div>
-        <div className="candy-label">CURRENT PRICE</div>
+        <div className="candy-label">PRICE</div>
         <div className="candy-price">
           {orderPrice ? `${orderPrice} ${exchangeInfo.symbol}` : 'N/A'}
-          <span className="candy-price-usd">&nbsp;| ${paymentPrice} USD</span>
+          <span className="candy-price-usd">&nbsp; US${paymentPrice}</span>
         </div>
-        <div style={{ textAlign: 'left', marginTop: '10px' }}>
+        <div style={{ textAlign: 'left', marginTop: '10px', fontSize: '12px', lineHeight: '18px' }}>
           USD/SGD price is for reference only and subject to final confirmation{' '}
           <span className="candy-stripe-note">
             (include disclaimers here for fees + buy buffer spread) - VN will update
           </span>
         </div>
       </div>
-      <div>
-        <div className="candy-title">Credit Card Payment</div>
+      <div className="candy-buy-stripe-right">
+        <div className="candy-title">Pay With Credit Card</div>
         <div className="candy-stripe-logo">
           Powered by <img src={stripeLogo} alt="stripe logo" />
         </div>
 
         <div className="candy-stripe-block">
-          Before buying, please confirm that this is your address. If incorrect, reconnect your wallet.
+          Before buying, please confirm that this is your wallet address. If not, reconnect your wallet.
           <span>{walletAddress}</span>
         </div>
 

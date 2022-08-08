@@ -2,6 +2,7 @@
 
 #stripe-timeout {
   font-size: 10px;
+  font-weight: normal;
   margin-left: 4px;
   vertical-align: bottom;
 }
@@ -12,8 +13,17 @@
   font-size: 18px;
 }
 .candy-buy-stripe {
+  .candy-buy-stripe-left {
+    flex: 0;
+  }
+
+  .candy-buy-stripe-right {
+    flex: 1;
+  }
+
   .candy-label {
-    margin-top: 20px;
+    margin-top: 10px;
+    margin-bottom: 2px;
   }
 
   .candy-stripe-note {
@@ -22,21 +32,25 @@
 
   .candy-stripe-terms {
     margin: 20px 0;
+    font-size: 12px;
+    line-height: 18px;
     a {
       color: @primary-color;
     }
   }
 
   .candy-stripe-block {
-    border-radius: 16px;
+    border-radius: 8px;
     background: rgba(236, 68, 47, 0.1);
     border: 1px solid #ec442f;
     padding: 20px 25px;
     margin-bottom: 30px;
+    font-size: 14px;
+    line-height: 20px;
 
     span {
       font-weight: 600;
-      font-size: 18px;
+      font-size: 16px;
       display: block;
       margin-top: 8px;
     }
@@ -45,12 +59,17 @@
   .candy-stripe-logo {
     margin-top: 10px;
     margin-bottom: 15px;
+    font-size: 14px;
     text-align: left;
+
+    img {
+      height: 18px;
+    }
   }
 
   @media @desktopXM {
     .candy-stripe-block {
-      padding: 5px 10px;
+      padding: 8px 16px;
       margin-bottom: 5px;
     }
     .candy-stripe-logo {
@@ -67,14 +86,13 @@
   gap: 24px;
   font-size: 16px;
   line-height: 24px;
-  min-height: 530px;
-  align-items: center;
 
   .candy-buy-modal-thumbnail {
     align-self: flex-start;
     width: 340px;
     height: 340px;
     text-align: center;
+    margin-bottom: 5px;
 
     img {
       max-width: 100%;
@@ -128,7 +146,7 @@
 
       .candy-pay-credit-button {
         border: 2px solid @primary-color;
-        margin-top: 20px;
+        margin-top: 10px;
         color: @primary-color;
         background: #fff;
         height: 56px;
