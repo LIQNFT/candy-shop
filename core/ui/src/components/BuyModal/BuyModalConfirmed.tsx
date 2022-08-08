@@ -80,7 +80,7 @@ export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
             <div className="candy-buy-modal-price">{orderPrice ? `${orderPrice} ${exchangeInfo.symbol}` : 'N/A'}</div>
             {paymentPrice && (
               <span className="candy-payment-confirmed-price">
-                ~$ <span>{paymentPrice} USD</span>
+                ~$US<span>{paymentPrice}</span>
               </span>
             )}
           </div>

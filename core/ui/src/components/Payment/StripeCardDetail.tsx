@@ -87,19 +87,14 @@ export const StripeCardDetail: React.FC<StripeCardDetailProps> = ({
     <div className="card-payment-modal-container">
       <label htmlFor="stripe-name">Name</label>
       <div className="candy-stripe-input">
-        <input
-          id="stripe-name"
-          placeholder={`Enter your name`}
-          onChange={(e: any) => setName(e.target.value)}
-          value={name}
-        />
+        <input id="stripe-name" placeholder={`Your name`} onChange={(e: any) => setName(e.target.value)} value={name} />
       </div>
 
-      <label htmlFor="stripe-email">Email Address</label>
+      <label htmlFor="stripe-email">Email</label>
       <div className={`candy-stripe-input ${error?.code === StripeErrorField.EMAIL ? 'error' : ''}`}>
         <input
           id="stripe-email"
-          placeholder={`Enter your email`}
+          placeholder={`Your email`}
           onChange={(e: any) => setEmail(e.target.value)}
           value={email}
         />

@@ -94,7 +94,7 @@ const App = () => {
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
-          <CandyShopPayProvider stripePublicKey={JSON.parse(candyForm.paymentProvider).stripePublicKey}>
+          <CandyShopPayProvider stripePublicKey={candyForm.paymentProvider && JSON.parse(candyForm.paymentProvider).stripePublicKey}>
             <CandyShopDataValidator>
               <>
                 <div

@@ -88,7 +88,7 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
               <span className="candy-price-timeout">
                 {paymentPrice ? (
                   <>
-                    <span className="candy-price-usd">&nbsp;| ${paymentPrice} USD</span>
+                    <span className="candy-price-usd">&nbsp; US${paymentPrice}</span>
                     <span ref={setCountdownElement} id="stripe-timeout">
                       (3s)
                     </span>
