@@ -24,6 +24,9 @@ export interface Drop {
   nftMint: string;
   txHashAtCreation: string;
   blockTimeAtCreation: string;
+  nftTokenAccount: string;
+  firstSalesPeriod: string;
+  programId: String;
   createdAt: Date;
   updatedAt: Date;
   status: VaultStatus;
