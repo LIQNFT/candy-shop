@@ -129,7 +129,7 @@ export const StripeCardDetail: React.FC<StripeCardDetailProps> = ({
       <div className="candy-stripe-terms">
         By proceeding with this transaction, I agree to the{' '}
         <a href="https://liqnft.gitbook.io/docs/candy-shop/terms-of-service" target="_blank" rel="noreferrer noopener">
-          CandyShop Terms & Conditions.
+          Candy Shop Terms & Conditions.
         </a>{' '}
         I acknowledge that transactions on the blockchain are final and non-refundable.
       </div>
