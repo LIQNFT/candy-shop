@@ -4,7 +4,7 @@ export enum DropType {
   Editioned = 0
 }
 
-export enum VaultStatus {
+export enum DropStatus {
   CREATED = 0,
   WHITELIST_STARTED = 1,
   SALE_STARTED = 2,
@@ -29,7 +29,7 @@ export interface Drop {
   programId: String;
   createdAt: Date;
   updatedAt: Date;
-  status: VaultStatus;
+  status: DropStatus;
 
   // Nft Info
   nftUri?: string;
