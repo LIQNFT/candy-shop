@@ -133,10 +133,8 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
           <span className="candy-price-usd">&nbsp; US${paymentPrice}</span>
         </div>
         <div style={{ textAlign: 'left', marginTop: '10px', fontSize: '12px', lineHeight: '18px' }}>
-          USD/SGD price is for reference only and subject to final confirmation{' '}
-          <span className="candy-stripe-note">
-            (include disclaimers here for fees + buy buffer spread) - VN will update
-          </span>
+          Final USD price will be based on the official FTX SOLUSD rate at point of transaction confirmation and
+          includes processing and FX fees.
         </div>
       </div>
       <div className="candy-buy-stripe-right">
