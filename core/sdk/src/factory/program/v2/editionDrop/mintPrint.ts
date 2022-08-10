@@ -104,5 +104,5 @@ export const mintPrint = async (newTokenInstruction: TransactionInstruction[], p
 
   transaction.add(ix);
 
-  return await sendTx(editionBuyer, transaction, program);
+  return await sendTx(editionBuyer, transaction, program, [newEditionMint]);
 };
