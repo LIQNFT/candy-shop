@@ -141,7 +141,7 @@ describe('e2e drop flow', function () {
       startTime: new BN(Date.now() / 1000 + 60),
       salesPeriod: SALES_PERIOD,
       whitelistMint,
-      whitelistTime: new BN(Date.now() / 100)
+      whitelistTime: new BN(Date.now() / 1000)
     });
     console.log('commitTxHash ', commitTxHash);
     await connection.confirmTransaction(commitTxHash);
@@ -184,7 +184,7 @@ describe('e2e drop flow', function () {
       startTime: new BN(Date.now() / 1000 + 60),
       salesPeriod: SALES_PERIOD,
       whitelistMint,
-      whitelistTime: new BN(Date.now() / 100)
+      whitelistTime: new BN(Date.now() / 1000)
     });
     console.log('commitTxHash ', commitTxHash);
     await connection.confirmTransaction(commitTxHash);
