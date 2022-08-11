@@ -729,7 +729,7 @@ export class CandyShop {
     }
 
     console.log(`${Logger}: performing mint print `, {
-      masterNft: masterMint.toString(),
+      masterNft: masterMint.toString()
     });
 
     const [auctionHouseAuthority] = await getAuctionHouseAuthority(
