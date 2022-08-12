@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { CandyShop, CandyShopTrade, CandyShopTradeCancelParams, CandyShopVersion, getCandyShopSync } from '@liqnft/candy-shop-sdk';
+import {
+  CandyShop,
+  CandyShopTrade,
+  CandyShopTradeCancelParams,
+  CandyShopVersion,
+  getCandyShopSync
+} from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';

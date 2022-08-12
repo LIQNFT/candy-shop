@@ -1,7 +1,7 @@
 import React from 'react';
 import { web3 } from '@project-serum/anchor';
 import { shortenAddress } from 'utils/helperFunc';
-import { CandyShop, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+import { ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
 
 export const BaseUrlType = {
   [ExplorerLinkBase.SolScan]: 'https://solscan.io',
