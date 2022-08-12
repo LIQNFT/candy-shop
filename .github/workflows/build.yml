@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['14.17.x']
+        node-version: ['16.x.x']
     steps:       
       # Checks out a copy of your repository on the ubuntu-latest machine
       - name: Checkout code
