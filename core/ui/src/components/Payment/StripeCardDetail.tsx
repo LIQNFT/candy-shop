@@ -5,6 +5,7 @@ import {
   CreatePaymentMethodCardData,
   PaymentMethod,
   PaymentMethodResult,
+  Stripe,
   StripeCardNumberElementOptions,
   StripeError
 } from '@stripe/stripe-js';
@@ -18,7 +19,7 @@ export interface StripeCardDetailProps {
   paymentEntityId: string;
   shopAddress: string;
   tokenAccount: string;
-  onClickedPayCallback: (param: ConfirmStripePaymentParams) => void;
+  onClickedPayCallback: (param: ConfirmStripePaymentParams, stripe: Stripe) => void;
 }
 
 enum StripeErrorField {
@@ -75,7 +76,7 @@ export const StripeCardDetail: React.FC<StripeCardDetailProps> = ({
           shopId: shopAddress,
           tokenAccount
         };
-        onClickedPayCallback(params);
+        onClickedPayCallback(params, stripe);
       })
       .catch((error: StripeError) => {
         console.log(`${Logger}: getConfirmPaymentParams failed, err=`, error);

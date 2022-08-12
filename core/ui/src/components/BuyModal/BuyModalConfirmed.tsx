@@ -1,14 +1,14 @@
 import React from 'react';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { web3 } from '@project-serum/anchor';
 import { formatDate } from 'utils/timer';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { LiqImage } from 'components/LiqImage';
 import { IconTick } from 'assets/IconTick';
-import { IconError } from 'assets/IconError';
 import { ShopExchangeInfo, PaymentErrorDetails } from 'model';
 import { getPrice } from 'utils/getPrice';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { IconError } from 'assets/IconError';
 
 interface BuyModalConfirmedProps {
   order: OrderSchema;
@@ -60,7 +60,7 @@ export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
     <div className="candy-buy-modal-confirmed">
       <div className="candy-buy-modal-confirmed-header">
         {error ? <IconError /> : <IconTick />}
-        <div>{error ? 'Transaction could not be completed' : 'Transaction Confirmed'}</div>
+        <div>{error ? error.title : 'Transaction Confirmed'}</div>
       </div>
       {error ? (
         <div className="candy-buy-confirmed-error-message">
@@ -119,7 +119,7 @@ export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
             <div className="candy-buy-modal-confirmed-item">
               <div className="candy-label">TRANSACTION HASH</div>
               <div className="candy-value">
-                <ExplorerLink type="tx" address={txHash} />
+                <ExplorerLink type="tx" address={txHash} source={candyShop.explorerLink} env={candyShop.env} />
               </div>
             </div>
             <div className="candy-buy-modal-confirmed-item">

@@ -24,6 +24,7 @@ export const configBaseUrl = (env: web3.Cluster): void => {
       if (env === 'mainnet-beta') {
         config.baseURL = 'https://candy-shop.liqnft.com/api/';
       }
+
       return config;
     },
     (error: any) => {

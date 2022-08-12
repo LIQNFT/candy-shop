@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+import { loadStripe, Stripe } from '@stripe/stripe-js';
 import {
   ConfirmStripePaymentParams,
   CreatePaymentParams,
@@ -11,7 +11,7 @@ import {
   ShopStatusType,
   SingleBase
 } from '@liqnft/candy-shop-types';
-import { CandyShopPay } from '@liqnft/candy-shop-sdk';
+import { CandyShopPay, safeAwait } from '@liqnft/candy-shop-sdk';
 import { StripeCardDetail } from './StripeCardDetail';
 import { Processing } from 'components/Processing';
 import { Viewer } from 'components/Viewer';
@@ -82,30 +82,55 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
       });
   }, [order, paymentPrice, shopAddress, walletAddress]);
 
-  const onClickedPayCallback = (params: ConfirmStripePaymentParams) => {
+  const handleConfirmPayment = async (params: ConfirmStripePaymentParams, stripe?: Stripe): Promise<boolean> => {
     onProcessingPay(BuyModalState.PROCESSING);
-    CandyShopPay.confirmPayment(params)
-      .then((res: SingleBase<PaymentInfo>) => {
-        if (res.success && res.result) {
-          onProcessingPay(BuyModalState.CONFIRMED);
-          refreshSubject(ShopStatusType.UserNft, Date.now());
+    const confirmRes = await CandyShopPay.confirmPayment(params);
+    if (confirmRes.success && confirmRes.result) {
+      const paymentInfo = confirmRes.result;
+      const stripeInfo = paymentInfo.stripeConfirmInfo;
+      if (stripe && stripeInfo?.requiresAuth && stripeInfo?.paymentIntentClientSecret) {
+        // TODO: This might be different with production mode, should revisit when doing production test.
+        // In test mode, the response contains `stripe_js` that has the authentication test page from Stripe
+        if ('stripe_js' in stripeInfo.stripeSdkObj) {
+          window.open(stripeInfo.stripeSdkObj.stripe_js, '_blank');
         } else {
-          if (res.msg) {
-            console.log(`${Logger}: confirmPayment failed, reason=`, res.msg);
-            const errorDetails: PaymentErrorDetails = {
-              title: 'Payment Error',
-              content: res.msg
-            };
-            onProcessingPay(BuyModalState.PAYMENT_ERROR, errorDetails);
-            notification(res.msg, NotificationType.Error, 5);
+          const handleAuth = await safeAwait(stripe.handleCardAction(stripeInfo.paymentIntentClientSecret));
+          if (handleAuth.error) {
+            // Catch the unexpected error of stripe.handleCardAction
+            //console.log('debugger: paymentResult.error=', handleAuth.error);
           }
-          if ('errorDetails' in res) {
-            onProcessingPay(BuyModalState.PAYMENT_ERROR, (res as any).errorDetails);
+
+          if (handleAuth.result?.error) {
+            throw handleAuth.result?.error;
           }
         }
+        handleConfirmPayment(params);
+        return false;
+      } else {
+        onProcessingPay(BuyModalState.CONFIRMED);
+        refreshSubject(ShopStatusType.UserNft, Date.now());
+      }
+    } else if ('errorDetails' in confirmRes) {
+      onProcessingPay(BuyModalState.PAYMENT_ERROR, (confirmRes as any).errorDetails);
+    } else if (typeof confirmRes.result === 'string' && confirmRes.msg) {
+      console.log(`${Logger}: confirmPayment failed, reason=`, confirmRes.msg);
+      const errorDetails: PaymentErrorDetails = {
+        title: confirmRes.result,
+        content: confirmRes.msg
+      };
+      onProcessingPay(BuyModalState.PAYMENT_ERROR, errorDetails);
+      notification(confirmRes.msg, NotificationType.Error, 5);
+    }
+    return true;
+  };
+
+  const onClickedPayCallback = (params: ConfirmStripePaymentParams, stripe: Stripe) => {
+    handleConfirmPayment(params, stripe)
+      .then((result) => {
+        //console.log('debugger: result=', result);
       })
       .catch((err: Error) => {
-        console.log(`${Logger}: confirmPayment failed, err=`, err);
+        console.log(`${Logger}: handleConfirmPayment failed, err=`, err);
         const errorDetails: PaymentErrorDetails = {
           title: err.name,
           content: err.message
@@ -115,7 +140,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
       });
   };
 
-  const orderPrice = getPrice(shopPriceDecimalsMin, shopPriceDecimals, order, exchangeInfo);
+  const orderPrice = getPrice(shopPriceDecimalsMin, shopPriceDecimals, order.price, exchangeInfo);
 
   return (
     <div className="candy-buy-modal candy-buy-stripe">
