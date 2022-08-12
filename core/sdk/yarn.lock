@@ -490,17 +490,17 @@
   resolved "https://registry.yarnpkg.com/@metaplex-foundation/cusper/-/cusper-0.0.2.tgz#dc2032a452d6c269e25f016aa4dd63600e2af975"
   integrity sha512-S9RulC2fFCFOQraz61bij+5YCHhSO9llJegK8c8Y6731fSi6snUSQJdCUqYS8AIgR0TKbQvdvgSyIIdbDFZbBA==
 
-"@metaplex-foundation/js@^0.14.0":
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/@metaplex-foundation/js/-/js-0.14.0.tgz#cd87ca847fc46557039acf2bb43070906ee2948d"
-  integrity sha512-R/n0rhnz0Ee4GRfBVw2VC4le7i0ZJPqiEV1sAWPOF8ldfbUrkvIn504sCDXLNhJzx7mrk6q90Ewgxd5YimMddQ==
+"@metaplex-foundation/js@0.13.1":
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/@metaplex-foundation/js/-/js-0.13.1.tgz#589535826253335ccfe3a9dad1005f06c9b8d95b"
+  integrity sha512-mlhv3BJE9CG+IBNVhiiuKZKguOfz5Wp8YZf3LYQlYR7exo0XUCe8gxR1QYeOPCX+eLJDVCAmur1z3eAL2M3JFg==
   dependencies:
     "@bundlr-network/client" "^0.7.14"
     "@metaplex-foundation/beet" "^0.2.0"
     "@metaplex-foundation/beet-solana" "^0.1.1"
-    "@metaplex-foundation/mpl-auction-house" "^2.1.1"
+    "@metaplex-foundation/mpl-auction-house" "^2.0.0"
     "@metaplex-foundation/mpl-candy-machine" "^4.3.0"
-    "@metaplex-foundation/mpl-token-metadata" "^2.2.2"
+    "@metaplex-foundation/mpl-token-metadata" "^2.1.2"
     "@solana/spl-token" "^0.2.0"
     "@solana/web3.js" "^1.47.3"
     abort-controller "^3.0.0"
@@ -516,7 +516,7 @@
     mime "^3.0.0"
     tweetnacl "^1.0.3"
 
-"@metaplex-foundation/mpl-auction-house@^2.1.1":
+"@metaplex-foundation/mpl-auction-house@^2.0.0":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@metaplex-foundation/mpl-auction-house/-/mpl-auction-house-2.1.1.tgz#137a35395f2b44b5c7e49ca9d62ef41e4c71336a"
   integrity sha512-KBQAiN2/BYd1aVtun0ObbFF1xbIaAXnKU4dlS/ruK5FO1itw6KiaICbl+nUJOvc7F7oTBnrtzfDYXHWEy4G0VQ==
@@ -546,7 +546,7 @@
     "@solana/web3.js" "^1.35.1"
     bs58 "^4.0.1"
 
-"@metaplex-foundation/mpl-token-metadata@^2.2.2":
+"@metaplex-foundation/mpl-token-metadata@^2.1.2":
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/@metaplex-foundation/mpl-token-metadata/-/mpl-token-metadata-2.2.3.tgz#099472aade1643f546d54667b47738661f1e8bff"
   integrity sha512-42QiGLXuOj2d7N5KUrzqHDe0QKGHzIF12CRZaGsD6C0EAJpCyOAn2Gu8HTZQioexPP0u2xEWfiCK+zo7UAtatQ==
