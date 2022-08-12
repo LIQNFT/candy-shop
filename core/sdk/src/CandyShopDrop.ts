@@ -167,9 +167,10 @@ async function generateEditionNumber(vaultAccount: PublicKey, connection: Connec
   }
   const vaultAccountInfo = vaultAccountInfoResult.result;
   const editionBase10Array = vaultAccountInfo?.data.slice(VAULT_ACCOUNT_SIZE - EDITION_ARRAY_SIZE, VAULT_ACCOUNT_SIZE);
-  const vaultMaxSupply = Number(
-    vaultAccountInfo?.data.slice(MAX_SUPPLY_OFFSET, MAX_SUPPLY_OFFSET + 8).readBigUint64LE()
-  );
+  const maxSupplyData = vaultAccountInfo?.data.slice(MAX_SUPPLY_OFFSET, MAX_SUPPLY_OFFSET + 8);
+  const maxSupplyDataArray = new Uint8Array(maxSupplyData!);
+  const view = new DataView(maxSupplyDataArray.buffer, 0);
+  const vaultMaxSupply = Number(view.getBigInt64(0, true));
 
   let editionArray: string[] = [];
   for (let i = 0; i < editionBase10Array!.length && i < vaultMaxSupply / 8; i++) {
