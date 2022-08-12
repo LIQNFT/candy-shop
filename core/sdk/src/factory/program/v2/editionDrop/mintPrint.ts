@@ -68,7 +68,7 @@ export const mintPrint = async (newTokenInstruction: TransactionInstruction[], p
     getMasterEditionAccount(masterMint),
     getMetadataAccount(newEditionMint.publicKey),
     getMasterEditionAccount(newEditionMint.publicKey),
-    getEditionMarkAccount(newEditionMint.publicKey, editionNumber)
+    getEditionMarkAccount(masterMint, editionNumber)
   ]);
 
   const transaction = new Transaction();
@@ -104,5 +104,5 @@ export const mintPrint = async (newTokenInstruction: TransactionInstruction[], p
 
   transaction.add(ix);
 
-  return await sendTx(editionBuyer, transaction, program);
+  return await sendTx(editionBuyer, transaction, program, [newEditionMint]);
 };
