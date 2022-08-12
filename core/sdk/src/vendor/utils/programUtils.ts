@@ -236,7 +236,19 @@ export const getSignedTx = (
   extraSigners?: web3.Keypair[]
 ) => {
   if ('signTransaction' in wallet) {
-    return wallet.signTransaction(transaction);
+    if (extraSigners) {
+      const extraKeypairs = extraSigners.map((signer) => {
+        return {
+          publicKey: signer.publicKey,
+          secretKey: signer.secretKey
+        };
+      });
+      transaction.sign(...extraKeypairs);
+    }
+
+    const signedTx = wallet.signTransaction(transaction);
+
+    return signedTx;
   }
 
   let signers: web3.Signer[] = [
