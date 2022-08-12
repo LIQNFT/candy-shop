@@ -17,21 +17,21 @@ export const initEnvWithNftHolder = async (
 ) => {
   const metaplex = Metaplex.make(connection).use(keypairIdentity(wallet));
 
-  const { mintAddress, tokenAddress, metadataAddress, masterEditionAddress } = await metaplex
+  const { tokenAddress, metadataAddress, masterEditionAddress, nft } = await metaplex
     .nfts()
     .create({
       uri: '',
       name: '',
-      sellerBasisFeePoints: 200,
+      sellerFeeBasisPoints: 200,
       maxSupply: maxSupply,
       payer: wallet,
-      tokenOwner: nftOwner.publicKey,
+      owner: nftOwner.publicKey,
       mintAuthority: wallet
     })
     .run();
 
   return {
-    nftMint: mintAddress,
+    nftMint: nft.mintAddress,
     nftOwnerTokenAccount: tokenAddress,
     masterEditionMetadataPublicKey: metadataAddress,
     masterEditionPublicKey: masterEditionAddress
@@ -64,10 +64,9 @@ export const mintWhitelistToken = async (
 
   await metaplex
     .tokens()
-    .mint({
+    .mintTokens({
       mint,
-      toOwner: receiver,
-      payer: authority,
+      destination: receiver,
       mintAuthority: authority,
       amount: {
         basisPoints: new BN(1),

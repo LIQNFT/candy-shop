@@ -112,7 +112,7 @@ describe('e2e drop flow', function () {
     console.log('mintPrintTx ', mintPrintTx);
   });
 
-  it('commit shop -> mint print (wl)', async function () {
+  xit('commit shop -> mint print (wl)', async function () {
     this.timeout(60000);
 
     await mintWhitelistToken(user1, whitelistMint, user2.publicKey, connection);
@@ -155,7 +155,7 @@ describe('e2e drop flow', function () {
     console.log('mintPrintTx ', mintPrintTx);
   });
 
-  it('commit enterprise -> mint print (wl)', async function () {
+  xit('commit enterprise -> mint print (wl)', async function () {
     this.timeout(60000);
 
     await mintWhitelistToken(user1, whitelistMint, user2.publicKey, connection);
