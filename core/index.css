@@ -1,0 +1,130 @@
+body {
+    background: wheat;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    color: black;
+    padding: 0 20px;
+}
+
+form {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+h1 {
+    margin-top: 80px;
+    font-weight: 100;
+    color: black;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgb(79, 98, 148);
+}
+
+.form {
+    background: #0e101c;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+button[type="button"] {
+    background: black;
+    border: 1px solid black;
+}
+
+p {
+    color: #bf1650;
+    text-align: center;
+}
+
+input {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid black;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+label {
+    line-height: 2;
+    text-align: left;
+    display: block;
+    margin-bottom: 13px;
+    margin-top: 20px;
+    color: black;
+    font-size: 14px;
+    font-weight: 200;
+}
+
+button,
+input[type="submit"] {
+    background: #ec5990;
+    color: black;
+    text-transform: uppercase;
+    border: none;
+    margin-top: 40px;
+    padding: 20px;
+    font-size: 16px;
+    font-weight: 100;
+    letter-spacing: 10px;
+}
+
+button {
+    display: block;
+    appearance: none;
+    border-radius: 4px;
+    width: 100%;
+}
+
+input[type="submit"]:hover {
+    background: #bf1650;
+}
+
+input[type="button"]:active,
+input[type="submit"]:active {
+    transition: 0.3s all;
+    transform: translateY(3px);
+    border: 1px solid transparent;
+    opacity: 0.8;
+}
+
+input:disabled {
+    opacity: 0.4;
+}
+
+input[type="button"]:hover {
+    transition: 0.3s all;
+}
+
+input[type="button"],
+input[type="submit"] {
+    -webkit-appearance: none;
+}
+
+.App {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+form {
+    margin-bottom: 400px;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+}
+
+.counter {
+    font-weight: 400;
+    background: black;
+    color: black;
+    padding: 10px 15px;
+    border-radius: 4px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+}
