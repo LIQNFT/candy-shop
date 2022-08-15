@@ -18,7 +18,7 @@ import {
 } from './programUtils';
 import { safeAwait } from './promiseUtils';
 import { PublicKey } from '@solana/web3.js';
-import { getCandyShopData } from '.';
+import { getCandyShopData, getEditionVaultData } from '.';
 
 export enum TransactionType {
   Marketplace = 'Marketplace',
@@ -255,4 +255,16 @@ export const checkCanCommitEnterprise = async (candyShop: PublicKey, nftOwner: P
   if (!Object.keys(candyShopData.key).includes('enterpriseCandyShopV1')) {
     throw new CandyShopError(CandyShopErrorType.IncorrectCandyShopType);
   }
+};
+
+export const checkEditionMintPeriod = async (vaultAccount: PublicKey, program: Program) => {
+  const vaultData = await getEditionVaultData(vaultAccount, program);
+
+  const currentTime: BN = new BN(Date.now() / 1000);
+  const saleEndTime: BN = vaultData.startingTime.add(vaultData.salesPeriod);
+
+  if (currentTime.lt(vaultData.startingTime) || currentTime.gte(saleEndTime)) {
+    throw new CandyShopError(CandyShopErrorType.NotWithinSalesPeriod);
+  }
+  return vaultData;
 };

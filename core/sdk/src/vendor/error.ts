@@ -9,7 +9,7 @@ export enum CandyShopErrorType {
   BuyerATACannotHaveDelegate = 'BuyerATACannotHaveDelegate',
   TradeStateExists = 'TradeStateExists',
   NonShopOwner = 'NonShopOwner',
-  AuctionExists = 'Auction already exists',
+  AuctionExists = 'AuctionExists',
   AuctionDoesNotExist = 'AuctionDoesNotExist',
   BidDoesNotExist = 'BidDoesNotExist',
   InvalidAuctionCreationParams = 'InvalidAuctionCreationParams',
@@ -27,6 +27,8 @@ export enum CandyShopErrorType {
   InvalidTreasuryMint = 'InvalidTreasuryMint',
   InvalidNftOwner = 'InvalidNftOwner',
   IncorrectCandyShopType = 'IncorrectCandyShopType',
+  VaultDoesNotExist = 'VaultDoesNotExist',
+  NotWithinSalesPeriod = 'NotWithinSalesPeriod',
   NotReachable = 'NotReachable'
 }
 
@@ -63,6 +65,8 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.InvalidTreasuryMint]: 'Treasury mint must be wrapped SOL to use edition drop program.',
   [CandyShopErrorType.InvalidNftOwner]: 'Caller must be Candy Shop creator.',
   [CandyShopErrorType.IncorrectCandyShopType]: 'Candy Shop is of the incorrect type (enterprise or regular).',
+  [CandyShopErrorType.VaultDoesNotExist]: 'Vault account does not exist.',
+  [CandyShopErrorType.NotWithinSalesPeriod]: 'Attempted to mint print outside of sales period.',
   [CandyShopErrorType.NotReachable]: 'Unknown error. Please contact CandyShop team for further info.'
 };
 

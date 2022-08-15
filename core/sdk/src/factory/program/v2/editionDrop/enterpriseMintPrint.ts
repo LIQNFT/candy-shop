@@ -9,10 +9,11 @@ import {
   TransactionInstruction
 } from '@solana/web3.js';
 import {
+  checkEditionMintPeriod,
   getAtaForMint,
   getAuctionHouseTreasuryAcct,
-  getEditionMarkAccount,
   getCandyShopData,
+  getEditionMarkAccount,
   getMasterEditionAccount,
   getMetadataAccount,
   sendTx
@@ -46,7 +47,7 @@ export const mintPrint = async (
     whitelistMint
   } = params;
 
-  const vaultData = await program.account.vaultAccount.fetch(vaultAccount);
+  const vaultData = await checkEditionMintPeriod(vaultAccount, program);
 
   const remainingAccounts: AccountMeta[] = [];
   const candyShopData = await getCandyShopData(candyShop, true, candyShopProgram);

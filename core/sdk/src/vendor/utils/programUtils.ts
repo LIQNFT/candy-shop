@@ -289,6 +289,20 @@ export const getCandyShopData = async (candyShop: web3.PublicKey, isEnterprise: 
   return candyShopData.result;
 };
 
+export const getEditionVaultData = async (vaultAccount: web3.PublicKey, program: Program) => {
+  const vaultData = await safeAwait(program.account.vaultAccount.fetch(vaultAccount));
+
+  if (!vaultData) {
+    throw new CandyShopError(CandyShopErrorType.VaultDoesNotExist);
+  }
+
+  if (vaultData.error) {
+    throw vaultData.error;
+  }
+
+  return vaultData.result;
+};
+
 export const getAuctionData = async (auction: web3.PublicKey, program: Program) => {
   const auctionData = await safeAwait(program.account.auctionV1.fetch(auction));
 
