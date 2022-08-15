@@ -41,4 +41,5 @@ export interface Drop {
   attributes?: NftAttribute[];
   externalUri?: string;
   properties?: NftProperties;
+  animationUrl?: string;
 }
