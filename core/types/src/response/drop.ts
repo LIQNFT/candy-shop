@@ -25,7 +25,7 @@ export interface Drop {
   txHashAtCreation: string;
   blockTimeAtCreation: string;
   nftTokenAccount: string;
-  firstSalesPeriod: string;
+  salesPeriod: string;
   programId: String;
   createdAt: Date;
   updatedAt: Date;
