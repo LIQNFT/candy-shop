@@ -81,7 +81,7 @@
           "type": "i64"
         },
         {
-          "name": "firstSalesPeriod",
+          "name": "salesPeriod",
           "type": "i64"
         },
         {
@@ -171,7 +171,7 @@
           "type": "i64"
         },
         {
-          "name": "firstSalesPeriod",
+          "name": "salesPeriod",
           "type": "i64"
         },
         {
@@ -426,7 +426,7 @@
             "type": "i64"
           },
           {
-            "name": "firstSalesPeriod",
+            "name": "salesPeriod",
             "type": "i64"
           },
           {
