@@ -7,6 +7,7 @@ import {
   getMetadataAccount,
   getMasterEditionAccount,
   getEditionMarkAccount,
+  checkEditionMintPeriod,
   sendTx
 } from '../../../../vendor';
 import { TOKEN_METADATA_PROGRAM_ID } from '../../../constants';
@@ -25,6 +26,8 @@ export const mintPrint = async (newTokenInstruction: TransactionInstruction[], p
     program,
     whitelistMint
   } = params;
+
+  await checkEditionMintPeriod(vaultAccount, program);
 
   const remainingAccounts: AccountMeta[] = [];
 
