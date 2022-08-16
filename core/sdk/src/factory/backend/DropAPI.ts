@@ -10,8 +10,11 @@ export async function fetchDropsByStoreId(
   queryDto?: DropQuery
 ): Promise<ListBase<Drop>> {
   let queryString: string = '';
-  const { offset = 0, limit = 10 } = queryDto || {};
+  const { offset = 0, limit = 10, status } = queryDto || {};
   let queryObj: any = { offset, limit };
+  if (status !== undefined) {
+    queryObj.status = status;
+  }
   queryString = qs.stringify(queryObj, { indices: false });
   const url = `/drop/${storeId}?${queryString}`;
 
