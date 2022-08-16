@@ -4,9 +4,9 @@ Defines the schema shared between the backend and frontend component
 
 ### Content
 
-##### reponse
+##### response
 
-Defines the API reponse format, `common.ts` lays out the base of the API response, and the generic `T` is from the respective defintiion defined under `/response`
+Defines the API response format, `common.ts` lays out the base of the API response, and the generic `T` is from the respective definition defined under `/response`
 
 ##### query
 
