@@ -1,5 +1,5 @@
 import { NftAttribute } from '../nft';
-import { Side, Status, ShopStatusType } from '../response';
+import { Side, Status, ShopStatusType, DropStatus } from '../response';
 
 export interface SortBy {
   column: string;
@@ -59,7 +59,9 @@ export interface ShopQuery extends CommonQuery {
   name?: string;
 }
 
-export interface DropQuery extends CommonQuery {}
+export interface DropQuery extends CommonQuery {
+  status?: DropStatus[];
+}
 export interface AuctionBidQuery extends CommonQuery {
   orderByArr?: SortBy;
 }
