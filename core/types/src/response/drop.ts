@@ -13,6 +13,8 @@ export enum DropStatus {
 
 export interface Drop {
   vaultAddress: string;
+  description?: string;
+  creator: string;
   type: DropType;
   shopId: string;
   price: string;
@@ -33,13 +35,13 @@ export interface Drop {
 
   // Nft Info
   nftUri?: string;
-  name?: string;
-  symbol?: string;
-  description?: string;
-  sellerFeeBasisPoint?: number;
-  image?: string;
-  attributes?: NftAttribute[];
-  externalUri?: string;
-  properties?: NftProperties;
-  animationUrl?: string;
+  nftName?: string;
+  nftSymbol?: string;
+  nftDescription?: string;
+  nftSellerFeeBasisPoint?: number;
+  nftImage?: string;
+  nftAttributes?: NftAttribute[];
+  nftExternalUri?: string;
+  nftAnimationUrl?: string;
+  nftProperties?: NftProperties;
 }
