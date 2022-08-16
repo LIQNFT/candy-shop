@@ -544,7 +544,7 @@ programCommand('commitEditionDropNft')
       whitelistMint,
       whitelistTime,
       version,
-      isEnterprise
+      isEnterpriseArg
     } = cmd.opts();
 
     const wallet = loadKey(keypair);
@@ -564,7 +564,7 @@ programCommand('commitEditionDropNft')
       settings: {
         mainnetConnectionUrl: rpcUrl
       },
-      isEnterprise: isEnterprise ? true : false
+      isEnterprise: isEnterprise(isEnterpriseArg)
     });
 
     const tokenAccountInfo = await getAccount(candyShop.connection(), new PublicKey(nftOwnerTokenAccount), 'finalized');
@@ -602,9 +602,8 @@ programCommand('mintPrint')
       rpcUrl,
       shopCreator,
       version,
-      isEnterprise
+      isEnterpriseArg
     } = cmd.opts();
-
     const wallet = loadKey(keypair);
 
     if (version !== 'v2') {
@@ -622,7 +621,7 @@ programCommand('mintPrint')
       settings: {
         mainnetConnectionUrl: rpcUrl
       },
-      isEnterprise: isEnterprise ? true : false
+      isEnterprise: isEnterprise(isEnterpriseArg)
     });
 
     const tokenAccountInfo = await getAccount(candyShop.connection(), new PublicKey(nftOwnerTokenAccount), 'finalized');
