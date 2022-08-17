@@ -61,6 +61,8 @@ export interface ShopQuery extends CommonQuery {
 
 export interface DropQuery extends CommonQuery {
   status?: DropStatus[];
+  creator?: string;
+  nftMint?: string;
 }
 export interface AuctionBidQuery extends CommonQuery {
   orderByArr?: SortBy;
