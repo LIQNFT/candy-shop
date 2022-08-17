@@ -10,7 +10,7 @@ import {
   sellNft,
   sellNftV1,
   SellTransactionParams
-} from './factory/program';
+} from './factory/conveyor/sol';
 import {
   getAuctionHouse,
   getAuctionHouseAuthority,

@@ -12,8 +12,22 @@ import {
 } from '@liqnft/candy-shop-types';
 import { Idl, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyShopCommitNftParams, CandyShopMintPrintParams } from '.';
-import { CandyShopDrop } from './CandyShopDrop';
+import {
+  getAuction,
+  getAuctionHouse,
+  getAuctionHouseAuthority,
+  getAuctionHouseFeeAcct,
+  getAuctionHouseTreasuryAcct,
+  getCandyShopSync,
+  getMetadataAccount,
+  getProgram,
+  CandyShopError,
+  CandyShopErrorType,
+  getCandyShopVersion,
+  configBaseUrl
+} from './vendor';
+import { supply } from './vendor/shipping';
+import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from './factory/conveyor/sol/constants';
 import {
   fetchNFTByMintAddress,
   fetchOrderByShopAndMintAddress,
@@ -41,7 +55,6 @@ import {
   CandyShopWithdrawAuctionBidParams
 } from './CandyShopModel';
 import { CandyShopTrade } from './CandyShopTrade';
-import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from './factory/constants';
 import {
   bidAuction,
   BidAuctionParams,
@@ -63,23 +76,10 @@ import {
   updateCandyShopV1,
   withdrawBid,
   WithdrawBidParams,
-  withdrawBidV1
-} from './factory/program';
-import {
-  CandyShopError,
-  CandyShopErrorType,
-  getAuction,
-  getAuctionHouse,
-  getAuctionHouseAuthority,
-  getAuctionHouseFeeAcct,
-  getAuctionHouseTreasuryAcct,
-  getCandyShopSync,
-  getCandyShopVersion,
-  getMetadataAccount,
-  getProgram
-} from './vendor';
-import { configBaseUrl } from './vendor/config';
-import { supply } from './vendor/shipping';
+  withdrawBidV1,
+} from './factory/conveyor/sol';
+import { CandyShopCommitNftParams, CandyShopMintPrintParams } from '.';
+import { CandyShopDrop } from './CandyShopDrop';
 
 const Logger = 'CandyShop';
 
