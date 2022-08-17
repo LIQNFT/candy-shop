@@ -34,7 +34,7 @@ import {
   fetchShop,
   fetchCollection,
   fetchCollectionByShopId
-} from './factory/backend';
+} from './factory/data';
 import axiosInstance from './vendor/config';
 
 export function fetchStatsByShopAddress(candyShopAddress: web3.PublicKey): Promise<ShopStats> {

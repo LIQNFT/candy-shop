@@ -9,7 +9,7 @@ import {
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Connection, Keypair, PublicKey, TransactionInstruction } from '@solana/web3.js';
 import { EditionDropCommitNftParams, EditionDropMintPrintParams, EditionDropRedeemParams } from '.';
-import { EDITION_DROP_PROGRAM_ID } from './factory/constants';
+import { EDITION_DROP_PROGRAM_ID } from './factory/conveyor/sol/constants';
 import {
   commitNft,
   CommitNftParams,
@@ -17,10 +17,9 @@ import {
   enterpriseMintPrint,
   mintPrint,
   MintPrintParams,
-  redeemNft,
   RedeemNftParams
-} from './factory/program';
-import editionDropIdl from './idl/edition_drop.json';
+} from './factory/conveyor/sol';
+import editionDropIdl from './factory/conveyor/sol/idl/edition_drop.json';
 import {
   CandyShopError,
   CandyShopErrorType,
@@ -29,6 +28,7 @@ import {
   getNodeWallet,
   safeAwait
 } from './vendor';
+import { redeemNft } from './factory/conveyor/sol/v2/editionDrop/redeemNft';
 const EDITION_ARRAY_SIZE = 1250;
 
 // ignore the reserved size here
@@ -179,7 +179,7 @@ async function createNewMintInstructions(payer: PublicKey, connection: Connectio
   return { instructions, newEditionMint: newMint, newEditionTokenAccount: userTokenAccountAddress };
 }
 
-async function generateEditionNumber(vaultAccount: PublicKey, connection: Connection): Promise<number> {
+async function generateEditionNumber(vaultAccount: PublicKey, connection: Connection): Promise<BN> {
   const vaultAccountInfoResult = await safeAwait(connection.getAccountInfo(vaultAccount));
   if (vaultAccountInfoResult.error) {
     throw new CandyShopError(CandyShopErrorType.AuctionDoesNotExist);
