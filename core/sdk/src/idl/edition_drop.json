@@ -393,6 +393,52 @@
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "redeemNft",
+      "accounts": [
+        {
+          "name": "nftOwner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "nftOwnerTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vaultAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vaultTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftMint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -680,86 +726,91 @@
     },
     {
       "code": 6026,
+      "name": "ExceededMaxAllowedSupply",
+      "msg": "Exceeded max allowed supply"
+    },
+    {
+      "code": 6027,
       "name": "AlreadyInitialized",
       "msg": "Already initialized"
     },
     {
-      "code": 6027,
+      "code": 6028,
       "name": "NumericalOverflow",
       "msg": "Invalid numerical inputs"
     },
     {
-      "code": 6028,
+      "code": 6029,
       "name": "RedeemConditionNotMet",
       "msg": "Redeem condition not met"
     },
     {
-      "code": 6029,
+      "code": 6030,
       "name": "WhitelistTimeNotSet",
       "msg": "whitelist time not set"
     },
     {
-      "code": 6030,
+      "code": 6031,
       "name": "WhitelistAccountsWronglySupplied",
       "msg": "missing whitelist accounts"
     },
     {
-      "code": 6031,
+      "code": 6032,
       "name": "InvalidWhitelistMint",
       "msg": "invalid whitelist mint"
     },
     {
-      "code": 6032,
+      "code": 6033,
       "name": "InvalidWhitelistTokenAccount",
       "msg": "invalid whitelist token account"
     },
     {
-      "code": 6033,
+      "code": 6034,
       "name": "WhitelistMintNotPresent",
       "msg": "whitelist mint not present in vault"
     },
     {
-      "code": 6034,
+      "code": 6035,
       "name": "InsufficientWhitelistToken",
       "msg": "insufficient whitelist token"
     },
     {
-      "code": 6035,
+      "code": 6036,
       "name": "VaultWhitelistAtaNotInitialized",
       "msg": "vault whitelist ata not initialized"
     },
     {
-      "code": 6036,
+      "code": 6037,
       "name": "InvalidWhitelistMintDecimal",
       "msg": "invalid whitelist mint decimals"
     },
     {
-      "code": 6037,
+      "code": 6038,
       "name": "InvalidWhitelistTime",
       "msg": "invalid whitelist time"
     },
     {
-      "code": 6038,
+      "code": 6039,
       "name": "InvalidEditionIndex",
       "msg": "invalid edition number"
     },
     {
-      "code": 6039,
+      "code": 6040,
       "name": "EditionTaken",
       "msg": "edition already taken"
     },
     {
-      "code": 6040,
+      "code": 6041,
       "name": "InvalidShopKey",
       "msg": "key of provided candy shop does not match expected value"
     },
     {
-      "code": 6041,
+      "code": 6042,
       "name": "MintNonNative",
       "msg": "Candy Shop treasury mint must be native"
     },
     {
-      "code": 6042,
+      "code": 6043,
       "name": "InvalidNftOwner",
       "msg": "Invalid nft owner provided in remaining accounts"
     }
