@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const IconActivity: React.FC = () => {
+export const IconSolScan: React.FC = () => {
   return (
     <svg
       className="candy-activity-icon"
