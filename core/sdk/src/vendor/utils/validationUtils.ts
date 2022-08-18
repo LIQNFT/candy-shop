@@ -278,7 +278,7 @@ export const checkRedeemable = async (vaultAccount: PublicKey, program: Program)
   if (
     vaultData.currentSupply.gt(new BN(0)) ||
     (vaultData.whitelistTime !== null && currentTime.gte(vaultData.whitelistTime) && currentTime.lt(salesEndTime)) ||
-    (vaultData.startingTime !== null && currentTime.gte(vaultData.startingTime && currentTime.lt(salesEndTime)))
+    (vaultData.startingTime !== null && currentTime.gte(vaultData.startingTime) && currentTime.lt(salesEndTime))
   ) {
     throw new CandyShopError(CandyShopErrorType.DropNotRedeemable);
   }
