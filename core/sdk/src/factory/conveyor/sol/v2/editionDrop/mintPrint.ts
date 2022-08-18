@@ -1,16 +1,16 @@
-import { AccountMeta, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { AccountMeta, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { TOKEN_METADATA_PROGRAM_ID } from '../../constants';
 import { MintPrintParams } from '../../model';
 import {
   getAtaForMint,
   getAuctionHouseTreasuryAcct,
-  getMetadataAccount,
-  getMasterEditionAccount,
   getEditionMarkAccount,
   checkEditionMintPeriod,
+  getMasterEditionAccount,
+  getMetadataAccount,
   sendTx
-} from '../../../../../vendor';
-import { TOKEN_METADATA_PROGRAM_ID } from '../../constants';
+} from '../../utils';
 
 export const mintPrint = async (newTokenInstruction: TransactionInstruction[], params: MintPrintParams) => {
   const {

@@ -1,7 +1,10 @@
 import * as anchor from '@project-serum/anchor';
 import { SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
+import { AUCTION_HOUSE_PROGRAM_ID } from '../../constants';
+import { BidAuctionParams } from '../../model';
 import {
-  AUCTION_HOUSE_PROGRAM_ID,
+  checkAHFeeAccountBalance,
+  checkBidParams,
   getAtaForMint,
   getAuctionHouseEscrow,
   getAuctionHouseTradeState,
@@ -9,9 +12,7 @@ import {
   getBidWallet,
   sendTx,
   treasuryMintIsNative
-} from '../../../../../vendor';
-import { checkAHFeeAccountBalance, checkBidParams } from '../../../../../vendor/sol/utils/validationUtils';
-import { BidAuctionParams } from '../../model';
+} from '../../utils';
 import { requestExtraComputeIx } from './requestExtraComputeIx';
 
 export const bidAuction = async (params: BidAuctionParams) => {

@@ -1,6 +1,6 @@
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { SystemProgram, SYSVAR_RENT_PUBKEY, Transaction } from '@solana/web3.js';
-import { checkRedeemable, getAtaForMint, sendTx } from '../../../../../vendor/sol/utils';
+import { checkRedeemable, getAtaForMint, sendTx } from '../../utils';
 import { RedeemNftParams } from '../../model';
 
 export const redeemNft = async (params: RedeemNftParams) => {

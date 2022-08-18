@@ -1,26 +1,21 @@
 import * as anchor from '@project-serum/anchor';
 import { web3 } from '@project-serum/anchor';
+import { Metadata, parseMetadata } from '../../../../../vendor';
+import { CandyShopError, CandyShopErrorType } from '../../../../error';
+import { AUCTION_HOUSE_PROGRAM_ID } from '../../constants';
+import { BuyAndExecuteSaleTransactionParams } from '../../model';
 import {
-  AUCTION_HOUSE_PROGRAM_ID,
+  checkDelegateOnReceiptAccounts,
+  checkNftAvailability,
+  checkPaymentAccountBalance,
   compileAtaCreationIxs,
   getAtaForMint,
   getAuctionHouseEscrow,
   getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
   sendTx,
-  treasuryMintIsNative,
-  CandyShopError,
-  CandyShopErrorType,
-  Metadata,
-  parseMetadata
-} from '../../../../../vendor';
-import {
-  checkDelegateOnReceiptAccounts,
-  checkNftAvailability,
-  checkPaymentAccountBalance
-} from '../../../../../vendor/sol/utils/validationUtils';
-import { BuyAndExecuteSaleTransactionParams } from '../../model';
-
+  treasuryMintIsNative
+} from '../../utils';
 export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionParams) {
   const {
     wallet,

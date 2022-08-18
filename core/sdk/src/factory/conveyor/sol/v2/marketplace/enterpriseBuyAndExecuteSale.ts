@@ -2,13 +2,6 @@ import * as anchor from '@project-serum/anchor';
 import { web3 } from '@project-serum/anchor';
 import {
   AUCTION_HOUSE_PROGRAM_ID,
-  compileAtaCreationIxs,
-  getAtaForMint,
-  getAuctionHouseEscrow,
-  getAuctionHouseProgramAsSigner,
-  getAuctionHouseTradeState,
-  sendTx,
-  treasuryMintIsNative,
   CandyShopError,
   CandyShopErrorType,
   Metadata,
@@ -17,8 +10,15 @@ import {
 import {
   checkDelegateOnReceiptAccounts,
   checkNftAvailability,
-  checkPaymentAccountBalance
-} from '../../../../../vendor/sol/utils/validationUtils';
+  checkPaymentAccountBalance,
+  compileAtaCreationIxs,
+  getAtaForMint,
+  getAuctionHouseEscrow,
+  getAuctionHouseProgramAsSigner,
+  getAuctionHouseTradeState,
+  sendTx,
+  treasuryMintIsNative
+} from '../../utils';
 import { BuyAndExecuteSaleTransactionParams } from '../../model';
 
 export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionParams) {

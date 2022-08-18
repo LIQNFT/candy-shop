@@ -8,6 +8,8 @@ import {
   Transaction,
   TransactionInstruction
 } from '@solana/web3.js';
+import { TOKEN_METADATA_PROGRAM_ID } from '../../constants';
+import { MintPrintParams } from '../../model';
 import {
   checkEditionMintPeriod,
   getAtaForMint,
@@ -17,9 +19,7 @@ import {
   getMasterEditionAccount,
   getMetadataAccount,
   sendTx
-} from '../../../../../vendor';
-import { TOKEN_METADATA_PROGRAM_ID } from '../../constants';
-import { MintPrintParams } from '../../model';
+} from '../../utils';
 
 /**
  * mintPrint

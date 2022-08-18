@@ -6,7 +6,7 @@ import {
   checkCreators,
   checkCreationParams,
   TransactionType
-} from '../../../../../vendor';
+} from '../../utils';
 import { CreateAuctionParams } from '../../model';
 
 export const createAuction = async (params: CreateAuctionParams) => {

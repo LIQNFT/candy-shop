@@ -1,11 +1,7 @@
 import * as anchor from '@project-serum/anchor';
-import {
-  AUCTION_HOUSE_PROGRAM_ID,
-  getAuctionHouseTradeState,
-  sendTx,
-  checkNftAvailability
-} from '../../../../../vendor';
+import { AUCTION_HOUSE_PROGRAM_ID } from '../../constants';
 import { CancelTransactionParams } from '../../model';
+import { checkNftAvailability, getAuctionHouseTradeState, sendTx } from '../../utils';
 
 export async function cancelOrder(params: CancelTransactionParams) {
   const {

@@ -2,7 +2,7 @@ import { web3 } from '@project-serum/anchor';
 import { Account, getAccount } from '@solana/spl-token';
 import axios from 'axios';
 import * as crc32 from 'crc-32';
-import { CandyShopError, CandyShopErrorType } from '../../error';
+import { CandyShopError, CandyShopErrorType } from '../../../factory/error';
 import { safeAwait } from '../../common/utils/promiseUtils';
 import { Metadata, parseEdition, parseMetadata } from './parseData';
 import { TOKEN_METADATA_PROGRAM_ID } from '../../../factory/conveyor/sol/constants';

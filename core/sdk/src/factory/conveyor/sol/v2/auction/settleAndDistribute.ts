@@ -1,8 +1,11 @@
 import * as anchor from '@project-serum/anchor';
 import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { PublicKey, SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
+import { AUCTION_HOUSE_PROGRAM_ID } from '../../constants';
+import { SettleAndDistributeProceedParams } from '../../model';
 import {
-  AUCTION_HOUSE_PROGRAM_ID,
+  checkAHFeeAccountBalance,
+  checkSettleParams,
   getAtaForMint,
   getAuctionData,
   getAuctionHouseEscrow,
@@ -12,11 +15,8 @@ import {
   getBidWallet,
   getRemainingAccountsForExecuteSaleIx,
   sendTx,
-  treasuryMintIsNative,
-  checkAHFeeAccountBalance,
-  checkSettleParams
-} from '../../../../../vendor';
-import { SettleAndDistributeProceedParams } from '../../model';
+  treasuryMintIsNative
+} from '../../utils';
 import { requestExtraComputeIx } from './requestExtraComputeIx';
 
 export const settleAndDistributeProceeds = async ({

@@ -1,5 +1,5 @@
 import { web3 } from '@project-serum/anchor';
-import { sleepPromise } from '../../common/utils/promiseUtils';
+import { sleepPromise } from '../../../../vendor/common/utils/promiseUtils';
 
 const getUnixTs = () => {
   return new Date().getTime() / 1000;

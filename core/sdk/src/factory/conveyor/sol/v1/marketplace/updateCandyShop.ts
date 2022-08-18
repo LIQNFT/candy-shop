@@ -1,12 +1,7 @@
 import { web3 } from '@project-serum/anchor';
-import {
-  AUCTION_HOUSE_PROGRAM_ID,
-  getAtaForMint,
-  getCandyShop,
-  sendTx,
-  treasuryMintIsNative
-} from '../../../../../vendor';
+import { AUCTION_HOUSE_PROGRAM_ID } from '../../constants';
 import { UpdateCandyShopParams } from '../../model';
+import { getAtaForMint, getCandyShop, sendTx, treasuryMintIsNative } from '../../utils';
 
 export async function updateCandyShop(params: UpdateCandyShopParams) {
   const {

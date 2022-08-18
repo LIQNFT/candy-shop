@@ -1,21 +1,21 @@
 import * as anchor from '@project-serum/anchor';
 import { PublicKey, SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
+import { AUCTION_HOUSE_PROGRAM_ID } from '../../constants';
+import { BuyNowAuctionParams } from '../../model';
 import {
-  AUCTION_HOUSE_PROGRAM_ID,
+  checkAHFeeAccountBalance,
+  checkBidPeriod,
+  checkBuyNowAvailable,
   getAtaForMint,
   getAuctionData,
   getAuctionHouseEscrow,
   getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
+  getBid,
   getRemainingAccountsForExecuteSaleIx,
   sendTx,
-  treasuryMintIsNative,
-  checkAHFeeAccountBalance,
-  checkBidPeriod,
-  checkBuyNowAvailable
-} from '../../../../../vendor';
-import { getBid } from '../../../../../vendor/sol/utils/programUtils';
-import { BuyNowAuctionParams } from '../../model';
+  treasuryMintIsNative
+} from '../../utils';
 import { requestExtraComputeIx } from './requestExtraComputeIx';
 
 export const buyNowAuction = async ({

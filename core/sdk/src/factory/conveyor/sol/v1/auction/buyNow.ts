@@ -1,7 +1,7 @@
 import * as anchor from '@project-serum/anchor';
 import { PublicKey, SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
+import { AUCTION_HOUSE_PROGRAM_ID } from '../../constants';
 import {
-  AUCTION_HOUSE_PROGRAM_ID,
   getAtaForMint,
   getAuctionData,
   getAuctionHouseEscrow,
@@ -9,9 +9,11 @@ import {
   getAuctionHouseTradeState,
   getRemainingAccountsForExecuteSaleIx,
   sendTx,
-  treasuryMintIsNative
-} from '../../../../../vendor';
-import { checkAHFeeAccountBalance, checkBidPeriod, checkBuyNowAvailable } from '../../../../../vendor/sol/utils';
+  treasuryMintIsNative,
+  checkAHFeeAccountBalance,
+  checkBidPeriod,
+  checkBuyNowAvailable
+} from '../../utils';
 import { BuyNowAuctionParams } from '../../model';
 import { requestExtraComputeIx } from './requestExtraComputeIx';
 

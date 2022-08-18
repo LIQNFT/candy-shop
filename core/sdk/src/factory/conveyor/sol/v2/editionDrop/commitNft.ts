@@ -1,13 +1,7 @@
-import { AccountMeta, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction } from '@solana/web3.js';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { AccountMeta, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction } from '@solana/web3.js';
 import { CommitNftParams } from '../../model';
-import {
-  getAtaForMint,
-  getMetadataAccount,
-  getMasterEditionAccount,
-  sendTx,
-  checkCanCommit
-} from '../../../../../vendor';
+import { checkCanCommit, getAtaForMint, getMasterEditionAccount, getMetadataAccount, sendTx } from '../../utils';
 
 export const commitNft = async (params: CommitNftParams) => {
   const {

@@ -76,7 +76,7 @@ import {
   updateCandyShopV1,
   withdrawBid,
   WithdrawBidParams,
-  withdrawBidV1,
+  withdrawBidV1
 } from './factory/conveyor/sol';
 import { CandyShopCommitNftParams, CandyShopMintPrintParams } from '.';
 import { CandyShopDrop } from './CandyShopDrop';

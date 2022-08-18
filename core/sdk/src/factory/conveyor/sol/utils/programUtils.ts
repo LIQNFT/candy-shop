@@ -23,14 +23,14 @@ import {
   TREASURY,
   WALLET,
   WRAPPED_SOL_MINT
-} from '../../../factory/conveyor/sol/constants';
+} from '../constants';
 
-import { CandyShopVersion } from '../../../CandyShopModel';
-import candyShopIdl from '../../../factory/conveyor/sol/idl/candy_shop.json';
-import candyShopV2Idl from '../../../factory/conveyor/sol/idl/candy_shop_v2.json';
-import { CandyShopError, CandyShopErrorType } from '../../error';
-import { Creator, Metadata, parseMetadata } from '../token/parseData';
-import { safeAwait } from '../../common/utils/promiseUtils';
+import { CandyShopVersion } from '../../../../CandyShopModel';
+import candyShopIdl from '../idl/candy_shop.json';
+import candyShopV2Idl from '../idl/candy_shop_v2.json';
+import { CandyShopError, CandyShopErrorType } from '../../../error';
+import { Creator, Metadata, parseMetadata } from '../../../../vendor/sol/token';
+import { safeAwait } from '../../../../vendor/common/utils/promiseUtils';
 import { awaitTransactionSignatureConfirmation } from './transactionUtils';
 
 /**

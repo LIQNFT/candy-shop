@@ -1,6 +1,6 @@
 import { BN, Program, web3 } from '@project-serum/anchor';
 import { getAccount } from '@solana/spl-token';
-import { CandyShopError, CandyShopErrorType } from '../../error';
+import { CandyShopError, CandyShopErrorType } from '../../../error';
 import {
   FEE_ACCOUNT_MIN_BAL,
   NATIVE_AUCTION_CREATORS_LIMIT,
@@ -8,7 +8,7 @@ import {
   SPL_AUCTION_CREATORS_LIMIT,
   SPL_MARKETPLACE_CREATORS_LIMIT,
   WRAPPED_SOL_MINT
-} from '../../../factory/conveyor/sol/constants';
+} from '../constants';
 import {
   getAuctionData,
   getAuctionHouseProgramAsSigner,
@@ -17,7 +17,7 @@ import {
   getNftCreators,
   treasuryMintIsNative
 } from './programUtils';
-import { safeAwait } from '../../common/utils/promiseUtils';
+import { safeAwait } from '../../../../vendor/common/utils/promiseUtils';
 import { PublicKey } from '@solana/web3.js';
 import { getCandyShopData } from '../../sol/utils';
 

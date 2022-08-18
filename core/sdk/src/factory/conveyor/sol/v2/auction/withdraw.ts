@@ -1,18 +1,18 @@
 import * as anchor from '@project-serum/anchor';
 import { SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
+import { AUCTION_HOUSE_PROGRAM_ID } from '../../constants';
+import { WithdrawBidParams } from '../../model';
 import {
-  AUCTION_HOUSE_PROGRAM_ID,
+  checkAHFeeAccountBalance,
+  checkCanWithdraw,
   getAtaForMint,
   getAuctionHouseEscrow,
   getAuctionHouseTradeState,
   getBid,
   getBidWallet,
   sendTx,
-  treasuryMintIsNative,
-  checkAHFeeAccountBalance,
-  checkCanWithdraw
-} from '../../../../../vendor';
-import { WithdrawBidParams } from '../../model';
+  treasuryMintIsNative
+} from '../../utils';
 
 export const withdrawBid = async ({
   auction,

@@ -1,5 +1,5 @@
 import { SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js';
-import { getAtaForMint, getAuctionHouseAuthority, sendTx, checkCanCancel } from '../../../../../vendor';
+import { getAtaForMint, getAuctionHouseAuthority, sendTx, checkCanCancel } from '../../utils';
 import { CancelAuctionParams } from '../../model';
 
 export const cancelAuction = async (params: CancelAuctionParams) => {
