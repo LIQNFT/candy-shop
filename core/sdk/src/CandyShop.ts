@@ -10,23 +10,10 @@ import {
   TradeQuery,
   WhitelistNft
 } from '@liqnft/candy-shop-types';
-import { BN, Idl, Program, Provider, web3 } from '@project-serum/anchor';
+import { Idl, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import {
-  getAuction,
-  getAuctionHouse,
-  getAuctionHouseAuthority,
-  getAuctionHouseFeeAcct,
-  getAuctionHouseTreasuryAcct,
-  getCandyShopSync,
-  getMetadataAccount,
-  getProgram,
-  CandyShopError,
-  CandyShopErrorType,
-  getCandyShopVersion
-} from './vendor';
-import { supply } from './vendor/shipping';
-import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from './factory/constants';
+import { CandyShopCommitNftParams, CandyShopMintPrintParams } from '.';
+import { CandyShopDrop } from './CandyShopDrop';
 import {
   fetchNFTByMintAddress,
   fetchOrderByShopAndMintAddress,
@@ -39,46 +26,60 @@ import {
 } from './CandyShopInfoAPI';
 import {
   CandyShopBidAuctionParams,
+  CandyShopBuyNowParams,
   CandyShopBuyParams,
   CandyShopCancelAuctionParams,
   CandyShopCancelParams,
+  CandyShopConstructorParams,
   CandyShopCreateAuctionParams,
+  CandyShopRedeemParams,
   CandyShopSellParams,
   CandyShopSettings,
-  CandyShopWithdrawAuctionBidParams,
   CandyShopSettleAndDistributeParams,
-  CandyShopBuyNowParams,
   CandyShopUpdateParams,
-  CandyShopConstructorParams,
-  CandyShopVersion
+  CandyShopVersion,
+  CandyShopWithdrawAuctionBidParams
 } from './CandyShopModel';
 import { CandyShopTrade } from './CandyShopTrade';
-import { configBaseUrl } from './vendor/config';
+import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from './factory/constants';
 import {
+  bidAuction,
   BidAuctionParams,
   bidAuctionV1,
-  bidAuction,
+  buyNowAuction,
   BuyNowAuctionParams,
   buyNowAuctionV1,
-  buyNowAuction,
+  cancelAuction,
   CancelAuctionParams,
   cancelAuctionV1,
-  cancelAuction,
+  createAuction,
   CreateAuctionParams,
   createAuctionV1,
-  createAuction,
   SettleAndDistributeProceedParams,
-  settleAndDistributeProceedsV1,
   settleAndDistributeProceeds,
+  settleAndDistributeProceedsV1,
+  updateCandyShop,
   UpdateCandyShopParams,
   updateCandyShopV1,
-  updateCandyShop,
+  withdrawBid,
   WithdrawBidParams,
-  withdrawBidV1,
-  withdrawBid
+  withdrawBidV1
 } from './factory/program';
-import { CandyShopCommitNftParams, CandyShopMintPrintParams } from '.';
-import { CandyShopDrop } from './CandyShopDrop';
+import {
+  CandyShopError,
+  CandyShopErrorType,
+  getAuction,
+  getAuctionHouse,
+  getAuctionHouseAuthority,
+  getAuctionHouseFeeAcct,
+  getAuctionHouseTreasuryAcct,
+  getCandyShopSync,
+  getCandyShopVersion,
+  getMetadataAccount,
+  getProgram
+} from './vendor';
+import { configBaseUrl } from './vendor/config';
+import { supply } from './vendor/shipping';
 
 const Logger = 'CandyShop';
 
@@ -750,6 +751,35 @@ export class CandyShop {
       isEnterprise: this._isEnterprise,
       connection: this.connection(),
       candyShopProgram: this.getStaticProgram(editionBuyer)
+    });
+
+    return txHash;
+  }
+
+  /**
+   * Executes Edition Drop __RedeemNft__ action
+   *
+   * @param {CandyShopRedeemParams} params required parameters for mint print action
+   */
+  public async redeemDrop(params: CandyShopRedeemParams) {
+    const { nftOwnerTokenAccount, masterMint, nftOwner } = params;
+
+    if (this._version !== CandyShopVersion.V2) {
+      throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
+    }
+
+    console.log(`${Logger}: performing redeem drop `, {
+      masterNft: masterMint.toString()
+    });
+
+    const txHash = await CandyShopDrop.redeemDrop({
+      nftOwner,
+      candyShop: this._candyShopAddress,
+      nftOwnerTokenAccount,
+      masterMint,
+      isEnterprise: this._isEnterprise,
+      connection: this.connection(),
+      candyShopProgram: this.getStaticProgram(nftOwner)
     });
 
     return txHash;

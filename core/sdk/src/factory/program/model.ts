@@ -128,3 +128,7 @@ export interface MintPrintParams extends EditionDropParams {
   auctionHouse: web3.PublicKey;
   editionNumber: BN;
 }
+
+export interface RedeemNftParams extends EditionDropParams {
+  nftOwner: AnchorWallet | web3.Keypair;
+}

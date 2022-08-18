@@ -36,8 +36,6 @@ programCommand('sellMany')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
-    console.log(name);
-
     let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl, version, isEnterpriseArg } =
       cmd.opts();
 
@@ -82,8 +80,6 @@ programCommand('cancelMany')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
-    console.log(name);
-
     let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl, version, isEnterpriseArg } =
       cmd.opts();
 
@@ -128,8 +124,6 @@ programCommand('sell')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
-    console.log(name);
-
     let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl, version, isEnterpriseArg } =
       cmd.opts();
 
@@ -170,8 +164,6 @@ programCommand('cancel')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
-    console.log(name);
-
     let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl, version, isEnterpriseArg } =
       cmd.opts();
 
@@ -214,8 +206,6 @@ programCommand('buy')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
-    console.log(name);
-
     let {
       keypair,
       env,
@@ -268,8 +258,6 @@ programCommand('createAuction')
   .requiredOption('-ts, --tick-size <string>', 'tick size')
   .option('-bnp, --buy-now-price <string>', 'Buy now price, in the unit of treasury mint, nullable')
   .action(async (name, cmd) => {
-    console.log(name);
-
     let {
       keypair,
       env,
@@ -326,8 +314,6 @@ programCommand('cancelAuction')
   .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .action(async (name, cmd) => {
-    console.log(name);
-
     let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version, isEnterpriseArg } = cmd.opts();
 
     const wallet = loadKey(keypair);
@@ -366,8 +352,6 @@ programCommand('makeBid')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
-    console.log(name);
-
     let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, price, version, isEnterpriseArg } =
       cmd.opts();
 
@@ -407,8 +391,6 @@ programCommand('withdrawBid')
   .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .action(async (name, cmd) => {
-    console.log(name);
-
     let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version, isEnterpriseArg } = cmd.opts();
 
     const wallet = loadKey(keypair);
@@ -445,8 +427,6 @@ programCommand('buyNow')
   .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .action(async (name, cmd) => {
-    console.log(name);
-
     let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version, isEnterpriseArg } = cmd.opts();
 
     const wallet = loadKey(keypair);
@@ -484,8 +464,6 @@ programCommand('settleAndDistribute')
   .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .action(async (name, cmd) => {
-    console.log(name);
-
     let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version, isEnterpriseArg } = cmd.opts();
 
     const wallet = loadKey(keypair);
@@ -529,8 +507,6 @@ programCommand('commitEditionDropNft')
   .option('-wtt, --whitelist-time <string>', 'whitelist time, unix timestamp')
 
   .action(async (name, cmd) => {
-    console.log(name);
-
     let {
       keypair,
       env,
@@ -591,8 +567,6 @@ programCommand('mintPrint')
   .option('-wtm, --whitelist-mint <string>', 'whitelist mint')
 
   .action(async (name, cmd) => {
-    console.log(name);
-
     let {
       keypair,
       env,
@@ -631,6 +605,45 @@ programCommand('mintPrint')
       masterMint: tokenAccountInfo.mint,
       whitelistMint: whitelistMint ? new PublicKey(whitelistMint) : undefined,
       editionBuyer: wallet
+    });
+
+    console.log('txHash', txHash);
+  });
+
+programCommand('redeemDrop')
+  .description('mint an edition-ed NFT from the master edition')
+  .requiredOption('-ota, --nft-owner-token-account <string>', 'NFT token account address')
+  .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
+  .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
+  .action(async (name, cmd) => {
+    let { keypair, env, nftOwnerTokenAccount, treasuryMint, rpcUrl, shopCreator, version, isEnterpriseArg } =
+      cmd.opts();
+    const wallet = loadKey(keypair);
+
+    if (version !== 'v2') {
+      throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
+    }
+
+    // default to v2
+    const candyShopProgramId = CANDY_SHOP_V2_PROGRAM_ID;
+
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
+      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
+      candyShopProgramId,
+      env,
+      settings: {
+        mainnetConnectionUrl: rpcUrl
+      },
+      isEnterprise: isEnterprise(isEnterpriseArg)
+    });
+
+    const tokenAccountInfo = await getAccount(candyShop.connection(), new PublicKey(nftOwnerTokenAccount), 'finalized');
+
+    const txHash = await candyShop.redeemDrop({
+      nftOwner: wallet,
+      nftOwnerTokenAccount: new PublicKey(nftOwnerTokenAccount),
+      masterMint: tokenAccountInfo.mint
     });
 
     console.log('txHash', txHash);

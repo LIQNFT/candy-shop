@@ -8,7 +8,7 @@ import {
 } from '@solana/spl-token';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Connection, Keypair, PublicKey, TransactionInstruction } from '@solana/web3.js';
-import { EditionDropCommitNftParams, EditionDropMintPrintParams } from '.';
+import { EditionDropCommitNftParams, EditionDropMintPrintParams, EditionDropRedeemParams } from '.';
 import { EDITION_DROP_PROGRAM_ID } from './factory/constants';
 import {
   commitNft,
@@ -16,7 +16,9 @@ import {
   enterpriseCommitNft,
   enterpriseMintPrint,
   mintPrint,
-  MintPrintParams
+  MintPrintParams,
+  redeemNft,
+  RedeemNftParams
 } from './factory/program';
 import editionDropIdl from './idl/edition_drop.json';
 import {
@@ -132,6 +134,23 @@ export abstract class CandyShopDrop {
     }
 
     return mintPrint(instructions, mintPrintParams);
+  }
+
+  static async redeemDrop(params: EditionDropRedeemParams): Promise<string> {
+    const { nftOwner, candyShop, nftOwnerTokenAccount, masterMint, connection } = params;
+    const [vaultAccount] = await getEditionVaultAccount(candyShop, nftOwnerTokenAccount);
+    const program = this.getProgram(connection, nftOwner);
+
+    const redeemParams: RedeemNftParams = {
+      nftOwner,
+      candyShop,
+      vaultAccount,
+      nftOwnerTokenAccount,
+      masterMint,
+      program
+    };
+
+    return redeemNft(redeemParams);
   }
 }
 

@@ -29,6 +29,7 @@ export enum CandyShopErrorType {
   IncorrectCandyShopType = 'IncorrectCandyShopType',
   VaultDoesNotExist = 'VaultDoesNotExist',
   NotWithinSalesPeriod = 'NotWithinSalesPeriod',
+  DropNotRedeemable = 'DropNotRedeemable',
   NotReachable = 'NotReachable'
 }
 
@@ -67,6 +68,7 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.IncorrectCandyShopType]: 'Candy Shop is of the incorrect type (enterprise or regular).',
   [CandyShopErrorType.VaultDoesNotExist]: 'Vault account does not exist.',
   [CandyShopErrorType.NotWithinSalesPeriod]: 'Attempted to mint print outside of sales period.',
+  [CandyShopErrorType.DropNotRedeemable]: 'Drop not redeemable',
   [CandyShopErrorType.NotReachable]: 'Unknown error. Please contact CandyShop team for further info.'
 };
 

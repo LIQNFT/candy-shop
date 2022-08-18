@@ -226,6 +226,10 @@ export interface CandyShopMintPrintParams extends CandyShopEditionDropParams {
   editionBuyer: AnchorWallet | web3.Keypair;
 }
 
+export interface CandyShopRedeemParams extends CandyShopEditionDropParams {
+  nftOwner: AnchorWallet | web3.Keypair;
+}
+
 interface EditionDropParams extends CandyShopEditionDropParams {
   isEnterprise: boolean;
   candyShop: web3.PublicKey;
@@ -238,3 +242,5 @@ export interface EditionDropCommitNftParams extends EditionDropParams, CandyShop
 export interface EditionDropMintPrintParams extends EditionDropParams, CandyShopMintPrintParams {
   auctionHouse: web3.PublicKey;
 }
+
+export interface EditionDropRedeemParams extends EditionDropParams, CandyShopRedeemParams {}
