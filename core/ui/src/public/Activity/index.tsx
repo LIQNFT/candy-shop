@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 
-import { ExplorerLink } from 'components/ExplorerLink';
+import { BaseUrlType, ExplorerLink } from 'components/ExplorerLink';
 import { Processing } from 'components/Processing';
-import { IconActivity } from 'assets/IconActivity';
+import { IconSolScan } from 'assets/IconSolScan';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { CandyShop } from '@liqnft/candy-shop-sdk';
@@ -137,14 +137,9 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
                 <div className="candy-activity-time">
                   <div className="candy-activity-time-content">
                     {tradeTime}
-                    <a
-                      className="candy-activity-time-content-link"
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      href={`https://solscan.io/tx/${trade.txHashAtCreation}`}
-                    >
-                      <IconActivity />
-                    </a>
+                    <ExplorerLink type="tx" address={trade.txHashAtCreation} baseUrl={BaseUrlType.SolScan}>
+                      <IconSolScan />
+                    </ExplorerLink>
                   </div>
                 </div>
               </div>
