@@ -27,8 +27,12 @@ export const ExplorerLink = (props: {
   const { type, children, baseUrl = BaseUrlType.Explorer } = props;
 
   const [network] = useState(() => {
-    const form = JSON.parse(localStorage.getItem('LS_CANDY_FORM') || '');
-    if (form) return form.network;
+    const formData = localStorage.getItem('LS_CANDY_FORM');
+    try {
+      if (formData) return JSON.parse(formData).network;
+    } catch (e) {
+      console.log('Empty LS_CANDY_FORM value');
+    }
   });
 
   const address = typeof props.address === 'string' ? props.address : props.address?.toBase58();
