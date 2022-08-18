@@ -28,7 +28,6 @@ export const ExplorerLink = (props: {
 
   const [network] = useState(() => {
     const form = JSON.parse(localStorage.getItem('LS_CANDY_FORM') || '');
-    console.log('form.network', form.network);
     if (form) return form.network;
   });
 
