@@ -22,6 +22,7 @@ import { CandyShopDataValidator } from '../core/ui';
 import { CandyShop } from '../core/sdk';
 import { ConfigureShop } from './ConfigureShop';
 import { DropExample } from './DropExample';
+import { EthExample } from './EthExample';
 
 const disableStyle = { pointerEvent: 'none', color: 'black', paddingRight: 20, fontWeight: 'bold' };
 const normalStyle = { paddingRight: 20 };
@@ -134,6 +135,7 @@ const App = () => {
                   <Switch>
                     <Route path="/edition-drop" component={() => <DropExample candyShop={candyShop} />} />
                     <Route path="/auction" component={() => <AuctionExample candyShop={candyShop} />} />
+                    <Route path="/eth" component={() => <EthExample candyShop={candyShop} />} />
                     <Route path="/" component={() => <MarketplaceExample candyShop={candyShop} />} />
                   </Switch>
                 ) : (
