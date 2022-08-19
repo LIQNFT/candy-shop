@@ -179,7 +179,7 @@ async function createNewMintInstructions(payer: PublicKey, connection: Connectio
   return { instructions, newEditionMint: newMint, newEditionTokenAccount: userTokenAccountAddress };
 }
 
-async function generateEditionNumber(vaultAccount: PublicKey, connection: Connection): Promise<number> {
+async function generateEditionNumber(vaultAccount: PublicKey, connection: Connection): Promise<BN> {
   const vaultAccountInfoResult = await safeAwait(connection.getAccountInfo(vaultAccount));
   if (vaultAccountInfoResult.error) {
     throw new CandyShopError(CandyShopErrorType.AuctionDoesNotExist);

@@ -108,7 +108,7 @@ export const mintPrint = async (
     getMasterEditionAccount(masterMint),
     getMetadataAccount(newEditionMint.publicKey),
     getMasterEditionAccount(newEditionMint.publicKey),
-    getEditionMarkAccount(masterMint, editionNumber)
+    getEditionMarkAccount(masterMint, editionNumber.toNumber())
   ]);
 
   const transaction = new Transaction();
