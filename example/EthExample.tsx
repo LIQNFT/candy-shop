@@ -8,8 +8,8 @@ import Sell from './eth/order/Sell';
 import Cancel from './eth/order/Cancel';
 import GetOrder from './eth/order/GetOrder';
 import Consumption from './eth/signature/Consumption';
-import Allowance from './eth/signature/Allowance';
-import OrderOfferAllowance from './eth/signature/OrderOfferAllowance';
+import BuyerAllowance from './eth/signature/BuyerAllowance';
+import SellerAllowance from './eth/signature/SellerAllowance';
 
 interface EthExampleProps {
   candyShop: CandyShop;
@@ -28,8 +28,8 @@ export const EthExample: React.FC<EthExampleProps> = ({ candyShop }) => {
       <Cancel />
       <GetOrder />
       <Consumption />
-      <Allowance />
-      <OrderOfferAllowance />
+      <SellerAllowance />
+      <BuyerAllowance />
     </div>
   );
 };

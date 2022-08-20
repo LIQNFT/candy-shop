@@ -4,16 +4,13 @@ import { EthereumSDK } from '../../../core/sdk/.';
 
 const sdk = new EthereumSDK();
 
-const OrderOfferAllowance = () => {
+const BuyerAllowance = () => {
   const { register, handleSubmit } = useForm();
   const [allowanceResult, setAllowanceResult] = useState<string>();
 
   const onSubmit = async (event: any) => {
-    // event.preventDefault();
     let accounts;
     if (window.ethereum) {
-      // res[0] for fetching a first wallet
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     } else {
       alert('install metamask extension!!');
@@ -26,8 +23,7 @@ const OrderOfferAllowance = () => {
 
   return (
     <>
-      <h2>Create Seller Allowance (check if can remove as same method as create buyer allowance)</h2>
-      {/* Calling all values which we have stored in usestate */}{' '}
+      <h2>Create Buyer Allowance</h2>
       <div className="text-center">
         <form onSubmit={handleSubmit(onSubmit)}>
           <label>Consumption uuid</label>
@@ -44,4 +40,4 @@ const OrderOfferAllowance = () => {
   );
 };
 
-export default OrderOfferAllowance;
+export default BuyerAllowance;

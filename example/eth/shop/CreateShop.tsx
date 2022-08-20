@@ -21,7 +21,7 @@ const CreateShop = () => {
 
   return (
     <>
-      <h2>Create Shop (to use in admin panel</h2>
+      <h2>Create Shop (to use in admin panel)</h2>
       <div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <label>Shop Name</label>
