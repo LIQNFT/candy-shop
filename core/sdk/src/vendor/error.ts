@@ -30,7 +30,9 @@ export enum CandyShopErrorType {
   VaultDoesNotExist = 'VaultDoesNotExist',
   NotWithinSalesPeriod = 'NotWithinSalesPeriod',
   DropNotRedeemable = 'DropNotRedeemable',
-  NotReachable = 'NotReachable'
+  ExceedDropMaxAllowedSupply = 'ExceedDropMaxAllowedSupply',
+  NotReachable = 'NotReachable',
+  FailToFetchOnchainAccount = 'FailToFetchOnchainAccount'
 }
 
 export const CandyShopErrorMsgMap = {
@@ -69,7 +71,9 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.VaultDoesNotExist]: 'Vault account does not exist.',
   [CandyShopErrorType.NotWithinSalesPeriod]: 'Attempted to mint print outside of sales period.',
   [CandyShopErrorType.DropNotRedeemable]: 'Drop not redeemable',
-  [CandyShopErrorType.NotReachable]: 'Unknown error. Please contact CandyShop team for further info.'
+  [CandyShopErrorType.ExceedDropMaxAllowedSupply]: 'Max Edition number only allowed up to 10000',
+  [CandyShopErrorType.NotReachable]: 'Unknown error. Please contact CandyShop team for further info.',
+  [CandyShopErrorType.FailToFetchOnchainAccount]: 'Failed to fetch onchain account'
 };
 
 export class CandyShopError extends Error {
