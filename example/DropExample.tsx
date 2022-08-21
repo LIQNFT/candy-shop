@@ -19,14 +19,7 @@ export const DropExample: React.FC<DropExampleProps> = ({ candyShop }) => {
       <CreateDrop candyShop={candyShop} wallet={wallet} walletConnectComponent={<WalletMultiButton />} />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginTop: 30 }}>Public View</h1>
-      <Drops
-        wallet={wallet}
-        candyShop={candyShop}
-        walletConnectComponent={<WalletMultiButton />}
-        filter
-        search
-        creator="creator"
-      />
+      <Drops wallet={wallet} candyShop={candyShop} walletConnectComponent={<WalletMultiButton />} filter search />
     </div>
   );
 };
