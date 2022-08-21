@@ -1,14 +1,18 @@
 import { BN, Program, web3 } from '@project-serum/anchor';
 import { getAccount } from '@solana/spl-token';
-import { CandyShopError, CandyShopErrorType } from '../error';
+import { PublicKey } from '@solana/web3.js';
+import { getCandyShopData, getEditionVaultData } from '.';
 import {
   FEE_ACCOUNT_MIN_BAL,
   NATIVE_AUCTION_CREATORS_LIMIT,
   NATIVE_MARKETPLACE_CREATORS_LIMIT,
   SPL_AUCTION_CREATORS_LIMIT,
   SPL_MARKETPLACE_CREATORS_LIMIT,
+  TOKEN_METADATA_PROGRAM_ID,
   WRAPPED_SOL_MINT
 } from '../../factory/constants';
+import { CandyShopError, CandyShopErrorType } from '../error';
+import { parseMasterEditionV2 } from '../token/parseData';
 import {
   getAuctionData,
   getAuctionHouseProgramAsSigner,
@@ -17,8 +21,6 @@ import {
   treasuryMintIsNative
 } from './programUtils';
 import { safeAwait } from './promiseUtils';
-import { PublicKey } from '@solana/web3.js';
-import { getCandyShopData, getEditionVaultData } from '.';
 
 export enum TransactionType {
   Marketplace = 'Marketplace',
@@ -228,7 +230,14 @@ const getCreatorLimit = (isNative: boolean, transactionType: TransactionType) =>
   }
 };
 
-export const checkCanCommit = async (candyShop: PublicKey, nftOwner: PublicKey, program: Program) => {
+export const checkCanCommit = async (
+  candyShop: PublicKey,
+  nftOwner: PublicKey,
+  masterMint: PublicKey,
+  program: Program
+) => {
+  await checkDropCommittable(masterMint, program);
+
   const candyShopData = await getCandyShopData(candyShop, false, program);
 
   // For v1
@@ -245,7 +254,9 @@ export const checkCanCommit = async (candyShop: PublicKey, nftOwner: PublicKey, 
   }
 };
 
-export const checkCanCommitEnterprise = async (candyShop: PublicKey, nftOwner: PublicKey, program: Program) => {
+export const checkCanCommitEnterprise = async (candyShop: PublicKey, masterMint: PublicKey, program: Program) => {
+  await checkDropCommittable(masterMint, program);
+
   const candyShopData = await getCandyShopData(candyShop, true, program);
 
   if (!candyShopData.treasuryMint.equals(WRAPPED_SOL_MINT)) {
@@ -281,5 +292,25 @@ export const checkRedeemable = async (vaultAccount: PublicKey, program: Program)
     (vaultData.startingTime !== null && currentTime.gte(vaultData.startingTime) && currentTime.lt(salesEndTime))
   ) {
     throw new CandyShopError(CandyShopErrorType.DropNotRedeemable);
+  }
+};
+
+export const checkDropCommittable = async (masterMint: web3.PublicKey, program: Program) => {
+  const maxSupportedEdition = new BN(10_000);
+  const [nftEditionPublicKey] = await web3.PublicKey.findProgramAddress(
+    [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), masterMint.toBuffer(), Buffer.from('edition')],
+    TOKEN_METADATA_PROGRAM_ID
+  );
+
+  const nftEditionAccountInfo = await safeAwait(program.provider.connection.getAccountInfo(nftEditionPublicKey));
+  if (nftEditionAccountInfo.error) {
+    throw new CandyShopError(CandyShopErrorType.FailToFetchOnchainAccount);
+  }
+
+  const maxSupply = nftEditionAccountInfo.result
+    ? await parseMasterEditionV2(nftEditionAccountInfo.result.data).maxSupply
+    : undefined;
+  if (maxSupply.gt(maxSupportedEdition)) {
+    throw new CandyShopError(CandyShopErrorType.ExceedDropMaxAllowedSupply);
   }
 };

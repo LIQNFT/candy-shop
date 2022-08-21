@@ -113,8 +113,7 @@ const getNFTMetadataAccountInfo = async (
   );
   const nftMetadataAccountInfo = await safeAwait(connection.getAccountInfo(nftMetadataPublicKey));
   if (nftMetadataAccountInfo.error) {
-    // TODO: handle the error correctly
-    console.log('rate limited');
+    throw new CandyShopError(CandyShopErrorType.FailToFetchOnchainAccount);
   }
 
   const tokenInfo = nftMetadataAccountInfo.result ? parseMetadata(nftMetadataAccountInfo.result.data) : undefined;
@@ -134,8 +133,7 @@ const getNFTEditionInfo = async (connection: web3.Connection, tokenAccount: Acco
 
   const nftEditionAccountInfo = await safeAwait(connection.getAccountInfo(nftEditionPublicKey));
   if (nftEditionAccountInfo.error) {
-    // TODO: handle the error correctly
-    console.log('rate limited');
+    throw new CandyShopError(CandyShopErrorType.FailToFetchOnchainAccount);
   }
 
   const editionInfo = nftEditionAccountInfo.result

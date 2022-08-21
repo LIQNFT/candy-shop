@@ -25,7 +25,7 @@ export const commitNft = async (params: CommitNftParams) => {
     whitelistMint
   } = params;
 
-  await checkCanCommitEnterprise(candyShop, nftOwner.publicKey, candyShopProgram);
+  await checkCanCommitEnterprise(candyShop, masterMint, candyShopProgram);
 
   const remainingAccounts: AccountMeta[] = [];
 
