@@ -1,4 +1,5 @@
 export enum Blockchain {
-  EMV = 'evm',
-  Solana = 'solana'
+  Ethereum = 'ethereum',
+  Solana = 'solana',
+  Polygon = 'polygon'
 }
