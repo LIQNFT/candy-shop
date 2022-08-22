@@ -1,5 +1,8 @@
-import { NftAttribute } from '../nft';
 import { Side, Status, ShopStatusType, DropStatus } from '../response';
+
+export interface NftAttributeQuery {
+  [trait_type: string]: string;
+}
 
 export interface SortBy {
   column: string;
@@ -37,7 +40,7 @@ export interface OrderQs extends CommonQuery {
 export interface OrderFilter {
   side: Side;
   status: Status;
-  attribute?: NftAttribute;
+  attribute?: NftAttributeQuery;
   candyShopAddress?: string;
 }
 
@@ -63,7 +66,7 @@ export interface DropQuery extends CommonQuery {
   status?: DropStatus[];
   creator?: string;
   nftMint?: string;
-  attributes?: NftAttribute[];
+  attributes?: NftAttributeQuery[];
 }
 export interface DropActivityQuery extends CommonQuery {
   walletAddress: string;
