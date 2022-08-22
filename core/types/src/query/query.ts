@@ -65,6 +65,9 @@ export interface DropQuery extends CommonQuery {
   nftMint?: string;
   attributes?: NftAttribute[];
 }
+export interface DropActivityQuery extends CommonQuery {
+  walletAddress: string;
+}
 export interface AuctionBidQuery extends CommonQuery {
   orderByArr?: SortBy;
 }

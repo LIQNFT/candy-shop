@@ -1,4 +1,4 @@
-import { ListBase, Drop, DropQuery } from '@liqnft/candy-shop-types';
+import { ListBase, Drop, DropQuery, DropActivityQuery, DropActivity } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
 
@@ -23,4 +23,11 @@ export async function fetchDropsByStoreId(
 
   console.log(`${Logger}: fetching Drops By ShopId=${storeId}, query=${queryString}`);
   return axiosInstance.get<ListBase<Drop>>(url).then((response) => response.data);
+}
+
+export async function fetchDropActivities(axiosInstance: AxiosInstance, dropActivityQuery: DropActivityQuery) {
+  const { walletAddress, offset = 0, limit = 10 } = dropActivityQuery;
+  const queryString = qs.stringify({ walletAddress, offset, limit });
+  const url = `/drop/activity?${queryString}`;
+  return axiosInstance.get<ListBase<DropActivity>>(url).then((response) => response.data);
 }
