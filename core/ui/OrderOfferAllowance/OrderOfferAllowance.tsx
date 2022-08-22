@@ -20,7 +20,7 @@ const OrderOfferAllowance = () => {
       alert("install metamask extension!!")
     }
 
-    const { transactionHash } = await sdk.makeConsumptionAllowance(
+    const { transactionHash } = await sdk.makeOfferAllowance(
       window.ethereum,
       event.consumptionUuid,
       accounts[0],
