@@ -15,6 +15,5 @@ export interface NftProperties {
   creators: NftCreator[];
 }
 export interface NftAttribute {
-  value: string;
-  trait_type: string;
+  [trait_type: string]: string;
 }
