@@ -1,3 +1,5 @@
+import { NftAttribute } from '@liqnft/candy-shop-types';
+
 export enum TransactionState {
   DISPLAY,
   PROCESSING,
@@ -13,7 +15,7 @@ export interface CollectionFilter {
   name: string;
   collectionId: string;
   identifier: number | Array<number>;
-  attribute?: { [key: string]: string };
+  attribute?: NftAttribute;
 }
 
 export interface ShopFilter {

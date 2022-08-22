@@ -9,38 +9,20 @@ export async function fetchOrdersByStoreId(
 ): Promise<ListBase<Order>> {
   const {
     sortBy,
-    offset,
-    limit,
+    offset = 0,
+    limit = 12,
     identifiers,
     sellerAddress,
     candyShopAddress,
-    attribute: attributeQuery,
+    attribute,
     collectionId,
     nftName
   } = ordersFilterQuery;
-  let queryParams: any = {};
-  let attribute: any = undefined;
-  if (attributeQuery) {
-    const attributes = Array.isArray(attributeQuery) ? attributeQuery : [attributeQuery];
-    attribute = attributes.map((attr) => {
-      const entry = Object.entries(attr)[0];
-      return { trait_type: entry[0], value: entry[1] };
-    });
-  }
-
-  console.log(`CandyShop: fetching orders from ${storeId}`, { query: ordersFilterQuery });
+  let queryParams: any = { offset, limit };
 
   if (sortBy) {
     const arrSortBy = Array.isArray(sortBy) ? sortBy : [sortBy];
     queryParams.orderByArr = arrSortBy.map((sort) => JSON.stringify(sort));
-  }
-
-  if (offset) {
-    queryParams.offset = offset;
-  }
-
-  if (limit) {
-    queryParams.limit = limit;
   }
 
   if (identifiers && identifiers.length !== 0) {
@@ -68,9 +50,9 @@ export async function fetchOrdersByStoreId(
     });
   }
 
-  return axiosInstance
-    .get<ListBase<Order>>(`/order/${storeId}?${qs.stringify(queryParams, { indices: false })}`)
-    .then((response) => response.data);
+  console.log(`CandyShop: fetching orders from ${storeId}`, { query: ordersFilterQuery });
+  const url = `/order/${storeId}?${qs.stringify(queryParams, { indices: false })}`;
+  return axiosInstance.get<ListBase<Order>>(url).then((response) => response.data);
 }
 
 /**
@@ -81,7 +63,8 @@ export async function fetchOrderByTokenMint(
   axiosInstance: AxiosInstance,
   mintAddress: string
 ): Promise<SingleBase<Order>> {
-  return axiosInstance.get<SingleBase<Order>>(`/order/mint/${mintAddress}`).then((response) => response.data);
+  const url = `/order/mint/${mintAddress}`;
+  return axiosInstance.get<SingleBase<Order>>(url).then((response) => response.data);
 }
 
 export async function fetchOrderByTokenMintAndShopId(
@@ -90,9 +73,8 @@ export async function fetchOrderByTokenMintAndShopId(
   shopId: string
 ): Promise<SingleBase<Order>> {
   console.log(`CandyShop: fetching orders by shop address=${shopId}, mintAddress=${mintAddress}`);
-  return axiosInstance
-    .get<SingleBase<Order>>(`/order/mint/${mintAddress}/shop/${shopId}`)
-    .then((response) => response.data);
+  const url = `/order/mint/${mintAddress}/shop/${shopId}`;
+  return axiosInstance.get<SingleBase<Order>>(url).then((response) => response.data);
 }
 
 export async function fetchOrdersByStoreIdAndWalletAddress(
@@ -102,21 +84,23 @@ export async function fetchOrdersByStoreIdAndWalletAddress(
 ): Promise<Order[]> {
   console.log(`CandyShop: fetching orders by shop address=${storeId}, walletAddress=${walletAddress}`);
   // handles pagination internally
-  const limit = 10;
+  const limit = 12;
   let offset = 0;
   let resCount: number | null = null;
   let orders: Order[] = [];
 
   while (resCount === null || resCount == limit) {
-    const page: Order[] = await axiosInstance
-      .get<ListBase<Order>>(
-        `/order/${storeId}?offset=${offset}&limit=${limit}&filterArr[]=${JSON.stringify({
-          side: 1,
-          status: 0,
-          walletAddress
-        })}`
-      )
-      .then((response) => response.data?.result);
+    const queryParams = {
+      offset,
+      limit,
+      'filterArr[]': JSON.stringify({
+        side: 1,
+        status: 0,
+        walletAddress
+      })
+    };
+    const url = `/order/${storeId}?${qs.stringify(queryParams, { indices: false })}`;
+    const page: Order[] = await axiosInstance.get<ListBase<Order>>(url).then((response) => response.data?.result);
     resCount = page.length;
     offset = offset + limit;
     orders = orders.concat(page);
