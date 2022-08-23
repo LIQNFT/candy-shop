@@ -241,6 +241,7 @@ export interface EditionDropCommitNftParams extends EditionDropParams, CandyShop
 
 export interface EditionDropMintPrintParams extends EditionDropParams, CandyShopMintPrintParams {
   auctionHouse: web3.PublicKey;
+  treasuryMint: web3.PublicKey;
 }
 
 export interface EditionDropRedeemParams extends EditionDropParams, CandyShopRedeemParams {}

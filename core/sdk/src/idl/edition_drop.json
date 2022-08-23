@@ -813,6 +813,11 @@
       "code": 6043,
       "name": "InvalidNftOwner",
       "msg": "Invalid nft owner provided in remaining accounts"
+    },
+    {
+      "code": 6044,
+      "name": "InvalidStartTime",
+      "msg": "invalid start time"
     }
   ],
   "metadata": {

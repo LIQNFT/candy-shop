@@ -751,7 +751,8 @@ export class CandyShop {
       auctionHouse,
       isEnterprise: this._isEnterprise,
       connection: this.connection(),
-      candyShopProgram: this.getStaticProgram(editionBuyer)
+      candyShopProgram: this.getStaticProgram(editionBuyer),
+      treasuryMint: this._treasuryMint
     });
 
     return txHash;

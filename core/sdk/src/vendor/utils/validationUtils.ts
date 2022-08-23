@@ -240,11 +240,6 @@ export const checkCanCommit = async (
 
   const candyShopData = await getCandyShopData(candyShop, false, program);
 
-  // For v1
-  if (!candyShopData.treasuryMint.equals(WRAPPED_SOL_MINT)) {
-    throw new CandyShopError(CandyShopErrorType.InvalidTreasuryMint);
-  }
-
   if (!candyShopData.creator.equals(nftOwner)) {
     throw new CandyShopError(CandyShopErrorType.InvalidNftOwner);
   }

@@ -10,7 +10,7 @@ import {
   checkEditionMintPeriod,
   sendTx
 } from '../../../../vendor';
-import { TOKEN_METADATA_PROGRAM_ID } from '../../../constants';
+import { TOKEN_METADATA_PROGRAM_ID, WRAPPED_SOL_MINT } from '../../../constants';
 
 export const mintPrint = async (newTokenInstruction: TransactionInstruction[], params: MintPrintParams) => {
   const {
@@ -24,12 +24,23 @@ export const mintPrint = async (newTokenInstruction: TransactionInstruction[], p
     newEditionMint,
     editionNumber,
     program,
-    whitelistMint
+    whitelistMint,
+    treasuryMint
   } = params;
 
   await checkEditionMintPeriod(vaultAccount, program);
 
   const remainingAccounts: AccountMeta[] = [];
+
+  if (!treasuryMint.equals(WRAPPED_SOL_MINT)) {
+    const buyerSplTokenAccount = await getAssociatedTokenAddress(treasuryMint, editionBuyer.publicKey, true);
+
+    remainingAccounts.push({
+      pubkey: buyerSplTokenAccount,
+      isWritable: true,
+      isSigner: false
+    });
+  }
 
   if (whitelistMint) {
     const [userWlTokenAccount, vaultWlTokenAccount] = await Promise.all([
