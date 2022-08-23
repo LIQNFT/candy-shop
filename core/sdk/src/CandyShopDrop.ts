@@ -102,7 +102,8 @@ export abstract class CandyShopDrop {
       whitelistMint,
       editionBuyer,
       auctionHouse,
-      candyShopProgram
+      candyShopProgram,
+      treasuryMint
     } = params;
 
     const [vaultAccount] = await getEditionVaultAccount(candyShop, nftOwnerTokenAccount);
@@ -128,7 +129,8 @@ export abstract class CandyShopDrop {
       editionNumber,
       newEditionMint,
       newEditionTokenAccount,
-      program
+      program,
+      treasuryMint
     };
 
     if (isEnterprise) {

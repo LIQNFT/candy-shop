@@ -127,6 +127,7 @@ export interface MintPrintParams extends EditionDropParams {
   newEditionMint: web3.Keypair;
   auctionHouse: web3.PublicKey;
   editionNumber: BN;
+  treasuryMint: web3.PublicKey;
 }
 
 export interface RedeemNftParams extends EditionDropParams {
