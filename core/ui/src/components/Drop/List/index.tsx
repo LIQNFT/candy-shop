@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CandyShop, fetchDropsByShopAddress } from '@liqnft/candy-shop-sdk';
-import { Drop, ListBase } from '@liqnft/candy-shop-types';
+import { Drop, DropStatus, ListBase } from '@liqnft/candy-shop-types';
 
 import { Card } from 'components/Card';
 import { LoadingSkeleton } from 'components/LoadingSkeleton';
@@ -45,6 +45,20 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
   const dropQueries = useRef({ offset: 0, limit: 12 });
   const prevFilterRef = useRef(filterOption);
 
+  const onUpdateDrops = (drop: Drop) => {
+    setDropNfts((list) =>
+      list?.map((item) => {
+        if (item.nftMint === drop.nftMint) {
+          const updatedDrop = { ...item, currentSupply: item.currentSupply + 1 };
+          //reset current selected drop
+          setDropNft(updatedDrop);
+          return updatedDrop;
+        }
+        return item;
+      })
+    );
+  };
+
   useEffect(() => {
     if (prevFilterRef.current !== filterOption || keyword !== undefined) {
       prevFilterRef.current = filterOption;
@@ -61,7 +75,7 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
       offset: dropQueries.current.offset,
       limit: dropQueries.current.limit,
       status: filterOption.value,
-      nftMint: keyword,
+      nftName: keyword,
       creator
     })
       .then((res: ListBase<Drop>) => {
@@ -89,6 +103,47 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
         setLoading(LoadStatus.Loaded);
       });
   };
+
+  // handle update drop status
+  useEffect(() => {
+    if (!dropNfts?.length) return;
+    const NOW = dayjs().unix();
+    let remainSecondTime = 0;
+    const willUpdateDrop = dropNfts.some((drop) => {
+      // upcoming whitelist
+      if (Number(drop.whitelistTime) > NOW) {
+        remainSecondTime = Number(drop.whitelistTime) - NOW;
+        return true;
+      }
+      // upcoming launch
+      if (Number(drop.startTime) > NOW) {
+        remainSecondTime = Number(drop.startTime) - NOW;
+        return true;
+      }
+      // upcoming end
+      if (Number(drop.startTime) + Number(drop.salesPeriod) > NOW) {
+        remainSecondTime = Number(drop.startTime) + Number(drop.salesPeriod) - NOW;
+        return true;
+      }
+    });
+
+    if (willUpdateDrop === undefined) return;
+
+    const timeout = setTimeout(() => {
+      setDropNfts((drops) => {
+        const NOW = dayjs().unix();
+        return drops?.map((drop) => {
+          if (Number(drop.whitelistTime) >= NOW) return { ...drop, status: DropStatus.WHITELIST_STARTED };
+          if (Number(drop.startTime) >= NOW) return { ...drop, status: DropStatus.SALE_STARTED };
+          if (Number(drop.startTime) + Number(drop.salesPeriod) >= NOW)
+            return { ...drop, status: DropStatus.SALE_COMPLETED };
+          return drop;
+        });
+      });
+    }, remainSecondTime * 1000);
+
+    return () => clearTimeout(timeout);
+  }, [dropNfts]);
 
   useObserver({ callbackFn: fetchDrops, triggerTargetId: 'DROP_TARGET', enable: Boolean(target && hasMore) });
 
@@ -147,6 +202,7 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
           wallet={wallet}
           dropNft={dropNft}
           candyShop={candyShop}
+          onMintSuccess={onUpdateDrops}
         />
       ) : null}
     </div>

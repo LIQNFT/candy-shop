@@ -53,6 +53,8 @@ export const DropSelection: React.FC<DropSelectionProps> = ({
 
   if (!wallet?.publicKey) return walletConnectComponent;
 
+  const emptyDrops = loading === LoadStatus.Loaded && dropNfts.length === 0;
+
   return (
     <>
       <div className="candy-edition-description">
@@ -63,7 +65,7 @@ export const DropSelection: React.FC<DropSelectionProps> = ({
       {loading !== LoadStatus.ToLoad && (
         <>
           <div className="candy-edition-list candy-container-list">
-            {dropNfts?.map((nft) => (
+            {dropNfts.map((nft) => (
               <Card
                 key={nft.tokenAccountAddress}
                 className={dropNft?.tokenAccountAddress === nft.tokenAccountAddress ? 'selected' : ''}
@@ -92,17 +94,19 @@ export const DropSelection: React.FC<DropSelectionProps> = ({
           </div>
           {loading === LoadStatus.Loading && <LoadingSkeleton />}
 
-          <button
-            disabled={!dropNft}
-            className={`candy-button candy-edition-select-button ${dropNft ? '' : 'disabled'}`}
-            onClick={onNext}
-          >
-            Continue
-          </button>
+          {emptyDrops ? null : (
+            <button
+              disabled={!dropNft}
+              className={`candy-button candy-edition-select-button ${dropNft ? '' : 'disabled'}`}
+              onClick={onNext}
+            >
+              Continue
+            </button>
+          )}
         </>
       )}
 
-      {loading === LoadStatus.Loaded && dropNfts?.length === 0 && (
+      {emptyDrops && (
         <Empty description="No available or eligible NFTs found. Please ensure you have NFTs that have a max supply >1 in the active wallet." />
       )}
     </>

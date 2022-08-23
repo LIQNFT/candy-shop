@@ -66,6 +66,7 @@ export interface DropQuery extends CommonQuery {
   status?: DropStatus[];
   creator?: string;
   nftMint?: string;
+  nftName?: string;
   attributes?: NftAttributeQuery[];
 }
 export interface DropActivityQuery extends CommonQuery {
