@@ -66,6 +66,8 @@ export abstract class CandyShopDrop {
       candyShopProgram
     } = params;
 
+    checkTimeValidity(startTime, whitelistTime);
+
     const [vaultAccount] = await getEditionVaultAccount(candyShop, nftOwnerTokenAccount);
 
     const commitNftParams: CommitNftParams = {
@@ -200,4 +202,16 @@ async function generateEditionNumber(vaultAccount: PublicKey, connection: Connec
   editionArray = editionArray.map((v, i) => (v === '1' ? '-1' : String(i + 1))).filter((i) => i !== '-1');
   const edition = new BN(editionArray[Math.floor(Math.random() * editionArray.length)]);
   return edition;
+}
+
+function checkTimeValidity(startTime: BN, whitelistTime?: BN) {
+  const now = new BN(new Date().getTime() / 1000);
+  if (whitelistTime) {
+    if (whitelistTime.gte(startTime) || whitelistTime.lt(now)) {
+      throw new CandyShopError(CandyShopErrorType.InvalidDropWhitelistTime);
+    }
+  }
+  if (startTime.lt(now)) {
+    throw new CandyShopError(CandyShopErrorType.InvalidDropStartTime);
+  }
 }
