@@ -45,15 +45,17 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
         )} UTC`
       ).unix()
     );
-    const whitelistTime = new BN(
-      dayjs(
-        `${formData.whitelistDate} ${convertTime12to24(
-          formData.whitelistHour,
-          formData.whitelistMinute,
-          formData.whitelistTimeFormat
-        )} UTC`
-      ).unix()
-    );
+    const whitelistTime = formData.whitelistRelease
+      ? new BN(
+          dayjs(
+            `${formData.whitelistDate} ${convertTime12to24(
+              formData.whitelistHour,
+              formData.whitelistMinute,
+              formData.whitelistTimeFormat
+            )} UTC`
+          ).unix()
+        )
+      : null;
 
     candyShop
       .commitMasterNft({
@@ -63,7 +65,8 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
         price: new BN(Number(formData.mintPrice) * 10 ** candyShop.currencyDecimals),
         startTime,
         whitelistTime,
-        salesPeriod: new BN(Number(formData.salesPeriod) * 60)
+        salesPeriod: new BN(Number(formData.salesPeriod) * 60),
+        whitelistMint: formData.whitelistRelease ? new web3.PublicKey(formData.whitelistAddress) : undefined
       })
       .then(() => {
         notification('Edition Drop created.', NotificationType.Success);
@@ -83,7 +86,7 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
       value: `${Number(formData.mintPrice)} ${candyShop.currencySymbol}`
     },
     {
-      name: 'Launch Start Date',
+      name: 'Launch Date',
       value: getStartTime({
         hour: formData.launchHour,
         minute: formData.launchMinute,
@@ -92,7 +95,7 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
       })
     },
     {
-      name: 'Sales Period (minutes)',
+      name: 'Sales Period (mins)',
       value: formData.salesPeriod
     }
   ];

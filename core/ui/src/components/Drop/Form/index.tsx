@@ -4,9 +4,10 @@ import { Checkbox } from 'components/Checkbox';
 import { EMPTY_FUNCTION } from 'utils/helperFunc';
 
 import { Tooltip } from 'components/Tooltip';
+import { EditionDrop } from '@liqnft/candy-shop-sdk';
+import { convertTime12to24 } from 'utils/timer';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { EditionDrop } from '@liqnft/candy-shop-sdk';
 dayjs.extend(utc);
 import './style.less';
 
@@ -41,6 +42,13 @@ export type FormType = {
   salesPeriod: string;
 };
 
+const validateInput = (nodeId: keyof FormType, message: string) => {
+  (document.getElementById(nodeId) as HTMLInputElement)?.setCustomValidity(message);
+};
+const checkValidity = (nodeId: keyof FormType) => {
+  (document.getElementById(nodeId) as HTMLInputElement)?.checkValidity();
+};
+
 export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
   onSubmit,
   nft,
@@ -48,21 +56,29 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
   onBack,
   currencySymbol
 }) => {
-  const [form, setForm] = useState<FormType>({
-    name: nft.name,
-    whitelistAddress: '',
-    launchTimeFormat: 'AM',
-    whitelistTimeFormat: 'AM',
-    launchHour: '12',
-    launchMinute: '00',
-    whitelistHour: '12',
-    whitelistMinute: '00',
-    launchDate: dayjs().add(1, 'd').format('YYYY-MM-DD'),
-    whitelistDate: dayjs().add(2, 'd').format('YYYY-MM-DD'),
-    totalSupply: nft.maxSupply,
-    mintPrice: '',
-    whitelistRelease: false,
-    salesPeriod: ''
+  const [form, setForm] = useState<FormType>(() => {
+    const getHour = () => {
+      const hour = dayjs.utc().hour();
+      if (hour === 0) return '12';
+      if (hour > 12) return (hour - 12).toString();
+      return hour.toString();
+    };
+    return {
+      name: nft.name,
+      whitelistAddress: '',
+      launchTimeFormat: 'AM',
+      whitelistTimeFormat: 'AM',
+      launchHour: '12',
+      launchMinute: '00',
+      whitelistHour: getHour(),
+      whitelistMinute: dayjs().minute().toString(),
+      launchDate: dayjs().add(1, 'd').format('YYYY-MM-DD'),
+      whitelistDate: dayjs().format('YYYY-MM-DD'),
+      totalSupply: nft.maxSupply,
+      mintPrice: '',
+      whitelistRelease: false,
+      salesPeriod: ''
+    };
   });
 
   const onCheck = (key: CheckEnum, value?: any) => (e: any) => {
@@ -82,7 +98,44 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
 
   const onSubmitForm = (e: any) => {
     e.preventDefault();
+
+    const NOW = dayjs().unix();
+
+    const startTime = dayjs(
+      `${form.launchDate} ${convertTime12to24(form.launchHour, form.launchMinute, form.launchTimeFormat)} UTC`
+    ).unix();
+
+    if (form.whitelistRelease) {
+      const whitelistDate = dayjs(
+        `${form.whitelistDate} ${convertTime12to24(
+          form.whitelistHour,
+          form.whitelistMinute,
+          form.whitelistTimeFormat
+        )} UTC`
+      ).unix();
+
+      if (whitelistDate <= NOW) {
+        validateInput('whitelistDate', 'Whitelist time must be > current time.');
+        return checkValidity('whitelistDate');
+      }
+
+      if (whitelistDate >= startTime) {
+        validateInput('whitelistDate', 'Whitelist time must be < Launch time.');
+        return checkValidity('whitelistDate');
+      }
+    }
+
+    if (startTime <= NOW) {
+      validateInput('launchDate', 'Launch time must be > current time.');
+      return checkValidity('launchDate');
+    }
+
     onSubmit(form);
+  };
+
+  const onResetValidation = () => {
+    validateInput('launchDate', '');
+    validateInput('whitelistDate', '');
   };
 
   const preventUpdateNumberOnWheel = (e: any) => {
@@ -98,7 +151,7 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
     `candy-edition-radio ${isActive ? '' : 'candy-edition-radio-disable'}`;
 
   return (
-    <form className="candy-edition-form" onSubmit={onSubmitForm}>
+    <form id="edition-form" className="candy-edition-form" onSubmit={onSubmitForm} onChange={onResetValidation}>
       <p className="candy-subTitle">Enter details on your new edition drop</p>
       <div className="candy-edition-form-item">
         <label htmlFor="name">

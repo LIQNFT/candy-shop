@@ -21,7 +21,10 @@ export const EditionModalDetail: React.FC<EditionModalDetailProps> = ({
   candyShop,
   onMint
 }) => {
-  const percentage = ((dropNft.currentSupply || 0) / dropNft.maxSupply) * 100;
+  const percentage = Math.round(((dropNft.currentSupply || 0) / dropNft.maxSupply) * 100 * 100) / 100;
+  const disabledMint =
+    !(dropNft.status === DropStatus.SALE_STARTED || dropNft.status === DropStatus.WHITELIST_STARTED) ||
+    dropNft.maxSupply === dropNft.currentSupply;
 
   return (
     <>
@@ -30,8 +33,8 @@ export const EditionModalDetail: React.FC<EditionModalDetailProps> = ({
       </div>
       <div className="candy-edition-modal-container">
         <div className="candy-edition-modal-header">
-          <div className="title">TOTAL SUPPLY</div>
-          <div className="title">AVAILABLE TOKENS</div>
+          <div className="candy-label">TOTAL SUPPLY</div>
+          <div className="candy-label">AVAILABLE TOKENS</div>
           <b className="bold">{percentage}%</b>
           <b className="bold">{dropNft.maxSupply}</b>
           <div className="candy-edition-slide">
@@ -55,13 +58,7 @@ export const EditionModalDetail: React.FC<EditionModalDetailProps> = ({
                 <input disabled placeholder="Enter number of quantity" min={0} value="1" type="number" step="any" />
               </div>
 
-              <button
-                disabled={
-                  !(dropNft.status === DropStatus.SALE_STARTED || dropNft.status === DropStatus.WHITELIST_STARTED)
-                }
-                onClick={onMint}
-                className="candy-button candy-edition-modal-button"
-              >
+              <button disabled={disabledMint} onClick={onMint} className="candy-button candy-edition-modal-button">
                 Mint NFT
               </button>
             </div>

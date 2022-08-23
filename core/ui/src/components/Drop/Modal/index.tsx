@@ -18,6 +18,7 @@ export interface EditionModalProps {
   onClose: () => void;
   candyShop: CandyShop;
   dropNft: Drop;
+  onMintSuccess?: (drop: Drop) => void;
 }
 
 const Logger = 'CandyShopUI/MintPrint';
@@ -27,7 +28,8 @@ export const EditionModal: React.FC<EditionModalProps> = ({
   walletConnectComponent,
   onClose,
   dropNft,
-  candyShop
+  candyShop,
+  onMintSuccess
 }) => {
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
 
@@ -49,6 +51,7 @@ export const EditionModal: React.FC<EditionModalProps> = ({
       .then(() => {
         notification('Mint Edition successful.', NotificationType.Success);
         setState(TransactionState.DISPLAY);
+        onMintSuccess && onMintSuccess(dropNft);
       })
       .catch((error: Error) => {
         console.log(`${Logger}: candyShop.mintNewPrint fail, error=`, error);
