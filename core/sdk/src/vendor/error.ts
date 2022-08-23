@@ -32,7 +32,9 @@ export enum CandyShopErrorType {
   DropNotRedeemable = 'DropNotRedeemable',
   ExceedDropMaxAllowedSupply = 'ExceedDropMaxAllowedSupply',
   NotReachable = 'NotReachable',
-  FailToFetchOnchainAccount = 'FailToFetchOnchainAccount'
+  FailToFetchOnchainAccount = 'FailToFetchOnchainAccount',
+  InvalidDropStartTime = 'InvalidDropStartTime',
+  InvalidDropWhitelistTime = 'InvalidDropWhitelistTime'
 }
 
 export const CandyShopErrorMsgMap = {
@@ -73,7 +75,9 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.DropNotRedeemable]: 'Drop not redeemable',
   [CandyShopErrorType.ExceedDropMaxAllowedSupply]: 'Max Edition number only allowed up to 10000',
   [CandyShopErrorType.NotReachable]: 'Unknown error. Please contact CandyShop team for further info.',
-  [CandyShopErrorType.FailToFetchOnchainAccount]: 'Failed to fetch onchain account'
+  [CandyShopErrorType.FailToFetchOnchainAccount]: 'Failed to fetch onchain account',
+  [CandyShopErrorType.InvalidDropStartTime]: 'Invalid Drop start time',
+  [CandyShopErrorType.InvalidDropWhitelistTime]: 'Invalid Drop whitelist time'
 };
 
 export class CandyShopError extends Error {
