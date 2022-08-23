@@ -429,13 +429,15 @@ export default class BlockchainService implements BlockchainServiceInterface {
       },
     }
     const { transactionHash } = await this.cancelOrders(baseParams, blockchainOrdersForCancel)
-    await ApiCaller.request(
-      `${process.env.REACT_APP_API_URL}/order/${orderUuid}`,
-      RequestMethod.Patch,
-      {
-        status: 2,
-      },
-    )
+    if (transactionHash) {
+      await ApiCaller.request(
+        `${process.env.REACT_APP_API_URL}/order/${orderUuid}`,
+        RequestMethod.Patch,
+        {
+          status: 2,
+        },
+      )
+    }
     return { transactionHash }
   }
 }

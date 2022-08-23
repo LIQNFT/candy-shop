@@ -200,18 +200,21 @@ export class EthereumSDK implements EthereumSDKInterface {
     const order = await this.blockchainService.getBlockchainOrderByConsumptionUuid(
       event.consumptionUuid,
     )
-    await ApiCaller.request(
-      `${process.env.REACT_APP_API_URL}/order/${order.uuid}`,
-      RequestMethod.Patch,
-      {
-        status: 3,
-      },
-    )
-    return await this.blockchainService.fulfillOrder(
+    const { transactionHash } = await this.blockchainService.fulfillOrder(
       baseParams,
       order,
       result.result.transactionData,
     )
+    if (transactionHash) {
+      await ApiCaller.request(
+        `${process.env.REACT_APP_API_URL}/order/${order.uuid}`,
+        RequestMethod.Patch,
+        {
+          status: 3,
+        },
+      )
+    }
+    return { transactionHash }
   }
 
   getOrder = async (uuid: string) => {
