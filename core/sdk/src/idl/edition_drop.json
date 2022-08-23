@@ -596,226 +596,161 @@
   "errors": [
     {
       "code": 6000,
-      "name": "InvalidOwnershipTokenAllocation",
-      "msg": "Invalid ownership token allocation"
-    },
-    {
-      "code": 6001,
-      "name": "CampaignNameTooLong",
-      "msg": "Campaign name too long"
-    },
-    {
-      "code": 6002,
-      "name": "VaultNameTooLong",
-      "msg": "Vault name too long"
-    },
-    {
-      "code": 6003,
-      "name": "WebsiteLinkTooLong",
-      "msg": "Website link too long"
-    },
-    {
-      "code": 6004,
-      "name": "InvalidAmount",
-      "msg": "Invalid amount"
-    },
-    {
-      "code": 6005,
-      "name": "InsufficientBalance",
-      "msg": "Insufficient balance"
-    },
-    {
-      "code": 6006,
-      "name": "MintSupplyNotOne",
-      "msg": "Mint supply not one"
-    },
-    {
-      "code": 6007,
       "name": "MintSupplyNotFixed",
       "msg": "Mint supply not fixed"
     },
     {
-      "code": 6008,
+      "code": 6001,
       "name": "MintDecimalsNotZero",
       "msg": "Mint decimal not zero"
     },
     {
-      "code": 6009,
+      "code": 6002,
       "name": "SaleNotStarted",
       "msg": "Sales not started yet"
     },
     {
-      "code": 6010,
+      "code": 6003,
       "name": "InvalidStatus",
       "msg": "Invalid status to update"
     },
     {
-      "code": 6011,
+      "code": 6004,
       "name": "SaleEnded",
       "msg": "Sales ended"
     },
     {
-      "code": 6012,
+      "code": 6005,
       "name": "InsufficientOtToken",
       "msg": "Insufficient ownership token for NFT redemption"
     },
     {
-      "code": 6013,
-      "name": "NotOnWhitelist",
-      "msg": "Not on whitelist"
-    },
-    {
-      "code": 6014,
-      "name": "MintCapExceeded",
-      "msg": "Cannot mint more than mint cap"
-    },
-    {
-      "code": 6015,
-      "name": "InvalidStatusForRejection",
-      "msg": "Invalid status for rejection"
-    },
-    {
-      "code": 6016,
+      "code": 6006,
       "name": "MetadataDoesntExist",
       "msg": "Metadata does not exist"
     },
     {
-      "code": 6017,
+      "code": 6007,
       "name": "EditionDoesntExist",
       "msg": "Edition does not exist"
     },
     {
-      "code": 6018,
+      "code": 6008,
       "name": "NotEnoughTokens",
       "msg": "Not enough tokens to mint a limited edition"
     },
     {
-      "code": 6019,
-      "name": "IncorretOwner",
-      "msg": "Incorret owner"
-    },
-    {
-      "code": 6020,
+      "code": 6009,
       "name": "MetadataNotFound",
       "msg": "Metadata not found"
     },
     {
-      "code": 6021,
+      "code": 6010,
       "name": "MasterEditionNotFound",
       "msg": "Master edition not found"
     },
     {
-      "code": 6022,
+      "code": 6011,
       "name": "Uninitialized",
       "msg": "Uninitialized"
     },
     {
-      "code": 6023,
+      "code": 6012,
       "name": "InvalidMint",
       "msg": "Invalid mint"
     },
     {
-      "code": 6024,
+      "code": 6013,
       "name": "MasterEditionSupplyNotSet",
       "msg": "Master Edition should have supply set"
     },
     {
-      "code": 6025,
+      "code": 6014,
       "name": "MasterEditionSupplyCannotBeZero",
       "msg": "Master Edition max supply cannot be zero"
     },
     {
-      "code": 6026,
+      "code": 6015,
       "name": "ExceededMaxAllowedSupply",
       "msg": "Exceeded max allowed supply"
     },
     {
-      "code": 6027,
+      "code": 6016,
       "name": "AlreadyInitialized",
       "msg": "Already initialized"
     },
     {
-      "code": 6028,
+      "code": 6017,
       "name": "NumericalOverflow",
       "msg": "Invalid numerical inputs"
     },
     {
-      "code": 6029,
+      "code": 6018,
       "name": "RedeemConditionNotMet",
       "msg": "Redeem condition not met"
     },
     {
-      "code": 6030,
+      "code": 6019,
       "name": "WhitelistTimeNotSet",
       "msg": "whitelist time not set"
     },
     {
-      "code": 6031,
+      "code": 6020,
       "name": "WhitelistAccountsWronglySupplied",
       "msg": "missing whitelist accounts"
     },
     {
-      "code": 6032,
+      "code": 6021,
       "name": "InvalidWhitelistMint",
       "msg": "invalid whitelist mint"
     },
     {
-      "code": 6033,
+      "code": 6022,
       "name": "InvalidWhitelistTokenAccount",
       "msg": "invalid whitelist token account"
     },
     {
-      "code": 6034,
-      "name": "WhitelistMintNotPresent",
-      "msg": "whitelist mint not present in vault"
-    },
-    {
-      "code": 6035,
+      "code": 6023,
       "name": "InsufficientWhitelistToken",
       "msg": "insufficient whitelist token"
     },
     {
-      "code": 6036,
-      "name": "VaultWhitelistAtaNotInitialized",
-      "msg": "vault whitelist ata not initialized"
-    },
-    {
-      "code": 6037,
+      "code": 6024,
       "name": "InvalidWhitelistMintDecimal",
       "msg": "invalid whitelist mint decimals"
     },
     {
-      "code": 6038,
+      "code": 6025,
       "name": "InvalidWhitelistTime",
       "msg": "invalid whitelist time"
     },
     {
-      "code": 6039,
+      "code": 6026,
       "name": "InvalidEditionIndex",
       "msg": "invalid edition number"
     },
     {
-      "code": 6040,
+      "code": 6027,
       "name": "EditionTaken",
       "msg": "edition already taken"
     },
     {
-      "code": 6041,
+      "code": 6028,
       "name": "InvalidShopKey",
       "msg": "key of provided candy shop does not match expected value"
     },
     {
-      "code": 6042,
+      "code": 6029,
       "name": "MintNonNative",
       "msg": "Candy Shop treasury mint must be native"
     },
     {
-      "code": 6043,
+      "code": 6030,
       "name": "InvalidNftOwner",
       "msg": "Invalid nft owner provided in remaining accounts"
     },
     {
-      "code": 6044,
+      "code": 6031,
       "name": "InvalidStartTime",
       "msg": "invalid start time"
     }
