@@ -19,9 +19,10 @@ import { AuctionExample } from './AuctionExample';
 import { TORUS_WALLET_CLIENT_ID } from './constant/clientId';
 import { DEFAULT_FORM_CONFIG, LS_CANDY_FORM } from './constant/formConfiguration';
 import { CandyShopDataValidator } from '../core/ui';
-import { CandyShop } from '../core/sdk';
+import { SolanaCandyShop } from '../core/sdk';
 import { ConfigureShop } from './ConfigureShop';
 import { DropExample } from './DropExample';
+import { EthSdkExample } from './EthSdkExample';
 import { EthExample } from './EthExample';
 
 const disableStyle = { pointerEvent: 'none', color: 'black', paddingRight: 20, fontWeight: 'bold' };
@@ -73,10 +74,10 @@ const App = () => {
   const candyShop = useMemo(() => {
     let candyShop: any = null;
     try {
-      candyShop = new CandyShop({
+      candyShop = new SolanaCandyShop({
         candyShopCreatorAddress: new web3.PublicKey(candyForm.creatorAddress),
         treasuryMint: new web3.PublicKey(candyForm.treasuryMint),
-        candyShopProgramId: new web3.PublicKey(candyForm.programId),
+        programId: new web3.PublicKey(candyForm.programId),
         env: candyForm.network,
         settings: JSON.parse(candyForm.settings),
         isEnterprise: false
@@ -135,7 +136,8 @@ const App = () => {
                   <Switch>
                     <Route path="/edition-drop" component={() => <DropExample candyShop={candyShop} />} />
                     <Route path="/auction" component={() => <AuctionExample candyShop={candyShop} />} />
-                    <Route path="/eth" component={() => <EthExample candyShop={candyShop} />} />
+                    <Route path="/eth/sdk" component={() => <EthSdkExample />} />
+                    <Route path="/eth" component={() => <EthExample />} />
                     <Route path="/" component={() => <MarketplaceExample candyShop={candyShop} />} />
                   </Switch>
                 ) : (

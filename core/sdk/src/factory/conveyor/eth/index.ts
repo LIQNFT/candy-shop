@@ -14,11 +14,7 @@ export class EthereumSDK implements EthereumSDKInterface {
     consumptionUuid: string,
     address: string
   ): Promise<BaseTransactionResult> => {
-    const result = await ApiCaller.request(
-      `${process.env.REACT_APP_API_URL}/order/consumption/${consumptionUuid}/allowance`,
-      RequestMethod.Get,
-      {}
-    );
+    const result = await ApiCaller.request('/order/consumption/${consumptionUuid}/allowance', RequestMethod.Get, {});
     const { provider, providerAddress } = await this.blockchainService.getParamData(metamaskProvider, address);
     const network = await provider.getNetwork();
     const baseParams: BlockchainPrivateParams = {
@@ -67,7 +63,7 @@ export class EthereumSDK implements EthereumSDKInterface {
       }
     );
 
-    return await ApiCaller.request(`${process.env.REACT_APP_API_URL}/shop`, RequestMethod.Post, {
+    return await ApiCaller.request('/shop', RequestMethod.Post, {
       name: event.name,
       ownerAddress: address,
       paymentSplit: percentage,
@@ -110,7 +106,7 @@ export class EthereumSDK implements EthereumSDKInterface {
         logoUrl: event.logoUrl
       }
     );
-    return await ApiCaller.request(`${process.env.REACT_APP_API_URL}/shop/${event.uuid}`, RequestMethod.Patch, {
+    return await ApiCaller.request('/shop/${event.uuid}', RequestMethod.Patch, {
       name: event.name,
       paymentSplit: percentage,
       logoUrl: event.logoUrl,
@@ -135,11 +131,7 @@ export class EthereumSDK implements EthereumSDKInterface {
       }
     );
 
-    await ApiCaller.request(
-      `${process.env.REACT_APP_API_URL}/shop/{uuid}?uuid=${event.uuid}&signature=${signature}`,
-      RequestMethod.Delete,
-      {}
-    );
+    await ApiCaller.request(`/shop/{uuid}?uuid=${event.uuid}&signature=${signature}`, RequestMethod.Delete, {});
   };
 
   fulfillOrder = async (
@@ -148,7 +140,7 @@ export class EthereumSDK implements EthereumSDKInterface {
     address: string
   ): Promise<BaseTransactionResult> => {
     const result = await ApiCaller.request(
-      `${process.env.REACT_APP_API_URL}/order/consumption/${event.consumptionUuid}/fulfill`,
+      `/order/consumption/${event.consumptionUuid}/fulfill`,
       RequestMethod.Get,
       {}
     );
@@ -167,7 +159,7 @@ export class EthereumSDK implements EthereumSDKInterface {
   };
 
   getOrder = async (uuid: string) => {
-    return await ApiCaller.request(`${process.env.REACT_APP_API_URL}/order/${uuid}`, RequestMethod.Get, {});
+    return await ApiCaller.request(`/order/${uuid}`, RequestMethod.Get, {});
   };
 
   makeOfferAllowance = async (
@@ -209,21 +201,21 @@ export class EthereumSDK implements EthereumSDKInterface {
       uuid: consumptionUuid
     });
 
-    return await ApiCaller.request(`${process.env.REACT_APP_API_URL}/order/signature`, RequestMethod.Post, {
+    return await ApiCaller.request('/order/signature', RequestMethod.Post, {
       consumptionUuid,
       signature
     });
   };
 
   getShop = async (uuid: string) => {
-    return await ApiCaller.request(`${process.env.REACT_APP_API_URL}/shop/${uuid}`, RequestMethod.Get, {});
+    return await ApiCaller.request(`/shop/${uuid}`, RequestMethod.Get, {});
   };
 
   createOrder = async (address: string, data: any) => {
     data.offerNftAsset.type = Number(data.offerNftAsset.type);
     data.consumptionPaymentAssets[0].type = Number(data.consumptionPaymentAssets[0].type);
     data.networkId = Number(data.networkId);
-    return await ApiCaller.request(`${process.env.REACT_APP_API_URL}/order`, RequestMethod.Post, {
+    return await ApiCaller.request('/order', RequestMethod.Post, {
       offererAddress: address,
       ...data
     });

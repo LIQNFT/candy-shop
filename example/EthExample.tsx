@@ -1,35 +1,27 @@
-import React from 'react';
-import CreateShop from './eth/shop/CreateShop';
-import UpdateShop from './eth/shop/UpdateShop';
-import GetShop from './eth/shop/GetShop';
-import DeleteShop from './eth/shop/DeleteShop';
-import Buy from './eth/order/Buy';
-import Sell from './eth/order/Sell';
-import Cancel from './eth/order/Cancel';
-import GetOrder from './eth/order/GetOrder';
-import Consumption from './eth/signature/Consumption';
-import BuyerAllowance from './eth/signature/BuyerAllowance';
-import SellerAllowance from './eth/signature/SellerAllowance';
+import React, { useMemo } from 'react';
+import { EthCandyShop } from '../core/sdk';
 
-interface EthExampleProps {
-  candyShop: CandyShop;
-}
+export const EthExample: React.FC = () => {
+  const candyShop = useMemo(() => {
+    let candyShop: any = null;
+    try {
+      candyShop = new EthCandyShop({
+        candyShopCreatorAddress: 'TestShop',
+        treasuryMint: 'ETH',
+        env: 'goerli'
+      });
+    } catch (err) {
+      console.log(`CandyShop: create instance failed, error=`, err);
+    }
 
-export const EthExample: React.FC<EthExampleProps> = ({ candyShop }) => {
+    return candyShop;
+  });
+
+  console.log(candyShop);
+
   return (
     <div style={{ paddingBottom: 50, textAlign: 'center' }}>
       <h1>Eth Candy Shop</h1>
-      <CreateShop />
-      <UpdateShop />
-      <GetShop />
-      <DeleteShop />
-      <Sell />
-      <Buy />
-      <Cancel />
-      <GetOrder />
-      <Consumption />
-      <SellerAllowance />
-      <BuyerAllowance />
     </div>
   );
 };

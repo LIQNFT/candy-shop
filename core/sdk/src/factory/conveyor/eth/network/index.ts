@@ -8,20 +8,12 @@ import {
 
 export default class BlockchainNetworkService {
   getByUuid: (uuid: string) => Promise<BlockchainNetworkInterface> = async (uuid: string) => {
-    const result = await ApiCaller.request(
-      `${process.env.REACT_APP_API_URL}/blockchain/network/${uuid}`,
-      RequestMethod.Get,
-      {}
-    );
+    const result = await ApiCaller.request(`/blockchain/network/${uuid}`, RequestMethod.Get, {});
     return result.result.network;
   };
 
   getById = async (id: number) => {
-    const result = await ApiCaller.request(
-      `${process.env.REACT_APP_API_URL}/blockchain/network/id/${id}`,
-      RequestMethod.Get,
-      {}
-    );
+    const result = await ApiCaller.request(`/blockchain/network/id/${id}`, RequestMethod.Get, {});
     return result.result.network;
   };
 

@@ -1,10 +1,14 @@
 import axios, { AxiosResponse } from 'axios';
 import { RequestMethod } from '../types/api';
 
+const ETH_BACKEND_STAGING_URL = 'https://ckaho.liqnft.com/api/eth';
+const ETH_BACKEND_PROD_URL = 'https://candy.liqnft.com/api/eth';
+
 export class ApiCaller {
-  static request = async (url: string, method: RequestMethod, data: { [key: string]: any }) => {
+  static request = async (url: string, method: RequestMethod, data: { [key: string]: any }, network?: string) => {
     let result: AxiosResponse<any>;
     try {
+      url = network === 'mainnet' ? `${ETH_BACKEND_PROD_URL}${url}` : `${ETH_BACKEND_STAGING_URL}${url}`;
       result = await this.makeRequest(url, method, data);
     } catch (e: any) {
       throw Error('Can not make request - ' + e.message);

@@ -1,6 +1,7 @@
 import { CandyShop } from './CandyShop';
 import { Blockchain } from './CandyShopModel';
 import { EthereumSDK } from './factory/conveyor/eth';
+import { MetamaskProvider } from './factory/conveyor/eth/types/sdk';
 
 interface CandyShopSettings {
   /** Shop transaction currency symbol (default is ETH) */
@@ -36,7 +37,7 @@ const DEFAULT_PRICE_DECIMALS = 3;
 const DEFAULT_PRICE_DECIMALS_MIN = 0;
 const DEFAULT_VOLUME_DECIMALS = 1;
 const DEFAULT_VOLUME_DECIMALS_MIN = 0;
-const DEFAULT_MAINNET_CONNECTION_URL = '';
+const DEFAULT_MAINNET_CONNECTION_URL = ''; // TODO
 
 const sdk = new EthereumSDK();
 
@@ -51,8 +52,7 @@ export class EthCandyShop implements CandyShop {
   constructor(params: CandyShopConstructorParams) {
     const { candyShopCreatorAddress, treasuryMint, env, settings } = params;
 
-    // TODO: get candyShopAddress from backend
-    this._candyShopAddress = 'TODO';
+    this._candyShopAddress = ''; // TODO: get candyShopAddress from backend
     this._candyShopCreatorAddress = candyShopCreatorAddress;
     this._treasuryMint = treasuryMint;
     this._env = env ?? 'goerli';
@@ -88,19 +88,26 @@ export class EthCandyShop implements CandyShop {
     return Blockchain.Ethereum;
   }
 
-  marketplaceBuy(): Promise<string> {
-    // TODO
-    return Promise.resolve('buy txhash');
+  async marketplaceBuy(params: { metamaskProvider: MetamaskProvider; event: any; address: string }): Promise<string> {
+    let { metamaskProvider, event, address } = params;
+    let response = await sdk.fulfillOrder(metamaskProvider, event, address);
+    return response.transactionHash;
   }
 
-  marketplaceSell(): Promise<string> {
-    // TODO
-    return Promise.resolve('sell txhash');
+  async marketplaceSell(params: { address: string; data: any }): Promise<string> {
+    let { address, data } = params;
+    let response = await sdk.createOrder(address, data);
+    return response.transactionHash;
   }
 
-  marketplaceCancel(): Promise<string> {
-    // TODO
-    return Promise.resolve('cancel txhash');
+  async marketplaceCancel(params: {
+    metamaskProvider: MetamaskProvider;
+    orderUuid: string;
+    address: string;
+  }): Promise<string> {
+    let { metamaskProvider, orderUuid, address } = params;
+    let response = await sdk.cancelOrder(metamaskProvider, orderUuid, address);
+    return response.transactionHash;
   }
 
   // Auction

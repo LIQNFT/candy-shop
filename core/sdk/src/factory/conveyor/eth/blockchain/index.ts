@@ -174,11 +174,7 @@ export default class BlockchainService implements BlockchainServiceInterface {
   };
 
   getOrderConsumptionSignData = async (uuid: string) => {
-    const result = await ApiCaller.request(
-      `${process.env.REACT_APP_API_URL}/order/signature?consumptionUuid=` + uuid,
-      RequestMethod.Get,
-      {}
-    );
+    const result = await ApiCaller.request('/order/signature?consumptionUuid=' + uuid, RequestMethod.Get, {});
     return result.result.data;
   };
 
@@ -269,11 +265,7 @@ export default class BlockchainService implements BlockchainServiceInterface {
   };
 
   getBlockchainOrderByConsumptionUuid = async (uuid: string) => {
-    const result = await ApiCaller.request(
-      `${process.env.REACT_APP_API_URL}/order/consumption/${uuid}`,
-      RequestMethod.Get,
-      {}
-    );
+    const result = await ApiCaller.request(`/order/consumption/${uuid}`, RequestMethod.Get, {});
     return result.result.order;
   };
 
@@ -318,7 +310,7 @@ export default class BlockchainService implements BlockchainServiceInterface {
     const { provider, signer } = await this.getProviderAndSigner(baseParams);
     const contract = this.getNFTContract(order.offer, provider).connect(signer);
     const response = await ApiCaller.request(
-      `${process.env.REACT_APP_API_URL}/order/consumption/${consumptionUuid}/offer/allowance`,
+      `/order/consumption/${consumptionUuid}/offer/allowance`,
       RequestMethod.Get,
       {}
     );
@@ -386,11 +378,7 @@ export default class BlockchainService implements BlockchainServiceInterface {
     orderUuid: string,
     address: string
   ): Promise<BaseTransactionResult> => {
-    const { result } = await ApiCaller.request(
-      `${process.env.REACT_APP_API_URL}/order/${orderUuid}`,
-      RequestMethod.Get,
-      {}
-    );
+    const { result } = await ApiCaller.request(`/order/${orderUuid}`, RequestMethod.Get, {});
     if (result.order.status !== 1) {
       throw Error('Order is not open');
     }
@@ -406,7 +394,7 @@ export default class BlockchainService implements BlockchainServiceInterface {
       }
     };
     const { transactionHash } = await this.cancelOrders(baseParams, blockchainOrdersForCancel);
-    await ApiCaller.request(`${process.env.REACT_APP_API_URL}/order/${orderUuid}`, RequestMethod.Patch, {
+    await ApiCaller.request(`/order/${orderUuid}`, RequestMethod.Patch, {
       status: 2
     });
     return { transactionHash };

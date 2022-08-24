@@ -9,3 +9,4 @@ export * from './SolanaCandyShopModel';
 export * from './vendor';
 /* Temporary export of ETH SDK methods */
 export * from './factory/conveyor/eth';
+export * from './EthCandyShop';
