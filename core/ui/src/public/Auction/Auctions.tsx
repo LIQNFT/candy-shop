@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CandyShop, fetchAuctionsByShopAddress } from '@liqnft/candy-shop-sdk';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { LoadingSkeleton } from 'components/LoadingSkeleton';
 import { AuctionCard } from 'components/Auction';
-import { Auction, AuctionStatus, ListBase, ShopStatusType } from '@liqnft/candy-shop-types';
+import { Auction, AuctionStatus, ListBase } from '@liqnft/candy-shop-types';
 import { Empty } from 'components/Empty';
-import { ORDER_FETCH_LIMIT, BACKGROUND_UPDATE_LIMIT } from 'constant/Orders';
-import { AuctionActionsStatus, DEFAULT_LIST_AUCTION_STATUS } from 'constant';
-import { useValidateStatus } from 'hooks/useValidateStatus';
-import { useUpdateSubject } from 'public/Context/CandyShopDataValidator';
+import { ORDER_FETCH_LIMIT } from 'constant/Orders';
+import { DEFAULT_LIST_AUCTION_STATUS } from 'constant';
+import { useUpdateCandyShopContext } from 'public/Context/CandyShopDataValidator';
+import { EventName, useSocket } from 'public/Context/Socket';
+import { removeDuplicate, removeListeners } from 'utils/helperFunc';
 
 const Logger = 'CandyShopUI/Auctions';
 
@@ -26,16 +27,16 @@ export const Auctions: React.FC<AuctionsProps> = ({
   candyShop,
   statusFilters = DEFAULT_LIST_AUCTION_STATUS
 }) => {
-  const [auctionedNfts, setAuctionedNfts] = useState<Auction[]>([]);
+  const [auctionedNfts, setAuctions] = useState<Auction[]>([]);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
   const [startIndex, setStartIndex] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
 
-  useUpdateSubject({ subject: ShopStatusType.Auction, candyShopAddress: candyShop.candyShopAddress });
-  const updateStatus = useValidateStatus(AuctionActionsStatus);
-  const updateStatusRef = useRef<number>(updateStatus);
-
+  const { onSocketEvent, onSendEvent } = useSocket();
   const walletKeyString = wallet?.publicKey.toString();
+  const candyShopAddress = candyShop.candyShopAddress;
+
+  useUpdateCandyShopContext({ candyShopAddress, network: candyShop.env });
 
   const loadNextPage = (startIndex: number) => () => {
     if (startIndex === 0) return;
@@ -46,7 +47,7 @@ export const Auctions: React.FC<AuctionsProps> = ({
     (startIndex: number) => {
       setHasNextPage(true);
       setLoading(true);
-      fetchAuctionsByShopAddress(candyShop.candyShopAddress.toString(), {
+      fetchAuctionsByShopAddress(candyShopAddress, {
         offset: startIndex,
         limit: ORDER_FETCH_LIMIT,
         status: statusFilters,
@@ -64,9 +65,9 @@ export const Auctions: React.FC<AuctionsProps> = ({
             return prevIndex + ORDER_FETCH_LIMIT;
           });
           if (startIndex === 0) {
-            setAuctionedNfts(data.result);
+            setAuctions(data.result);
           } else {
-            setAuctionedNfts((prevNfts) => [...prevNfts, ...data.result]);
+            setAuctions((prevNfts) => [...prevNfts, ...data.result]);
           }
         })
         .catch((error: any) => {
@@ -77,48 +78,62 @@ export const Auctions: React.FC<AuctionsProps> = ({
           setLoading(false);
         });
     },
-    [candyShop.candyShopAddress, statusFilters, walletKeyString]
+    [candyShopAddress, statusFilters, walletKeyString]
   );
-
-  useEffect(() => {
-    if (updateStatus === updateStatusRef.current) return;
-    updateStatusRef.current = updateStatus;
-
-    const batches = Array.from({ length: Math.ceil(startIndex / BACKGROUND_UPDATE_LIMIT) });
-    Promise.all(
-      batches.map((_, idx) =>
-        fetchAuctionsByShopAddress(candyShop.candyShopAddress.toString(), {
-          offset: idx * BACKGROUND_UPDATE_LIMIT,
-          limit: BACKGROUND_UPDATE_LIMIT,
-          status: statusFilters,
-          walletAddress: walletKeyString
-        })
-      )
-    )
-      .then((responses: ListBase<Auction>[]) => {
-        const memo: { [key: string]: true } = {};
-
-        setAuctionedNfts(
-          responses.reduce((acc: Auction[], res: ListBase<Auction>) => {
-            if (!res.result?.length) return acc;
-            res.result.forEach((auction) => {
-              if (memo[auction.tokenAccount]) return;
-              memo[auction.tokenAccount] = true;
-              acc.push(auction);
-            });
-            return acc;
-          }, [])
-        );
-        setStartIndex(batches.length * BACKGROUND_UPDATE_LIMIT);
-      })
-      .catch((err: any) => {
-        console.log(`${Logger} BackgroundUpdate failed, error=`, err);
-      });
-  }, [candyShop.candyShopAddress, startIndex, statusFilters, updateStatus, walletKeyString]);
 
   useEffect(() => {
     fetchAuctions(0);
   }, [fetchAuctions]);
+
+  //socket
+  useEffect(() => {
+    if (!walletKeyString) return;
+
+    const controllers = [
+      onSocketEvent(EventName.auctionCreated, (auction: Auction) => {
+        if (!statusFilters.includes(auction.status)) return;
+        setAuctions((list) => removeDuplicate([auction], list, 'auctionAddress'));
+      }),
+      onSocketEvent(EventName.auctionUpdateStatus, (auction: { auctionAddress: string; status: AuctionStatus }) => {
+        // status out of current Fe filter => remove it if exist
+        if (!statusFilters.includes(auction.status)) {
+          return setAuctions((list) => {
+            const newList = list.filter((item) => item.auctionAddress === auction.auctionAddress);
+            if (newList.length === list.length) return list;
+            return newList;
+          });
+        } else {
+          // find and update status for that auction
+          setAuctions((list) =>
+            list.map((item) => {
+              if (item.auctionAddress === auction.auctionAddress) {
+                return { ...item, status: auction.status };
+              }
+              return item;
+            })
+          );
+        }
+      }),
+      onSocketEvent(EventName.auctionUpdateBid, (data: { auctionAddress: string }) => {
+        // find current auction in list:
+        setAuctions((list) => {
+          const currentOne = list.find((item) => item.auctionAddress === data.auctionAddress);
+          if (currentOne && walletKeyString) {
+            onSendEvent(EventName.getAuctionByAddressAndWallet, {
+              auctionAddress: data.auctionAddress,
+              walletAddress: walletKeyString
+            });
+          }
+          return list;
+        });
+      }),
+      onSocketEvent(EventName.getAuctionByAddressAndWallet, (data: Auction) => {
+        setAuctions((list) => list.map((item) => (item.auctionAddress === data.auctionAddress ? data : item)));
+      })
+    ];
+
+    return () => removeListeners(controllers);
+  }, [onSocketEvent, onSendEvent, statusFilters, walletKeyString]);
 
   return (
     <div className="candy-container">

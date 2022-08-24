@@ -7,14 +7,14 @@ export const LOADING_SKELETON_COUNT = 4;
 export const SORT_OPTIONS: { value: OrderSortBy; label: string }[] = [
   {
     value: {
-      column: 'blockTimeAtCreation',
+      column: 'createdAt',
       order: 'desc'
     },
     label: 'Newest'
   },
   {
     value: {
-      column: 'blockTimeAtCreation',
+      column: 'createdAt',
       order: 'asc'
     },
     label: 'Oldest'

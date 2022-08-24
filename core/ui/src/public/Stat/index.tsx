@@ -5,8 +5,7 @@ import { useValidateStatus } from 'hooks/useValidateStatus';
 import { StatActionsStatus } from 'constant';
 
 import './index.less';
-import { useUpdateSubject } from 'public/Context/CandyShopDataValidator';
-import { ShopStatusType } from '@liqnft/candy-shop-types';
+import { useUpdateCandyShopContext } from 'public/Context/CandyShopDataValidator';
 
 export interface StatProps {
   title: string | undefined;
@@ -45,7 +44,7 @@ export const Stat: React.FC<StatProps> = ({ title, description, style, candyShop
   const [stat, setStat] = useState<any>();
 
   const statUpdateStatus = useValidateStatus(StatActionsStatus);
-  useUpdateSubject({ subject: ShopStatusType.Order, candyShopAddress: candyShop.candyShopAddress });
+  useUpdateCandyShopContext({ candyShopAddress: candyShop.candyShopAddress, network: candyShop.env });
 
   // handle fetch data
   useEffect(() => {

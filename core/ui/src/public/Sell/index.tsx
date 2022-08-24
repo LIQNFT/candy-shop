@@ -12,7 +12,7 @@ import {
   ListBase,
   CandyShop as CandyShopResponse,
   SingleBase,
-  ShopStatusType
+  Trade
 } from '@liqnft/candy-shop-types';
 import {
   CacheNFTParam,
@@ -23,9 +23,9 @@ import {
   SingleTokenInfo
 } from '@liqnft/candy-shop-sdk';
 
-import { LoadStatus, SellActionsStatus } from 'constant';
-import { useValidateStatus } from 'hooks/useValidateStatus';
-import { useUpdateSubject, useUpdateWalletAddress } from 'public/Context/CandyShopDataValidator';
+import { LoadStatus } from 'constant';
+import { EventName, useSocket } from 'public/Context/Socket';
+import { removeListeners } from 'utils/helperFunc';
 
 const Logger = 'CandyShopUI/Sell';
 
@@ -53,12 +53,7 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
   const allNFTs = useRef<any>({});
   const firstBatchNFTLoaded = useRef<boolean>(false);
 
-  const sellUpdateStatus = useValidateStatus(SellActionsStatus);
-  useUpdateWalletAddress(wallet?.publicKey.toString());
-  useUpdateSubject({
-    subject: ShopStatusType.UserNft,
-    candyShopAddress: candyShop.candyShopAddress
-  });
+  const { onSocketEvent } = useSocket();
 
   useEffect(() => {
     if (!walletPublicKey) return;
@@ -80,7 +75,7 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
       setWalletPublicKey(wallet.publicKey);
       setNFTLoadingStatus(LoadStatus.ToLoad);
     }
-  }, [wallet?.publicKey, sellUpdateStatus, candyShop]);
+  }, [wallet?.publicKey, candyShop]);
 
   /**
    * getShopIdentifiers values:
@@ -171,9 +166,7 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
   }, [candyShop, loadingNFTStatus, walletPublicKey, progressiveLoadUserNFTs, shopLoading]);
 
   useEffect(() => {
-    if (!walletPublicKey) {
-      return;
-    }
+    if (!walletPublicKey) return;
     setOrderLoading(LoadStatus.Loading);
     candyShop
       .activeOrdersByWalletAddress(walletPublicKey.toString())
@@ -186,7 +179,30 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
       .finally(() => {
         setOrderLoading(LoadStatus.Loaded);
       });
-  }, [candyShop, walletPublicKey, sellUpdateStatus]);
+  }, [candyShop, walletPublicKey]);
+
+  useEffect(() => {
+    const controllers = [
+      onSocketEvent(EventName.orderOpened, (order: OrderSchema) => {
+        setSellOrders((list = []) => [...list, order]);
+      }),
+      onSocketEvent(EventName.orderCanceled, (order: { tokenMint: string }) => {
+        setSellOrders((list = []) => list.filter((token) => token.tokenMint !== order.tokenMint));
+      })
+    ];
+
+    return () => removeListeners(controllers);
+  }, [onSocketEvent]);
+
+  useEffect(() => {
+    if (!walletPublicKey) return;
+    const controller = onSocketEvent(EventName.traded, (data: Trade) => {
+      if (data.buyerAddress === walletPublicKey.toString()) {
+        progressiveLoadUserNFTs(walletPublicKey);
+      }
+    });
+    return () => controller.abort();
+  }, [onSocketEvent, progressiveLoadUserNFTs, walletPublicKey]);
 
   const hashSellOrders: any = useMemo(() => {
     return (
