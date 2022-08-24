@@ -8,7 +8,11 @@ import { EditionDrop } from '@liqnft/candy-shop-sdk';
 import { convertTime12to24 } from 'utils/timer';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
+import IsSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import IsSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 dayjs.extend(utc);
+dayjs.extend(IsSameOrBefore);
+dayjs.extend(IsSameOrAfter);
 import './style.less';
 
 interface CreateEditionFormProps {
@@ -45,8 +49,8 @@ export type FormType = {
 const validateInput = (nodeId: keyof FormType, message: string) => {
   (document.getElementById(nodeId) as HTMLInputElement)?.setCustomValidity(message);
 };
-const checkValidity = (nodeId: keyof FormType) => {
-  (document.getElementById(nodeId) as HTMLInputElement)?.checkValidity();
+const reportValidity = () => {
+  (document.getElementById('edition-form') as HTMLFormElement).reportValidity();
 };
 
 export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
@@ -71,9 +75,9 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
       launchHour: '12',
       launchMinute: '00',
       whitelistHour: getHour(),
-      whitelistMinute: dayjs().minute().toString(),
-      launchDate: dayjs().add(1, 'd').format('YYYY-MM-DD'),
-      whitelistDate: dayjs().format('YYYY-MM-DD'),
+      whitelistMinute: dayjs.utc().minute().toString(),
+      launchDate: dayjs.utc().add(1, 'd').format('YYYY-MM-DD'),
+      whitelistDate: dayjs.utc().format('YYYY-MM-DD'),
       totalSupply: nft.maxSupply,
       mintPrice: '',
       whitelistRelease: false,
@@ -99,11 +103,11 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
   const onSubmitForm = (e: any) => {
     e.preventDefault();
 
-    const NOW = dayjs().unix();
+    const NOW = dayjs();
 
     const startTime = dayjs(
       `${form.launchDate} ${convertTime12to24(form.launchHour, form.launchMinute, form.launchTimeFormat)} UTC`
-    ).unix();
+    );
 
     if (form.whitelistRelease) {
       const whitelistDate = dayjs(
@@ -112,22 +116,22 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
           form.whitelistMinute,
           form.whitelistTimeFormat
         )} UTC`
-      ).unix();
+      );
 
-      if (whitelistDate <= NOW) {
+      if (whitelistDate.isSameOrBefore(NOW)) {
         validateInput('whitelistDate', 'Whitelist time must be > current time.');
-        return checkValidity('whitelistDate');
+        return reportValidity();
       }
 
-      if (whitelistDate >= startTime) {
+      if (whitelistDate.isSameOrAfter(startTime)) {
         validateInput('whitelistDate', 'Whitelist time must be < Launch time.');
-        return checkValidity('whitelistDate');
+        return reportValidity();
       }
     }
 
-    if (startTime <= NOW) {
+    if (startTime.isSameOrBefore(NOW)) {
       validateInput('launchDate', 'Launch time must be > current time.');
-      return checkValidity('launchDate');
+      return reportValidity();
     }
 
     onSubmit(form);
@@ -167,6 +171,7 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
           required
           value={form['name']}
           onChange={onChangeInput}
+          disabled
         />
       </div>
       <div className="candy-edition-form-item">
@@ -223,7 +228,7 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
           step="any"
           onBlur={() => {
             const num = Number(form['launchMinute']);
-            setForm((form) => ({ ...form, ['launchMinute']: num > 10 ? `${num}` : `0${num}` }));
+            setForm((form) => ({ ...form, ['launchMinute']: num >= 10 ? `${num}` : `0${num}` }));
           }}
         />
         <div className="candy-edition-time-checkbox">
@@ -288,6 +293,7 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
             onChange={onChangeInput}
             onWheel={preventUpdateNumberOnWheel}
             step="any"
+            disabled
           />
         </div>
         <div className="candy-edition-form-item">
@@ -395,7 +401,7 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
           step="any"
           onBlur={() => {
             const num = Number(form['whitelistMinute']);
-            setForm((form) => ({ ...form, ['whitelistMinute']: num > 10 ? `${num}` : `0${num}` }));
+            setForm((form) => ({ ...form, ['whitelistMinute']: num >= 10 ? `${num}` : `0${num}` }));
           }}
         />
         <div className="candy-edition-time-checkbox">
@@ -427,7 +433,7 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
         <button className="candy-button candy-button-default" onClick={onBack}>
           Back
         </button>
-        <input className="candy-button" type="submit" value="Continue" />
+        <input className="candy-button" id="edition-form-btn-submit" type="submit" value="Continue" />
       </div>
     </form>
   );
