@@ -1,31 +1,23 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CandyShop } from '@liqnft/candy-shop-sdk';
 
-import {
-  ListBase,
-  NftCollection,
-  Order,
-  ShopStatusType,
-  CandyShop as CandyShopResponse
-} from '@liqnft/candy-shop-types';
+import { ListBase, NftCollection, Order, CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
 
 import { Search } from 'components/Search';
 import { Dropdown } from 'components/Dropdown';
 import { Empty } from 'components/Empty';
 import { InfiniteOrderList } from 'components/InfiniteOrderList';
-import { LoadingSkeleton } from 'components/LoadingSkeleton';
 import { PoweredBy } from 'components/PoweredBy';
 import { CollectionFilter as CollectionFilterComponent } from 'components/CollectionFilter';
 import { ShopFilter as ShopFilterComponent } from 'components/ShopFilter';
 
-import { useValidateStatus } from 'hooks/useValidateStatus';
-import { useUpdateSubject } from 'public/Context/CandyShopDataValidator';
 import { CollectionFilter, ShopFilter, OrderDefaultFilter } from 'model';
-import { removeDuplicate } from 'utils/helperFunc';
-import { OrdersActionsStatus } from 'constant';
+import { removeDuplicate, removeListeners } from 'utils/helperFunc';
 import { ORDER_FETCH_LIMIT, SORT_OPTIONS } from 'constant/Orders';
+import { useSocket } from 'public/Context/Socket';
+import { EventName } from 'constant/SocketEvent';
 import './index.less';
 
 interface OrdersProps {
@@ -71,7 +63,6 @@ export const Orders: React.FC<OrdersProps> = ({
   const [sortedByOption, setSortedByOption] = useState(SORT_OPTIONS[0]);
   const [orders, setOrders] = useState<any[]>([]);
   const [hasNextPage, setHasNextPage] = useState<boolean>(true);
-  const [loading, setLoading] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
   // manual collection filter
   const [collectionFilter, setCollectionFilter] = useState<CollectionFilter | undefined>(() => {
@@ -91,11 +82,7 @@ export const Orders: React.FC<OrdersProps> = ({
   // auction shop filter
   const [selectedShop, setSelectedShop] = useState<CandyShopResponse>();
   const [nftKeyword, setNftKeyword] = useState<string>();
-
-  const loadingMountRef = useRef(false);
-
-  const updateOrderStatus = useValidateStatus(OrdersActionsStatus);
-  useUpdateSubject({ subject: ShopStatusType.Order, candyShopAddress: candyShop.candyShopAddress });
+  const { onSocketEvent } = useSocket();
 
   const onSearchNft = useCallback((nftName: string) => {
     setNftKeyword(nftName);
@@ -131,9 +118,7 @@ export const Orders: React.FC<OrdersProps> = ({
         })
         .catch((err: Error) => {
           console.info('fetchOrdersByStoreId failed: ', err);
-        })
-        .finally(() => {
-          setLoading(false);
+          setHasNextPage(false);
         });
     },
     [
@@ -157,7 +142,6 @@ export const Orders: React.FC<OrdersProps> = ({
   const onResetLoadingOrders = () => {
     setStartIndex(0);
     setHasNextPage(true);
-    setLoading(true);
   };
 
   const onResetCollectionFilter = () => {
@@ -191,15 +175,39 @@ export const Orders: React.FC<OrdersProps> = ({
   };
 
   useEffect(() => {
-    if (!loadingMountRef.current) {
-      setLoading(true);
-    }
-    loadingMountRef.current = true;
-
     fetchOrders(0);
-  }, [fetchOrders, updateOrderStatus]);
+  }, [fetchOrders]);
 
-  const emptyView = <Empty description="No orders found" />;
+  useEffect(() => {
+    const controllers = [
+      onSocketEvent(EventName.orderOpened, (order: Order) => {
+        setOrders((list) => {
+          const newList = removeDuplicate<Order>([order], list, 'tokenMint');
+
+          const { column, order: sortOrder } = sortedByOption.value as { column: keyof Order; order: 'asc' | 'desc' };
+          const sortFunc = (a: Order, b: Order) =>
+            (
+              sortOrder === 'desc'
+                ? (a[column] as string) > (b[column] as string)
+                : (a[column] as string) < (b[column] as string)
+            )
+              ? -1
+              : 1;
+
+          newList.sort(sortFunc);
+          return newList;
+        });
+      }),
+      onSocketEvent(EventName.orderCanceled, (order: { tokenMint: string }) => {
+        setOrders((list) => list.filter((item) => item.tokenMint !== order.tokenMint));
+      }),
+      onSocketEvent(EventName.orderFilled, (order: { tokenMint: string }) => {
+        setOrders((list) => list.filter((item) => item.tokenMint !== order.tokenMint));
+      })
+    ];
+
+    return () => removeListeners(controllers);
+  }, [onSocketEvent, sortedByOption.value]);
 
   const infiniteOrderListView = (
     <InfiniteOrderList
@@ -279,20 +287,13 @@ export const Orders: React.FC<OrdersProps> = ({
                   search={filterSearch}
                 />
               )}
-
-              {/* <div className="candy-filter-title">Attributes</div>
-              {FILTER_ATTRIBUTES_MOCK: constant/Orders}
-               {FILTER_ATTRIBUTES_MOCK.map((attr) => {
-                return (
-                  <div className="candy-filter-attribute">
-                    <span>{attr.name}</span>
-                    <Dropdown items={attr.options} onSelectItem={onFilterAttribute} placeholder={attr.placeholder} />
-                  </div>
-                );
-              })} */}
             </div>
             <div className="candy-orders-content">
-              {loading ? <LoadingSkeleton /> : orders.length ? infiniteOrderListView : emptyView}
+              {hasNextPage === false && orders.length === 0 ? (
+                <Empty description="No orders found" />
+              ) : (
+                infiniteOrderListView
+              )}
               <PoweredBy />
             </div>
           </div>
@@ -314,7 +315,11 @@ export const Orders: React.FC<OrdersProps> = ({
             />
             {search && <Search onSearch={onSearchNft} placeholder="Search NFTs" />}
           </div>
-          {loading ? <LoadingSkeleton /> : orders.length ? infiniteOrderListView : emptyView}
+          {hasNextPage === false && orders.length === 0 ? (
+            <Empty description="No orders found" />
+          ) : (
+            infiniteOrderListView
+          )}
           <PoweredBy />
         </div>
       </div>

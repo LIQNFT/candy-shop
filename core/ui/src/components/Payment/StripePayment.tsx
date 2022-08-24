@@ -8,7 +8,6 @@ import {
   PaymentCurrencyType,
   PaymentInfo,
   PaymentMethodType,
-  ShopStatusType,
   SingleBase
 } from '@liqnft/candy-shop-types';
 import { CandyShopPay, safeAwait } from '@liqnft/candy-shop-sdk';
@@ -19,7 +18,6 @@ import { NftVerification } from 'components/Tooltip/NftVerification';
 import { ShopExchangeInfo, BuyModalState, PaymentErrorDetails } from 'model';
 import { notification, NotificationType } from 'utils/rc-notification';
 import { getPrice } from 'utils/getPrice';
-import { useUpdateCandyShopContext } from 'public/Context/CandyShopDataValidator';
 import stripeLogo from '../../assets/stripe.png';
 
 const Logger = 'CandyShopUI/StripePayment';
@@ -49,8 +47,6 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 }) => {
   const stripePromise = loadStripe(stripePublicKey);
   const [paymentEntityId, setPaymentEntityId] = useState<string>();
-
-  const { refreshSubject } = useUpdateCandyShopContext();
 
   useEffect(() => {
     const params: CreatePaymentParams = {
@@ -116,7 +112,6 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
   const handlePaymentSucceed = () => {
     onProcessingPay(BuyModalState.CONFIRMED);
-    refreshSubject(ShopStatusType.UserNft, Date.now());
   };
 
   const handlePaymentFailed = (confirmRes: SingleBase<PaymentInfo>) => {

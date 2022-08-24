@@ -7,18 +7,17 @@ import { IconExplorer } from 'assets/IconExplorer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { CandyShop, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
-import { Trade, ListBase, ShopStatusType, SortBy } from '@liqnft/candy-shop-types';
-import { useValidateStatus } from 'hooks/useValidateStatus';
-import { useUpdateSubject } from 'public/Context/CandyShopDataValidator';
-import { ActivityActionsStatus } from 'constant';
+import { Trade, ListBase, SortBy } from '@liqnft/candy-shop-types';
 import { removeDuplicate, EMPTY_FUNCTION } from 'utils/helperFunc';
 import { IconSolanaFM } from 'assets/IconSolanaFM';
-
+import { EventName } from 'constant/SocketEvent';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 import './style.less';
+import { useSocket } from 'public/Context/Socket';
+import { useUpdateCandyShopContext } from 'public/Context/CandyShopDataValidator';
 
 interface ActivityProps {
   candyShop: CandyShop;
@@ -34,9 +33,9 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
   const [trades, setTrades] = useState<Trade[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [offset, setOffset] = useState<number>(0);
+  const { onSocketEvent } = useSocket();
 
-  useUpdateSubject({ subject: ShopStatusType.Trade, candyShopAddress: candyShop.candyShopAddress });
-  const updateActivityStatus = useValidateStatus(ActivityActionsStatus);
+  useUpdateCandyShopContext({ candyShopAddress: candyShop.candyShopAddress, network: candyShop.env });
 
   const getTrades = useCallback(
     (offset: number, limit: number, firstLoad?: boolean) => () => {
@@ -69,25 +68,19 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
     getTrades(0, LIMIT)();
   }, [getTrades]);
 
-  //update hook
   useEffect(() => {
-    if (!updateActivityStatus) return;
-
-    candyShop
-      .transactions({ identifiers, offset: 0, limit: 10 })
-      .then((res: ListBase<Trade>) => {
-        if (!res.success) return;
-        setTrades((list) => {
-          // prettier-ignore
-          const newItems = res.result.filter((item) => list.findIndex((i) => i.txHashAtCreation === item.txHashAtCreation) === -1);
-          if (newItems.length) return [...newItems, ...list];
-          return list;
-        });
-      })
-      .catch((error: any) => {
-        console.log(`${Logger}: candyShop.transactions failed, error=`, error);
+    const controller = onSocketEvent(EventName.traded, (data: Trade) => {
+      setTrades((list) => {
+        const trades = removeDuplicate([data], list, 'txHashAtCreation');
+        if (trades.length === list.length + 1) {
+          setOffset((offset) => offset + 1);
+        }
+        return trades;
       });
-  }, [candyShop, identifiers, updateActivityStatus]);
+    });
+
+    return () => controller.abort();
+  }, [onSocketEvent]);
 
   return (
     <div className="candy-activity">

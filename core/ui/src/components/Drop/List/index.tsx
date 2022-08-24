@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CandyShop, fetchDropsByShopAddress } from '@liqnft/candy-shop-sdk';
 import { Drop, DropStatus, ListBase } from '@liqnft/candy-shop-types';
@@ -12,7 +12,7 @@ import { DropFilter, FILTERS } from 'constant/drop';
 
 import { useObserver } from 'hooks/useObserver';
 import { LoadStatus } from 'constant';
-import { removeDuplicate } from 'utils/helperFunc';
+import { removeDuplicate, removeListeners } from 'utils/helperFunc';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 
@@ -21,6 +21,8 @@ import { DropFooter } from './DropFooter';
 dayjs.extend(duration);
 import './style.less';
 import { Search } from 'components/Search';
+import { EventName, useSocket } from 'public/Context/Socket';
+import { useUpdateCandyShopContext } from 'public/Context/CandyShopDataValidator';
 
 interface DropsProps {
   wallet: AnchorWallet | undefined;
@@ -45,6 +47,9 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
   const dropQueries = useRef({ offset: 0, limit: 12 });
   const prevFilterRef = useRef(filterOption);
 
+  useUpdateCandyShopContext({ candyShopAddress: candyShop.candyShopAddress, network: candyShop.env });
+  const { onSocketEvent } = useSocket();
+
   const onUpdateDrops = (drop: Drop) => {
     setDropNfts((list) =>
       list?.map((item) => {
@@ -59,7 +64,7 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
     );
   };
 
-  useEffect(() => {
+  useMemo(() => {
     if (prevFilterRef.current !== filterOption || keyword !== undefined) {
       prevFilterRef.current = filterOption;
       dropQueries.current.offset = 0;
@@ -89,7 +94,7 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
         }
         setHasMore(offset + result.length < totalCount);
         dropQueries.current = { ...dropQueries.current, offset: offset + dropQueries.current.limit };
-        setDropNfts((list) => removeDuplicate<Drop>(list, result, 'txHashAtCreation'));
+        setDropNfts((list = []) => removeDuplicate<Drop>(list, result, 'txHashAtCreation'));
         if (offset + result.length < totalCount && target && target.getBoundingClientRect().top > 0) {
           fetchDrops();
         }
@@ -103,6 +108,22 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
         setLoading(LoadStatus.Loaded);
       });
   };
+
+  // socket
+  useEffect(() => {
+    const controllers = [
+      onSocketEvent(EventName.dropCreatedOrUpdated, (drop: Drop) => {
+        setDropNfts((list) => {
+          if (!list?.length) return [drop];
+          const currentOne = list.find((item) => item.vaultAddress === drop.vaultAddress);
+          if (!currentOne) return removeDuplicate([drop], list, 'txHashAtCreation');
+          return list.map((item) => (item.vaultAddress === drop.vaultAddress ? drop : item));
+        });
+      })
+    ];
+
+    return () => removeListeners(controllers);
+  }, [onSocketEvent]);
 
   // handle update drop status
   useEffect(() => {

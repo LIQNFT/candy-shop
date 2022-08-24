@@ -5,8 +5,7 @@ import { Processing } from 'components/Processing';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { CandyShop, fetchAuctionHistory } from '@liqnft/candy-shop-sdk';
-import { AuctionBid, AuctionStatus, ListBase, ShopStatusType, SortBy } from '@liqnft/candy-shop-types';
-import { useUpdateSubject } from 'public/Context/CandyShopDataValidator';
+import { AuctionBid, AuctionStatus, ListBase, SortBy } from '@liqnft/candy-shop-types';
 import { removeDuplicate, EMPTY_FUNCTION } from 'utils/helperFunc';
 
 import dayjs from 'dayjs';
@@ -27,8 +26,6 @@ export const AuctionActivity: React.FC<AuctionActivityProps> = ({ candyShop, auc
   const [bids, setBids] = useState<AuctionBid[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [offset, setOffset] = useState<number>(0);
-
-  useUpdateSubject({ subject: ShopStatusType.Auction });
 
   const getAuctionBids = useCallback(
     (offset: number, limit: number, firstLoad?: boolean) => () => {
