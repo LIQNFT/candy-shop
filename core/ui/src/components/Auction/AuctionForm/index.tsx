@@ -278,7 +278,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
             step="any"
             onBlur={() => {
               const num = Number(form['auctionMinute']);
-              setForm((form) => ({ ...form, ['auctionMinute']: num > 10 ? `${num}` : `0${num}` }));
+              setForm((form) => ({ ...form, ['auctionMinute']: num >= 10 ? `${num}` : `0${num}` }));
             }}
           />
           <div className="candy-auction-time-checkbox">

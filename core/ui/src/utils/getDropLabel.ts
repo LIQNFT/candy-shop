@@ -3,7 +3,7 @@ import { Drop, DropStatus } from '@liqnft/candy-shop-types';
 enum DropLabel {
   COMING_SOON = 'COMING SOON',
   LIVE = 'LIVE TOKEN SALE',
-  WHITELIST_SALE = 'PRIVATE SALE',
+  WHITELIST_SALE = 'WHITELIST SALE',
   SOLD_OUT = 'SOLD OUT',
   ENDED = 'ENDED'
 }

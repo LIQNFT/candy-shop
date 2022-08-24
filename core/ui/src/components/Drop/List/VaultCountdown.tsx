@@ -32,7 +32,7 @@ export const VaultCountdown: React.FC<{ launchTime: number; whitelistTime?: numb
     if (whitelistMoment.unix() > dayjs().unix()) {
       launchMoment = whitelistMoment;
       timeToLaunch = dayjs.duration(dayjs().diff(whitelistMoment));
-      message = 'Private sale starts in ';
+      message = 'Whitelist sale starts in ';
     } else {
       // otherwise, countdown to public mint
       message = 'Public mint starts in ';
