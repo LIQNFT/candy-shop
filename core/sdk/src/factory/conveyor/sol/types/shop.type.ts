@@ -34,6 +34,7 @@ export interface BuyAndExecuteSaleTransactionParams extends CandyShopTransaction
   counterParty: web3.PublicKey;
   auctionHouseTreasury: web3.PublicKey;
   metadata: web3.PublicKey;
+  partialOrderAmount: BN | null;
 }
 
 export interface SellTransactionParams extends CandyShopTransactionParams {

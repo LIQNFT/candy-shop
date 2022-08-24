@@ -36,6 +36,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     candyShop,
     price,
     amount,
+    partialOrderAmount,
     program
   } = params;
 
@@ -92,8 +93,10 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     amount.toNumber()
   );
 
+  const partialOrderPrice = partialOrderAmount ? price.div(amount).mul(partialOrderAmount) : null;
+
   const ix = await program.methods
-    .buyWithProxy(price, amount, buyTradeStateBump, buyerEscrowBump)
+    .buyWithProxy(partialOrderPrice ?? price, partialOrderAmount ?? amount, buyTradeStateBump, buyerEscrowBump)
     .accounts({
       wallet: wallet.publicKey,
       paymentAccount,
@@ -191,7 +194,16 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
   }
 
   const ix2 = await program.methods
-    .executeSaleWithProxy(price, amount, buyerEscrowBump, freeTradeStateBump, programAsSignerBump, true)
+    .executeSaleWithProxy(
+      price,
+      amount,
+      partialOrderPrice,
+      partialOrderAmount,
+      buyerEscrowBump,
+      freeTradeStateBump,
+      programAsSignerBump,
+      true
+    )
     .accounts({
       buyer: wallet.publicKey,
       seller: counterParty,

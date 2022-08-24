@@ -12,7 +12,7 @@ import {
   TradeQuery,
   WhitelistNft
 } from '@liqnft/candy-shop-types';
-import { Idl, Program, Provider, web3 } from '@project-serum/anchor';
+import { BN, Idl, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CandyShopCommitNftParams, CandyShopMintPrintParams } from './CandyShopModel';
 import { CandyShopDrop, createNewMintInstructions } from '../../CandyShopDrop';
@@ -288,7 +288,7 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
    * @param {CandyShopBuyParams} params required parameters for buy action
    */
   public async buy(params: CandyShopBuyParams): Promise<string> {
-    const { seller, tokenAccount, tokenMint, price, wallet } = params;
+    const { seller, tokenAccount, tokenMint, price, amount, partialOrderAmount, wallet } = params;
 
     console.log(`${Logger}: performing buy, `, {
       seller: seller.toString(),
@@ -308,11 +308,13 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
       shopCreatorAddress,
       shopTreasuryMint,
       isEnterprise: this._isEnterprise,
-      wallet: wallet,
-      tokenAccount: tokenAccount,
-      tokenMint: tokenMint,
-      seller: seller,
-      price: price
+      wallet,
+      tokenAccount,
+      tokenMint,
+      seller,
+      price,
+      amount: amount ?? new BN(1),
+      partialOrderAmount
     });
     return txHash;
   }
@@ -322,7 +324,7 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
    * @param {CandyShopSellParams} params required parameters for sell action
    */
   public async sell(params: CandyShopSellParams): Promise<string> {
-    const { tokenAccount, tokenMint, price, wallet } = params;
+    const { tokenAccount, tokenMint, price, amount, wallet } = params;
 
     console.log(`${Logger}: Performing sell `, {
       tokenMint: tokenMint.toString(),
@@ -336,10 +338,11 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
 
     const txHash = await CandyShopTrade.sell({
       connection: this.connection,
-      tokenAccount: tokenAccount,
-      tokenMint: tokenMint,
-      price: price,
-      wallet: wallet,
+      tokenAccount,
+      tokenMint,
+      price,
+      amount: amount ?? new BN(1),
+      wallet,
       shopAddress: this._candyShopAddress,
       candyShopProgramId,
       shopTreasuryMint,
@@ -353,7 +356,7 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
    * @param {CandyShopCancelParams} params required parameters for cancel action
    */
   async cancel(params: CandyShopCancelParams): Promise<string> {
-    const { tokenAccount, tokenMint, price, wallet } = params;
+    const { tokenAccount, tokenMint, price, amount, wallet } = params;
 
     console.log('CandyShop: performing cancel', {
       tokenAccount: tokenAccount.toString(),
@@ -367,10 +370,11 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
 
     const txHash = await CandyShopTrade.cancel({
       connection: this.connection,
-      tokenAccount: tokenAccount,
-      tokenMint: tokenMint,
-      price: price,
-      wallet: wallet,
+      tokenAccount,
+      tokenMint,
+      price,
+      amount: amount ?? new BN(1),
+      wallet,
       shopAddress: this._candyShopAddress,
       candyShopProgramId,
       shopTreasuryMint,

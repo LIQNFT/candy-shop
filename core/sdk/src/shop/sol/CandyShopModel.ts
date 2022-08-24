@@ -29,6 +29,7 @@ export interface CandyShopUpdateParams {
  * @property {PublicKey} tokenAccount
  * @property {PublicKey} tokenMint
  * @property {BN} price
+ * @property {BN} amount
  * @property {AnchorWallet | Keypair} wallet
  */
 export interface CandyShopActionParams {
@@ -36,8 +37,10 @@ export interface CandyShopActionParams {
   tokenAccount: web3.PublicKey;
   /** Mint address of NFT */
   tokenMint: web3.PublicKey;
-  /** Asking price for NFT */
+  /** Asking price for all listed tokens */
   price: BN;
+  /** Amount of tokens for listing */
+  amount?: BN;
   /** User wallet keypair */
   wallet: AnchorWallet | web3.Keypair;
 }
@@ -46,10 +49,12 @@ export interface CandyShopActionParams {
  * Arguments required for calling Candy Shop buy action
  *
  * @property {PublicKey} seller Public key of seller of NFT
+ * @property {BN} partiatOrderAmount Indicates that a user is only buying part of a listing (optional)
  */
 
 export interface CandyShopBuyParams extends CandyShopActionParams {
   seller: web3.PublicKey;
+  partialOrderAmount?: BN;
 }
 /**
  * Arguments required for calling Candy Shop sell action
