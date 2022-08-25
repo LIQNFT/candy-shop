@@ -11,7 +11,6 @@ import React, {
 
 import { fetchShopStatusByShopAddress } from '@liqnft/candy-shop-sdk';
 import { SingleBase, ShopStatus, ShopStatusType } from '@liqnft/candy-shop-types';
-import { web3 } from '@project-serum/anchor';
 
 import { POLLING_SHOP_INTERVAL } from 'constant';
 import { useInterval } from 'hooks/useInterval';
@@ -20,8 +19,8 @@ const Logger = 'CandyShopUI/CandyShopDataValidator';
 
 // Data context
 interface ContextData {
-  candyShopAddress?: web3.PublicKey;
-  setCandyShopAddress: Dispatch<SetStateAction<web3.PublicKey | undefined>>;
+  candyShopAddress?: string;
+  setCandyShopAddress: Dispatch<SetStateAction<string | undefined>>;
   setSubjects: Dispatch<SetStateAction<any>>;
   setWalletAddress: Dispatch<SetStateAction<string | undefined>>;
   refreshSubject: (subject: ShopStatusType, timestamp: number) => void;
@@ -36,7 +35,7 @@ type Subject = { [key in ShopStatusType]?: number };
 export const CandyContext = createContext<ContextData | null>(null);
 
 export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children }) => {
-  const [candyShopAddress, setCandyShopAddress] = useState<web3.PublicKey>();
+  const [candyShopAddress, setCandyShopAddress] = useState<string>();
   const [walletAddress, setWalletAddress] = useState<string>();
   /**
    * subject will be increase when some components need to check status is rendered on UI.
@@ -54,7 +53,7 @@ export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children 
   }, []);
 
   const polling = useCallback(
-    (candyShopAddress: web3.PublicKey) => {
+    (candyShopAddress: string) => {
       const targets: ShopStatusType[] = [];
       let key: keyof Subject;
       for (key in subjects) {
@@ -106,7 +105,7 @@ export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children 
   );
 };
 
-export const useUpdateCandyShopContext: (candyShopAddress?: web3.PublicKey) => ContextData = (candyShopAddress) => {
+export const useUpdateCandyShopContext: (candyShopAddress?: string) => ContextData = (candyShopAddress) => {
   const context = useContext(CandyContext);
   if (!context) {
     throw new Error('useUpdateCandyShopContext must be used within a CandyShopDataValidator');
@@ -124,8 +123,8 @@ export const useUpdateCandyShopContext: (candyShopAddress?: web3.PublicKey) => C
 };
 
 interface UpdateSubjectProps {
-  subject?: ShopStatusType;
-  candyShopAddress?: web3.PublicKey;
+  subject: ShopStatusType;
+  candyShopAddress?: string;
   walletAddress?: string;
 }
 

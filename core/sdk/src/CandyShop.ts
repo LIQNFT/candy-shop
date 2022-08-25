@@ -1,3 +1,5 @@
+import { BaseShop } from './shop/base/BaseShop';
+import { Blockchain } from './shop/base/BaseShopModel';
 import {
   CandyShop as CandyShopResponse,
   ListBase,
@@ -95,7 +97,7 @@ const DEFAULT_MAINNET_CONNECTION_URL = 'https://ssc-dao.genesysgo.net/';
 /**
  * @class CandyShop
  */
-export class CandyShop {
+export class CandyShop extends BaseShop {
   private _candyShopAddress: web3.PublicKey;
   private _candyShopCreatorAddress: web3.PublicKey;
   private _treasuryMint: web3.PublicKey;
@@ -115,28 +117,32 @@ export class CandyShop {
     return this._settings;
   }
 
+  get blockchain(): Blockchain {
+    return Blockchain.Solana;
+  }
+
   get env(): web3.Cluster {
     return this._env;
   }
 
-  get treasuryMint(): web3.PublicKey {
-    return this._treasuryMint;
+  get treasuryMint(): string {
+    return this._treasuryMint.toString();
   }
 
   get connectedPublicKey(): web3.PublicKey | undefined {
     return this._program?.provider.wallet.publicKey;
   }
 
-  get candyShopAddress(): web3.PublicKey {
-    return this._candyShopAddress;
+  get candyShopCreatorAddress(): string {
+    return this._candyShopCreatorAddress.toString();
   }
 
-  get candyShopCreatorAddress(): web3.PublicKey {
-    return this._candyShopCreatorAddress;
+  get candyShopAddress(): string {
+    return this._candyShopAddress.toString();
   }
 
-  get programId(): web3.PublicKey {
-    return this._programId;
+  get programId(): string {
+    return this._programId.toString();
   }
 
   get isEnterprise(): boolean {
@@ -183,6 +189,7 @@ export class CandyShop {
    */
   // Changed constructor params to object, can revert if it will cause too many issues
   constructor(params: CandyShopConstructorParams) {
+    super(params);
     const { candyShopCreatorAddress, candyShopProgramId, treasuryMint, env, settings, isEnterprise } = params;
 
     this.verifyProgramId(candyShopProgramId);
@@ -745,7 +752,7 @@ export class CandyShop {
     const [auctionHouseAuthority] = await getAuctionHouseAuthority(
       this._candyShopCreatorAddress,
       this._treasuryMint,
-      this.programId
+      this._programId
     );
     const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
     const txHash = await CandyShopDrop.mintPrint({
@@ -797,7 +804,7 @@ export class CandyShop {
    * Fetch stats associated with this Candy Shop
    */
   public stats(): Promise<ShopStats> {
-    return fetchStatsByShopAddress(this._candyShopAddress);
+    return fetchStatsByShopAddress(this.candyShopAddress);
   }
   /**
    * Fetch transactions made through this Candy Shop
@@ -805,7 +812,7 @@ export class CandyShop {
    * * @param {number[]} identifiers optional list of identifiers to apply to query string
    */
   public transactions(queryDto: TradeQuery): Promise<ListBase<Trade>> {
-    return fetchTradeByShopAddress(this._candyShopAddress, queryDto);
+    return fetchTradeByShopAddress(this.candyShopAddress, queryDto);
   }
   /**
    * Fetch information on the specified nft
@@ -821,7 +828,7 @@ export class CandyShop {
    * @param {OrdersFilterQuery} ordersFilterQuery filters to apply to search
    */
   public orders(ordersFilterQuery: OrdersFilterQuery): Promise<ListBase<Order>> {
-    return fetchOrdersByShopAddress(this._candyShopAddress, ordersFilterQuery);
+    return fetchOrdersByShopAddress(this.candyShopAddress, ordersFilterQuery);
   }
   /**
    * Fetch active orders created by specified wallet address
@@ -829,13 +836,13 @@ export class CandyShop {
    * @param {string} walletAddress base 58 encoded public key string
    */
   public activeOrdersByWalletAddress(walletAddress: string): Promise<Order[]> {
-    return fetchOrdersByShopAndWalletAddress(this._candyShopAddress, walletAddress);
+    return fetchOrdersByShopAndWalletAddress(this.candyShopAddress, walletAddress);
   }
   /**
    * Fetch list of whitelisted NFTs for this Candy Shop
    */
   public shopWlNfts(): Promise<ListBase<WhitelistNft>> {
-    return fetchShopWhitelistNftByShopAddress(this._candyShopAddress);
+    return fetchShopWhitelistNftByShopAddress(this.candyShopAddress);
   }
   /**
    * Fetch active orders associated with specified mint address
@@ -843,12 +850,12 @@ export class CandyShop {
    * @param {string} mintAddress base 58 encoded mint key string
    */
   public activeOrderByMintAddress(mintAddress: string): Promise<SingleBase<Order>> {
-    return fetchOrderByShopAndMintAddress(this._candyShopAddress, mintAddress);
+    return fetchOrderByShopAndMintAddress(this.candyShopAddress, mintAddress);
   }
   /**
    * Fetch the data for Candy Shop with this Shop's public key
    */
   public fetchShopByShopId(): Promise<SingleBase<CandyShopResponse>> {
-    return fetchShopByShopAddress(this._candyShopAddress);
+    return fetchShopByShopAddress(this.candyShopAddress);
   }
 }

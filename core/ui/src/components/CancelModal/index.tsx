@@ -28,7 +28,6 @@ export interface CancelModalProps {
   wallet: AnchorWallet;
   exchangeInfo: ShopExchangeInfo;
   connection: web3.Connection;
-  candyShopVersion: CandyShopVersion;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
   candyShop: CandyShop;

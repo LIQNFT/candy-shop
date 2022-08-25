@@ -1,5 +1,6 @@
 import { web3, BN, Program, Idl } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
+import { ShopSettings } from './shop/base/BaseShopModel';
 
 /**
  * Program version that CandyShop was created with
@@ -47,31 +48,8 @@ export enum ExplorerLinkBase {
 
 /**
  * Custom CandyShop settings
- *
- * @property {string} currencySymbol
- * @property {number} currencyDecimals
- * @property {number} priceDecimals
- * @property {number} volumeDecimals
- * @property {string} mainnetConnectionUrl
- * @property {object | undefined} connectionConfig
  */
-export interface CandyShopSettings {
-  /** Shop transaction currency symbol (default is SOL) */
-  currencySymbol: string;
-  /** Shop transaction currency decimals (default is 9 for SOL) */
-  currencyDecimals: number;
-  /** Number of min decimals to display for price numbers (default is 0) */
-  priceDecimalsMin: number;
-  /** Number of max decimals to display for price numbers (default is 3) */
-  priceDecimals: number;
-  /** Number of min decimals to display for volume numbers (default is 0) */
-  volumeDecimalsMin: number;
-  /** Number of max decimals to display for volume numbers (default is 1) */
-  volumeDecimals: number;
-  /** Rpc connection endpoint */
-  mainnetConnectionUrl: string;
-  /** Connection config options */
-  connectionConfig: object | undefined;
+export interface CandyShopSettings extends ShopSettings {
   /** Explorer link */
   explorerLink: ExplorerLinkBase;
 }

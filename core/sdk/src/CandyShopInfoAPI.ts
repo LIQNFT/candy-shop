@@ -3,7 +3,6 @@
  * CandyShop instance but just a few required fields from CandyShop instance to get the shop info.
  */
 
-import { web3 } from '@project-serum/anchor';
 import {
   ListBase,
   Nft,
@@ -37,15 +36,12 @@ import {
 } from './factory/backend';
 import axiosInstance from './vendor/config';
 
-export function fetchStatsByShopAddress(candyShopAddress: web3.PublicKey): Promise<ShopStats> {
-  return fetchStatsById(axiosInstance, candyShopAddress.toString());
+export function fetchStatsByShopAddress(candyShopAddress: string): Promise<ShopStats> {
+  return fetchStatsById(axiosInstance, candyShopAddress);
 }
 
-export function fetchTradeByShopAddress(
-  candyShopAddress: web3.PublicKey,
-  queryDto: TradeQuery
-): Promise<ListBase<Trade>> {
-  return fetchTradeById(axiosInstance, candyShopAddress.toString(), queryDto);
+export function fetchTradeByShopAddress(candyShopAddress: string, queryDto: TradeQuery): Promise<ListBase<Trade>> {
+  return fetchTradeById(axiosInstance, candyShopAddress, queryDto);
 }
 
 export function fetchNFTByMintAddress(mintAddressStr: string): Promise<Nft> {
@@ -53,39 +49,39 @@ export function fetchNFTByMintAddress(mintAddressStr: string): Promise<Nft> {
 }
 
 export function fetchOrdersByShopAddress(
-  candyShopAddress: web3.PublicKey,
+  candyShopAddress: string,
   ordersFilterQuery: OrdersFilterQuery
 ): Promise<ListBase<Order>> {
-  return fetchOrdersByStoreId(axiosInstance, candyShopAddress.toString(), ordersFilterQuery);
+  return fetchOrdersByStoreId(axiosInstance, candyShopAddress, ordersFilterQuery);
 }
 
 export function fetchOrdersByShopAndWalletAddress(
-  candyShopAddress: web3.PublicKey,
+  candyShopAddress: string,
   walletAddressStr: string
 ): Promise<Order[]> {
-  return fetchOrdersByStoreIdAndWalletAddress(axiosInstance, candyShopAddress.toString(), walletAddressStr);
+  return fetchOrdersByStoreIdAndWalletAddress(axiosInstance, candyShopAddress, walletAddressStr);
 }
 
-export function fetchShopWhitelistNftByShopAddress(candyShopAddress: web3.PublicKey): Promise<ListBase<WhitelistNft>> {
-  return fetchShopWhitelistNftByShopId(axiosInstance, candyShopAddress.toString());
+export function fetchShopWhitelistNftByShopAddress(candyShopAddress: string): Promise<ListBase<WhitelistNft>> {
+  return fetchShopWhitelistNftByShopId(axiosInstance, candyShopAddress);
 }
 
 export function fetchOrderByShopAndMintAddress(
-  candyShopAddress: web3.PublicKey,
+  candyShopAddress: string,
   mintAddressStr: string
 ): Promise<SingleBase<Order>> {
-  return fetchOrderByTokenMintAndShopId(axiosInstance, mintAddressStr, candyShopAddress.toString());
+  return fetchOrderByTokenMintAndShopId(axiosInstance, mintAddressStr, candyShopAddress);
 }
 
-export function fetchShopByShopAddress(candyShopAddress: web3.PublicKey): Promise<SingleBase<CandyShopResponse>> {
-  return fetchShopByShopId(axiosInstance, candyShopAddress.toString());
+export function fetchShopByShopAddress(candyShopAddress: string): Promise<SingleBase<CandyShopResponse>> {
+  return fetchShopByShopId(axiosInstance, candyShopAddress);
 }
 
 export function fetchShopStatusByShopAddress(
-  candyShopAddress: web3.PublicKey,
+  candyShopAddress: string,
   query: ShopStatusQuery
 ): Promise<SingleBase<ShopStatus[]>> {
-  return fetchShopStatusByShopId(axiosInstance, candyShopAddress.toString(), query);
+  return fetchShopStatusByShopId(axiosInstance, candyShopAddress, query);
 }
 
 export function fetchAllShop(allShopQuery?: ShopQuery): Promise<ListBase<CandyShopResponse>> {
