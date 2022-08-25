@@ -1,10 +1,10 @@
 import { Idl, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyShop } from './CandyShop';
+import { AbstractShop } from '../abstract/AbstractShop';
 
 import { CandyShopDrop } from './CandyShopDrop';
-import { CandyShopTrade } from './SolanaCandyShopTrade';
-import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from './factory/conveyor/sol/constants';
+import { CandyShopTrade } from './CandyShopTrade';
+import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from '../../factory/conveyor/sol/constants';
 import {
   BidAuctionParams,
   BuyNowAuctionParams,
@@ -12,7 +12,7 @@ import {
   CreateAuctionParams,
   SettleAndDistributeProceedParams,
   WithdrawBidParams
-} from './factory/conveyor/sol/model';
+} from '../../factory/conveyor/sol/model';
 import {
   getAuction,
   getAuctionHouse,
@@ -23,7 +23,7 @@ import {
   getCandyShopVersion,
   getMetadataAccount,
   getProgram
-} from './factory/conveyor/sol/utils/programUtils';
+} from '../../factory/conveyor/sol/utils/programUtils';
 import {
   bidAuctionV1,
   buyNowAuctionV1,
@@ -31,14 +31,14 @@ import {
   createAuctionV1,
   settleAndDistributeProceedsV1,
   withdrawBidV1
-} from './factory/conveyor/sol/v1/auction';
-import { bidAuction } from './factory/conveyor/sol/v2/auction/bid';
-import { buyNowAuction } from './factory/conveyor/sol/v2/auction/buyNow';
-import { cancelAuction } from './factory/conveyor/sol/v2/auction/cancel';
-import { createAuction } from './factory/conveyor/sol/v2/auction/create';
-import { settleAndDistributeProceeds } from './factory/conveyor/sol/v2/auction/settleAndDistribute';
-import { withdrawBid } from './factory/conveyor/sol/v2/auction/withdraw';
-import { CandyShopError, CandyShopErrorType } from './factory/error';
+} from '../../factory/conveyor/sol/v1/auction';
+import { bidAuction } from '../../factory/conveyor/sol/v2/auction/bid';
+import { buyNowAuction } from '../../factory/conveyor/sol/v2/auction/buyNow';
+import { cancelAuction } from '../../factory/conveyor/sol/v2/auction/cancel';
+import { createAuction } from '../../factory/conveyor/sol/v2/auction/create';
+import { settleAndDistributeProceeds } from '../../factory/conveyor/sol/v2/auction/settleAndDistribute';
+import { withdrawBid } from '../../factory/conveyor/sol/v2/auction/withdraw';
+import { CandyShopError, CandyShopErrorType } from '../../factory/error';
 import {
   CandyShopBidAuctionParams,
   CandyShopBuyNowParams,
@@ -51,14 +51,13 @@ import {
   CandyShopMintPrintParams,
   CandyShopRedeemParams,
   CandyShopSellParams,
-  CandyShopSettings,
   CandyShopSettleAndDistributeParams,
   CandyShopVersion,
   CandyShopWithdrawAuctionBidParams
-} from './SolanaCandyShopModel';
-import { Blockchain } from './CandyShopModel';
-import { configBaseUrl } from './vendor/config';
-import { supply } from './vendor/shipping';
+} from './CandyShopModel';
+import { Blockchain, ShopSettings } from '../abstract/AbstractShopTypes';
+import { configBaseUrl } from '../../vendor/config';
+import { supply } from '../../vendor/shipping';
 
 const Logger = 'CandyShop';
 
@@ -70,13 +69,13 @@ const DEFAULT_VOLUME_DECIMALS = 1;
 const DEFAULT_VOLUME_DECIMALS_MIN = 0;
 const DEFAULT_MAINNET_CONNECTION_URL = 'https://ssc-dao.genesysgo.net/';
 
-export class SolanaCandyShop implements CandyShop {
+export class CandyShop implements AbstractShop {
   private _candyShopAddress: web3.PublicKey;
   private _candyShopCreatorAddress: web3.PublicKey;
   private _treasuryMint: web3.PublicKey;
   private _programId: web3.PublicKey;
   private _env: web3.Cluster;
-  private _settings: CandyShopSettings;
+  private _settings: ShopSettings;
   private _isEnterprise: boolean;
   private _version: CandyShopVersion;
   private _program: Program | undefined;
@@ -165,7 +164,7 @@ export class SolanaCandyShop implements CandyShop {
     return this._treasuryMint.toString();
   }
 
-  settings(): Partial<CandyShopSettings> {
+  settings(): Partial<ShopSettings> {
     return this._settings;
   }
 

@@ -8,8 +8,8 @@ import {
 } from '@solana/spl-token';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Connection, Keypair, PublicKey, TransactionInstruction } from '@solana/web3.js';
-import { EditionDropCommitNftParams, EditionDropMintPrintParams, EditionDropRedeemParams } from '.';
-import { EDITION_DROP_PROGRAM_ID } from './factory/conveyor/sol/constants';
+import { EditionDropCommitNftParams, EditionDropMintPrintParams, EditionDropRedeemParams } from './CandyShopModel';
+import { EDITION_DROP_PROGRAM_ID } from '../../factory/conveyor/sol/constants';
 import {
   commitNft,
   CommitNftParams,
@@ -18,8 +18,8 @@ import {
   mintPrint,
   MintPrintParams,
   RedeemNftParams
-} from './factory/conveyor/sol';
-import editionDropIdl from './factory/conveyor/sol/idl/edition_drop.json';
+} from '../../factory/conveyor/sol';
+import editionDropIdl from '../../factory/conveyor/sol/idl/edition_drop.json';
 import {
   CandyShopError,
   CandyShopErrorType,
@@ -27,8 +27,8 @@ import {
   getEditionVaultAccount,
   getNodeWallet,
   safeAwait
-} from './vendor';
-import { redeemNft } from './factory/conveyor/sol/v2/editionDrop/redeemNft';
+} from '../../vendor';
+import { redeemNft } from '../../factory/conveyor/sol/v2/editionDrop/redeemNft';
 const EDITION_ARRAY_SIZE = 1250;
 
 // ignore the reserved size here

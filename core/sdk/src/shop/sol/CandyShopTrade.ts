@@ -1,5 +1,5 @@
 import { BN } from '@project-serum/anchor';
-import { CandyShopTradeBuyParams, CandyShopTradeCancelParams, CandyShopTradeSellParams } from './SolanaCandyShopModel';
+import { CandyShopTradeBuyParams, CandyShopTradeCancelParams, CandyShopTradeSellParams } from './CandyShopModel';
 import {
   buyAndExecuteSale,
   BuyAndExecuteSaleTransactionParams,
@@ -10,7 +10,7 @@ import {
   sellNft,
   sellNftV1,
   SellTransactionParams
-} from './factory/conveyor/sol';
+} from '../../factory/conveyor/sol';
 import {
   getAuctionHouse,
   getAuctionHouseAuthority,
@@ -20,8 +20,8 @@ import {
   getCandyShopVersion,
   getMetadataAccount,
   getProgram
-} from './vendor';
-import { proceedToBuy, supply } from './vendor/shipping';
+} from '../../vendor';
+import { proceedToBuy, supply } from '../../vendor/shipping';
 
 /**
  * A abstract class to provide static trading methods without CandyShop instance but partial information from shop.

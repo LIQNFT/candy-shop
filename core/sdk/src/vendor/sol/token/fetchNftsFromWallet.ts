@@ -7,7 +7,7 @@ import {
   isValidWhitelistNft
 } from './fetchMetadata';
 import { web3 } from '@project-serum/anchor';
-import { deleteCandyShopIDB, retrieveWalletNftFromIDB, storeWalletNftToIDB } from '../../../idb';
+import { deleteCandyShopIDB, retrieveWalletNftFromIDB, storeWalletNftToIDB } from '../../common/idb';
 import { safeAwait, sleepPromise } from '../../common/utils/promiseUtils';
 import { EditionDrop, parseEdition, parseMasterEditionV2, RawTokenInfo } from './parseData';
 import { TOKEN_METADATA_PROGRAM_ID } from '../../../factory/conveyor/sol/constants';

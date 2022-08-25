@@ -1,12 +1,10 @@
-import { CandyShopSettings } from './SolanaCandyShopModel';
+import { Blockchain, ShopSettings } from './AbstractShopTypes';
 
-import { Blockchain } from './CandyShopModel';
-
-export interface CandyShop {
+export interface AbstractShop {
   shopId(): string;
   ownerAddress(): string;
   treasuryMint(): string;
-  settings(): Partial<CandyShopSettings>;
+  settings(): Partial<ShopSettings>;
   blockchain(): Blockchain;
 
   // Marketplace
