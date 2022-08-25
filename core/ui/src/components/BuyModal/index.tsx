@@ -35,7 +35,6 @@ export interface BuyModalProps {
   wallet: AnchorWallet | undefined;
   walletConnectComponent: React.ReactElement;
   exchangeInfo: ShopExchangeInfo;
-  candyShopProgramId: web3.PublicKey;
   connection: web3.Connection;
   isEnterprise: boolean;
   shopPriceDecimalsMin: number;

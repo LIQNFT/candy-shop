@@ -33,12 +33,11 @@ export interface SellModalProps {
   wallet: AnchorWallet;
   shop: CandyShopResponse;
   connection: web3.Connection;
-  shopAddress: web3.PublicKey;
-  candyShopProgramId: web3.PublicKey;
-  candyShopVersion: CandyShopVersion;
+  shopAddress: string;
+  candyShopProgramId: string;
   baseUnitsPerCurrency: number;
-  shopTreasuryMint: web3.PublicKey;
-  shopCreatorAddress: web3.PublicKey;
+  shopTreasuryMint: string;
+  shopCreatorAddress: string;
   currencySymbol: string;
   candyShop: CandyShop;
 }
@@ -89,10 +88,10 @@ export const SellModal: React.FC<SellModalProps> = ({
       tokenMint: new web3.PublicKey(nft.tokenMintAddress),
       price: new BN(price),
       wallet,
-      shopAddress: shopAddress,
-      candyShopProgramId: candyShopProgramId,
-      shopTreasuryMint,
-      shopCreatorAddress
+      shopAddress: new web3.PublicKey(shopAddress),
+      candyShopProgramId: new web3.PublicKey(candyShopProgramId),
+      shopTreasuryMint: new web3.PublicKey(shopTreasuryMint),
+      shopCreatorAddress: new web3.PublicKey(shopCreatorAddress)
     };
 
     return CandyShopTrade.sell(tradeSellParams)
