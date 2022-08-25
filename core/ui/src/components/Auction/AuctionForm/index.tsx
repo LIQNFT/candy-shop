@@ -10,6 +10,7 @@ dayjs.extend(utc);
 
 import './style.less';
 import { EMPTY_FUNCTION } from 'utils/helperFunc';
+import { convertTime12to24 } from 'utils/timer';
 
 interface AuctionFormProps {
   onSubmit: (...args: any) => void;
@@ -46,6 +47,21 @@ const VALIDATE_MESSAGE: { [key: string]: string } = {
   buyNowPrice: 'Buy Now Price must be greater than 0.'
 };
 
+const validateInput = (nodeId: string, message: string) => {
+  (document.getElementById(nodeId) as HTMLInputElement)?.setCustomValidity(message);
+};
+
+const reportValidity = () => {
+  (document.getElementById('auction-form') as HTMLFormElement).reportValidity();
+};
+
+const onResetValidation = () => {
+  Object.keys(VALIDATE_MESSAGE).forEach((nodeId) =>
+    (document.getElementById(nodeId) as HTMLInputElement).setCustomValidity('')
+  );
+  (document.getElementById('startDate') as HTMLInputElement).setCustomValidity('');
+};
+
 export const AuctionForm: React.FC<AuctionFormProps> = ({
   onSubmit,
   currencySymbol,
@@ -69,19 +85,18 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
 
   const onCheck = (key: CheckEnum, value?: any) => (e: any) => {
     e.preventDefault();
+    onResetValidation();
     setForm((prev: FormType) => ({ ...prev, [key]: value }));
   };
 
   const onCheckbox = (key: CheckEnum) => (e: any) => {
     e.preventDefault();
+    onResetValidation();
     setForm((prev: FormType) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const validateInput = (nodeId: string, message: string) => {
-    (document.getElementById(nodeId) as HTMLInputElement)?.setCustomValidity(message);
-  };
-
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onResetValidation();
     const { value, name } = e.target as { value: any; name: keyof FormType };
     if (name !== 'startDate') {
       validateInput(name, Number(value) > 0 ? '' : VALIDATE_MESSAGE[name]);
@@ -99,6 +114,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
 
   const onSubmitForm = (e: any) => {
     e.preventDefault();
+
     const VALIDATES: { nodeId: keyof FormType; trigger: boolean }[] = [
       { nodeId: 'startingBid', trigger: true },
       { nodeId: 'tickSize', trigger: true },
@@ -113,6 +129,18 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
     ) {
       return;
     }
+
+    const NOW = dayjs().unix();
+
+    const startDate = dayjs(
+      `${form.startDate} ${convertTime12to24(form.auctionHour, form.auctionMinute, form.clockFormat)} UTC`
+    ).unix();
+
+    if (startDate <= NOW) {
+      validateInput('startDate', `Start time must be > current time.`);
+      return reportValidity();
+    }
+
     onSubmit(form);
   };
 
@@ -126,7 +154,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
   }, [auctionForm]);
 
   return (
-    <form className="candy-auction-form" onSubmit={onSubmitForm}>
+    <form className="candy-auction-form" id="auction-form" onSubmit={onSubmitForm}>
       <AuctionNftHeader
         name={nft.metadata?.data.name}
         ticker={nft.metadata?.data.symbol}

@@ -85,18 +85,26 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
     };
   });
 
+  const onResetValidation = () => {
+    validateInput('launchDate', '');
+    validateInput('whitelistDate', '');
+  };
+
   const onCheck = (key: CheckEnum, value?: any) => (e: any) => {
     e.preventDefault();
+    onResetValidation();
     setForm((prev: FormType) => ({ ...prev, [key]: value }));
   };
 
   const onCheckbox = (key: CheckEnum) => (e: any) => {
     e.preventDefault();
+    onResetValidation();
     setForm((prev: FormType) => ({ ...prev, [key]: !prev[key] }));
   };
 
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target as { value: any; name: keyof FormType };
+    onResetValidation();
     setForm((prev: FormType) => ({ ...prev, [name]: value }));
   };
 
@@ -137,11 +145,6 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
     onSubmit(form);
   };
 
-  const onResetValidation = () => {
-    validateInput('launchDate', '');
-    validateInput('whitelistDate', '');
-  };
-
   const preventUpdateNumberOnWheel = (e: any) => {
     e.preventDefault();
     e.currentTarget.blur();
@@ -155,7 +158,7 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
     `candy-edition-radio ${isActive ? '' : 'candy-edition-radio-disable'}`;
 
   return (
-    <form id="edition-form" className="candy-edition-form" onSubmit={onSubmitForm} onChange={onResetValidation}>
+    <form id="edition-form" className="candy-edition-form" onSubmit={onSubmitForm}>
       <p className="candy-subTitle">Enter details on your new edition drop</p>
       <div className="candy-edition-form-item">
         <label htmlFor="name">
