@@ -126,7 +126,7 @@ export abstract class CandyShopDrop {
       whitelistMint,
       editionBuyer,
       auctionHouse,
-      editionNumber,
+      editionNumber: new BN(editionNumber),
       newEditionMint,
       newEditionTokenAccount,
       program,
@@ -202,7 +202,7 @@ async function generateEditionNumber(vaultAccount: PublicKey, connection: Connec
   }
   editionArray = editionArray.slice(0, vaultMaxSupply);
   editionArray = editionArray.map((v, i) => (v === '1' ? '-1' : String(i + 1))).filter((i) => i !== '-1');
-  const edition = new BN(editionArray[Math.floor(Math.random() * editionArray.length)]);
+  const edition = Number(editionArray[Math.floor(Math.random() * editionArray.length)]);
   return edition;
 }
 

@@ -55,7 +55,7 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
             )} UTC`
           ).unix()
         )
-      : null;
+      : undefined;
 
     candyShop
       .commitMasterNft({

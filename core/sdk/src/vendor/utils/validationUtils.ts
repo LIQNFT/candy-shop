@@ -305,7 +305,7 @@ export const checkDropCommittable = async (masterMint: web3.PublicKey, program: 
   const maxSupply = nftEditionAccountInfo.result
     ? await parseMasterEditionV2(nftEditionAccountInfo.result.data).maxSupply
     : undefined;
-  if (maxSupply.gt(maxSupportedEdition)) {
+  if (maxSupply && maxSupply.gt(maxSupportedEdition)) {
     throw new CandyShopError(CandyShopErrorType.ExceedDropMaxAllowedSupply);
   }
 };
