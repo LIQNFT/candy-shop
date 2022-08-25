@@ -27,13 +27,18 @@ export const DropFooter: React.FC<DropFooterProps> = ({ candyShop, nft }: DropFo
       </div>
       <div className="candy-edition-slide">
         <div className="background-slide" />
-        <div className="slide" style={{ width: `${(nft.currentSupply / nft.maxSupply) * 100}%` }} />
+        <div className="slide" style={{ width: `${(1 - nft.currentSupply / nft.maxSupply) * 100}%` }} />
       </div>
       <div className="available">
         Available:{' '}
         <span>
-          {getPrice(candyShop.priceDecimalsMin, candyShop.priceDecimals, nft.currentSupply, EXCHANGE_INFO) || 0}/
-          {getPrice(candyShop.priceDecimalsMin, candyShop.priceDecimals, nft.maxSupply, EXCHANGE_INFO)}
+          {getPrice(
+            candyShop.priceDecimalsMin,
+            candyShop.priceDecimals,
+            nft.maxSupply - nft.currentSupply,
+            EXCHANGE_INFO
+          ) || 0}
+          /{getPrice(candyShop.priceDecimalsMin, candyShop.priceDecimals, nft.maxSupply, EXCHANGE_INFO)}
         </span>
       </div>
 

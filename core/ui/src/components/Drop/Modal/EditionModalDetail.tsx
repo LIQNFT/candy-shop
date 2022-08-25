@@ -21,7 +21,7 @@ export const EditionModalDetail: React.FC<EditionModalDetailProps> = ({
   candyShop,
   onMint
 }) => {
-  const percentage = Math.round(((dropNft.currentSupply || 0) / dropNft.maxSupply) * 100 * 100) / 100;
+  const percentage = Math.round((1 - (dropNft.currentSupply || 0) / dropNft.maxSupply) * 100 * 100) / 100;
   const disabledMint =
     !(dropNft.status === DropStatus.SALE_STARTED || dropNft.status === DropStatus.WHITELIST_STARTED) ||
     dropNft.maxSupply === dropNft.currentSupply;
@@ -43,7 +43,7 @@ export const EditionModalDetail: React.FC<EditionModalDetailProps> = ({
           </div>
           <div className="decimal">
             {' '}
-            {dropNft.currentSupply} / {dropNft.maxSupply}
+            {dropNft.maxSupply - dropNft.currentSupply} / {dropNft.maxSupply}
           </div>
         </div>
         <div className="candy-title">{dropNft.nftName}</div>
