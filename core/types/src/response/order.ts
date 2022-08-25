@@ -1,4 +1,4 @@
-import { NftCreator } from '../nft';
+import { NftAttribute, NftCreator, NftProperties } from '../nft';
 
 export enum Side {
   BUY,
@@ -36,6 +36,10 @@ export interface Order {
   nftImageLink: string | null;
   nftAnimationLink: string | null;
   nftCreators: NftCreator[];
+  nftSellerFeeBasisPoint?: number;
+  nftAttributes?: NftAttribute[];
+  nftExternalUri?: string;
+  nftProperties?: NftProperties;
   tradeState: string;
   status: Status;
   // Current owner
