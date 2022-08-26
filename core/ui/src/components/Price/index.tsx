@@ -1,35 +1,37 @@
 import React from 'react';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
-
-interface ShopInfo {
-  baseUnitsPerCurrency: number;
-  priceDecimalsMin: number;
-  priceDecimals: number;
-  currencySymbol: string;
-}
 
 interface PriceProps {
   value: string | number | null | undefined;
-  candyShop: CandyShop | ShopInfo;
   emptyValue?: string;
+  currencySymbol: string;
+  baseUnitsPerCurrency: number;
+  priceDecimalsMin: number;
+  priceDecimals: number;
 }
 
-const getPrice = (candyShop: CandyShop | ShopInfo, price?: string | number | null) => {
-  if (!price || isNaN(Number(price))) return null;
+export const Price: React.FC<PriceProps> = ({
+  value,
+  emptyValue,
+  baseUnitsPerCurrency,
+  currencySymbol,
+  priceDecimals,
+  priceDecimalsMin
+}) => {
+  const getPrice = (price?: string | number | null) => {
+    if (!price || isNaN(Number(price))) return null;
 
-  return (Number(price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-    minimumFractionDigits: candyShop.priceDecimalsMin,
-    maximumFractionDigits: candyShop.priceDecimals
-  });
-};
+    return (Number(price) / baseUnitsPerCurrency).toLocaleString(undefined, {
+      minimumFractionDigits: priceDecimalsMin,
+      maximumFractionDigits: priceDecimals
+    });
+  };
 
-export const Price: React.FC<PriceProps> = ({ value, candyShop, emptyValue }) => {
-  const formattedValue = getPrice(candyShop, value);
+  const formattedValue = getPrice(value) || 'WIP';
   emptyValue = emptyValue || 'N/A';
 
-  return candyShop && formattedValue ? (
+  return formattedValue ? (
     <>
-      {formattedValue} {candyShop.currencySymbol}
+      {formattedValue} {currencySymbol}
     </>
   ) : (
     <>{emptyValue}</>

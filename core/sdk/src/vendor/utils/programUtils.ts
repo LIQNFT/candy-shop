@@ -25,7 +25,7 @@ import {
   WRAPPED_SOL_MINT
 } from '../../factory/constants';
 
-import { CandyShopVersion } from '../../CandyShopModel';
+import { CandyShopVersion } from '../../shop/base/BaseShopModel';
 import candyShopIdl from '../../idl/candy_shop.json';
 import candyShopV2Idl from '../../idl/candy_shop_v2.json';
 import { CandyShopError, CandyShopErrorType } from '../error';

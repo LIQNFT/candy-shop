@@ -1,7 +1,6 @@
 import React from 'react';
-import { CandyShop, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
-import { Order as OrderSchema } from '@liqnft/candy-shop-types';
-import { web3 } from '@project-serum/anchor';
+import { ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+import { Blockchain, Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { formatDate } from 'utils/timer';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { LiqImage } from 'components/LiqImage';
@@ -10,22 +9,18 @@ import { ShopExchangeInfo, PaymentErrorDetails } from 'model';
 import { getPrice } from 'utils/getPrice';
 import { IconError } from 'assets/IconError';
 
-interface ShopInfo {
-  explorerLink: ExplorerLinkBase;
-  env: web3.Cluster;
-}
-
 interface BuyModalConfirmedProps {
   order: OrderSchema;
   txHash: string;
-  walletPublicKey: web3.PublicKey | undefined;
-  onClose: () => void;
+  walletPublicKey: string | undefined;
   exchangeInfo: ShopExchangeInfo;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
-  candyShop: CandyShop | ShopInfo;
   paymentPrice?: number;
   error?: PaymentErrorDetails;
+  candyShopEnv: Blockchain;
+  explorerLink: ExplorerLinkBase;
+  onClose: () => void;
 }
 
 const PaymentErrorMessage: React.FC<{ error: PaymentErrorDetails }> = ({ error }) => {
@@ -46,19 +41,18 @@ const PaymentErrorMessage: React.FC<{ error: PaymentErrorDetails }> = ({ error }
 };
 
 export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
+  walletPublicKey,
   order,
   txHash,
-  walletPublicKey,
   onClose,
   exchangeInfo,
   shopPriceDecimalsMin,
   shopPriceDecimals,
-  candyShop,
   paymentPrice,
-  error
+  error,
+  candyShopEnv,
+  explorerLink
 }) => {
-  const walletAddress = walletPublicKey?.toBase58();
-
   const orderPrice = getPrice(shopPriceDecimalsMin, shopPriceDecimals, order.price, exchangeInfo);
 
   return (
@@ -99,20 +93,20 @@ export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
             <ExplorerLink
               type="address"
               address={order.walletAddress}
-              source={candyShop.explorerLink}
-              env={candyShop.env}
+              candyShopEnv={candyShopEnv}
+              explorerLink={explorerLink}
             />
           </div>
         </div>
         <div className="candy-buy-modal-confirmed-item">
           <div className="candy-label">TO</div>
           <div className="candy-value">
-            {walletAddress && (
+            {walletPublicKey && (
               <ExplorerLink
                 type="address"
-                address={walletAddress}
-                source={candyShop.explorerLink}
-                env={candyShop.env}
+                address={walletPublicKey}
+                candyShopEnv={candyShopEnv}
+                explorerLink={explorerLink}
               />
             )}
           </div>
@@ -124,7 +118,7 @@ export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
             <div className="candy-buy-modal-confirmed-item">
               <div className="candy-label">TRANSACTION HASH</div>
               <div className="candy-value">
-                <ExplorerLink type="tx" address={txHash} source={candyShop.explorerLink} env={candyShop.env} />
+                <ExplorerLink type="tx" address={txHash} candyShopEnv={candyShopEnv} explorerLink={explorerLink} />
               </div>
             </div>
             <div className="candy-buy-modal-confirmed-item">

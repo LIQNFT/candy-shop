@@ -1,25 +1,22 @@
 import React from 'react';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { IconPlayer } from 'assets/IconPlayer';
 import { LiqImage } from 'components/LiqImage';
 import { NftVerification } from 'components/Tooltip/NftVerification';
 import { getExchangeInfo } from 'utils/getExchangeInfo';
 import { getPrice } from 'utils/getPrice';
+import { ShopProps } from 'model';
 import './index.less';
 
-export interface OrderProps {
+interface OrderProps extends ShopProps {
   order: OrderSchema;
-  wallet: AnchorWallet | undefined;
   walletConnectComponent: React.ReactElement;
   url?: string;
-  candyShop: CandyShop;
   sellerUrl?: string;
   onOrderSelection: (order?: OrderSchema) => void;
 }
 
-export const Order: React.FC<OrderProps> = ({ order, wallet, url, candyShop, onOrderSelection }) => {
+export const Order: React.FC<OrderProps> = ({ order, onOrderSelection, url, candyShop, wallet }) => {
   const onClick = () => {
     if (url) {
       window.location.href = url.replace(':tokenMint', order.tokenMint);
@@ -30,7 +27,9 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, url, candyShop, onO
 
   const exchangeInfo = getExchangeInfo(order, candyShop);
   const orderPrice = getPrice(candyShop.priceDecimalsMin, candyShop.priceDecimals, order.price, exchangeInfo);
-  const isUserListing = wallet?.publicKey && order.walletAddress === wallet.publicKey.toString();
+  // ETH address can be Checksum Address with full lowercase characters, which different from origin address
+  const isUserListing =
+    wallet?.publicKey && order.walletAddress.toLowerCase() === wallet.publicKey.toString().toLowerCase();
 
   return (
     <div className="candy-order candy-card-border" onClick={onClick}>
@@ -45,7 +44,7 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, url, candyShop, onO
         {order?.nftAnimationLink?.includes('ext=mp4') && <IconPlayer className="candy-order-player-icon" />}
         <div className="candy-order-name-container">
           <div className="candy-order-name candy-line-limit-1">
-            {`${order?.name}${order?.edition !== 0 ? ` #${order?.edition}` : ''}`}
+            {`${order?.name}${order?.edition === 0 || order?.edition === null ? '' : `#${order?.edition}`}`}
           </div>
           {order.verifiedNftCollection ? <NftVerification /> : null}
         </div>

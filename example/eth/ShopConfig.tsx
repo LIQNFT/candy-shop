@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Input, Modal, Select } from 'antd';
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { LS_CANDY_FORM, DEFAULT_FORM_CONFIG } from './constant/formConfiguration';
+import { ETH_LS_CANDY_FORM, ETH_DEFAULT_FORM_CONFIG } from './constants/formConfig';
+import { chains } from './constants/chains';
 
-interface ConfigureShopProps {
+interface ShopConfigProps {
   setCandyForm: (candyForm: any) => any;
   candyForm: any;
 }
@@ -11,43 +11,39 @@ interface ConfigureShopProps {
 enum InputType {
   CREATOR_ADDRESS = 'CREATOR_ADDRESS',
   TREASURY_MINT = 'TREASURY_MINT',
-  PROGRAM_ID = 'PROGRAM_ID',
   SETTINGS = 'SETTINGS',
   PAYMENT_PROVIDER = 'PAYMENT_PROVIDER'
 }
 
-export const ConfigureShop: React.FC<ConfigureShopProps> = ({ setCandyForm, candyForm }) => {
+export const ShopConfig: React.FC<ShopConfigProps> = ({ setCandyForm, candyForm }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [creatorAddressInput, setCreatorAddressInput] = useState<string>(DEFAULT_FORM_CONFIG.creatorAddress);
-  const [treasuryMintInput, setTreasuryMintInput] = useState<string>(DEFAULT_FORM_CONFIG.treasuryMint);
-  const [programIdInput, setProgramIdInput] = useState<string>(DEFAULT_FORM_CONFIG.programId);
-  const [networkInput, setNetworkInput] = useState<string>(DEFAULT_FORM_CONFIG.network);
-  const [settingsInput, setSettingsInput] = useState<string>(DEFAULT_FORM_CONFIG.settings);
-  const [paymentProviderObject, setPaymentProviderObject] = useState<string>(DEFAULT_FORM_CONFIG.paymentProvider);
+  const [creatorAddressInput, setCreatorAddressInput] = useState<string>(ETH_DEFAULT_FORM_CONFIG.creatorAddress);
+  const [treasuryMintInput, setTreasuryMintInput] = useState<string>(ETH_DEFAULT_FORM_CONFIG.treasuryMint);
+  const [networkInput, setNetworkInput] = useState<string>(ETH_DEFAULT_FORM_CONFIG.network);
+  const [settingsInput, setSettingsInput] = useState<string>(ETH_DEFAULT_FORM_CONFIG.settings);
+  const [paymentProviderObject, setPaymentProviderObject] = useState<string>(ETH_DEFAULT_FORM_CONFIG.paymentProvider);
 
   const onCreateNewCandyShop = () => {
     const data = {
       creatorAddress: creatorAddressInput,
       treasuryMint: treasuryMintInput,
-      programId: programIdInput,
       network: networkInput,
       settings: settingsInput,
       paymentProvider: paymentProviderObject
     };
     setCandyForm(data);
-    localStorage.setItem(LS_CANDY_FORM, JSON.stringify(data));
+    localStorage.setItem(ETH_LS_CANDY_FORM, JSON.stringify(data));
     setIsModalVisible(false);
   };
 
   const onReset = () => {
-    onUpdateFormState(DEFAULT_FORM_CONFIG);
+    onUpdateFormState(ETH_DEFAULT_FORM_CONFIG);
   };
 
   const onUpdateFormState = useCallback((data) => {
-    const { treasuryMint, creatorAddress, programId, network, settings, paymentProvider } = data;
+    const { treasuryMint, creatorAddress, network, settings, paymentProvider } = data;
     setCreatorAddressInput(creatorAddress);
     setTreasuryMintInput(treasuryMint);
-    setProgramIdInput(programId);
     setNetworkInput(network);
     setSettingsInput(settings);
     setPaymentProviderObject(paymentProvider);
@@ -63,10 +59,6 @@ export const ConfigureShop: React.FC<ConfigureShopProps> = ({ setCandyForm, cand
         setTreasuryMintInput(e.target.value);
         break;
       }
-      case InputType.PROGRAM_ID: {
-        setProgramIdInput(e.target.value);
-        break;
-      }
       case InputType.SETTINGS: {
         setSettingsInput(e.target.value);
         break;
@@ -79,10 +71,6 @@ export const ConfigureShop: React.FC<ConfigureShopProps> = ({ setCandyForm, cand
         break;
       }
     }
-  };
-
-  const handleSelectChange = (value: string) => {
-    setNetworkInput(value);
   };
 
   useEffect(() => {
@@ -127,28 +115,22 @@ export const ConfigureShop: React.FC<ConfigureShopProps> = ({ setCandyForm, cand
           onChange={(e) => handleInputChange(e, InputType.TREASURY_MINT)}
         />
 
-        <div style={{ fontSize: 16, lineHeight: '24px', fontWeight: 500 }}>Candy Shop Program ID</div>
-        <Input
-          style={{ marginBottom: 15 }}
-          placeholder="Candy Shop Program ID"
-          value={programIdInput}
-          onChange={(e) => handleInputChange(e, InputType.PROGRAM_ID)}
-        />
-
         <div style={{ fontSize: 16, lineHeight: '24px', fontWeight: 500 }}>Network</div>
         <Select
-          defaultValue={WalletAdapterNetwork.Devnet}
-          onChange={handleSelectChange}
+          defaultValue={chains.polygonMumbai.network}
+          onChange={setNetworkInput}
           style={{ width: '100%', marginBottom: 15 }}
           value={networkInput}
         >
-          <Select.Option value={WalletAdapterNetwork.Devnet}>devnet</Select.Option>
-          <Select.Option value={WalletAdapterNetwork.Mainnet}>mainnet-beta</Select.Option>
+          <Select.Option value={chains.mainnet.network}>{chains.mainnet.name}</Select.Option>
+          <Select.Option value={chains.goerli.network}>{chains.goerli.name}</Select.Option>
+          <Select.Option value={chains.polygon.network}>{chains.polygon.name}</Select.Option>
+          <Select.Option value={chains.polygonMumbai.network}>{chains.polygonMumbai.name}</Select.Option>
         </Select>
 
         <div style={{ fontSize: 16, lineHeight: '24px', fontWeight: 500 }}>Candy Shop Settings</div>
         <Input.TextArea
-          rows={5}
+          rows={3}
           placeholder="Candy Shop Settings"
           value={settingsInput}
           onChange={(e) => handleInputChange(e, InputType.SETTINGS)}

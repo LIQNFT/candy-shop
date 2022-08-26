@@ -3,16 +3,16 @@ import React from 'react';
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 
-import { CandyShop } from '../core/sdk/.';
-import { SortBy } from '../core/types';
-import { Activity, OrderDetail, Orders, Sell, Stat } from '../core/ui/.';
+import { BlockchainType, CandyShop } from '../../core/sdk/.';
+import { SortBy } from '../../core/types/.';
+import { Activity, OrderDetail, Orders, Sell, Stat } from '../../core/ui/.';
 
 import 'antd/dist/antd.min.css';
-interface MarketplaceExampleProps {
+interface SolMarketplaceExampleProps {
   candyShop: CandyShop;
 }
 
-export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ candyShop }) => {
+export const SolMarketplaceExample: React.FC<SolMarketplaceExampleProps> = ({ candyShop }) => {
   const wallet = useAnchorWallet();
   return (
     <div style={{ paddingBottom: 50, textAlign: 'center' }}>
@@ -23,10 +23,12 @@ export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ candySho
             'Candy Shop is an open source on-chain protocol that empowers DAOs, NFT projects and anyone interested in creating an NFT marketplace to do so within minutes!'
           }
           candyShop={candyShop}
+          blockchain={BlockchainType.Solana}
         />
       </div>
 
       <Orders
+        blockchain={BlockchainType.Solana}
         wallet={wallet}
         walletConnectComponent={<WalletMultiButton />}
         candyShop={candyShop}
@@ -42,6 +44,7 @@ export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ candySho
         walletConnectComponent={<WalletMultiButton />}
         wallet={wallet}
         candyShop={candyShop}
+        blockchain={BlockchainType.Solana}
       />
 
       {/* Can serve Activity with partial shop info without CandyShop instance to present the same */}
@@ -66,14 +69,15 @@ export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ candySho
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Sell</h1>
       <Sell
-        wallet={wallet}
-        candyShop={candyShop}
         walletConnectComponent={<WalletMultiButton />}
         enableCacheNFT={true}
+        blockchain={BlockchainType.Solana}
+        wallet={wallet}
+        candyShop={candyShop}
       />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', margin: '80px 0 30px' }}>Activity</h1>
-      <Activity candyShop={candyShop} orderBy={ORDER_ACTIVITY} />
+      <Activity candyShop={candyShop} orderBy={ORDER_ACTIVITY} blockchain={BlockchainType.Solana} />
       {/* Can serve Activity with partial shop info without CandyShop instance to present the same */}
       {/* 
         <Activity candyShop={{

@@ -37,7 +37,10 @@ export const fetchAllEvmNftsFromWallet = async (
   let evmNfts = null;
   while (totalCount > singleTokenInfos.length) {
     evmNfts = await fetchEvmNftsFromWalletByLimit(walletAddress, fetchQuery);
-    singleTokenInfos = singleTokenInfos.concat(evmNfts.result);
+    if (evmNfts.success) {
+      singleTokenInfos = singleTokenInfos.concat(evmNfts.result);
+    }
+
     if (fetchNFTBatchParam?.batchCallback) {
       // Only provide the batch result when batchCallback is specified.
       fetchNFTBatchParam.batchCallback(singleTokenInfos);

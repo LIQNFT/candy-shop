@@ -2,11 +2,13 @@ import React from 'react';
 import { web3 } from '@project-serum/anchor';
 import { shortenAddress } from 'utils/helperFunc';
 import { ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+import { Blockchain } from '@liqnft/candy-shop-types';
 
 export const BaseUrlType = {
   [ExplorerLinkBase.SolScan]: 'https://solscan.io',
   [ExplorerLinkBase.SolanaFM]: 'https://solana.fm',
-  [ExplorerLinkBase.Explorer]: 'https://explorer.solana.com'
+  [ExplorerLinkBase.Explorer]: 'https://explorer.solana.com',
+  [ExplorerLinkBase.Polygon]: 'https://mumbai.polygonscan.com'
 };
 
 const getClusterQuery = (network: string | undefined, baseUrl: ExplorerLinkBase) => {
@@ -15,21 +17,31 @@ const getClusterQuery = (network: string | undefined, baseUrl: ExplorerLinkBase)
   return `?cluster=devnet`;
 };
 
-export const ExplorerLink = (props: {
+interface ExplorerLinkProps {
   address: string | web3.PublicKey;
   type: string;
   length?: number;
   children?: React.ReactNode;
-  source: ExplorerLinkBase;
-  env: web3.Cluster;
-}): JSX.Element | null => {
-  const { type, children, length = 4, address, source, env } = props;
+  candyShopEnv: Blockchain;
+  explorerLink: ExplorerLinkBase;
+}
+
+export const ExplorerLink: React.FC<ExplorerLinkProps> = ({
+  type,
+  children,
+  length = 4,
+  address,
+  candyShopEnv,
+  explorerLink
+}) => {
+  const source = explorerLink || ExplorerLinkBase.Explorer; // TODO: update source for ETh
   if (!address) return null;
   const addressString = typeof address === 'string' ? address : address?.toBase58();
+
   return (
     <div className="candy-link">
       <a
-        href={`${BaseUrlType[source]}/${type}/${address}${getClusterQuery(env, source)}`}
+        href={`${BaseUrlType[source]}/${type}/${address}${getClusterQuery(candyShopEnv, source)}`}
         target="_blank"
         rel="noreferrer noopener"
         title={addressString}

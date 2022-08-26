@@ -34,7 +34,8 @@ import {
   fetchShop,
   fetchCollection,
   fetchCollectionByShopId,
-  fetchOrdersByStoreIdAndMasterEditionMint
+  fetchOrdersByStoreIdAndMasterEditionMint,
+  fetchShopByOwnerAddress
 } from './factory/backend';
 import axiosInstance from './vendor/config';
 
@@ -79,6 +80,10 @@ export function fetchOrdersByShopAndMasterEditionMint(
 
 export function fetchShopWhitelistNftByShopAddress(candyShopAddress: string): Promise<ListBase<WhitelistNft>> {
   return fetchShopWhitelistNftByShopId(axiosInstance, candyShopAddress);
+}
+
+export function fetchShopsByOwnerAddress(ownerAddress: string): Promise<ListBase<CandyShopResponse>> {
+  return fetchShopByOwnerAddress(axiosInstance, ownerAddress);
 }
 
 export function fetchOrderByShopAndMintAddress(

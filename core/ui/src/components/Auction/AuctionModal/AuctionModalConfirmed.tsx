@@ -1,34 +1,32 @@
 import React from 'react';
-
-import { web3 } from '@project-serum/anchor';
 import { formatDate } from 'utils/timer';
-import { Auction } from '@liqnft/candy-shop-types';
+import { Auction, Blockchain } from '@liqnft/candy-shop-types';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { LiqImage } from 'components/LiqImage';
 import IconTick from 'assets/IconTick';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
 
 interface AuctionModalConfirmedProps {
   auction: Auction;
   txHash: string;
-  walletPublicKey: web3.PublicKey | undefined;
   onClose: () => void;
   titleText: string;
   descriptionText?: string;
-  candyShop: CandyShop;
+  candyShopEnv: Blockchain;
+  explorerLink: ExplorerLinkBase;
+  walletAddress: string | undefined;
 }
 
 export const AuctionModalConfirmed: React.FC<AuctionModalConfirmedProps> = ({
   auction,
   txHash,
-  walletPublicKey,
   onClose,
   titleText,
   descriptionText,
-  candyShop
+  walletAddress,
+  candyShopEnv,
+  explorerLink
 }) => {
-  const walletAddress = walletPublicKey?.toBase58();
-
   return (
     <div className="candy-auction-modal-confirmed">
       <div className="candy-auction-modal-confirmed-header">
@@ -58,8 +56,8 @@ export const AuctionModalConfirmed: React.FC<AuctionModalConfirmedProps> = ({
             <ExplorerLink
               type="address"
               address={auction.sellerAddress}
-              source={candyShop.explorerLink}
-              env={candyShop.env}
+              candyShopEnv={candyShopEnv}
+              explorerLink={explorerLink}
             />
           </div>
         </div>
@@ -70,8 +68,8 @@ export const AuctionModalConfirmed: React.FC<AuctionModalConfirmedProps> = ({
               <ExplorerLink
                 type="address"
                 address={walletAddress}
-                source={candyShop.explorerLink}
-                env={candyShop.env}
+                candyShopEnv={candyShopEnv}
+                explorerLink={explorerLink}
               />
             )}
           </div>
@@ -79,7 +77,7 @@ export const AuctionModalConfirmed: React.FC<AuctionModalConfirmedProps> = ({
         <div className="candy-auction-modal-confirmed-item">
           <div className="candy-label">TRANSACTION HASH</div>
           <div className="candy-value">
-            <ExplorerLink type="tx" address={txHash} source={candyShop.explorerLink} env={candyShop.env} />
+            <ExplorerLink type="tx" address={txHash} candyShopEnv={candyShopEnv} explorerLink={explorerLink} />
           </div>
         </div>
         <div className="candy-auction-modal-confirmed-item">

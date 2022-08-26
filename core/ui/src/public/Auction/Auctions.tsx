@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyShop, fetchAuctionsByShopAddress } from '@liqnft/candy-shop-sdk';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { fetchAuctionsByShopAddress } from '@liqnft/candy-shop-sdk';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { LoadingSkeleton } from 'components/LoadingSkeleton';
-import { AuctionCard } from 'components/Auction';
+import { AuctionCard, AuctionModal } from 'components/Auction';
 import { Auction, AuctionStatus, ListBase } from '@liqnft/candy-shop-types';
 import { Empty } from 'components/Empty';
 import { ORDER_FETCH_LIMIT } from 'constant/Orders';
@@ -11,32 +10,39 @@ import { DEFAULT_LIST_AUCTION_STATUS } from 'constant';
 import { useUpdateCandyShopContext } from 'public/Context/CandyShopDataValidator';
 import { EventName, useSocket } from 'public/Context/Socket';
 import { removeDuplicate, removeListeners } from 'utils/helperFunc';
+import { ShopProps } from '../../model';
+import { AuctioneerFactory } from 'services/auctioneer';
 
 const Logger = 'CandyShopUI/Auctions';
 
-interface AuctionsProps {
-  wallet?: AnchorWallet;
+interface AuctionsProps extends ShopProps {
   walletConnectComponent: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
-  candyShop: CandyShop;
   statusFilters?: AuctionStatus[];
 }
 
 export const Auctions: React.FC<AuctionsProps> = ({
   walletConnectComponent,
-  wallet,
+  statusFilters = DEFAULT_LIST_AUCTION_STATUS,
+  blockchain,
   candyShop,
-  statusFilters = DEFAULT_LIST_AUCTION_STATUS
+  wallet
 }) => {
+  const auctioneer = useMemo(
+    () => AuctioneerFactory({ candyShop, blockchain, wallet }),
+    [candyShop, blockchain, wallet]
+  );
+
+  const [auctionSelected, setAuctionSelected] = useState<Auction>();
   const [auctionedNfts, setAuctions] = useState<Auction[]>([]);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
   const [startIndex, setStartIndex] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
 
   const { onSocketEvent, onSendEvent } = useSocket();
-  const walletKeyString = wallet?.publicKey.toString();
-  const candyShopAddress = candyShop.candyShopAddress;
+  const walletKeyString = wallet?.publicKey?.toString();
+  const candyShopAddress = candyShop.candyShopAddress.toString();
 
-  useUpdateCandyShopContext({ candyShopAddress, network: candyShop.env });
+  useUpdateCandyShopContext({ candyShopAddress, network: candyShop.env as any });
 
   const loadNextPage = (startIndex: number) => () => {
     if (startIndex === 0) return;
@@ -142,6 +148,27 @@ export const Auctions: React.FC<AuctionsProps> = ({
     return () => removeListeners(controllers);
   }, [onSendEvent, onSocketEvent, walletKeyString]);
 
+  const buyNowAuction = useCallback(
+    (auction: Auction) => {
+      return auctioneer.buyNowAuction(auction);
+    },
+    [auctioneer]
+  );
+
+  const bidAuction = useCallback(
+    (auction: Auction, price: number) => {
+      return auctioneer.bidAuction(auction, price);
+    },
+    [auctioneer]
+  );
+
+  const withdrawAuctionBid = useCallback(
+    (auction: Auction) => {
+      return auctioneer.withdrawAuctionBid(auction);
+    },
+    [auctioneer]
+  );
+
   return (
     <div className="candy-container">
       <InfiniteScroll
@@ -153,17 +180,42 @@ export const Auctions: React.FC<AuctionsProps> = ({
         {auctionedNfts.length === 0 && !loading ? (
           <Empty description="No auctions found" />
         ) : (
-          <div className="candy-container-list">
-            {auctionedNfts.map((auction: Auction) => (
-              <AuctionCard
-                key={auction.tokenAccount}
-                auction={auction}
-                candyShop={candyShop}
-                wallet={wallet}
+          <>
+            <div className="candy-container-list">
+              {auctionedNfts.map((auction: Auction) => (
+                <AuctionCard
+                  key={auction.tokenAccount}
+                  auction={auction}
+                  walletConnectComponent={walletConnectComponent}
+                  walletPublicKey={candyShopAddress}
+                  currencySymbol={candyShop.currencySymbol}
+                  baseUnitsPerCurrency={candyShop.baseUnitsPerCurrency}
+                  priceDecimalsMin={candyShop.priceDecimalsMin}
+                  priceDecimals={candyShop.priceDecimals}
+                  onClick={(auction) => {
+                    setAuctionSelected(auction);
+                  }}
+                />
+              ))}
+            </div>
+            {auctionSelected ? (
+              <AuctionModal
+                auction={auctionSelected}
+                onClose={() => setAuctionSelected(undefined)}
                 walletConnectComponent={walletConnectComponent}
+                walletPublicKey={wallet?.publicKey?.toString()}
+                candyShopEnv={candyShop.env}
+                explorerLink={candyShop.explorerLink}
+                buyNowAuction={buyNowAuction}
+                bidAuction={bidAuction}
+                withdrawAuctionBid={withdrawAuctionBid}
+                currencySymbol={candyShop.currencySymbol}
+                baseUnitsPerCurrency={candyShop.baseUnitsPerCurrency}
+                priceDecimals={candyShop.priceDecimals}
+                priceDecimalsMin={candyShop.priceDecimalsMin}
               />
-            ))}
-          </div>
+            ) : null}
+          </>
         )}
       </InfiniteScroll>
     </div>

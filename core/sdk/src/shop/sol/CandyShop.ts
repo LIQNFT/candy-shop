@@ -1,8 +1,8 @@
-import { BaseShop } from './shop/base/BaseShop';
-import { Blockchain } from './shop/base/BaseShopModel';
+import { BaseShop } from '../base/BaseShop';
 import {
   CandyShop as CandyShopResponse,
   ListBase,
+  Blockchain,
   Nft,
   Order,
   OrdersEditionFilterQuery,
@@ -15,8 +15,8 @@ import {
 } from '@liqnft/candy-shop-types';
 import { Idl, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyShopCommitNftParams, CandyShopMintPrintParams } from '.';
-import { CandyShopDrop } from './CandyShopDrop';
+import { CandyShopCommitNftParams, CandyShopMintPrintParams } from './CandyShopModel';
+import { CandyShopDrop } from '../../CandyShopDrop';
 import {
   fetchNFTByMintAddress,
   fetchOrderByShopAndMintAddress,
@@ -27,7 +27,7 @@ import {
   fetchShopWhitelistNftByShopAddress,
   fetchStatsByShopAddress,
   fetchTradeByShopAddress
-} from './CandyShopInfoAPI';
+} from '../../CandyShopInfoAPI';
 import {
   CandyShopBidAuctionParams,
   CandyShopBuyNowParams,
@@ -38,23 +38,14 @@ import {
   CandyShopCreateAuctionParams,
   CandyShopRedeemParams,
   CandyShopSellParams,
-  CandyShopSettings,
   CandyShopSettleAndDistributeParams,
   CandyShopUpdateParams,
-  CandyShopVersion,
-  CandyShopWithdrawAuctionBidParams,
-  ExplorerLinkBase
+  CandyShopWithdrawAuctionBidParams
 } from './CandyShopModel';
-import { CandyShopTrade } from './CandyShopTrade';
-import { CandyShopAuction } from './CandyShopAuction';
-import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from './factory/constants';
+import { CandyShopTrade } from '../../CandyShopTrade';
+import { CandyShopAuction } from '../../CandyShopAuction';
+import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from '../../factory/constants';
 import {
-  bidAuction,
-  BidAuctionParams,
-  bidAuctionV1,
-  buyNowAuction,
-  BuyNowAuctionParams,
-  buyNowAuctionV1,
   cancelAuction,
   CancelAuctionParams,
   cancelAuctionV1,
@@ -66,11 +57,8 @@ import {
   settleAndDistributeProceedsV1,
   updateCandyShop,
   UpdateCandyShopParams,
-  updateCandyShopV1,
-  withdrawBid,
-  WithdrawBidParams,
-  withdrawBidV1
-} from './factory/program';
+  updateCandyShopV1
+} from '../../factory/program';
 import {
   CandyShopError,
   CandyShopErrorType,
@@ -83,9 +71,10 @@ import {
   getCandyShopVersion,
   getMetadataAccount,
   getProgram
-} from './vendor';
-import { configBaseUrl } from './vendor/config';
-import { supply } from './vendor/shipping';
+} from '../../vendor';
+import { configBaseUrl } from '../../vendor/config';
+import { supply } from '../../vendor/shipping';
+import { BlockchainType, CandyShopVersion, ExplorerLinkBase, ShopSettings } from '../base/BaseShopModel';
 
 const Logger = 'CandyShop';
 
@@ -96,6 +85,8 @@ const DEFAULT_PRICE_DECIMALS_MIN = 0;
 const DEFAULT_VOLUME_DECIMALS = 1;
 const DEFAULT_VOLUME_DECIMALS_MIN = 0;
 const DEFAULT_MAINNET_CONNECTION_URL = 'https://api.mainnet-beta.solana.com';
+const SOL_BACKEND_STAGING_URL = 'https://ckaho.liqnft.com/api';
+const SOL_BACKEND_PROD_URL = 'https://candy.liqnft.com/api';
 
 /**
  * @class CandyShop
@@ -105,26 +96,27 @@ export class CandyShop extends BaseShop {
   private _candyShopCreatorAddress: web3.PublicKey;
   private _treasuryMint: web3.PublicKey;
   private _programId: web3.PublicKey;
-  private _env: web3.Cluster;
-  private _settings: CandyShopSettings;
+  private _env: Blockchain;
+  private _settings: ShopSettings;
   private _baseUnitsPerCurrency: number;
   private _isEnterprise: boolean;
   private _version: CandyShopVersion;
   private _program: Program | undefined;
+  private _blockchainType: BlockchainType;
 
   get currencyDecimals(): number {
     return this._settings.currencyDecimals;
   }
 
-  get settings(): Partial<CandyShopSettings> {
+  get settings(): Partial<ShopSettings> {
     return this._settings;
   }
 
-  get blockchain(): Blockchain {
-    return Blockchain.Solana;
+  get blockchain(): BlockchainType {
+    return this._blockchainType;
   }
 
-  get env(): web3.Cluster {
+  get env(): Blockchain {
     return this._env;
   }
 
@@ -190,7 +182,7 @@ export class CandyShop extends BaseShop {
    * @constructor
    * @param {CandyShopConstructorParams} params
    */
-  // Changed constructor params to object, can revert if it will cause too many issues
+
   constructor(params: CandyShopConstructorParams) {
     super(params);
     const { candyShopCreatorAddress, candyShopProgramId, treasuryMint, env, settings, isEnterprise } = params;
@@ -220,8 +212,11 @@ export class CandyShop extends BaseShop {
       explorerLink: settings?.explorerLink ?? ExplorerLinkBase.SolanaFM
     };
     this._baseUnitsPerCurrency = Math.pow(10, this._settings.currencyDecimals);
+    this._blockchainType = BlockchainType.Solana;
     console.log('CandyShop constructor: init CandyShop=', this);
-    configBaseUrl(env);
+    const url = this._env === Blockchain.SolMainnetBeta ? SOL_BACKEND_PROD_URL : SOL_BACKEND_STAGING_URL;
+
+    configBaseUrl(url);
   }
 
   verifyProgramId(programId: web3.PublicKey) {

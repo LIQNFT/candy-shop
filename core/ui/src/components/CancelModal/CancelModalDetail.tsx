@@ -1,5 +1,6 @@
-import { CandyShop } from '@liqnft/candy-shop-sdk';
-import { Order as OrderSchema } from '@liqnft/candy-shop-types';
+import { ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+import { Blockchain, Order as OrderSchema } from '@liqnft/candy-shop-types';
+
 import { ExplorerLink } from 'components/ExplorerLink';
 import { NftVerification } from 'components/Tooltip/NftVerification';
 import { Viewer } from 'components/Viewer';
@@ -13,7 +14,8 @@ export interface CancelModalDetailProps {
   exchangeInfo: ShopExchangeInfo;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
-  candyShop: CandyShop;
+  candyShopEnv: Blockchain;
+  explorerLink: ExplorerLinkBase;
 }
 
 export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
@@ -22,7 +24,8 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
   exchangeInfo,
   shopPriceDecimalsMin,
   shopPriceDecimals,
-  candyShop
+  candyShopEnv,
+  explorerLink
 }) => {
   const orderPrice = getPrice(shopPriceDecimalsMin, shopPriceDecimals, order.price, exchangeInfo);
 
@@ -59,8 +62,8 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
               <ExplorerLink
                 type="address"
                 address={order.tokenMint}
-                source={candyShop.explorerLink}
-                env={candyShop.env}
+                candyShopEnv={candyShopEnv}
+                explorerLink={explorerLink}
               />
             </div>
           </div>
@@ -80,8 +83,8 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
               <ExplorerLink
                 type="address"
                 address={order.walletAddress}
-                source={candyShop.explorerLink}
-                env={candyShop.env}
+                candyShopEnv={candyShopEnv}
+                explorerLink={explorerLink}
               />
             </div>
           </div>
