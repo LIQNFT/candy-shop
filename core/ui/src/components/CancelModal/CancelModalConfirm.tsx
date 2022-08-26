@@ -4,7 +4,7 @@ import React from 'react';
 import { LiqImage } from '../LiqImage';
 
 export interface CancelModalConfirmProps {
-  order: OrderSchema;
+  order?: OrderSchema;
   onCancel: (...args: any) => void;
 }
 
@@ -16,10 +16,10 @@ export const CancelModalConfirm = ({ order, onCancel }: CancelModalConfirmProps)
       </div>
       <div className="candy-cancel-modal-confirm-content">
         <div className="candy-cancel-modal-confirm-content-img">
-          <LiqImage src={order.nftImageLink} alt={order.name} fit="contain" />
+          <LiqImage src={order?.nftImageLink} alt={order?.name} fit="contain" />
         </div>
         <div className="candy-cancel-modal-confirm-content-text">
-          <span style={{ fontWeight: 'bold' }}>{order.name}</span> is no longer listed for sale
+          <span style={{ fontWeight: 'bold' }}>{order?.name}</span> is no longer listed for sale
         </div>
       </div>
       <div className="candy-cancel-modal-confirm-success">

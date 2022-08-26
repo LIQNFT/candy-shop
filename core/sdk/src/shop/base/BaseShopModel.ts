@@ -1,10 +1,28 @@
 /**
- * Blockchain
+ * Explorer link source on checking on-chain information
  */
-export enum Blockchain {
-  Ethereum = 'ethereum',
-  Solana = 'solana',
-  Polygon = 'polygon'
+
+export enum ExplorerLinkBase {
+  SolScan = 'SolScan',
+  SolanaFM = 'SolanaFM',
+  Explorer = 'Explorer',
+  Polygon = 'Polygon'
+}
+
+/**
+ * Program version that CandyShop was created with
+ */
+export enum CandyShopVersion {
+  V1,
+  V2
+}
+
+/**
+ * Blockchains that CandyShop supports
+ */
+export enum BlockchainType {
+  Ethereum = 'Ethereum',
+  Solana = 'Solana'
 }
 
 /**
@@ -34,4 +52,6 @@ export interface ShopSettings {
   mainnetConnectionUrl: string;
   /** Connection config options */
   connectionConfig: object | undefined;
+  /** Explorer link options */
+  explorerLink: ExplorerLinkBase;
 }

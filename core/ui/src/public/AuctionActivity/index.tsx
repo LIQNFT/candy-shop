@@ -4,29 +4,18 @@ import { ExplorerLink } from 'components/ExplorerLink';
 import { Processing } from 'components/Processing';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import { CandyShop, fetchAuctionHistory, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+import { fetchAuctionHistory, BaseShop } from '@liqnft/candy-shop-sdk';
 import { AuctionBid, AuctionStatus, ListBase, SortBy } from '@liqnft/candy-shop-types';
 import { removeDuplicate, EMPTY_FUNCTION } from 'utils/helperFunc';
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
-import { web3 } from '@project-serum/anchor';
-
 dayjs.extend(relativeTime);
 import './style.less';
 
-interface ShopInfo {
-  env: web3.Cluster;
-  explorerLink: ExplorerLinkBase;
-  baseUnitsPerCurrency: number;
-  priceDecimalsMin: number;
-  priceDecimals: number;
-  currencySymbol: string;
-}
-
 interface AuctionActivityProps {
-  candyShop: CandyShop | ShopInfo;
+  candyShop: BaseShop;
   orderBy?: SortBy;
   auctionAddress: string;
 }
@@ -92,8 +81,8 @@ export const AuctionActivity: React.FC<AuctionActivityProps> = ({ candyShop, auc
                   <ExplorerLink
                     type="address"
                     address={auction.buyerAddress}
-                    source={candyShop.explorerLink}
-                    env={candyShop.env}
+                    candyShopEnv={candyShop.env}
+                    explorerLink={candyShop.explorerLink}
                   />
                 </div>
                 <div className="candy-activity-auction-price">

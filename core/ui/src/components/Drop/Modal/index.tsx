@@ -73,7 +73,10 @@ export const EditionModal: React.FC<EditionModalProps> = ({
             walletPublicKey={wallet?.publicKey}
             walletConnectComponent={walletConnectComponent}
             onMint={onMint}
-            candyShop={candyShop}
+            currencySymbol={candyShop.currencySymbol}
+            baseUnitsPerCurrency={candyShop.baseUnitsPerCurrency}
+            priceDecimalsMin={candyShop.priceDecimalsMin}
+            priceDecimals={candyShop.priceDecimals}
           />
         )}
         {state === TransactionState.PROCESSING && <Processing text="Processing purchase" />}

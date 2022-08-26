@@ -1,18 +1,15 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { web3 } from '@project-serum/anchor';
 
 const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json'
-  },
-  // Default baseUrl is staging backend
-  baseURL: 'https://ckaho.liqnft.com/api/'
+  }
 });
 
 export default axiosInstance;
 let interceptorEvents: number[] = [];
 
-export const configBaseUrl = (env: web3.Cluster): void => {
+export const configBaseUrl = (baseUrl: string): void => {
   if (interceptorEvents.length) {
     interceptorEvents.forEach((id) => {
       axiosInstance.interceptors.request.eject(id);
@@ -21,9 +18,7 @@ export const configBaseUrl = (env: web3.Cluster): void => {
   }
   const interceptorEvent = axiosInstance.interceptors.request.use(
     (config: AxiosRequestConfig<any>) => {
-      if (env === 'mainnet-beta') {
-        config.baseURL = 'https://candy-shop.liqnft.com/api/';
-      }
+      config.baseURL = baseUrl;
 
       return config;
     },

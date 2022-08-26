@@ -5,22 +5,36 @@ import { Drop } from '@liqnft/candy-shop-types';
 import { getPrice } from 'utils/getPrice';
 import { Price } from 'components/Price';
 import { VaultCountdown } from './VaultCountdown';
+import { ConfigPrice } from 'model';
 
 const EXCHANGE_INFO = { decimals: 0 };
 
-interface DropFooterProps {
+interface DropFooterProps extends ConfigPrice {
   candyShop: CandyShop;
   nft: Drop;
 }
 
-export const DropFooter: React.FC<DropFooterProps> = ({ candyShop, nft }: DropFooterProps) => {
+export const DropFooter: React.FC<DropFooterProps> = ({
+  candyShop,
+  nft,
+  baseUnitsPerCurrency,
+  currencySymbol,
+  priceDecimals,
+  priceDecimalsMin
+}) => {
   return (
     <div className="candy-edition-list-footer-card">
       <div className="row">
         <div className="candy-edition-name-price">
           <div className="name">{nft.nftName}</div>
           <span className="candy-price">
-            <Price candyShop={candyShop} value={nft.price} />
+            <Price
+              currencySymbol={currencySymbol}
+              baseUnitsPerCurrency={baseUnitsPerCurrency}
+              priceDecimalsMin={priceDecimalsMin}
+              priceDecimals={priceDecimals}
+              value={nft.price}
+            />
           </span>
         </div>
       </div>

@@ -8,7 +8,11 @@ import {
 } from '@solana/spl-token';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Connection, Keypair, PublicKey, TransactionInstruction } from '@solana/web3.js';
-import { EditionDropCommitNftParams, EditionDropMintPrintParams, EditionDropRedeemParams } from '.';
+import {
+  EditionDropCommitNftParams,
+  EditionDropMintPrintParams,
+  EditionDropRedeemParams
+} from './shop/sol/CandyShopModel';
 import { EDITION_DROP_PROGRAM_ID } from './factory/constants';
 import {
   commitNft,

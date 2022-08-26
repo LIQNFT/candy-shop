@@ -1,14 +1,7 @@
+import { Blockchain } from '@liqnft/candy-shop-types';
 import { web3, BN, Program, Idl } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { ShopSettings } from './shop/base/BaseShopModel';
-
-/**
- * Program version that CandyShop was created with
- */
-export enum CandyShopVersion {
-  V1,
-  V2
-}
+import { CandyShopVersion, ShopSettings } from '../base/BaseShopModel';
 
 /**
  * Parameters to CandyShop constructor
@@ -16,7 +9,7 @@ export enum CandyShopVersion {
  * @property {PublicKey} candyShopCreatorAddress
  * @property {PublicKey} treasuryMint
  * @property {PublicKey} candyShopProgramId
- * @property {web3.Cluster} env
+ * @property {Blockchain} env
  * @property {Partial<CandyShopSettings>} settings
  * @property {boolean} isEnterprise
  */
@@ -28,30 +21,12 @@ export interface CandyShopConstructorParams {
   treasuryMint: web3.PublicKey;
   /** Candy Shop program id */
   candyShopProgramId: web3.PublicKey;
-  /** web3.Cluster mainnet, devnet */
-  env: web3.Cluster;
+  /** Network */
+  env: Blockchain;
   /** Optional, additional shop settings */
-  settings?: Partial<CandyShopSettings>;
+  settings?: Partial<ShopSettings>;
   /** Indicates if this shop uses enterprise program functionality. Defaults to false */
   isEnterprise?: boolean;
-}
-
-/**
- * Explorer link source on checking on-chain information
- */
-
-export enum ExplorerLinkBase {
-  SolScan = 'SolScan',
-  SolanaFM = 'SolanaFM',
-  Explorer = 'Explorer'
-}
-
-/**
- * Custom CandyShop settings
- */
-export interface CandyShopSettings extends ShopSettings {
-  /** Explorer link */
-  explorerLink: ExplorerLinkBase;
 }
 
 /**
@@ -64,11 +39,11 @@ export interface CandyShopSettings extends ShopSettings {
 export interface CandyShopUpdateParams {
   /** User wallet keypair */
   wallet: AnchorWallet | web3.Keypair;
-  /** Updated valuse for sellerFeeBasisPoint */
+  /** Updated value for sellerFeeBasisPoint */
   sellerFeeBasisPoint: BN | null;
-  /** Updated valuse for requiresSignOff */
+  /** Updated value for requiresSignOff */
   requiresSignOff: boolean | null;
-  /** Updated valuse for canChangeSalePrice */
+  /** Updated value for canChangeSalePrice */
   canChangeSalePrice: boolean | null;
   /** fee split of the shop */
   split: BN | null;
@@ -222,7 +197,7 @@ export interface CandyShopAuctionBuyNowParams extends CandyShopAuctionParams {
   candyShopProgramId: web3.PublicKey;
   shopTreasuryMint: web3.PublicKey;
   connection: web3.Connection;
-  env: web3.Cluster;
+  env: Blockchain;
   version: CandyShopVersion;
 }
 

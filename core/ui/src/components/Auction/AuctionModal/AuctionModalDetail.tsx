@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { web3 } from '@project-serum/anchor';
-
 import { LiqImage } from 'components/LiqImage';
-import { NftStat } from 'components/NftStat';
 import { NftAttributes } from 'components/NftAttributes';
-import { ExplorerLink } from 'components/ExplorerLink';
 import { Countdown } from 'components/Countdown';
+import { Auction, AuctionBid, SingleBase, AuctionStatus, BidStatus, Blockchain } from '@liqnft/candy-shop-types';
+import { ExplorerLinkBase, fetchAuctionBidByWalletAddress } from '@liqnft/candy-shop-sdk';
 import { Price } from 'components/Price';
-
-import { Auction, AuctionBid, SingleBase, AuctionStatus, BidStatus } from '@liqnft/candy-shop-types';
-import { CandyShop, fetchAuctionBidByWalletAddress } from '@liqnft/candy-shop-sdk';
+import { NftStat } from 'components/NftStat';
+import { ExplorerLink } from 'components/ExplorerLink';
 
 const Logger = 'CandyShopUI/AuctionModalDetail';
-export interface AuctionModalDetailProps {
+interface AuctionModalDetailProps {
   auction: Auction;
   placeBid: (price: number) => void;
   buyNow: () => void;
   onWithdrew: () => void;
-  walletPublicKey: web3.PublicKey | undefined;
+  walletPublicKey: string | undefined;
   walletConnectComponent: React.ReactElement;
-  candyShop: CandyShop;
+  currencySymbol: string;
+  baseUnitsPerCurrency: number;
+  priceDecimalsMin: number;
+  priceDecimals: number;
+  candyShopEnv: Blockchain;
+  explorerLink: ExplorerLinkBase;
 }
 
 export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
@@ -29,7 +31,12 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
   onWithdrew,
   walletPublicKey,
   walletConnectComponent,
-  candyShop
+  baseUnitsPerCurrency,
+  currencySymbol,
+  priceDecimals,
+  priceDecimalsMin,
+  candyShopEnv,
+  explorerLink
 }) => {
   const [bidInfo, setBidInfo] = useState<AuctionBid | null>(null);
   const [price, setPrice] = useState<number>();
@@ -37,14 +44,14 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
   useEffect(() => {
     if (!walletPublicKey) return;
 
-    fetchAuctionBidByWalletAddress(auction.auctionAddress, walletPublicKey.toString())
+    fetchAuctionBidByWalletAddress(auction.auctionAddress, walletPublicKey)
       .then((res: SingleBase<AuctionBid>) => {
         if (res.success) {
           setBidInfo(res.result);
           console.log(`${Logger}: fetchAuctionBidByWalletAddress success=`, res.result);
           console.log(`${Logger}: fetchAuctionBidAPI BidStatus=`, mappedBidStatusString(res.result.status));
         } else {
-          console.log(`${Logger}: fetchAuctionBidAPI failed, ${walletPublicKey.toString()} has not placed any bid yet`);
+          console.log(`${Logger}: fetchAuctionBidAPI failed, ${walletPublicKey} has not placed any bid yet`);
         }
       })
       .catch((error: any) => {
@@ -70,19 +77,11 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
   const ModalAlertElement = () => {
     if (!bidInfo) return null;
 
-    if (
-      auction.highestBidBuyer &&
-      auction.highestBidBuyer === walletPublicKey?.toString() &&
-      bidInfo.status !== BidStatus.WON
-    ) {
+    if (auction.highestBidBuyer && auction.highestBidBuyer === walletPublicKey && bidInfo.status !== BidStatus.WON) {
       return <div className="candy-auction-modal-notice">Congratulations, you are currently the highest bidder!</div>;
     }
 
-    if (
-      auction.highestBidBuyer &&
-      auction.highestBidBuyer === walletPublicKey?.toString() &&
-      bidInfo.status === BidStatus.WON
-    ) {
+    if (auction.highestBidBuyer && auction.highestBidBuyer === walletPublicKey && bidInfo.status === BidStatus.WON) {
       return <div className="candy-auction-modal-notice">Congratulations, you have won the auction!</div>;
     }
 
@@ -126,7 +125,13 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
             <div>
               <div className="candy-label">BUY NOW PRICE</div>
               <div className="candy-price">
-                <Price value={auction.buyNowPrice} candyShop={candyShop} />
+                <Price
+                  value={auction.highestBidPrice}
+                  currencySymbol={currencySymbol}
+                  baseUnitsPerCurrency={baseUnitsPerCurrency}
+                  priceDecimalsMin={priceDecimalsMin}
+                  priceDecimals={priceDecimals}
+                />
               </div>
             </div>
           </div>
@@ -135,7 +140,13 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
         <div className="candy-auction-modal-form-item">
           <div className="candy-label">STARTING BID</div>
           <div className="candy-price">
-            <Price value={auction.startingBid} candyShop={candyShop} />
+            <Price
+              value={auction.highestBidPrice}
+              currencySymbol={currencySymbol}
+              baseUnitsPerCurrency={baseUnitsPerCurrency}
+              priceDecimalsMin={priceDecimalsMin}
+              priceDecimals={priceDecimals}
+            />
           </div>
         </div>
       </>
@@ -148,7 +159,13 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
             <div>
               <div className="candy-label">BUY NOW PRICE</div>
               <div className="candy-price">
-                <Price value={auction.buyNowPrice} candyShop={candyShop} />
+                <Price
+                  value={auction.highestBidPrice}
+                  currencySymbol={currencySymbol}
+                  baseUnitsPerCurrency={baseUnitsPerCurrency}
+                  priceDecimalsMin={priceDecimalsMin}
+                  priceDecimals={priceDecimals}
+                />
               </div>
             </div>
             {walletPublicKey ? (
@@ -166,14 +183,26 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
             <>
               <div className="candy-label">CURRENT BID</div>
               <div className="candy-price">
-                <Price value={auction.highestBidPrice} candyShop={candyShop} />
+                <Price
+                  value={auction.highestBidPrice}
+                  currencySymbol={currencySymbol}
+                  baseUnitsPerCurrency={baseUnitsPerCurrency}
+                  priceDecimalsMin={priceDecimalsMin}
+                  priceDecimals={priceDecimals}
+                />
               </div>
             </>
           ) : (
             <>
               <div className="candy-label">STARTING BID</div>
               <div className="candy-price">
-                <Price value={auction.startingBid} candyShop={candyShop} />
+                <Price
+                  value={auction.highestBidPrice}
+                  currencySymbol={currencySymbol}
+                  baseUnitsPerCurrency={baseUnitsPerCurrency}
+                  priceDecimalsMin={priceDecimalsMin}
+                  priceDecimals={priceDecimals}
+                />
               </div>
             </>
           )}
@@ -186,19 +215,27 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
                 <div className="candy-input-label">Enter your bid</div>
                 <div className="candy-input-price">
                   <input
-                    placeholder={`${String(minNextBid / candyShop.baseUnitsPerCurrency)}+`}
-                    min={minNextBid / candyShop.baseUnitsPerCurrency}
+                    placeholder={`${String(minNextBid / baseUnitsPerCurrency)}+`}
+                    min={minNextBid / baseUnitsPerCurrency}
                     onChange={(e: any) => setPrice(e.target.value)}
                     type="number"
                     value={price === undefined ? '' : price}
                   />
-                  <span>{candyShop?.currencySymbol}</span>
+                  <span>{currencySymbol}</span>
                 </div>
               </div>
               {PlaceBidButton}
             </div>
             <div className="candy-auction-modal-prompt">
-              Place bid of <Price value={minNextBid} candyShop={candyShop} /> or more
+              Place bid of
+              <Price
+                value={auction.highestBidPrice}
+                currencySymbol={currencySymbol}
+                baseUnitsPerCurrency={baseUnitsPerCurrency}
+                priceDecimalsMin={priceDecimalsMin}
+                priceDecimals={priceDecimals}
+              />
+              or more
             </div>
           </>
         ) : (
@@ -216,7 +253,14 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
         <div className="candy-auction-modal-form-item">
           <div className="candy-label">WINNING BID</div>
           <div className="candy-price">
-            <Price value={auction.highestBidPrice} candyShop={candyShop} emptyValue="No winner" />
+            <Price
+              value={auction.highestBidPrice}
+              currencySymbol={currencySymbol}
+              baseUnitsPerCurrency={baseUnitsPerCurrency}
+              priceDecimalsMin={priceDecimalsMin}
+              priceDecimals={priceDecimals}
+              emptyValue="No winner"
+            />
           </div>
         </div>
         {auction.highestBidBuyer && (
@@ -226,8 +270,8 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
               <ExplorerLink
                 type="address"
                 address={auction.highestBidBuyer}
-                source={candyShop.explorerLink}
-                env={candyShop.env}
+                candyShopEnv={candyShopEnv}
+                explorerLink={explorerLink}
               />
             </div>
           </div>
@@ -264,7 +308,12 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
             </div>
           )}
 
-          <NftStat owner={auction.sellerAddress} tokenMint={auction.tokenMint} candyShop={candyShop} />
+          <NftStat
+            tokenMint={auction.tokenMint}
+            owner={auction.sellerAddress}
+            candyShopEnv={candyShopEnv}
+            explorerLink={explorerLink}
+          />
           <NftAttributes loading={false} attributes={auction.attributes} />
         </div>
       </div>

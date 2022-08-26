@@ -1,14 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  CandyShop,
-  CandyShopPay,
-  CandyShopTrade,
-  CandyShopTradeBuyParams,
-  getCandyShopSync
-} from '@liqnft/candy-shop-sdk';
-import { Order as OrderSchema, PaymentCurrencyType, PaymentErrorName } from '@liqnft/candy-shop-types';
-import { BN, web3 } from '@project-serum/anchor';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { CandyShopPay, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+import { Blockchain, Order as OrderSchema, PaymentCurrencyType, PaymentErrorName } from '@liqnft/candy-shop-types';
+
 import { Modal } from 'components/Modal';
 import { StripePayment } from 'components/Payment';
 import { PoweredByInBuyModal } from 'components/PoweredBy/PowerByInBuyModal';
@@ -30,31 +23,33 @@ enum ProcessingTextType {
 const Logger = 'CandyShopUI/BuyModalDetail';
 
 export interface BuyModalProps {
+  walletPublicKey: string | undefined;
+  shopAddress: string;
   order: OrderSchema;
-  onClose: () => void;
-  wallet: AnchorWallet | undefined;
   walletConnectComponent: React.ReactElement;
   exchangeInfo: ShopExchangeInfo;
-  connection: web3.Connection;
-  isEnterprise: boolean;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
   sellerUrl?: string;
-  candyShop: CandyShop;
+  candyShopEnv: Blockchain;
+  explorerLink: ExplorerLinkBase;
+  onClose: () => void;
+  buyNft: (order: OrderSchema) => Promise<string>;
 }
 
 export const BuyModal: React.FC<BuyModalProps> = ({
+  walletPublicKey,
+  shopAddress,
   order,
-  onClose,
-  wallet,
   walletConnectComponent,
   exchangeInfo,
-  connection,
-  isEnterprise,
   shopPriceDecimalsMin,
   shopPriceDecimals,
   sellerUrl,
-  candyShop
+  candyShopEnv,
+  explorerLink,
+  onClose,
+  buyNft
 }) => {
   const [state, setState] = useState<BuyModalState>(BuyModalState.DISPLAY);
   const [hash, setHash] = useState(''); // txHash
@@ -67,45 +62,22 @@ export const BuyModal: React.FC<BuyModalProps> = ({
 
   const stripePublicKey = useCandyShopPayContext()?.stripePublicKey;
 
-  const shopAddress = useMemo(
-    () =>
-      getCandyShopSync(
-        new web3.PublicKey(order.candyShopCreatorAddress),
-        new web3.PublicKey(order.treasuryMint),
-        new web3.PublicKey(order.programId)
-      )[0].toString(),
-    [order]
-  );
-
   const buy = async () => {
-    if (!wallet) {
+    if (!walletPublicKey) {
       notification(ErrorMsgMap[ErrorType.InvalidWallet], NotificationType.Error);
       return;
     }
     setState(BuyModalState.PROCESSING);
 
-    const tradeBuyParams: CandyShopTradeBuyParams = {
-      tokenAccount: new web3.PublicKey(order.tokenAccount),
-      tokenMint: new web3.PublicKey(order.tokenMint),
-      price: new BN(order.price),
-      wallet: wallet,
-      seller: new web3.PublicKey(order.walletAddress),
-      connection: connection,
-      shopAddress: new web3.PublicKey(shopAddress),
-      candyShopProgramId: new web3.PublicKey(order.programId),
-      isEnterprise: isEnterprise,
-      shopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress),
-      shopTreasuryMint: new web3.PublicKey(order.treasuryMint)
-    };
-
-    return CandyShopTrade.buy(tradeBuyParams)
+    buyNft(order)
       .then((txHash: string) => {
         setHash(txHash);
         console.log('Buy order made with transaction hash', txHash);
         setState(BuyModalState.CONFIRMED);
       })
       .catch((err: Error) => {
-        console.log({ err });
+        console.log(`${Logger} buyNft failed, error=`, err);
+        err.message = (err as any).code || err.message;
         handleError({ error: err });
         setState(BuyModalState.DISPLAY);
       });
@@ -252,40 +224,42 @@ export const BuyModal: React.FC<BuyModalProps> = ({
           <BuyModalDetail
             order={order}
             buy={buy}
-            walletPublicKey={wallet?.publicKey}
             walletConnectComponent={walletConnectComponent}
             exchangeInfo={exchangeInfo}
             shopPriceDecimalsMin={shopPriceDecimalsMin}
             shopPriceDecimals={shopPriceDecimals}
             sellerUrl={sellerUrl}
-            candyShop={candyShop}
             onPayment={onPaymentCallback}
             paymentPrice={paymentPrice}
             creditCardPayAvailable={creditCardPayAvailable}
             setCountdownElement={setCountdownElement}
+            candyShopEnv={candyShopEnv}
+            explorerLink={explorerLink}
+            publicKey={walletPublicKey}
           />
         )}
         {state === BuyModalState.PROCESSING && <Processing text={processingText} />}
-        {(state === BuyModalState.CONFIRMED || state === BuyModalState.PAYMENT_ERROR) && wallet && (
+        {(state === BuyModalState.CONFIRMED || state === BuyModalState.PAYMENT_ERROR) && walletPublicKey && (
           <BuyModalConfirmed
-            walletPublicKey={wallet.publicKey}
+            walletPublicKey={walletPublicKey}
             order={order}
             txHash={hash}
             onClose={onClose}
             exchangeInfo={exchangeInfo}
             shopPriceDecimalsMin={shopPriceDecimalsMin}
             shopPriceDecimals={shopPriceDecimals}
-            candyShop={candyShop}
             paymentPrice={paymentPrice}
             error={paymentError}
+            candyShopEnv={candyShopEnv}
+            explorerLink={explorerLink}
           />
         )}
 
-        {state === BuyModalState.PAYMENT && stripePublicKey && wallet?.publicKey && order && paymentPrice && (
+        {state === BuyModalState.PAYMENT && stripePublicKey && walletPublicKey && order && paymentPrice && (
           <StripePayment
             stripePublicKey={stripePublicKey}
             shopAddress={shopAddress}
-            walletAddress={wallet.publicKey.toString()}
+            walletAddress={walletPublicKey}
             order={order}
             shopPriceDecimals={shopPriceDecimals}
             shopPriceDecimalsMin={shopPriceDecimalsMin}

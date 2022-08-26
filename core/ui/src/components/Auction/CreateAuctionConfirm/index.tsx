@@ -1,94 +1,39 @@
 import React from 'react';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { web3, BN } from '@project-serum/anchor';
-import { CandyShop, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
-
+import { SingleTokenInfo } from '@liqnft/candy-shop-sdk';
 import { FormType } from '../AuctionForm';
 import { AuctionNftHeader } from '../AuctionNftHeader';
-
-import { notification, NotificationType } from 'utils/rc-notification';
-import { getStartTime, convertTime12to24 } from 'utils/timer';
-
+import { getStartTime } from 'utils/timer';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 
 import './style.less';
 
-interface CreateAuctionProps {
-  wallet: AnchorWallet | undefined;
-  candyShop: CandyShop;
+interface CreateAuctionConfirmProps {
   selected: SingleTokenInfo;
   onBack: () => void;
   auctionForm: FormType;
-  onCreateAuctionSuccess?: (auctionedToken: SingleTokenInfo) => void;
   fee?: number;
   showExtensionBidding: boolean;
+  currencySymbol: string;
+  onCreateAuction: () => void;
 }
 
-const Logger = 'CandyShopUI/CreateAuction';
-
-export const CreateAuctionConfirm: React.FC<CreateAuctionProps> = ({
-  candyShop,
-  wallet,
+export const CreateAuctionConfirm: React.FC<CreateAuctionConfirmProps> = ({
   selected,
   onBack,
   auctionForm,
-  onCreateAuctionSuccess,
   fee,
-  showExtensionBidding
+  showExtensionBidding,
+  currencySymbol,
+  onCreateAuction
 }) => {
-  const onCreateAuction = () => {
-    if (!wallet || !auctionForm || !selected) return;
-
-    const startingBid = new BN(Number(auctionForm.startingBid) * 10 ** candyShop.currencyDecimals);
-    const startTime = new BN(
-      //prettier-ignore
-      dayjs(auctionForm.startNow ? undefined : `${auctionForm.startDate} ${convertTime12to24(auctionForm.auctionHour, auctionForm.auctionMinute, auctionForm.clockFormat)} UTC`).unix()
-    );
-    const biddingPeriod = new BN(Number(auctionForm.biddingPeriod) * 3600);
-    const buyNowPrice = auctionForm.buyNow
-      ? new BN(Number(auctionForm.buyNowPrice) * 10 ** candyShop.currencyDecimals)
-      : null;
-    const tickSize = new BN(Number(auctionForm.tickSize) * 10 ** candyShop.currencyDecimals);
-
-    let params: Parameters<typeof candyShop.createAuction>[0] = {
-      startingBid,
-      startTime,
-      biddingPeriod,
-      buyNowPrice,
-      tokenAccount: new web3.PublicKey(selected.tokenAccountAddress),
-      tokenMint: new web3.PublicKey(selected.tokenMintAddress),
-      wallet,
-      tickSize
-    };
-
-    if (showExtensionBidding && !auctionForm.disableBiddingExtension) {
-      params = {
-        ...params,
-        extensionPeriod: new BN(Number(auctionForm.extensionPeriod)),
-        extensionIncrement: new BN(Number(auctionForm.extensionPeriod))
-      };
-    }
-
-    candyShop
-      .createAuction(params)
-      .then(() => {
-        notification('Auction created', NotificationType.Success);
-        onCreateAuctionSuccess && onCreateAuctionSuccess(selected);
-      })
-      .catch((err: Error) => {
-        console.log(`${Logger}: Create Auction failed=`, err);
-        notification(err.message, NotificationType.Error);
-      });
-  };
-
   const confirmDetails = [
-    { name: 'Starting bid', value: `${Number(auctionForm.startingBid)} ${candyShop.currencySymbol}` },
-    { name: 'Minimum Incremental Bid', value: `${Number(auctionForm.tickSize)} ${candyShop.currencySymbol}` },
+    { name: 'Starting bid', value: `${Number(auctionForm.startingBid)} ${currencySymbol}` },
+    { name: 'Minimum Incremental Bid', value: `${Number(auctionForm.tickSize)} ${currencySymbol}` },
     {
       name: 'Buy Now Price',
-      value: auctionForm.buyNow ? `${Number(auctionForm.buyNowPrice)} ${candyShop.currencySymbol}` : 'N/A'
+      value: auctionForm.buyNow ? `${Number(auctionForm.buyNowPrice)} ${currencySymbol}` : 'N/A'
     },
     {
       name: 'Fees',

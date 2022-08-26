@@ -6,11 +6,12 @@ import { IconSolScan } from 'assets/IconSolScan';
 import { IconExplorer } from 'assets/IconExplorer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import { CandyShop, ExplorerLinkBase, fetchTradeByShopAddress } from '@liqnft/candy-shop-sdk';
+import { fetchTradeByShopAddress } from '@liqnft/candy-shop-sdk';
+import { EventName } from 'constant/SocketEvent';
 import { Trade, ListBase, SortBy } from '@liqnft/candy-shop-types';
 import { removeDuplicate, EMPTY_FUNCTION } from 'utils/helperFunc';
 import { IconSolanaFM } from 'assets/IconSolanaFM';
-import { EventName } from 'constant/SocketEvent';
+
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
@@ -18,19 +19,9 @@ dayjs.extend(relativeTime);
 import './style.less';
 import { useSocket } from 'public/Context/Socket';
 import { useUpdateCandyShopContext } from 'public/Context/CandyShopDataValidator';
-import { web3 } from '@project-serum/anchor';
+import { ShopProps } from '../../model';
 
-interface ShopInfo {
-  candyShopAddress: string;
-  env: web3.Cluster;
-  baseUnitsPerCurrency: number;
-  priceDecimalsMin: number;
-  priceDecimals: number;
-  explorerLink: ExplorerLinkBase;
-}
-
-interface ActivityProps {
-  candyShop: CandyShop | ShopInfo;
+interface ActivityProps extends ShopProps {
   identifiers?: number[];
   orderBy?: SortBy[] | SortBy;
 }
@@ -39,13 +30,16 @@ const LIMIT = 10;
 
 const Logger = 'CandyShopUI/Activity';
 
-export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orderBy }) => {
+export const Activity: React.FC<ActivityProps> = ({ identifiers, orderBy, candyShop }) => {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [offset, setOffset] = useState<number>(0);
   const { onSocketEvent } = useSocket();
 
-  useUpdateCandyShopContext({ candyShopAddress: candyShop.candyShopAddress, network: candyShop.env });
+  useUpdateCandyShopContext({
+    candyShopAddress: candyShop.candyShopAddress,
+    network: candyShop.env
+  });
 
   const getTrades = useCallback(
     (offset: number, limit: number, firstLoad?: boolean) => () => {
@@ -70,7 +64,7 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
           console.log(`${Logger}: candyShop.transactions failed, error=`, error);
         });
     },
-    [candyShop, identifiers, orderBy]
+    [candyShop.candyShopAddress, identifiers, orderBy]
   );
 
   useEffect(() => {
@@ -127,24 +121,24 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
                       <ExplorerLink
                         type="tx"
                         address={trade.txHashAtCreation}
-                        source={ExplorerLinkBase.SolanaFM}
-                        env={candyShop.env}
+                        candyShopEnv={candyShop.env}
+                        explorerLink={candyShop.explorerLink}
                       >
                         <IconSolanaFM />
                       </ExplorerLink>
                       <ExplorerLink
                         type="tx"
                         address={trade.txHashAtCreation}
-                        source={ExplorerLinkBase.SolScan}
-                        env={candyShop.env}
+                        candyShopEnv={candyShop.env}
+                        explorerLink={candyShop.explorerLink}
                       >
                         <IconSolScan />
                       </ExplorerLink>
                       <ExplorerLink
                         type="tx"
                         address={trade.txHashAtCreation}
-                        source={ExplorerLinkBase.Explorer}
-                        env={candyShop.env}
+                        candyShopEnv={candyShop.env}
+                        explorerLink={candyShop.explorerLink}
                       >
                         <IconExplorer />
                       </ExplorerLink>
@@ -155,22 +149,23 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
                   {`${(Number(trade.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
                     minimumFractionDigits: candyShop.priceDecimalsMin,
                     maximumFractionDigits: candyShop.priceDecimals
-                  })} ${trade.shopSymbol}`}
+                  })} `}
+                  {trade.shopSymbol}
                 </div>
                 <div>
                   <ExplorerLink
                     type="address"
                     address={trade.sellerAddress}
-                    source={candyShop.explorerLink}
-                    env={candyShop.env}
+                    candyShopEnv={candyShop.env}
+                    explorerLink={candyShop.explorerLink}
                   />
                 </div>
                 <div>
                   <ExplorerLink
                     type="address"
                     address={trade.buyerAddress}
-                    source={candyShop.explorerLink}
-                    env={candyShop.env}
+                    candyShopEnv={candyShop.env}
+                    explorerLink={candyShop.explorerLink}
                   />
                 </div>
                 <div className="candy-activity-time">{tradeTime}</div>

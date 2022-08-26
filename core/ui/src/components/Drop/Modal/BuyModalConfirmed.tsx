@@ -1,16 +1,14 @@
 import React from 'react';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
-
 import { web3 } from '@project-serum/anchor';
 import { formatDate } from 'utils/timer';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { LiqImage } from 'components/LiqImage';
 import IconTick from 'assets/IconTick';
-import { ShopExchangeInfo } from 'model';
+import { ShopExchangeInfo, ShopProps } from 'model';
 import { getPrice } from 'utils/getPrice';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
 
-interface BuyModalConfirmedProps {
+interface BuyModalConfirmedProps extends ShopProps {
   order: OrderSchema;
   txHash: string;
   walletPublicKey: web3.PublicKey | undefined;
@@ -18,7 +16,6 @@ interface BuyModalConfirmedProps {
   exchangeInfo: ShopExchangeInfo;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
-  candyShop: CandyShop;
 }
 
 export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
@@ -63,28 +60,33 @@ export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
             <ExplorerLink
               type="address"
               address={order.walletAddress}
-              source={candyShop.explorerLink}
-              env={candyShop.env}
+              candyShopEnv={candyShop.env}
+              explorerLink={candyShop.explorerLink}
             />
           </div>
         </div>
         <div className="candy-buy-modal-confirmed-item">
           <div className="candy-label">TO</div>
           <div className="candy-value">
-            {walletAddress && (
+            {walletAddress ? (
               <ExplorerLink
                 type="address"
                 address={walletAddress}
-                source={candyShop.explorerLink}
-                env={candyShop.env}
+                candyShopEnv={candyShop.env}
+                explorerLink={candyShop.explorerLink}
               />
-            )}
+            ) : null}
           </div>
         </div>
         <div className="candy-buy-modal-confirmed-item">
           <div className="candy-label">TRANSACTION HASH</div>
           <div className="candy-value">
-            <ExplorerLink type="tx" address={txHash} source={candyShop.explorerLink} env={candyShop.env} />
+            <ExplorerLink
+              type="tx"
+              address={txHash}
+              candyShopEnv={candyShop.env}
+              explorerLink={candyShop.explorerLink}
+            />
           </div>
         </div>
         <div className="candy-buy-modal-confirmed-item">

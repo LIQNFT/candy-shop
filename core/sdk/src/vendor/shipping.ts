@@ -1,5 +1,5 @@
 /*  This file should not be exposed in src/index.ts */
-import { CandyShopVersion } from '../CandyShopModel';
+import { CandyShopVersion } from '../shop/base/BaseShopModel';
 import { BuyAndExecuteSaleTransactionParams } from '../factory/program/model';
 import { insBuyAndExecuteSale } from '../factory/program/v2/marketplace';
 

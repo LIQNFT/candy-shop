@@ -1,16 +1,6 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { web3 } from '@project-serum/anchor';
-import {
-  CandyShop,
-  SingleTokenInfo,
-  fetchNftsFromWallet,
-  fetchShopByShopAddress,
-  FetchNFTBatchParam,
-  CacheNFTParam,
-  CandyShopVersion
-} from '@liqnft/candy-shop-sdk';
-import { Order, SingleBase, CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
+import React, { useState, useCallback, useMemo } from 'react';
+import { BN, web3 } from '@project-serum/anchor';
+import { SingleTokenInfo, CandyShopVersion } from '@liqnft/candy-shop-sdk';
 
 import { Empty } from 'components/Empty';
 import { Card } from 'components/Card';
@@ -18,15 +8,19 @@ import { LoadingSkeleton } from 'components/LoadingSkeleton';
 import { AuctionForm, FormType, CreateAuctionConfirm } from 'components/Auction';
 import { IconTick } from 'assets/IconTick';
 import { LoadStatus } from 'constant';
+import { ShopProps } from '../../model';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 
 import './create-auction-style.less';
 
-interface CreateAuctionProps {
-  wallet: AnchorWallet | undefined;
-  candyShop: CandyShop;
+import { notification, NotificationType } from 'utils/rc-notification';
+import { convertTime12to24 } from 'utils/timer';
+import useUserNfts from 'hooks/useUserNfts';
+import { AuctioneerFactory } from 'services/auctioneer';
+
+interface CreateAuctionProps extends ShopProps {
   walletConnectComponent: React.ReactElement;
   onCreatedAuctionSuccess?: (auctionedToken: SingleTokenInfo) => void;
   cacheUserNFT?: boolean;
@@ -46,120 +40,42 @@ const STEPS = [
 ];
 
 export const CreateAuction: React.FC<CreateAuctionProps> = ({
-  candyShop,
-  wallet,
   walletConnectComponent,
   onCreatedAuctionSuccess,
-  cacheUserNFT
+  cacheUserNFT,
+  blockchain,
+  candyShop,
+  wallet
 }) => {
+  const {
+    loading: loadingSeller,
+    nfts,
+    sellOrders,
+    shop
+  } = useUserNfts({ blockchain, candyShop, wallet }, { enableCacheNFT: cacheUserNFT });
+  const auctioneer = useMemo(
+    () => AuctioneerFactory({ candyShop, blockchain, wallet }),
+    [candyShop, blockchain, wallet]
+  );
+
   const [selected, setSelected] = useState<SingleTokenInfo>();
   const [stage, setStage] = useState<AuctionStage>(AuctionStage.SELECT);
-  const [nfts, setNfts] = useState<SingleTokenInfo[]>([]);
-  const [listedUserNfts, setListedUserNfts] = useState<{ [key: string]: Order }>({});
-  const [loadingNft, setLoadingNft] = useState<LoadStatus>(LoadStatus.ToLoad);
-  const [loadingListedUserNft, setLoadingListedUserNft] = useState<LoadStatus>(LoadStatus.ToLoad);
+
   const [auctionForm, setAuctionForm] = useState<FormType>();
-  const [shop, setShop] = useState<CandyShopResponse>();
-  const [loadingShop, setLoadingShop] = useState<LoadStatus>(LoadStatus.Loading);
-  const allNFTs = useRef<SingleTokenInfo[]>([]);
-  const firstBatchNFTLoaded = useRef<boolean>(false);
+
+  const publicKey = wallet?.publicKey?.toString();
 
   const isShopCreator = useCallback(
     (walletAddress: string) => {
       return walletAddress === candyShop.candyShopCreatorAddress.toString();
     },
-    [candyShop]
-  );
-
-  const getUserNFTFromBatch = useCallback((batchNFTs: SingleTokenInfo[]) => {
-    if (!firstBatchNFTLoaded.current) {
-      firstBatchNFTLoaded.current = true;
-    }
-    const userNFTs = allNFTs.current.concat(batchNFTs);
-    allNFTs.current = userNFTs;
-    setNfts(userNFTs);
-  }, []);
-
-  const progressiveLoadUserNFTs = useCallback(
-    async (walletPublicKey: web3.PublicKey) => {
-      // Setup the batchCallback to retrieve the batch result.
-      const fetchBatchParam: FetchNFTBatchParam = {
-        batchCallback: getUserNFTFromBatch,
-        batchSize: 8
-      };
-      // Enable cache nft, store nft token in IDB and get nft token from IDB.
-      // CandyShopSDK will always keep up-to-date status from chain in IDB once fetchNFT is called.
-      const cacheNFTParam: CacheNFTParam = {
-        enable: cacheUserNFT ?? false
-      };
-
-      return fetchNftsFromWallet(candyShop.connection, walletPublicKey, undefined, fetchBatchParam, cacheNFTParam);
-    },
-    [getUserNFTFromBatch, cacheUserNFT, candyShop]
+    [candyShop.candyShopCreatorAddress]
   );
 
   const onFilledUpAuctionForm = (auctionForm: FormType) => {
     setAuctionForm(auctionForm);
     setStage(AuctionStage.CONFIRMING);
   };
-
-  // fetch current wallet nfts when mount and when publicKey was changed.
-  useEffect(() => {
-    if (!wallet?.publicKey || !isShopCreator(wallet.publicKey.toString())) return;
-
-    if (loadingNft === LoadStatus.ToLoad) {
-      allNFTs.current = [];
-      firstBatchNFTLoaded.current = false;
-      setLoadingNft(LoadStatus.Loading);
-      progressiveLoadUserNFTs(wallet.publicKey)
-        .then((allUserNFTs: SingleTokenInfo[]) => {
-          console.log(`${Logger}: getUserNFTs success, total amount of user NFTs= ${allUserNFTs.length}`);
-        })
-        .catch((error: any) => {
-          console.log(`${Logger}: getUserNFTs failed, error=`, error);
-          firstBatchNFTLoaded.current = true;
-        })
-        .finally(() => {
-          setLoadingNft(LoadStatus.Loaded);
-        });
-    }
-  }, [candyShop, progressiveLoadUserNFTs, wallet?.publicKey, isShopCreator, loadingNft]);
-
-  useEffect(() => {
-    if (!wallet?.publicKey || !isShopCreator(wallet.publicKey.toString())) return;
-    if (loadingListedUserNft === LoadStatus.ToLoad) {
-      setLoadingListedUserNft(LoadStatus.Loading);
-      candyShop
-        .activeOrdersByWalletAddress(wallet.publicKey.toString())
-        .then((sellOrders: Order[]) => {
-          setListedUserNfts(
-            sellOrders.reduce((acc: any, nft: Order) => {
-              acc[nft.tokenMint] = nft;
-              return acc;
-            }, {})
-          );
-        })
-        .finally(() => {
-          setLoadingListedUserNft(LoadStatus.Loaded);
-        });
-    }
-  }, [candyShop, wallet?.publicKey, isShopCreator, loadingListedUserNft]);
-
-  useEffect(() => {
-    if (!wallet?.publicKey || !isShopCreator(wallet.publicKey.toString())) return;
-
-    fetchShopByShopAddress(candyShop.candyShopAddress)
-      .then((data: SingleBase<CandyShopResponse>) => {
-        if (!data.success) return;
-        setShop(data.result);
-      })
-      .catch((error: any) => {
-        console.log(`${Logger}: CreateAuction failed to get shop detail, error=`, error);
-      })
-      .finally(() => {
-        setLoadingShop(LoadStatus.Loaded);
-      });
-  }, [candyShop, wallet?.publicKey, isShopCreator]);
 
   const onClickCard = (item: any) => () => setSelected(item);
 
@@ -168,9 +84,8 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
     window.scrollTo({ top: document.getElementById('candy-auction-title-id')?.offsetTop, behavior: 'smooth' });
   };
 
-  const loading =
-    !firstBatchNFTLoaded.current || loadingListedUserNft !== LoadStatus.Loaded || loadingShop !== LoadStatus.Loaded;
-  const availableAuctionNfts = nfts.filter((nft) => !listedUserNfts[nft.tokenMintAddress]);
+  const loading = loadingSeller !== LoadStatus.Loaded;
+  const availableAuctionNfts = nfts.filter((nft) => !sellOrders[nft.tokenMintAddress]);
   const fee = shop?.feeRate ? shop.feeRate / 100 : undefined;
 
   const AuctionTickLabel = (
@@ -178,6 +93,54 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
       <IconTick fill="#7522f5" />
     </span>
   );
+
+  const onCreateAuction = () => {
+    if (!wallet || !auctionForm || !selected) return;
+
+    const startingBid = new BN(Number(auctionForm.startingBid) * 10 ** candyShop.currencyDecimals);
+    const startTime = new BN(
+      //prettier-ignore
+      dayjs(auctionForm.startNow ? undefined : `${auctionForm.startDate} ${convertTime12to24(auctionForm.auctionHour, auctionForm.auctionMinute, auctionForm.clockFormat)} UTC`).unix()
+    );
+    const biddingPeriod = new BN(Number(auctionForm.biddingPeriod) * 3600);
+    const buyNowPrice = auctionForm.buyNow
+      ? new BN(Number(auctionForm.buyNowPrice) * 10 ** candyShop.currencyDecimals)
+      : null;
+    const tickSize = new BN(Number(auctionForm.tickSize) * 10 ** candyShop.currencyDecimals);
+
+    let params: any = {
+      startingBid,
+      startTime,
+      biddingPeriod,
+      buyNowPrice,
+      tokenAccount: new web3.PublicKey(selected.tokenAccountAddress),
+      tokenMint: new web3.PublicKey(selected.tokenMintAddress),
+      wallet,
+      tickSize
+    };
+
+    if (showExtensionBidding && !auctionForm.disableBiddingExtension) {
+      params = {
+        ...params,
+        extensionPeriod: new BN(Number(auctionForm.extensionPeriod)),
+        extensionIncrement: new BN(Number(auctionForm.extensionPeriod))
+      };
+    }
+
+    auctioneer
+      .createAuction(params)
+      .then(() => {
+        notification('Auction created', NotificationType.Success);
+
+        onCreatedAuctionSuccess && onCreatedAuctionSuccess(selected);
+      })
+      .catch((err: Error) => {
+        console.log(`${Logger}: Create Auction failed=`, err);
+        notification(err.message, NotificationType.Error);
+      });
+  };
+
+  const showExtensionBidding = candyShop.version === CandyShopVersion.V2;
 
   const CreateAuctionSelectStage = (
     <>
@@ -206,7 +169,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
           </button>
         </>
       )}
-      {loadingNft === LoadStatus.Loaded && availableAuctionNfts.length === 0 && <Empty description="No orders found" />}
+      {!loading && availableAuctionNfts.length === 0 && <Empty description="No orders found" />}
     </>
   );
 
@@ -224,19 +187,18 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
             setAuctionForm(undefined);
           }}
           onSubmit={(form: FormType) => onFilledUpAuctionForm(form)}
-          showExtensionBidding={candyShop.version === CandyShopVersion.V2}
+          showExtensionBidding={showExtensionBidding}
         />
       ) : null}
       {stage === AuctionStage.CONFIRMING && selected && auctionForm && (
         <CreateAuctionConfirm
-          candyShop={candyShop}
-          wallet={wallet}
           selected={selected}
           onBack={() => setStage(AuctionStage.FORM)}
           auctionForm={auctionForm}
-          onCreateAuctionSuccess={(token: SingleTokenInfo) => onCreatedAuctionSuccess && onCreatedAuctionSuccess(token)}
           fee={fee}
-          showExtensionBidding={candyShop.version === CandyShopVersion.V2}
+          showExtensionBidding={showExtensionBidding}
+          onCreateAuction={onCreateAuction}
+          currencySymbol={candyShop.currencySymbol}
         />
       )}
     </div>
@@ -263,8 +225,8 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
         </div>
 
         <div className="candy-auction-content-detail">
-          {wallet && (isShopCreator(wallet.publicKey.toString()) ? CreateAuctionStages : NotOwnerNotification)}
-          {!wallet && walletConnectComponent}
+          {publicKey && (isShopCreator(publicKey) ? CreateAuctionStages : NotOwnerNotification)}
+          {!publicKey && walletConnectComponent}
         </div>
       </div>
     </div>
