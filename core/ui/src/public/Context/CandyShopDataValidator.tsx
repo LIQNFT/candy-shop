@@ -1,12 +1,13 @@
 import React, { createContext, ReactElement, useState, Dispatch, SetStateAction, useContext, useMemo } from 'react';
 import { SocketProvider } from './Socket';
-import { Cluster } from '@solana/web3.js';
+
+import { Blockchain } from '@liqnft/candy-shop-types';
 
 // Data context
 interface ContextData {
   candyShopAddress?: string;
   setCandyShopAddress: Dispatch<SetStateAction<string | undefined>>;
-  setNetwork: Dispatch<SetStateAction<Cluster | undefined>>;
+  setNetwork: Dispatch<SetStateAction<Blockchain | undefined>>;
 }
 
 interface CandyProviderProps {
@@ -17,7 +18,7 @@ export const CandyContext = createContext<ContextData | null>(null);
 
 export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children }) => {
   const [candyShopAddress, setCandyShopAddress] = useState<string>();
-  const [network, setNetwork] = useState<Cluster>();
+  const [network, setNetwork] = useState<Blockchain>();
 
   return (
     <CandyContext.Provider value={{ candyShopAddress, setCandyShopAddress, setNetwork }}>
@@ -33,7 +34,7 @@ export const useUpdateCandyShopContext: ({
   network
 }: {
   candyShopAddress?: string;
-  network?: Cluster;
+  network: Blockchain;
 }) => ContextData = ({ candyShopAddress, network }) => {
   const context = useContext(CandyContext);
   if (!context) {

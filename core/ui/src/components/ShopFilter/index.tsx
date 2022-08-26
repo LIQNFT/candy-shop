@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Search } from 'components/Search';
-import { CandyShop, fetchAllShop } from '@liqnft/candy-shop-sdk';
+import { fetchAllShop } from '@liqnft/candy-shop-sdk';
 import { LoadStatus } from 'constant';
 import { ListBase, CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
 import { Processing } from 'components/Processing';
@@ -12,11 +12,11 @@ import '../../style/order-filter.less';
 interface ShopFilterProps {
   onChange: (item: CandyShopResponse | ShopFilterInfo | undefined, type: 'auto' | 'manual') => any;
   selected?: CandyShopResponse;
-  candyShop: CandyShop;
   filters?: ShopFilterInfo[] | boolean;
   selectedManual?: ShopFilterInfo;
   showAllFilters: boolean;
   search?: boolean;
+  candyShopAddress?: string;
 }
 
 const Logger = 'CandyShopUI/ShopFilter';
@@ -25,11 +25,11 @@ const LIMIT = 10;
 export const ShopFilter: React.FC<ShopFilterProps> = ({
   onChange,
   selected,
-  candyShop,
   filters,
   selectedManual,
   showAllFilters,
-  search
+  search,
+  candyShopAddress
 }) => {
   const [options, setOptions] = useState<CandyShopResponse[]>([]);
   const [offset, setOffset] = useState<number>(0);
@@ -44,12 +44,12 @@ export const ShopFilter: React.FC<ShopFilterProps> = ({
 
   const fetchOption = useCallback(
     (startIndex: number) => {
-      if (!candyShop) return;
+      if (!candyShopAddress) return;
       setLoading(LoadStatus.Loading);
       const queryDto = {
         offset: startIndex,
         limit: LIMIT,
-        shopId: candyShop.candyShopAddress.toString(),
+        shopId: candyShopAddress,
         name: keyword
       };
       fetchAllShop(queryDto)
@@ -71,7 +71,7 @@ export const ShopFilter: React.FC<ShopFilterProps> = ({
         .catch((err: Error) => console.log(`${Logger} fetchAllCollection error=`, err))
         .finally(() => setLoading(LoadStatus.Loaded));
     },
-    [candyShop, keyword]
+    [candyShopAddress, keyword]
   );
 
   useEffect(() => {

@@ -1,18 +1,18 @@
 import React, { createContext, ReactElement, useCallback, useContext, useEffect, useState } from 'react';
 import { parseSocketMessage, EventName, stringifyMessage } from 'constant/SocketEvent';
-import { Cluster } from '@solana/web3.js';
+import { Blockchain } from '@liqnft/candy-shop-types';
 
 // TODO: update websocket url for each ENV
-const getSocketUrl = (network: Cluster) => {
+const getSocketUrl = (network: Blockchain) => {
   switch (network) {
-    case 'mainnet-beta':
+    case Blockchain.SolMainnetBeta:
       return 'wss://ckaho.liqnft.com/websocket';
     default:
       return 'wss://ckaho.liqnft.com/websocket';
   }
 };
 
-const createSocket = (network: Cluster): WebSocket => new WebSocket(getSocketUrl(network));
+const createSocket = (network: Blockchain): WebSocket => new WebSocket(getSocketUrl(network));
 
 interface SocketContextData {
   socket?: WebSocket;
@@ -24,7 +24,7 @@ const SocketContext = createContext<SocketContextData | null>(null);
 interface SocketProviderProps {
   children: ReactElement;
   candyShopAddress?: string;
-  network?: Cluster;
+  network?: Blockchain;
 }
 
 const RECONNECT_SOCKET_TIME = 2_000;

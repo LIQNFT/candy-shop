@@ -15,7 +15,7 @@ import {
   CandyShopAuctionBuyNowParams,
   CandyShopAuctionBidParams,
   CandyShopAuctionWithdrawBidParams
-} from './CandyShopModel';
+} from './shop/sol/CandyShopModel';
 import {
   buyNowAuction,
   BuyNowAuctionParams,

@@ -4,22 +4,24 @@ import { Drop, DropStatus } from '@liqnft/candy-shop-types';
 import { web3 } from '@project-serum/anchor';
 
 import { Price } from 'components/Price';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { ConfigPrice } from 'model';
 
-export interface EditionModalDetailProps {
+export interface EditionModalDetailProps extends ConfigPrice {
   dropNft: Drop;
   walletPublicKey: web3.PublicKey | undefined;
   walletConnectComponent: React.ReactElement;
   onMint: () => void;
-  candyShop: CandyShop;
 }
 
 export const EditionModalDetail: React.FC<EditionModalDetailProps> = ({
   dropNft,
   walletPublicKey,
   walletConnectComponent,
-  candyShop,
-  onMint
+  onMint,
+  baseUnitsPerCurrency,
+  currencySymbol,
+  priceDecimals,
+  priceDecimalsMin
 }) => {
   const percentage = Math.round((1 - (dropNft.currentSupply || 0) / dropNft.maxSupply) * 100 * 100) / 100;
   const disabledMint =
@@ -42,7 +44,6 @@ export const EditionModalDetail: React.FC<EditionModalDetailProps> = ({
             <div className="slide" style={{ width: `${percentage}%` }} />
           </div>
           <div className="decimal">
-            {' '}
             {dropNft.maxSupply - dropNft.currentSupply} / {dropNft.maxSupply}
           </div>
         </div>
@@ -50,7 +51,15 @@ export const EditionModalDetail: React.FC<EditionModalDetailProps> = ({
         <div className="candy-edition-modal-control">
           <div className="candy-edition-mint-price">
             <div className="candy-label">MINT PRICE</div>
-            <div className="candy-price">{<Price candyShop={candyShop} value={dropNft.price} />}</div>
+            <div className="candy-price">
+              <Price
+                currencySymbol={currencySymbol}
+                baseUnitsPerCurrency={baseUnitsPerCurrency}
+                priceDecimalsMin={priceDecimalsMin}
+                priceDecimals={priceDecimals}
+                value={dropNft.price}
+              />
+            </div>
           </div>
           {walletPublicKey ? (
             <div className="candy-edition-price-modal">

@@ -5,10 +5,13 @@ import {
   OrdersEditionFilterQuery,
   Side,
   SingleBase,
-  Status
+  Status,
+  Blockchain
 } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
+
+const DEFAULT_BLOCKCHAIN = Blockchain.Sol;
 
 export async function fetchOrdersByStoreId(
   axiosInstance: AxiosInstance,
@@ -26,9 +29,10 @@ export async function fetchOrdersByStoreId(
     collectionId,
     nftName,
     masterEdition,
-    collectionKey
+    collectionKey,
+    blockchain = DEFAULT_BLOCKCHAIN
   } = ordersFilterQuery;
-  let queryParams: any = { offset, limit };
+  let queryParams: any = { offset, limit, blockchain };
 
   if (sortBy) {
     const arrSortBy = Array.isArray(sortBy) ? sortBy : [sortBy];

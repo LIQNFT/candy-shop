@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
-
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { BaseShop, BlockchainType, fetchStatsByShopAddress } from '@liqnft/candy-shop-sdk';
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { StatActionsStatus } from 'constant';
-
-import './index.less';
 import { useUpdateCandyShopContext } from 'public/Context/CandyShopDataValidator';
+import { ShopProps } from '../../model';
+import './index.less';
+import { ShopStats } from '@liqnft/candy-shop-types';
 
-export interface StatProps {
+interface StatProps extends ShopProps {
   title: string | undefined;
   description: string | undefined;
   style?: { [key: string]: string | number } | undefined;
-  candyShop: CandyShop;
 }
 
-const getFloorPrice = (candyShop: CandyShop, stat: any) => {
+const getFloorPrice = (candyShop: BaseShop, stat: any) => {
   if (!stat?.floorPrice) return null;
 
   return (Number(stat.floorPrice) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
@@ -23,16 +22,7 @@ const getFloorPrice = (candyShop: CandyShop, stat: any) => {
   });
 };
 
-const getTotalListed = (stat: any) => {
-  if (!stat?.totalListed) return 0;
-
-  return stat.totalListed.toLocaleString(undefined, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  });
-};
-
-const getTotalVolume = (candyShop: CandyShop, stat: any) => {
+const getTotalVolume = (candyShop: BaseShop, stat: any) => {
   if (!stat?.totalVolume) return 0;
   return (Number(stat.totalVolume) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
     minimumFractionDigits: candyShop.volumeDecimalsMin,
@@ -40,29 +30,30 @@ const getTotalVolume = (candyShop: CandyShop, stat: any) => {
   });
 };
 
-export const Stat: React.FC<StatProps> = ({ title, description, style, candyShop }): JSX.Element => {
-  const [stat, setStat] = useState<any>();
+const Logger = 'CandyShopUI/Stat: ';
+export const Stat: React.FC<StatProps> = ({ title, description, style, candyShop, blockchain }): JSX.Element => {
+  const [stat, setStat] = useState<ShopStats>();
 
+  const candyShopAddress = candyShop.candyShopAddress;
   const statUpdateStatus = useValidateStatus(StatActionsStatus);
-  useUpdateCandyShopContext({ candyShopAddress: candyShop.candyShopAddress, network: candyShop.env });
+  useUpdateCandyShopContext({ candyShopAddress, network: candyShop.env as any });
 
-  // handle fetch data
   useEffect(() => {
-    candyShop
-      .stats()
-      .then((data: any) => {
+    if (!candyShopAddress) return;
+
+    fetchStatsByShopAddress(candyShopAddress)
+      .then((data: ShopStats) => {
         if (!data) return;
         setStat(data);
       })
-      .catch((err: any) => {
-        console.info('fetchOrdersByStoreId failed: ', err);
+      .catch((err: Error) => {
+        console.log(`${Logger} fetchOrdersByStoreId failed, error=`, err);
       });
     // statUpdateStatus on polling
-  }, [candyShop, statUpdateStatus]);
+  }, [candyShopAddress, statUpdateStatus]);
 
-  const floorPrice = getFloorPrice(candyShop, stat);
-  const totalListed = getTotalListed(stat);
-  const totalVolume = getTotalVolume(candyShop, stat);
+  const floorPrice = blockchain === BlockchainType.Solana ? getFloorPrice(candyShop, stat) : 0;
+  const totalVolume = blockchain === BlockchainType.Solana ? getTotalVolume(candyShop, stat) : 0;
 
   return (
     <div style={style}>
@@ -81,7 +72,7 @@ export const Stat: React.FC<StatProps> = ({ title, description, style, candyShop
             </div>
             <div className="candy-stat-component-item">
               <div className="candy-label">TOTAL LISTED</div>
-              <div className="candy-value-lg">{totalListed}</div>
+              <div className="candy-value-lg">{stat?.totalListed || '0'}</div>
             </div>
             <div className="candy-stat-component-item">
               <div className="candy-label">VOLUME</div>

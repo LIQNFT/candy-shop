@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Input, Modal, Select } from 'antd';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { LS_CANDY_FORM, DEFAULT_FORM_CONFIG } from './constant/formConfiguration';
+import { LS_CANDY_FORM, DEFAULT_FORM_CONFIG } from './constants/formConfiguration';
 
-interface ConfigureShopProps {
+interface ShopConfigProps {
   setCandyForm: (candyForm: any) => any;
   candyForm: any;
 }
@@ -16,7 +16,7 @@ enum InputType {
   PAYMENT_PROVIDER = 'PAYMENT_PROVIDER'
 }
 
-export const ConfigureShop: React.FC<ConfigureShopProps> = ({ setCandyForm, candyForm }) => {
+export const ShopConfig: React.FC<ShopConfigProps> = ({ setCandyForm, candyForm }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [creatorAddressInput, setCreatorAddressInput] = useState<string>(DEFAULT_FORM_CONFIG.creatorAddress);
   const [treasuryMintInput, setTreasuryMintInput] = useState<string>(DEFAULT_FORM_CONFIG.treasuryMint);

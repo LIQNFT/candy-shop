@@ -1,79 +1,58 @@
-import React, { useState } from 'react';
-import {
-  CandyShop,
-  CandyShopTrade,
-  CandyShopTradeCancelParams,
-  CandyShopVersion,
-  getCandyShopSync
-} from '@liqnft/candy-shop-sdk';
-import { Order as OrderSchema } from '@liqnft/candy-shop-types';
-import { BN, web3 } from '@project-serum/anchor';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
+import React, { useRef, useState } from 'react';
+import { ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+import { Blockchain, Order as OrderSchema } from '@liqnft/candy-shop-types';
+
 import { Modal } from 'components/Modal';
 import { PoweredByInBuyModal } from 'components/PoweredBy/PowerByInBuyModal';
 import { Processing } from 'components/Processing';
-import { TIMEOUT_EXTRA_LOADING } from 'constant';
-import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
 import { ShopExchangeInfo, TransactionState } from 'model';
 import { handleError } from 'utils/ErrorHandler';
 import { CancelModalConfirm } from './CancelModalConfirm';
 import { CancelModalDetail } from './CancelModalDetail';
+
 import './index.less';
 
 const Logger = 'CandyShopUI/CancelModal';
 
-export interface CancelModalProps {
-  order: OrderSchema;
+interface CancelModalProps {
+  publicKey: string | undefined;
+  order?: OrderSchema;
   onClose: any;
-  wallet: AnchorWallet;
   exchangeInfo: ShopExchangeInfo;
-  connection: web3.Connection;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
-  candyShop: CandyShop;
+  candyShopEnv: Blockchain;
+  explorerLink: ExplorerLinkBase;
+  cancelOrder: (order: OrderSchema) => Promise<any>;
 }
 
 export const CancelModal: React.FC<CancelModalProps> = ({
+  publicKey,
   order,
   onClose,
-  wallet,
   exchangeInfo,
-  connection,
   shopPriceDecimalsMin,
   shopPriceDecimals,
-  candyShop
+  candyShopEnv,
+  explorerLink,
+  cancelOrder
 }) => {
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
-  const timeoutRef = useUnmountTimeout();
-  const shopAddress = getCandyShopSync(
-    new web3.PublicKey(order.candyShopCreatorAddress),
-    new web3.PublicKey(order.treasuryMint),
-    new web3.PublicKey(order.programId)
-  )[0].toString();
+  // save for UI confirm modal
+  const orderRef = useRef(order);
 
   const cancel = async () => {
+    if (!order) return;
     setState(TransactionState.PROCESSING);
 
-    const tradeCancelParams: CandyShopTradeCancelParams = {
-      connection: connection,
-      tokenAccount: new web3.PublicKey(order.tokenAccount),
-      tokenMint: new web3.PublicKey(order.tokenMint),
-      price: new BN(order.price),
-      wallet: wallet,
-      shopAddress: new web3.PublicKey(shopAddress),
-      candyShopProgramId: new web3.PublicKey(order.programId),
-      shopTreasuryMint: new web3.PublicKey(order.treasuryMint),
-      shopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress)
-    };
-
-    return CandyShopTrade.cancel(tradeCancelParams)
+    return cancelOrder(order)
       .then((txHash) => {
         console.log(`${Logger}: Cancel order made with transaction hash=${txHash}`);
-        timeoutRef.current = setTimeout(() => {
-          setState(TransactionState.CONFIRMED);
-        }, TIMEOUT_EXTRA_LOADING);
+        setState(TransactionState.CONFIRMED);
       })
       .catch((err: Error) => {
+        console.log(`${Logger}: Cancel order failed, error=${err}`);
+        err.message = (err as any).code || err.message;
         handleError({ error: err });
         setState(TransactionState.DISPLAY);
       });
@@ -85,18 +64,19 @@ export const CancelModal: React.FC<CancelModalProps> = ({
       onCancel={onClose}
       width={state !== TransactionState.DISPLAY ? 600 : 1000}
     >
-      {state === TransactionState.DISPLAY && wallet && (
+      {state === TransactionState.DISPLAY && publicKey && order && (
         <CancelModalDetail
           order={order}
           cancel={cancel}
           exchangeInfo={exchangeInfo}
           shopPriceDecimalsMin={shopPriceDecimalsMin}
           shopPriceDecimals={shopPriceDecimals}
-          candyShop={candyShop}
+          candyShopEnv={candyShopEnv}
+          explorerLink={explorerLink}
         />
       )}
       {state === TransactionState.PROCESSING && <Processing text="Canceling your sale" />}
-      {state === TransactionState.CONFIRMED && <CancelModalConfirm order={order} onCancel={onClose} />}
+      {state === TransactionState.CONFIRMED && <CancelModalConfirm order={orderRef.current} onCancel={onClose} />}
       <PoweredByInBuyModal />
     </Modal>
   );

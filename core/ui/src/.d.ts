@@ -18,3 +18,9 @@ declare namespace JSX {
     'model-viewer': ModelViewerElement;
   }
 }
+
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}

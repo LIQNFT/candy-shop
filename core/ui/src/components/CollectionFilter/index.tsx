@@ -1,22 +1,22 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { CandyShop, fetchAllCollection, fetchCollectionByShopAddress } from '@liqnft/candy-shop-sdk';
+import { fetchAllCollection, fetchCollectionByShopAddress } from '@liqnft/candy-shop-sdk';
 import { ListBase, NftCollection } from '@liqnft/candy-shop-types';
 import { Processing } from 'components/Processing';
-import { CollectionFilter as CollectionFilterType } from 'model';
+import { CollectionFilter as CollectionFilterModel } from 'model';
 import { Search } from 'components/Search';
 import { removeDuplicate } from 'utils/helperFunc';
 import { LoadStatus } from 'constant';
 import '../../style/order-filter.less';
 
 interface CollectionFilterProps {
-  onChange: (item: NftCollection | CollectionFilterType | undefined, type: 'auto' | 'manual') => any;
+  onChange: (item: NftCollection | CollectionFilterModel | undefined, type: 'auto' | 'manual') => any;
   selected?: NftCollection;
-  candyShop: CandyShop;
-  filters?: CollectionFilterType[] | boolean | 'auto';
-  selectedManual?: CollectionFilterType;
+  filters?: CollectionFilterModel[] | boolean | 'auto';
+  selectedManual?: CollectionFilterModel;
   shopId?: string;
   showAllFilters: boolean;
   search?: boolean;
+  candyShopAddress?: string;
 }
 
 const Logger = 'CandyShopUI/Collection';
@@ -25,12 +25,12 @@ const LIMIT = 10;
 export const CollectionFilter: React.FC<CollectionFilterProps> = ({
   onChange,
   selected,
-  candyShop,
   filters,
   selectedManual,
   shopId,
   showAllFilters,
-  search
+  search,
+  candyShopAddress
 }) => {
   const [options, setOptions] = useState<NftCollection[]>([]);
   const [offset, setOffset] = useState<number>(0);
@@ -54,18 +54,18 @@ export const CollectionFilter: React.FC<CollectionFilterProps> = ({
       const queryDto = {
         offset: startIndex,
         limit: LIMIT,
-        shopId: shopId || candyShop.candyShopAddress.toString(),
+        shopId: shopId || candyShopAddress,
         name: keyword
       };
       if (shopId) return fetchCollectionByShopAddress(queryDto);
       return fetchAllCollection(queryDto);
     },
-    [candyShop, keyword, shopId]
+    [candyShopAddress, keyword, shopId]
   );
 
   const fetchOption = useCallback(
     (startIndex: number) => {
-      if (!candyShop) return;
+      if (!candyShopAddress) return;
       setLoading(LoadStatus.Loading);
       getFetchCollectionAPI(startIndex)
         .then((res: ListBase<NftCollection>) => {
@@ -85,7 +85,7 @@ export const CollectionFilter: React.FC<CollectionFilterProps> = ({
         .catch((err: Error) => console.log(`${Logger} fetchAllCollection error=`, err))
         .finally(() => setLoading(LoadStatus.Loaded));
     },
-    [candyShop, getFetchCollectionAPI]
+    [candyShopAddress, getFetchCollectionAPI]
   );
 
   useEffect(() => {
@@ -94,7 +94,7 @@ export const CollectionFilter: React.FC<CollectionFilterProps> = ({
   }, [fetchOption, filters, offset]);
 
   // Manual filter
-  const filteredList: CollectionFilterType[] = useMemo(() => {
+  const filteredList: CollectionFilterModel[] = useMemo(() => {
     if (!Array.isArray(filters)) return [];
     if (!keyword) return filters;
 

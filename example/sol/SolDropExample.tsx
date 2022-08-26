@@ -1,17 +1,16 @@
 import React from 'react';
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
-
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyShop } from '../core/sdk/dist';
-import { CreateDrop, Drops } from '../core/ui/.';
+import { CandyShop } from '../../core/sdk/.';
+import { CreateDrop, Drops } from '../../core/ui/.';
 
 import 'antd/dist/antd.min.css';
 
-interface DropExampleProps {
+interface SolDropExampleProps {
   candyShop: CandyShop;
 }
 
-export const DropExample: React.FC<DropExampleProps> = ({ candyShop }) => {
+export const SolDropExample: React.FC<SolDropExampleProps> = ({ candyShop }) => {
   const wallet = useAnchorWallet();
 
   return (

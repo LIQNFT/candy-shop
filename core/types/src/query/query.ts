@@ -28,6 +28,7 @@ export interface OrdersFilterQuery extends CommonQuery {
   nftName?: string;
   masterEdition?: boolean;
   collectionKey?: string;
+  blockchain?: Blockchain;
 }
 
 export interface OrdersEditionFilterQuery extends CommonQuery {}
@@ -91,10 +92,12 @@ export type AuctionQuery = {
 
 export enum Blockchain {
   Sol = 'SOL',
+  SolDevnet = 'devnet',
+  SolMainnetBeta = 'mainnet-beta',
   Eth = 'ETH',
-  Eth_Testnet = 'GOERLI',
+  EthTestnet = 'GOERLI',
   Polygon = 'MATIC',
-  Polygon_Testnet = 'MUMBAI'
+  PolygonTestnet = 'MUMBAI'
 }
 
 export interface FetchEvmWalletNftQuery {

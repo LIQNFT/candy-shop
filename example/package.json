@@ -10,12 +10,16 @@
     "@solana/wallet-adapter-base": "^0.6.0",
     "@solana/wallet-adapter-react": "^0.12.5",
     "@solana/wallet-adapter-wallets": "^0.10.1",
+    "@walletconnect/web3-provider": "^1.8.0",
     "antd": "^4.19.1",
     "api": "^4.2.0",
     "axios": "^0.26.0",
     "components": "^0.1.0",
+    "ethers": "^5.7.0",
     "react-app-polyfill": "^1.0.0",
-    "react-router-dom": "^5.2.0"
+    "react-hook-form": "^7.34.2",
+    "react-router-dom": "^5.2.0",
+    "web3modal": "^1.9.9"
   },
   "devDependencies": {
     "@babel/core": "^7.17.8",

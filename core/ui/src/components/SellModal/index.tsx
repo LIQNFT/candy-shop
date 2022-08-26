@@ -1,17 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { BN, web3 } from '@project-serum/anchor';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
-
-import {
-  CandyShop,
-  CandyShopTrade,
-  CandyShopTradeSellParams,
-  CandyShopVersion,
-  getTokenMetadataByMintAddress,
-  NftMetadata,
-  SingleTokenInfo
-} from '@liqnft/candy-shop-sdk';
-import { CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
+import { NftMetadata, SingleTokenInfo, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
 
 import { LiqImage } from 'components/LiqImage';
 import { Modal } from 'components/Modal';
@@ -19,42 +8,35 @@ import { NftStat } from 'components/NftStat';
 import { Processing } from 'components/Processing';
 import { Tooltip } from 'components/Tooltip';
 
-import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
-import { TransactionState } from 'model';
+import { Wallet, TransactionState } from 'model';
 import { ErrorMsgMap, ErrorType, handleError } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
-import { TIMEOUT_EXTRA_LOADING } from 'constant';
+
 import IconTick from 'assets/IconTick';
 import './style.less';
 
-export interface SellModalProps {
-  onCancel: () => void;
+export type SellModalProps = {
   nft: SingleTokenInfo;
-  wallet: AnchorWallet;
+  wallet: Wallet;
   shop: CandyShopResponse;
-  connection: web3.Connection;
-  shopAddress: string;
-  candyShopProgramId: string;
-  baseUnitsPerCurrency: number;
-  shopTreasuryMint: string;
-  shopCreatorAddress: string;
   currencySymbol: string;
-  candyShop: CandyShop;
-}
+  candyShopEnv: Blockchain;
+  explorerLink: ExplorerLinkBase;
+  onCancel: () => void;
+  getTokenMetadataByMintAddress: (tokenMintAddress: string) => Promise<NftMetadata>;
+  sell: (nft: SingleTokenInfo, price: number) => Promise<string>;
+};
 
 export const SellModal: React.FC<SellModalProps> = ({
   onCancel: onUnSelectItem,
   nft,
   wallet,
   shop,
-  connection,
-  shopAddress,
-  candyShopProgramId,
-  baseUnitsPerCurrency,
-  shopTreasuryMint,
-  shopCreatorAddress,
   currencySymbol,
-  candyShop
+  candyShopEnv,
+  explorerLink,
+  getTokenMetadataByMintAddress,
+  sell
 }) => {
   const [formState, setFormState] = useState<{ price: number | undefined }>({
     price: undefined
@@ -63,10 +45,7 @@ export const SellModal: React.FC<SellModalProps> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [royalties, setRoyalties] = useState<number>();
 
-  const timeoutRef = useUnmountTimeout();
-
-  // List for sale and move to next step
-  const sell = async () => {
+  const sellNft = async () => {
     setState(TransactionState.PROCESSING);
 
     if (!wallet) {
@@ -80,29 +59,14 @@ export const SellModal: React.FC<SellModalProps> = ({
       return;
     }
 
-    const price = formState.price * baseUnitsPerCurrency;
-
-    const tradeSellParams: CandyShopTradeSellParams = {
-      connection,
-      tokenAccount: new web3.PublicKey(nft.tokenAccountAddress),
-      tokenMint: new web3.PublicKey(nft.tokenMintAddress),
-      price: new BN(price),
-      wallet,
-      shopAddress: new web3.PublicKey(shopAddress),
-      candyShopProgramId: new web3.PublicKey(candyShopProgramId),
-      shopTreasuryMint: new web3.PublicKey(shopTreasuryMint),
-      shopCreatorAddress: new web3.PublicKey(shopCreatorAddress)
-    };
-
-    return CandyShopTrade.sell(tradeSellParams)
-      .then((txHash) => {
+    return sell(nft, formState.price)
+      .then((txHash: string) => {
         console.log('SellModal: Place sell order with transaction hash= ', txHash);
-        timeoutRef.current = setTimeout(() => {
-          setState(TransactionState.CONFIRMED);
-        }, TIMEOUT_EXTRA_LOADING);
+        setState(TransactionState.CONFIRMED);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         console.log('SellModal: error= ', err);
+        err.message = (err as any).code || err.message;
         handleError({ error: err });
         setState(TransactionState.DISPLAY);
       });
@@ -126,28 +90,26 @@ export const SellModal: React.FC<SellModalProps> = ({
   }, [onUnSelectItem]);
 
   useEffect(() => {
-    console.log('getTokenMetadataByMintAddress', {
-      mint: nft.tokenMintAddress
-    });
     setLoading(true);
-    getTokenMetadataByMintAddress(nft.tokenMintAddress, connection)
+    getTokenMetadataByMintAddress(nft.tokenMintAddress)
       .then((data: NftMetadata) => {
         setRoyalties(data.sellerFeeBasisPoints / 100);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         console.log('ERROR getTokenMetadataByMintAddress', err);
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [connection, nft.tokenMintAddress]);
+  }, [getTokenMetadataByMintAddress, nft.tokenMintAddress]);
 
   const onCloseModal = () => {
     onCancel();
   };
 
   const disableListedBtn = formState.price === undefined || loading;
-  const transactionFee = shop.feeRate / 100;
+  const transactionFee = shop ? shop.feeRate / 100 : 0;
+  const isEth = candyShopEnv !== Blockchain.SolDevnet && candyShopEnv !== Blockchain.SolMainnetBeta;
 
   return (
     <Modal onCancel={onCloseModal} width={600}>
@@ -162,7 +124,12 @@ export const SellModal: React.FC<SellModalProps> = ({
               <div>
                 <div className="candy-sell-modal-nft-name">{nft?.metadata?.data?.name}</div>
                 <div className="candy-sell-modal-symbol">{nft?.metadata?.data?.symbol}</div>
-                <NftStat tokenMint={nft.tokenMintAddress} edition={nft.edition} candyShop={candyShop} />
+                <NftStat
+                  tokenMint={nft.tokenMintAddress}
+                  edition={nft.edition}
+                  candyShopEnv={candyShopEnv}
+                  explorerLink={explorerLink}
+                />
               </div>
             </div>
             <div className="candy-sell-modal-hr"></div>
@@ -181,8 +148,12 @@ export const SellModal: React.FC<SellModalProps> = ({
               <div className="candy-sell-modal-fees">
                 <div className="candy-sell-modal-fees-left">
                   Transaction Fees
-                  <br />
-                  Royalties
+                  {isEth ? null : (
+                    <>
+                      <br />
+                      Royalties
+                    </>
+                  )}
                 </div>
                 {loading ? (
                   <div className="candy-loading candy-sell-modal-loading" />
@@ -191,14 +162,16 @@ export const SellModal: React.FC<SellModalProps> = ({
                     <Tooltip inner="Payable to marketplace" className="candy-tooltip-right">
                       {transactionFee !== undefined && !isNaN(transactionFee) ? transactionFee.toFixed(1) + '%' : 'n/a'}
                     </Tooltip>
-                    <Tooltip inner="Payable to NFT creators" className="candy-tooltip-right">
-                      {royalties !== undefined && !isNaN(royalties) ? royalties.toFixed(1) + '%' : 'n/a'}
-                    </Tooltip>
+                    {isEth ? null : (
+                      <Tooltip inner="Payable to NFT creators" className="candy-tooltip-right">
+                        {royalties !== undefined && !isNaN(royalties) ? royalties.toFixed(1) + '%' : 'n/a'}
+                      </Tooltip>
+                    )}
                   </div>
                 )}
               </div>
 
-              <button className="candy-sell-modal-button candy-button" onClick={sell} disabled={disableListedBtn}>
+              <button className="candy-sell-modal-button candy-button" onClick={sellNft} disabled={disableListedBtn}>
                 List for Sale
               </button>
             </form>

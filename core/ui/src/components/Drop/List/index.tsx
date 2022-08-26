@@ -217,7 +217,16 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
                   </div>
                 </div>
               }
-              footer={<DropFooter candyShop={candyShop} nft={nft} />}
+              footer={
+                <DropFooter
+                  candyShop={candyShop}
+                  nft={nft}
+                  currencySymbol={candyShop.currencySymbol}
+                  baseUnitsPerCurrency={candyShop.baseUnitsPerCurrency}
+                  priceDecimalsMin={candyShop.priceDecimalsMin}
+                  priceDecimals={candyShop.priceDecimals}
+                />
+              }
             />
           );
         })}
