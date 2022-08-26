@@ -71,6 +71,7 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
           shopPriceDecimalsMin={candyShop.priceDecimalsMin}
           shopPriceDecimals={candyShop.priceDecimals}
           sellerUrl={sellerUrl}
+          candyShop={candyShop}
         />
       ) : null}
 
@@ -86,6 +87,7 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
           candyShopVersion={candyShop.version}
           shopPriceDecimalsMin={candyShop.priceDecimalsMin}
           shopPriceDecimals={candyShop.priceDecimals}
+          candyShop={candyShop}
         />
       ) : null}
     </>

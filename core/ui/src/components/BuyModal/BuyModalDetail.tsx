@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchNFTByMintAddress } from '@liqnft/candy-shop-sdk';
+import { CandyShop, fetchNFTByMintAddress } from '@liqnft/candy-shop-sdk';
 import { Nft, Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { web3 } from '@project-serum/anchor';
 import { NftAttributes } from 'components/NftAttributes';
@@ -18,6 +18,7 @@ export interface BuyModalDetailProps {
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
   sellerUrl?: string;
+  candyShop: CandyShop;
 }
 
 export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
@@ -28,7 +29,8 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   exchangeInfo,
   shopPriceDecimalsMin,
   shopPriceDecimals,
-  sellerUrl
+  sellerUrl,
+  candyShop
 }) => {
   const [loadingNftInfo, setLoadingNftInfo] = useState(false);
   const [nftInfo, setNftInfo] = useState<Nft>();
@@ -82,6 +84,7 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
           tokenMint={order.tokenMint}
           edition={order.edition}
           sellerUrl={sellerUrl}
+          candyShop={candyShop}
         />
         <NftAttributes loading={loadingNftInfo} attributes={nftInfo?.attributes} />
       </div>

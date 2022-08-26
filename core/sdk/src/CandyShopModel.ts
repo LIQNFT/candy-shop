@@ -36,6 +36,16 @@ export interface CandyShopConstructorParams {
 }
 
 /**
+ * Explorer link source on checking on-chain information
+ */
+
+export enum ExplorerLinkBase {
+  SolScan = 'SolScan',
+  SolanaFM = 'SolanaFM',
+  Explorer = 'Explorer'
+}
+
+/**
  * Custom CandyShop settings
  *
  * @property {string} currencySymbol
@@ -62,6 +72,8 @@ export interface CandyShopSettings {
   mainnetConnectionUrl: string;
   /** Connection config options */
   connectionConfig: object | undefined;
+  /** Explorer link */
+  explorerLink: ExplorerLinkBase;
 }
 
 /**

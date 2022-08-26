@@ -1,67 +1,40 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { web3 } from '@project-serum/anchor';
 import { shortenAddress } from 'utils/helperFunc';
-import { IconSolanaFM } from 'assets/IconSolanaFM';
+import { CandyShop, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
 
-export enum BaseUrlType {
-  SolScan = 'https://solscan.io',
-  SolFM = 'https://solana.fm',
-  Explorer = 'https://explorer.solana.com'
-}
+export const BaseUrlType = {
+  [ExplorerLinkBase.SolScan]: 'https://solscan.io',
+  [ExplorerLinkBase.SolanaFM]: 'https://solana.fm',
+  [ExplorerLinkBase.Explorer]: 'https://explorer.solana.com'
+};
 
-const getClusterQuery = (network: string | undefined, baseUrl: BaseUrlType) => {
+const getClusterQuery = (network: string | undefined, baseUrl: ExplorerLinkBase) => {
   if (network !== 'devnet') return '';
-  if (baseUrl === BaseUrlType.SolFM) return '?cluster=devnet-qn1';
+  if (baseUrl === ExplorerLinkBase.SolanaFM) return '?cluster=devnet-qn1';
   return `?cluster=devnet`;
 };
 
 export const ExplorerLink = (props: {
   address: string | web3.PublicKey;
   type: string;
-  style?: React.CSSProperties;
   length?: number;
   children?: React.ReactNode;
-  href?: string;
-  baseUrl?: BaseUrlType;
+  source: ExplorerLinkBase;
+  env: web3.Cluster;
 }): JSX.Element | null => {
-  const { type, children, baseUrl = BaseUrlType.Explorer } = props;
-
-  const [network] = useState(() => {
-    const formData = localStorage.getItem('LS_CANDY_FORM');
-    try {
-      if (formData) return JSON.parse(formData).network;
-    } catch (e) {
-      console.log('Empty LS_CANDY_FORM value');
-    }
-  });
-
-  const address = typeof props.address === 'string' ? props.address : props.address?.toBase58();
-
-  if (!address) {
-    return null;
-  }
-
-  const length = props.length ?? 4;
-
+  const { type, children, length = 4, address, source, env } = props;
+  if (!address) return null;
+  const addressString = typeof address === 'string' ? address : address?.toBase58();
   return (
     <div className="candy-link">
       <a
-        href={`${BaseUrlType.SolFM}/${type}/${address}${getClusterQuery(network, BaseUrlType.SolFM)}`}
+        href={`${BaseUrlType[source]}/${type}/${address}${getClusterQuery(env, source)}`}
         target="_blank"
         rel="noreferrer noopener"
-        title={address}
-        style={props.style}
+        title={addressString}
       >
-        <IconSolanaFM />
-      </a>
-      <a
-        href={`${baseUrl}/${type}/${address}${getClusterQuery(network, baseUrl)}`}
-        target="_blank"
-        rel="noreferrer noopener"
-        title={address}
-        style={props.style}
-      >
-        {children || shortenAddress(address, length)}
+        {children || shortenAddress(addressString, length)}
       </a>
     </div>
   );

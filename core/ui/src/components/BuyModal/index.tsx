@@ -1,4 +1,4 @@
-import { CandyShopTrade, CandyShopTradeBuyParams } from '@liqnft/candy-shop-sdk';
+import { CandyShop, CandyShopTrade, CandyShopTradeBuyParams } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
@@ -28,6 +28,7 @@ export interface BuyModalProps {
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
   sellerUrl?: string;
+  candyShop: CandyShop;
 }
 
 export const BuyModal: React.FC<BuyModalProps> = ({
@@ -42,7 +43,8 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   isEnterprise,
   shopPriceDecimalsMin,
   shopPriceDecimals,
-  sellerUrl
+  sellerUrl,
+  candyShop
 }) => {
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
   const [hash, setHash] = useState(''); // txHash
@@ -103,6 +105,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             shopPriceDecimalsMin={shopPriceDecimalsMin}
             shopPriceDecimals={shopPriceDecimals}
             sellerUrl={sellerUrl}
+            candyShop={candyShop}
           />
         )}
         {state === TransactionState.PROCESSING && <Processing text="Processing purchase" />}
@@ -115,6 +118,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             exchangeInfo={exchangeInfo}
             shopPriceDecimalsMin={shopPriceDecimalsMin}
             shopPriceDecimals={shopPriceDecimals}
+            candyShop={candyShop}
           />
         )}
       </div>

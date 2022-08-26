@@ -158,6 +158,7 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
             txHash={hash}
             onClose={onClose}
             descriptionText={bidPrice ? `${bidPrice} ${candyShop.currencySymbol}` : undefined}
+            candyShop={candyShop}
           />
         )}
       </div>

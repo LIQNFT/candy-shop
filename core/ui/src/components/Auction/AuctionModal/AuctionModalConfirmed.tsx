@@ -6,6 +6,7 @@ import { Auction } from '@liqnft/candy-shop-types';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { LiqImage } from 'components/LiqImage';
 import IconTick from 'assets/IconTick';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 
 interface AuctionModalConfirmedProps {
   auction: Auction;
@@ -14,6 +15,7 @@ interface AuctionModalConfirmedProps {
   onClose: () => void;
   titleText: string;
   descriptionText?: string;
+  candyShop: CandyShop;
 }
 
 export const AuctionModalConfirmed: React.FC<AuctionModalConfirmedProps> = ({
@@ -22,7 +24,8 @@ export const AuctionModalConfirmed: React.FC<AuctionModalConfirmedProps> = ({
   walletPublicKey,
   onClose,
   titleText,
-  descriptionText
+  descriptionText,
+  candyShop
 }) => {
   const walletAddress = walletPublicKey?.toBase58();
 
@@ -52,17 +55,31 @@ export const AuctionModalConfirmed: React.FC<AuctionModalConfirmedProps> = ({
         <div className="candy-auction-modal-confirmed-item">
           <div className="candy-label">FROM</div>
           <div className="candy-value">
-            <ExplorerLink type="address" address={auction.sellerAddress} />
+            <ExplorerLink
+              type="address"
+              address={auction.sellerAddress}
+              source={candyShop.explorerLink}
+              env={candyShop.env}
+            />
           </div>
         </div>
         <div className="candy-auction-modal-confirmed-item">
           <div className="candy-label">TO</div>
-          <div className="candy-value">{walletAddress && <ExplorerLink type="address" address={walletAddress} />}</div>
+          <div className="candy-value">
+            {walletAddress && (
+              <ExplorerLink
+                type="address"
+                address={walletAddress}
+                source={candyShop.explorerLink}
+                env={candyShop.env}
+              />
+            )}
+          </div>
         </div>
         <div className="candy-auction-modal-confirmed-item">
           <div className="candy-label">TRANSACTION HASH</div>
           <div className="candy-value">
-            <ExplorerLink type="tx" address={txHash} />
+            <ExplorerLink type="tx" address={txHash} source={candyShop.explorerLink} env={candyShop.env} />
           </div>
         </div>
         <div className="candy-auction-modal-confirmed-item">

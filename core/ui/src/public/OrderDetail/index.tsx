@@ -138,6 +138,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
               edition={order.edition}
               tokenMint={order.tokenMint}
               sellerUrl={sellerUrl}
+              candyShop={candyShop}
             />
           ) : null}
           <NftAttributes loading={loadingNftInfo} attributes={nftInfo?.attributes} />
@@ -172,6 +173,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
                 exchangeInfo={exchangeInfo}
                 shopPriceDecimalsMin={candyShop.priceDecimalsMin}
                 shopPriceDecimals={candyShop.priceDecimals}
+                candyShop={candyShop}
               />
             </div>
           </Modal>

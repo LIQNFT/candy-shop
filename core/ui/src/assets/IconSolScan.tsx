@@ -3,7 +3,7 @@ import React from 'react';
 export const IconSolScan: React.FC = () => {
   return (
     <svg
-      className="candy-activity-icon"
+      className="explorer-icon"
       width="32"
       height="32"
       viewBox="0 0 32 32"

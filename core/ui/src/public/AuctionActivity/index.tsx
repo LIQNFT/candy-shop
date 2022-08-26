@@ -80,7 +80,12 @@ export const AuctionActivity: React.FC<AuctionActivityProps> = ({ candyShop, auc
             return (
               <div key={auction.bidAddress} className="candy-activity-auction-item">
                 <div>
-                  <ExplorerLink type="address" address={auction.buyerAddress} />
+                  <ExplorerLink
+                    type="address"
+                    address={auction.buyerAddress}
+                    source={candyShop.explorerLink}
+                    env={candyShop.env}
+                  />
                 </div>
                 <div className="candy-activity-auction-price">
                   {`${(Number(auction.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {

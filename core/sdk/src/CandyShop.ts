@@ -38,7 +38,8 @@ import {
   CandyShopSettleAndDistributeParams,
   CandyShopUpdateParams,
   CandyShopVersion,
-  CandyShopWithdrawAuctionBidParams
+  CandyShopWithdrawAuctionBidParams,
+  ExplorerLinkBase
 } from './CandyShopModel';
 import { CandyShopTrade } from './CandyShopTrade';
 import { CANDY_SHOP_PROGRAM_ID, CANDY_SHOP_V2_PROGRAM_ID } from './factory/constants';
@@ -170,6 +171,10 @@ export class CandyShop {
     return this._settings.volumeDecimalsMin;
   }
 
+  get explorerLink(): ExplorerLinkBase {
+    return this._settings.explorerLink;
+  }
+
   /**
    * Instantiate a CandyShop object
    *
@@ -201,7 +206,8 @@ export class CandyShop {
       volumeDecimals: settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
       volumeDecimalsMin: settings?.volumeDecimalsMin ?? DEFAULT_VOLUME_DECIMALS_MIN,
       mainnetConnectionUrl: settings?.mainnetConnectionUrl ?? DEFAULT_MAINNET_CONNECTION_URL,
-      connectionConfig: settings?.connectionConfig
+      connectionConfig: settings?.connectionConfig,
+      explorerLink: settings?.explorerLink ?? ExplorerLinkBase.SolanaFM
     };
     this._baseUnitsPerCurrency = Math.pow(10, this._settings.currencyDecimals);
     console.log('CandyShop constructor: init CandyShop=', this);
