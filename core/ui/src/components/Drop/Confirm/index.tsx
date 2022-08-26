@@ -69,7 +69,7 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
         whitelistMint: formData.whitelistRelease ? new web3.PublicKey(formData.whitelistAddress) : undefined
       })
       .then(() => {
-        notification('Edition Drop created.', NotificationType.Success);
+        notification('Edition Drop created.\nRemember to edit and update the description.', NotificationType.Success);
         onCreateDropSuccess && onCreateDropSuccess(dropNft);
       })
       .catch((error: Error) => {
