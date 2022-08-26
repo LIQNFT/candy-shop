@@ -3,14 +3,14 @@ import React from 'react';
 export const IconSolanaFM: React.FC = () => {
   return (
     <svg
-      className="solana-fm"
+      className="explorer-icon"
       width="125"
       height="181"
       viewBox="0 0 125 181"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_4592_13822)">
+      <g clipPath="url(#clip0_4592_13822)">
         <path
           d="M0 89.52C0.166191 65.7374 9.72372 42.984 26.5905 26.2164C43.4574 9.44885 66.2668 0.0258011 90.05 0L96.64 0V14.31H90.05C70.0612 14.3331 50.8899 22.2476 36.7062 36.3321C22.5224 50.4166 14.4734 69.5318 14.31 89.52H0Z"
           fill="#8285F1"

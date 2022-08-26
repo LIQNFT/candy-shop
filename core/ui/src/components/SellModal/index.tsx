@@ -3,6 +3,7 @@ import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
 import {
+  CandyShop,
   CandyShopTrade,
   CandyShopTradeSellParams,
   CandyShopVersion,
@@ -39,6 +40,7 @@ export interface SellModalProps {
   shopTreasuryMint: web3.PublicKey;
   shopCreatorAddress: web3.PublicKey;
   currencySymbol: string;
+  candyShop: CandyShop;
 }
 
 export const SellModal: React.FC<SellModalProps> = ({
@@ -52,7 +54,8 @@ export const SellModal: React.FC<SellModalProps> = ({
   baseUnitsPerCurrency,
   shopTreasuryMint,
   shopCreatorAddress,
-  currencySymbol
+  currencySymbol,
+  candyShop
 }) => {
   const [formState, setFormState] = useState<{ price: number | undefined }>({
     price: undefined
@@ -160,7 +163,7 @@ export const SellModal: React.FC<SellModalProps> = ({
               <div>
                 <div className="candy-sell-modal-nft-name">{nft?.metadata?.data?.name}</div>
                 <div className="candy-sell-modal-symbol">{nft?.metadata?.data?.symbol}</div>
-                <NftStat tokenMint={nft.tokenMintAddress} edition={nft.edition} />
+                <NftStat tokenMint={nft.tokenMintAddress} edition={nft.edition} candyShop={candyShop} />
               </div>
             </div>
             <div className="candy-sell-modal-hr"></div>

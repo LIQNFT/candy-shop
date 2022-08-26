@@ -1,4 +1,4 @@
-import { CandyShopTrade, CandyShopTradeCancelParams, CandyShopVersion } from '@liqnft/candy-shop-sdk';
+import { CandyShop, CandyShopTrade, CandyShopTradeCancelParams, CandyShopVersion } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
@@ -27,6 +27,7 @@ export interface CancelModalProps {
   candyShopVersion: CandyShopVersion;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
+  candyShop: CandyShop;
 }
 
 export const CancelModal: React.FC<CancelModalProps> = ({
@@ -38,7 +39,8 @@ export const CancelModal: React.FC<CancelModalProps> = ({
   shopAddress,
   candyShopProgramId,
   shopPriceDecimalsMin,
-  shopPriceDecimals
+  shopPriceDecimals,
+  candyShop
 }) => {
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
   const timeoutRef = useUnmountTimeout();
@@ -84,6 +86,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
           exchangeInfo={exchangeInfo}
           shopPriceDecimalsMin={shopPriceDecimalsMin}
           shopPriceDecimals={shopPriceDecimals}
+          candyShop={candyShop}
         />
       )}
       {state === TransactionState.PROCESSING && <Processing text="Canceling your sale" />}

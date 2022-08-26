@@ -58,6 +58,7 @@ export const Nft = ({ nft, wallet, sellDetail, shop, candyShop }: NftProps): JSX
           shopTreasuryMint={candyShop.treasuryMint}
           shopCreatorAddress={candyShop.candyShopCreatorAddress}
           currencySymbol={candyShop.currencySymbol}
+          candyShop={candyShop}
         />
       )}
 
@@ -73,6 +74,7 @@ export const Nft = ({ nft, wallet, sellDetail, shop, candyShop }: NftProps): JSX
           candyShopVersion={candyShop.version}
           shopPriceDecimalsMin={candyShop.priceDecimalsMin}
           shopPriceDecimals={candyShop.priceDecimals}
+          candyShop={candyShop}
         />
       ) : null}
     </>

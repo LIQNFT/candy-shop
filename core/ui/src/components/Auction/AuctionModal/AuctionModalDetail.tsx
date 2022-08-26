@@ -223,7 +223,12 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
           <div className="candy-stat">
             <div className="candy-label">WINNER</div>
             <div className="candy-value">
-              <ExplorerLink type="address" address={auction.highestBidBuyer} />
+              <ExplorerLink
+                type="address"
+                address={auction.highestBidBuyer}
+                source={candyShop.explorerLink}
+                env={candyShop.env}
+              />
             </div>
           </div>
         )}
@@ -259,7 +264,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
             </div>
           )}
 
-          <NftStat owner={auction.sellerAddress} tokenMint={auction.tokenMint} />
+          <NftStat owner={auction.sellerAddress} tokenMint={auction.tokenMint} candyShop={candyShop} />
           <NftAttributes loading={false} attributes={auction.attributes} />
         </div>
       </div>

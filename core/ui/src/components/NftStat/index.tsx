@@ -1,21 +1,23 @@
 import React from 'react';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { shortenAddress } from 'utils/helperFunc';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 
 export interface NftStatProps {
   tokenMint: string;
   edition?: number | string | null;
   owner?: string;
   sellerUrl?: string;
+  candyShop: CandyShop;
 }
 
-export const NftStat: React.FC<NftStatProps> = ({ tokenMint, edition, owner, sellerUrl }) => {
+export const NftStat: React.FC<NftStatProps> = ({ tokenMint, edition, owner, sellerUrl, candyShop }) => {
   return (
     <div className="candy-stat-horizontal">
       <div>
         <div className="candy-label">MINT ADDRESS</div>
         <div className="candy-value">
-          <ExplorerLink type="address" address={tokenMint} />
+          <ExplorerLink type="address" address={tokenMint} source={candyShop.explorerLink} env={candyShop.env} />
         </div>
       </div>
       {edition && edition !== '0' ? (
@@ -43,7 +45,7 @@ export const NftStat: React.FC<NftStatProps> = ({ tokenMint, edition, owner, sel
                   {shortenAddress(owner)}
                 </a>
               ) : (
-                <ExplorerLink type="address" address={owner} />
+                <ExplorerLink type="address" address={owner} source={candyShop.explorerLink} env={candyShop.env} />
               )}
             </div>
           </div>

@@ -1,16 +1,18 @@
 import React, { useState, useCallback, useEffect } from 'react';
 
-import { BaseUrlType, ExplorerLink } from 'components/ExplorerLink';
+import { ExplorerLink } from 'components/ExplorerLink';
 import { Processing } from 'components/Processing';
 import { IconSolScan } from 'assets/IconSolScan';
+import { IconExplorer } from 'assets/IconExplorer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { CandyShop, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
 import { Trade, ListBase, ShopStatusType, SortBy } from '@liqnft/candy-shop-types';
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { useUpdateSubject } from 'public/Context/CandyShopDataValidator';
 import { ActivityActionsStatus } from 'constant';
 import { removeDuplicate, EMPTY_FUNCTION } from 'utils/helperFunc';
+import { IconSolanaFM } from 'assets/IconSolanaFM';
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -119,6 +121,32 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
                     <span className="candy-line-limit-1" title={trade.nftName}>
                       {trade.nftName}
                     </span>
+                    <div className="candy-activity-icons">
+                      <ExplorerLink
+                        type="tx"
+                        address={trade.txHashAtCreation}
+                        source={ExplorerLinkBase.SolanaFM}
+                        env={candyShop.env}
+                      >
+                        <IconSolanaFM />
+                      </ExplorerLink>
+                      <ExplorerLink
+                        type="tx"
+                        address={trade.txHashAtCreation}
+                        source={ExplorerLinkBase.SolScan}
+                        env={candyShop.env}
+                      >
+                        <IconSolScan />
+                      </ExplorerLink>
+                      <ExplorerLink
+                        type="tx"
+                        address={trade.txHashAtCreation}
+                        source={ExplorerLinkBase.Explorer}
+                        env={candyShop.env}
+                      >
+                        <IconExplorer />
+                      </ExplorerLink>
+                    </div>
                   </div>
                 </div>
                 <div className="candy-activity-price">
@@ -128,20 +156,22 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
                   })} ${trade.shopSymbol}`}
                 </div>
                 <div>
-                  <ExplorerLink type="address" address={trade.sellerAddress} />
+                  <ExplorerLink
+                    type="address"
+                    address={trade.sellerAddress}
+                    source={candyShop.explorerLink}
+                    env={candyShop.env}
+                  />
                 </div>
                 <div>
-                  <ExplorerLink type="address" address={trade.buyerAddress} />
+                  <ExplorerLink
+                    type="address"
+                    address={trade.buyerAddress}
+                    source={candyShop.explorerLink}
+                    env={candyShop.env}
+                  />
                 </div>
-
-                <div className="candy-activity-time">
-                  <div className="candy-activity-time-content">
-                    {tradeTime}
-                    <ExplorerLink type="tx" address={trade.txHashAtCreation} baseUrl={BaseUrlType.SolScan}>
-                      <IconSolScan />
-                    </ExplorerLink>
-                  </div>
-                </div>
+                <div className="candy-activity-time">{tradeTime}</div>
               </div>
             );
           })}
