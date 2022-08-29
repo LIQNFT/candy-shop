@@ -86,6 +86,7 @@ export const CreateAuctionConfirm: React.FC<CreateAuctionProps> = ({
     {
       name: 'Auction Start Date',
       value: getStartTime({
+        isNow: auctionForm.startNow,
         hour: auctionForm.auctionHour,
         minute: auctionForm.auctionMinute,
         clockFormat: auctionForm.clockFormat,
