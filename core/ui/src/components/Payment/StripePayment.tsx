@@ -126,7 +126,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
 
   const onClickedPayCallback = (params: ConfirmStripePaymentParams, stripe: Stripe) => {
     handleConfirmPayment(params, stripe)
-      .then((result) => {
+      .then(() => {
         //console.log('debugger: result=', result);
       })
       .catch((err: Error) => {

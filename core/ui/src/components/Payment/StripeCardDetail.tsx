@@ -1,4 +1,3 @@
-import './card-payment-form.less';
 import React, { useState } from 'react';
 import { useElements, useStripe, CardCvcElement, CardNumberElement, CardExpiryElement } from '@stripe/react-stripe-js';
 import {
@@ -12,6 +11,7 @@ import {
 import { ConfirmStripePaymentParams } from '@liqnft/candy-shop-types';
 import { LoadingSkeleton } from 'components/LoadingSkeleton';
 import { notification, NotificationType } from 'utils/rc-notification';
+import './stripe-card-detail.less';
 
 const Logger = 'CandyShopUI/CardPaymentModal';
 
