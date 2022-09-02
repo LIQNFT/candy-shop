@@ -61,6 +61,8 @@ export interface CreateAuctionParams extends AuctionParams {
   biddingPeriod: anchor.BN;
   tickSize: anchor.BN;
   buyNowPrice: anchor.BN | null;
+  extensionPeriod?: anchor.BN;
+  extensionIncrement?: anchor.BN;
 }
 
 export interface CancelAuctionParams extends AuctionParams {

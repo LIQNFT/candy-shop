@@ -1,4 +1,4 @@
-import { CandyShop, CandyShopError, CandyShopErrorType } from '@liqnft/candy-shop-sdk';
+import { CandyShop, CandyShopError, CandyShopErrorType } from '../../sdk/src';
 import * as anchor from '@project-serum/anchor';
 import { getAccount } from '@solana/spl-token';
 import { PublicKey } from '@solana/web3.js';
@@ -11,6 +11,7 @@ import {
   findAssociatedTokenAddress,
   isEnterprise
 } from './helper/utils';
+import BN from 'bn.js';
 
 const CMD = new Command();
 
@@ -257,6 +258,8 @@ programCommand('createAuction')
   .requiredOption('-bp, --bidding-period <string>', 'Bidding Period in seconds')
   .requiredOption('-ts, --tick-size <string>', 'tick size')
   .option('-bnp, --buy-now-price <string>', 'Buy now price, in the unit of treasury mint, nullable')
+  .option('-ep, --extension-period <string>', 'Extension period, in seconds, optional')
+  .option('-ei, --extension-increment <string>', 'Extension increment, in seconds, optional')
   .action(async (name, cmd) => {
     let {
       keypair,
@@ -268,6 +271,8 @@ programCommand('createAuction')
       biddingPeriod,
       tickSize,
       buyNowPrice,
+      extensionPeriod,
+      extensionIncrement,
       shopCreator,
       startTime,
       version,
@@ -302,6 +307,8 @@ programCommand('createAuction')
       biddingPeriod: new anchor.BN(biddingPeriod),
       tickSize: new anchor.BN(tickSize),
       buyNowPrice: buyNowPrice ? new anchor.BN(buyNowPrice) : null,
+      extensionPeriod: extensionPeriod ? new BN(extensionPeriod) : undefined,
+      extensionIncrement: extensionIncrement ? new BN(extensionIncrement) : undefined,
       wallet
     });
 

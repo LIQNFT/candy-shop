@@ -34,7 +34,9 @@ export enum CandyShopErrorType {
   NotReachable = 'NotReachable',
   FailToFetchOnchainAccount = 'FailToFetchOnchainAccount',
   InvalidDropStartTime = 'InvalidDropStartTime',
-  InvalidDropWhitelistTime = 'InvalidDropWhitelistTime'
+  InvalidDropWhitelistTime = 'InvalidDropWhitelistTime',
+  MissingExtensionSetting = 'MissingExtensionSetting',
+  InvalidExtensionSettings = 'InvalidExtensionSettings'
 }
 
 export const CandyShopErrorMsgMap = {
@@ -77,7 +79,9 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.NotReachable]: 'Unknown error. Please contact CandyShop team for further info.',
   [CandyShopErrorType.FailToFetchOnchainAccount]: 'Failed to fetch onchain account',
   [CandyShopErrorType.InvalidDropStartTime]: 'Invalid Drop start time',
-  [CandyShopErrorType.InvalidDropWhitelistTime]: 'Invalid Drop whitelist time'
+  [CandyShopErrorType.InvalidDropWhitelistTime]: 'Invalid Drop whitelist time',
+  [CandyShopErrorType.InvalidExtensionSettings]: 'Extension period must not be greater than the extension increment.',
+  [CandyShopErrorType.MissingExtensionSetting]: 'Both extension settings must be provided to use this functionality.'
 };
 
 export class CandyShopError extends Error {
