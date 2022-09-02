@@ -382,7 +382,18 @@ export class CandyShop extends BaseShop {
    * @param {CandyShopCreateAuctionParams} params required parameters for create auction action
    */
   public async createAuction(params: CandyShopCreateAuctionParams): Promise<string> {
-    const { tokenAccount, tokenMint, startingBid, startTime, biddingPeriod, buyNowPrice, wallet, tickSize } = params;
+    const {
+      tokenAccount,
+      tokenMint,
+      startingBid,
+      startTime,
+      biddingPeriod,
+      buyNowPrice,
+      wallet,
+      tickSize,
+      extensionPeriod,
+      extensionIncrement
+    } = params;
     if (wallet.publicKey.toString() !== this.candyShopCreatorAddress.toString()) {
       throw new CandyShopError(CandyShopErrorType.NonShopOwner);
     }
@@ -424,6 +435,8 @@ export class CandyShop extends BaseShop {
       biddingPeriod,
       tickSize,
       buyNowPrice,
+      extensionPeriod,
+      extensionIncrement,
       program
     };
 

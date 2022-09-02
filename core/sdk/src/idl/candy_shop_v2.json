@@ -1071,6 +1071,18 @@
           "type": {
             "option": "u64"
           }
+        },
+        {
+          "name": "extensionPeriod",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
+          "name": "extensionIncrement",
+          "type": {
+            "option": "u64"
+          }
         }
       ]
     },
@@ -1171,7 +1183,8 @@
         {
           "name": "auctionBidWallet",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["System account for perfoming transfers on behalf of an auction bid account"]
         },
         {
           "name": "nftMint",
@@ -1181,12 +1194,14 @@
         {
           "name": "bidPaymentAccount",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["Account that will be used to pay into `escrow_payment_account` on behalf of user"]
         },
         {
           "name": "userTreasuryAta",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["User account for paying bid when auction treasury is SPL token"]
         },
         {
           "name": "treasuryMint",
@@ -1304,17 +1319,20 @@
         {
           "name": "auctionBidWallet",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["System account for perfoming transfers on behalf of an auction bid account"]
         },
         {
           "name": "userTreasuryAta",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["User account for receiving withdrawal when auction treasury is SPL token"]
         },
         {
           "name": "bidReceiptAccount",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["Account that will receive withdrawal from `escrow_payment_account` on behalf of user"]
         },
         {
           "name": "nftMint",
@@ -1419,7 +1437,8 @@
         {
           "name": "sellerPaymentReceiptAccount",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["Seller SOL or SPL account to receive payment at."]
         },
         {
           "name": "auction",
@@ -1469,12 +1488,14 @@
         {
           "name": "auctionPaymentReceiptAccount",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["Account that will receive SPL or SOL payment on behalf of seller"]
         },
         {
           "name": "buyerReceiptTokenAccount",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["Buyer SPL token account to receive purchased item at."]
         },
         {
           "name": "authority",
@@ -1605,12 +1626,14 @@
         {
           "name": "auctionBidWallet",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["System account for perfoming transfers on behalf of an auction bid account"]
         },
         {
           "name": "bidReceiptTokenAccount",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["Account that will receive purchased SPL token on behalf of buyer."]
         },
         {
           "name": "nftMint",
@@ -1640,7 +1663,8 @@
         {
           "name": "auctionPaymentReceiptAccount",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["Account that will receive SPL or SOL payment on behalf of seller"]
         },
         {
           "name": "authority",
@@ -1761,12 +1785,14 @@
         {
           "name": "buyerReceiptTokenAccount",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["Buyer SPL token account to receive purchased item at."]
         },
         {
           "name": "sellerPaymentReceiptAccount",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["Seller SOL or SPL account to receive payment at."]
         },
         {
           "name": "auction",
@@ -1786,12 +1812,14 @@
         {
           "name": "auctionBidWallet",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["System account for perfoming transfers on behalf of an auction bid account"]
         },
         {
           "name": "bidReceiptTokenAccount",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["Account that will receive purchased SPL token on behalf of buyer."]
         },
         {
           "name": "nftMint",
@@ -1806,7 +1834,8 @@
         {
           "name": "auctionPaymentReceiptAccount",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": ["Account that will receive SPL or SOL payment on behalf of seller"]
         },
         {
           "name": "tokenProgram",
@@ -1976,6 +2005,18 @@
             "name": "status",
             "type": {
               "defined": "AuctionStatus"
+            }
+          },
+          {
+            "name": "extensionPeriod",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "extensionIncrement",
+            "type": {
+              "option": "u64"
             }
           }
         ]
@@ -2179,6 +2220,21 @@
       "code": 6023,
       "name": "TokenAccountUninitialized",
       "msg": "Token Account not initialized"
+    },
+    {
+      "code": 6024,
+      "name": "InvalidAccountType",
+      "msg": "Invalid account type"
+    },
+    {
+      "code": 6025,
+      "name": "MissingExtensionSetting",
+      "msg": "Both extension settings must be provided to use this functionality"
+    },
+    {
+      "code": 6026,
+      "name": "InvalidExtensionSettings",
+      "msg": "Extension period must not be greater than the extension increment"
     }
   ],
   "metadata": {

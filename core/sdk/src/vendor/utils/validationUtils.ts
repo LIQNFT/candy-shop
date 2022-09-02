@@ -309,3 +309,15 @@ export const checkDropCommittable = async (masterMint: web3.PublicKey, program: 
     throw new CandyShopError(CandyShopErrorType.ExceedDropMaxAllowedSupply);
   }
 };
+
+export const checkExtensionParams = (extensionPeriod: BN | undefined, extensionIncrement: BN | undefined) => {
+  if ((extensionPeriod && !extensionIncrement) || (!extensionPeriod && extensionIncrement)) {
+    throw new CandyShopError(CandyShopErrorType.MissingExtensionSetting);
+  }
+
+  if (extensionIncrement && extensionPeriod) {
+    if (extensionPeriod.gt(extensionIncrement)) {
+      throw new CandyShopError(CandyShopErrorType.InvalidExtensionSettings);
+    }
+  }
+};
