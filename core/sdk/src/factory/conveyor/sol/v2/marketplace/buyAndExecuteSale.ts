@@ -40,6 +40,8 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     program
   } = params;
 
+  const partialOrderPrice = partialOrderAmount ? price.div(amount).mul(partialOrderAmount) : null;
+
   if (counterParty.toString() === wallet.publicKey.toString()) {
     throw new CandyShopError(CandyShopErrorType.BuyerOwnsListing);
   }
@@ -52,8 +54,8 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     tokenAccount,
     treasuryMint,
     tokenAccountMint,
-    amount,
-    price
+    partialOrderAmount ?? amount,
+    partialOrderPrice ?? price
   );
 
   const isNative = treasuryMintIsNative(treasuryMint);
@@ -93,7 +95,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     amount.toNumber()
   );
 
-  const partialOrderPrice = partialOrderAmount ? price.div(amount).mul(partialOrderAmount) : null;
+  await checkBuyAmountBalance(program.provider.connection, tokenAccount, partialOrderAmount ?? amount);
 
   const ix = await program.methods
     .buyWithProxy(partialOrderPrice ?? price, partialOrderAmount ?? amount, buyTradeStateBump, buyerEscrowBump)

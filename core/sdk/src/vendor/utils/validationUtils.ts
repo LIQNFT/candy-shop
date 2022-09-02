@@ -1,7 +1,7 @@
 import { BN, Program, web3 } from '@project-serum/anchor';
 import { getAccount } from '@solana/spl-token';
 import { PublicKey } from '@solana/web3.js';
-import { getCandyShopData, getEditionVaultData } from '.';
+import { getCandyShopData, getEditionVaultData, getMetadataDecoded } from '.';
 import {
   FEE_ACCOUNT_MIN_BAL,
   NATIVE_AUCTION_CREATORS_LIMIT,
@@ -12,7 +12,7 @@ import {
   WRAPPED_SOL_MINT
 } from '../../factory/constants';
 import { CandyShopError, CandyShopErrorType } from '../error';
-import { parseMasterEditionV2 } from '../token/parseData';
+import { parseMasterEditionV2, TokenStandard } from '../token/parseData';
 import {
   getAuctionData,
   getAuctionHouseProgramAsSigner,
@@ -21,6 +21,7 @@ import {
   treasuryMintIsNative
 } from './programUtils';
 import { safeAwait } from './promiseUtils';
+import { Metadata } from '../token';
 
 export enum TransactionType {
   Marketplace = 'Marketplace',
@@ -303,6 +304,40 @@ export const checkDropCommittable = async (masterMint: web3.PublicKey, program: 
     : undefined;
   if (maxSupply && maxSupply.gt(maxSupportedEdition)) {
     throw new CandyShopError(CandyShopErrorType.ExceedDropMaxAllowedSupply);
+  }
+};
+
+export const checkBuyAmountBalance = async (connection: web3.Connection, tokenAccount: web3.PublicKey, amount: BN) => {
+  const tokenAccountBalance = new BN((await connection.getTokenAccountBalance(tokenAccount)).value.amount);
+
+  if (tokenAccountBalance.lt(amount)) {
+    throw new CandyShopError(CandyShopErrorType.InsufficientSftBalance);
+  }
+};
+
+export const checkSellAmount = async (
+  connection: web3.Connection,
+  tokenAccount: web3.PublicKey,
+  tokenMetadata: web3.PublicKey,
+  amount: BN
+) => {
+  const tokenAccountBalance = new BN((await connection.getTokenAccountBalance(tokenAccount)).value.amount);
+  const metadataDecoded: Metadata = await getMetadataDecoded(connection, tokenMetadata);
+
+  if (tokenAccountBalance.lt(amount)) {
+    throw new CandyShopError(CandyShopErrorType.InsufficientBalance);
+  }
+
+  if (metadataDecoded.tokenStandard) {
+    if (metadataDecoded.tokenStandard === TokenStandard.FungibleAsset && amount.len(0)) {
+      throw new CandyShopError(CandyShopErrorType.InvalidTokenAmount);
+    }
+    // @ts-ignore
+    else if (metadataDecoded.tokenStandard === TokenStandard.NonFungible && !amount.eqn(1)) {
+      throw new CandyShopError(CandyShopErrorType.InvalidTokenAmount);
+    } else {
+      throw new CandyShopError(CandyShopErrorType.UnsupportedTokenStandard);
+    }
   }
 };
 
