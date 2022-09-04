@@ -82,53 +82,60 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
       });
   }, [order, paymentPrice, shopAddress, walletAddress]);
 
-  const handleConfirmPayment = async (params: ConfirmStripePaymentParams, stripe?: Stripe): Promise<boolean> => {
+  const handleConfirmPayment = async (params: ConfirmStripePaymentParams, stripe?: Stripe): Promise<void> => {
     onProcessingPay(BuyModalState.PROCESSING);
     const confirmRes = await CandyShopPay.confirmPayment(params);
-    if (confirmRes.success && confirmRes.result) {
-      const paymentInfo = confirmRes.result;
-      const stripeInfo = paymentInfo.stripeConfirmInfo;
-      if (stripe && stripeInfo?.requiresAuth && stripeInfo?.paymentIntentClientSecret) {
-        // TODO: This might be different with production mode, should revisit when doing production test.
-        // In test mode, the response contains `stripe_js` that has the authentication test page from Stripe
-        if ('stripe_js' in stripeInfo.stripeSdkObj) {
-          window.open(stripeInfo.stripeSdkObj.stripe_js, '_blank');
-        } else {
-          const handleAuth = await safeAwait(stripe.handleCardAction(stripeInfo.paymentIntentClientSecret));
-          if (handleAuth.error) {
-            // Catch the unexpected error of stripe.handleCardAction
-            //console.log('debugger: paymentResult.error=', handleAuth.error);
-          }
+    const isConfirmResolved = confirmRes.success && confirmRes.result;
 
-          if (handleAuth.result?.error) {
-            throw handleAuth.result?.error;
-          }
-        }
-        handleConfirmPayment(params);
-        return false;
+    if (!isConfirmResolved) {
+      handlePaymentFailed(confirmRes);
+      return;
+    }
+
+    const paymentInfo = confirmRes.result;
+    const stripeInfo = paymentInfo.stripeConfirmInfo;
+    if (stripe && stripeInfo?.requiresAuth && stripeInfo?.paymentIntentClientSecret) {
+      // In test mode, the response contains `stripe_js` that has the authentication test page from Stripe
+      if ('stripe_js' in stripeInfo.stripeSdkObj) {
+        window.open(stripeInfo.stripeSdkObj.stripe_js, '_blank');
       } else {
-        onProcessingPay(BuyModalState.CONFIRMED);
-        refreshSubject(ShopStatusType.UserNft, Date.now());
+        const handleAuth = await safeAwait(stripe.handleCardAction(stripeInfo.paymentIntentClientSecret));
+        if (handleAuth.error) {
+          throw Error('The required 3DS method is not supported on this device, probably the biometrics auth');
+        }
+        if (handleAuth.result.error) {
+          throw Error(handleAuth.result.error.message);
+        }
+        console.log(`${Logger}: handleCardAction result=`, handleAuth.result);
       }
-    } else if ('errorDetails' in confirmRes) {
+      handleConfirmPayment(params);
+    } else {
+      handlePaymentSucceed();
+    }
+  };
+
+  const handlePaymentSucceed = () => {
+    onProcessingPay(BuyModalState.CONFIRMED);
+    refreshSubject(ShopStatusType.UserNft, Date.now());
+  };
+
+  const handlePaymentFailed = (confirmRes: SingleBase<PaymentInfo>) => {
+    if ('errorDetails' in confirmRes) {
       onProcessingPay(BuyModalState.PAYMENT_ERROR, (confirmRes as any).errorDetails);
-    } else if (typeof confirmRes.result === 'string' && confirmRes.msg) {
+    } else {
       console.log(`${Logger}: confirmPayment failed, reason=`, confirmRes.msg);
       const errorDetails: PaymentErrorDetails = {
-        title: confirmRes.result,
-        content: confirmRes.msg
+        title: JSON.stringify(confirmRes.result),
+        content: confirmRes.msg ?? 'Confirm payment failed'
       };
       onProcessingPay(BuyModalState.PAYMENT_ERROR, errorDetails);
-      notification(confirmRes.msg, NotificationType.Error, 5);
+      notification(confirmRes.msg ?? 'Confirm payment failed', NotificationType.Error, 5);
     }
-    return true;
   };
 
   const onClickedPayCallback = (params: ConfirmStripePaymentParams, stripe: Stripe) => {
     handleConfirmPayment(params, stripe)
-      .then(() => {
-        //console.log('debugger: result=', result);
-      })
+      .then()
       .catch((err: Error) => {
         console.log(`${Logger}: handleConfirmPayment failed, err=`, err);
         const errorDetails: PaymentErrorDetails = {
