@@ -1,27 +1,30 @@
 import React from 'react';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
-import { web3 } from '@project-serum/anchor';
 import { formatDate } from 'utils/timer';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { LiqImage } from 'components/LiqImage';
 import { IconTick } from 'assets/IconTick';
-import { ShopExchangeInfo, PaymentErrorDetails } from 'model';
+import { ShopExchangeInfo, PaymentErrorDetails, CommonChain, EthWallet } from 'model';
 import { getPrice } from 'utils/getPrice';
 import { IconError } from 'assets/IconError';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 
-interface BuyModalConfirmedProps {
+interface BuyModalConfirmedType<C, S, W> extends CommonChain<C, S, W> {
   order: OrderSchema;
   txHash: string;
-  walletPublicKey: web3.PublicKey | undefined;
+  // walletPublicKey: web3.PublicKey | undefined;
   onClose: () => void;
   exchangeInfo: ShopExchangeInfo;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
-  candyShop: CandyShop;
+  // candyShop: CandyShop;
   paymentPrice?: number;
   error?: PaymentErrorDetails;
 }
+type BuyModalConfirmedProps =
+  | BuyModalConfirmedType<Blockchain.Ethereum, EthCandyShop, EthWallet>
+  | BuyModalConfirmedType<Blockchain.Solana, CandyShop, AnchorWallet>;
 
 const PaymentErrorMessage: React.FC<{ error: PaymentErrorDetails }> = ({ error }) => {
   const { content, moreInfo } = error;
@@ -43,16 +46,18 @@ const PaymentErrorMessage: React.FC<{ error: PaymentErrorDetails }> = ({ error }
 export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
   order,
   txHash,
-  walletPublicKey,
   onClose,
   exchangeInfo,
   shopPriceDecimalsMin,
   shopPriceDecimals,
-  candyShop,
   paymentPrice,
-  error
+  error,
+  ...chainProps
 }) => {
-  const walletAddress = walletPublicKey?.toBase58();
+  const walletAddress =
+    chainProps.blockchain === Blockchain.Solana
+      ? chainProps.wallet?.publicKey.toBase58()
+      : chainProps.wallet?.publicKey;
 
   const orderPrice = getPrice(shopPriceDecimalsMin, shopPriceDecimals, order.price, exchangeInfo);
 
@@ -91,25 +96,13 @@ export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
         <div className="candy-buy-modal-confirmed-item">
           <div className="candy-label">FROM</div>
           <div className="candy-value">
-            <ExplorerLink
-              type="address"
-              address={order.walletAddress}
-              source={candyShop.explorerLink}
-              env={candyShop.env}
-            />
+            <ExplorerLink type="address" address={order.walletAddress} {...chainProps} />
           </div>
         </div>
         <div className="candy-buy-modal-confirmed-item">
           <div className="candy-label">TO</div>
           <div className="candy-value">
-            {walletAddress && (
-              <ExplorerLink
-                type="address"
-                address={walletAddress}
-                source={candyShop.explorerLink}
-                env={candyShop.env}
-              />
-            )}
+            {walletAddress && <ExplorerLink {...chainProps} type="address" address={walletAddress} />}
           </div>
         </div>
         {error ? (
@@ -119,7 +112,7 @@ export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
             <div className="candy-buy-modal-confirmed-item">
               <div className="candy-label">TRANSACTION HASH</div>
               <div className="candy-value">
-                <ExplorerLink type="tx" address={txHash} source={candyShop.explorerLink} env={candyShop.env} />
+                <ExplorerLink type="tx" address={txHash} {...chainProps} />
               </div>
             </div>
             <div className="candy-buy-modal-confirmed-item">

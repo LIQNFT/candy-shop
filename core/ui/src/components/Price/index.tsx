@@ -1,11 +1,15 @@
 import React from 'react';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop } from '@liqnft/candy-shop-sdk';
+import { CommonChain, EthWallet } from 'model';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 
-interface PriceProps {
+interface PriceType<C, S, W> extends CommonChain<C, S, W> {
   value: string | number | null | undefined;
-  candyShop: CandyShop;
   emptyValue?: string;
 }
+type PriceProps =
+  | PriceType<Blockchain.Ethereum, EthCandyShop, EthWallet>
+  | PriceType<Blockchain.Solana, CandyShop, AnchorWallet>;
 
 const getPrice = (candyShop: CandyShop, price?: string | number | null) => {
   if (!price || isNaN(Number(price))) return null;
@@ -16,8 +20,8 @@ const getPrice = (candyShop: CandyShop, price?: string | number | null) => {
   });
 };
 
-export const Price: React.FC<PriceProps> = ({ value, candyShop, emptyValue }) => {
-  const formattedValue = getPrice(candyShop, value);
+export const Price: React.FC<PriceProps> = ({ value, candyShop, emptyValue, blockchain }) => {
+  const formattedValue = blockchain === Blockchain.Solana ? getPrice(candyShop, value) : 'WIP';
   emptyValue = emptyValue || 'N/A';
 
   return candyShop && formattedValue ? (

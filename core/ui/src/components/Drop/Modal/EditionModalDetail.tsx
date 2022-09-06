@@ -50,7 +50,7 @@ export const EditionModalDetail: React.FC<EditionModalDetailProps> = ({
         <div className="candy-edition-modal-control">
           <div className="candy-edition-mint-price">
             <div className="candy-label">MINT PRICE</div>
-            <div className="candy-price">{<Price candyShop={candyShop} value={dropNft.price} />}</div>
+            {/* <div className="candy-price">{<Price candyShop={candyShop} value={dropNft.price} />}</div> */}
           </div>
           {walletPublicKey ? (
             <div className="candy-edition-price-modal">

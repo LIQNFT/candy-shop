@@ -1,22 +1,24 @@
-import { CandyShop, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
 import { CandyShop as CandyShopResponse, Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CancelModal } from 'components/CancelModal';
 import { Card } from 'components/Card';
 import { SellModal } from 'components/SellModal';
+import { CommonChain, EthWallet } from 'model';
 import React, { useState } from 'react';
-import { getExchangeInfo } from 'utils/getExchangeInfo';
+import { getDefaultExchange, getExchangeInfo } from 'utils/getExchangeInfo';
 import './index.less';
 
-export interface NftProps {
+export interface NftType<C, S, W> extends CommonChain<C, S, W> {
   nft: SingleTokenInfo;
-  wallet: AnchorWallet;
   sellDetail?: OrderSchema;
   shop: CandyShopResponse;
-  candyShop: CandyShop;
 }
+type NftProps =
+  | NftType<Blockchain.Ethereum, EthCandyShop, EthWallet>
+  | NftType<Blockchain.Solana, CandyShop, AnchorWallet>;
 
-export const Nft = ({ nft, wallet, sellDetail, shop, candyShop }: NftProps): JSX.Element => {
+export const Nft = ({ nft, sellDetail, shop, ...chainProps }: NftProps): JSX.Element => {
   const [selection, setSelection] = useState<SingleTokenInfo | undefined>();
 
   const onClose = () => {
@@ -27,12 +29,10 @@ export const Nft = ({ nft, wallet, sellDetail, shop, candyShop }: NftProps): JSX
     setSelection(nft);
   };
 
-  const exchangeInfo = sellDetail
-    ? getExchangeInfo(sellDetail, candyShop)
-    : {
-        symbol: candyShop.currencySymbol,
-        decimals: candyShop.currencyDecimals
-      };
+  const exchangeInfo =
+    sellDetail && chainProps.blockchain === Blockchain.Solana
+      ? getExchangeInfo(sellDetail, chainProps.candyShop)
+      : getDefaultExchange(chainProps.candyShop);
 
   return (
     <>
@@ -48,16 +48,17 @@ export const Nft = ({ nft, wallet, sellDetail, shop, candyShop }: NftProps): JSX
         <SellModal
           onCancel={onClose}
           nft={selection}
-          wallet={wallet}
           shop={shop}
-          connection={candyShop.connection()}
-          shopAddress={candyShop.candyShopAddress}
-          candyShopProgramId={candyShop.programId}
-          baseUnitsPerCurrency={candyShop.baseUnitsPerCurrency}
-          shopTreasuryMint={candyShop.treasuryMint}
-          shopCreatorAddress={candyShop.candyShopCreatorAddress}
-          currencySymbol={candyShop.currencySymbol}
-          candyShop={candyShop}
+          connection={chainProps.blockchain === Blockchain.Solana ? chainProps.candyShop.connection() : undefined}
+          shopAddress={chainProps.candyShop.candyShopAddress}
+          candyShopProgramId={chainProps.blockchain === Blockchain.Solana ? chainProps.candyShop.programId : undefined}
+          baseUnitsPerCurrency={
+            chainProps.blockchain === Blockchain.Solana ? chainProps.candyShop.baseUnitsPerCurrency : 0
+          }
+          shopTreasuryMint={chainProps.candyShop.treasuryMint}
+          shopCreatorAddress={chainProps.candyShop.candyShopCreatorAddress}
+          currencySymbol={chainProps.candyShop.currencySymbol}
+          {...chainProps}
         />
       )}
 
@@ -65,12 +66,10 @@ export const Nft = ({ nft, wallet, sellDetail, shop, candyShop }: NftProps): JSX
         <CancelModal
           onClose={onClose}
           order={sellDetail}
-          wallet={wallet}
           exchangeInfo={exchangeInfo}
-          connection={candyShop.connection()}
-          shopPriceDecimalsMin={candyShop.priceDecimalsMin}
-          shopPriceDecimals={candyShop.priceDecimals}
-          candyShop={candyShop}
+          shopPriceDecimalsMin={chainProps.candyShop.priceDecimalsMin}
+          shopPriceDecimals={chainProps.candyShop.priceDecimals}
+          {...chainProps}
         />
       ) : null}
     </>

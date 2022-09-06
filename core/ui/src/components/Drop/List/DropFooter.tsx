@@ -20,9 +20,7 @@ export const DropFooter: React.FC<DropFooterProps> = ({ candyShop, nft }: DropFo
         <div className="name">{nft.nftName}</div>
         <div className="candy-edition-price">
           <span>MINT PRICE</span>
-          <span className="candy-price">
-            <Price candyShop={candyShop} value={nft.price} />
-          </span>
+          <span className="candy-price">{/* <Price candyShop={candyShop} value={nft.price} /> */}</span>
         </div>
       </div>
       <div className="candy-edition-slide">

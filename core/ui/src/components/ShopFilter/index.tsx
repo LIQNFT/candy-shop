@@ -1,23 +1,26 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Search } from 'components/Search';
-import { CandyShop, fetchAllShop } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop, fetchAllShop } from '@liqnft/candy-shop-sdk';
 import { LoadStatus } from 'constant';
 import { ListBase, CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
 import { Processing } from 'components/Processing';
-import { ShopFilter as ShopFilterInfo } from 'model';
+import { CommonChain, EthWallet, ShopFilter as ShopFilterInfo } from 'model';
 import { removeDuplicate } from 'utils/helperFunc';
 
 import '../../style/order-filter.less';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 
-interface ShopFilterProps {
+interface ShopFilterType<C, S, W> extends CommonChain<C, S, W> {
   onChange: (item: CandyShopResponse | ShopFilterInfo | undefined, type: 'auto' | 'manual') => any;
   selected?: CandyShopResponse;
-  candyShop: CandyShop;
   filters?: ShopFilterInfo[] | boolean;
   selectedManual?: ShopFilterInfo;
   showAllFilters: boolean;
   search?: boolean;
 }
+type ShopFilterProps =
+  | ShopFilterType<Blockchain.Solana, CandyShop, AnchorWallet>
+  | ShopFilterType<Blockchain.Ethereum, EthCandyShop, EthWallet>;
 
 const Logger = 'CandyShopUI/ShopFilter';
 const LIMIT = 10;
@@ -25,11 +28,11 @@ const LIMIT = 10;
 export const ShopFilter: React.FC<ShopFilterProps> = ({
   onChange,
   selected,
-  candyShop,
   filters,
   selectedManual,
   showAllFilters,
-  search
+  search,
+  ...chainProps
 }) => {
   const [options, setOptions] = useState<CandyShopResponse[]>([]);
   const [offset, setOffset] = useState<number>(0);
@@ -42,14 +45,16 @@ export const ShopFilter: React.FC<ShopFilterProps> = ({
     setOffset(0);
   }, []);
 
+  const candyShopAddress = chainProps.candyShop.candyShopAddress.toString();
+
   const fetchOption = useCallback(
     (startIndex: number) => {
-      if (!candyShop) return;
+      if (!candyShopAddress) return;
       setLoading(LoadStatus.Loading);
       const queryDto = {
         offset: startIndex,
         limit: LIMIT,
-        shopId: candyShop.candyShopAddress.toString(),
+        shopId: candyShopAddress,
         name: keyword
       };
       fetchAllShop(queryDto)
@@ -71,7 +76,7 @@ export const ShopFilter: React.FC<ShopFilterProps> = ({
         .catch((err: Error) => console.log(`${Logger} fetchAllCollection error=`, err))
         .finally(() => setLoading(LoadStatus.Loaded));
     },
-    [candyShop, keyword]
+    [candyShopAddress, keyword]
   );
 
   useEffect(() => {

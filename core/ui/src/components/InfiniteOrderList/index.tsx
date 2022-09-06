@@ -3,40 +3,47 @@ import { Order as OrderComponent } from 'components/Order';
 import { Order } from '@liqnft/candy-shop-types';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
-import { getExchangeInfo } from 'utils/getExchangeInfo';
+import { getDefaultExchange, getExchangeInfo } from 'utils/getExchangeInfo';
 import { BuyModal } from 'components/BuyModal';
 import { CancelModal } from 'components/CancelModal';
 import { LoadingSkeleton } from 'components/LoadingSkeleton';
+import { CommonChain, EthWallet } from '../../model';
+import { isSolana } from 'utils/helperFunc';
 
-interface InfiniteOrderListProps {
+interface InfiniteOrderListType<C, S, W> extends CommonChain<C, S, W> {
   orders: Order[];
-  wallet: AnchorWallet | undefined;
-  walletConnectComponent: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
+  walletConnectComponent: React.ReactElement;
   url?: string;
   hasNextPage: boolean;
   loadNextPage: () => void;
-  candyShop: CandyShop;
   sellerUrl?: string;
 }
+type InfiniteOrderListProps =
+  | InfiniteOrderListType<Blockchain.Solana, CandyShop, AnchorWallet>
+  | InfiniteOrderListType<Blockchain.Ethereum, EthCandyShop, EthWallet>;
 
 export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
   orders,
-  wallet,
   walletConnectComponent,
   url,
   hasNextPage,
   loadNextPage,
-  candyShop,
-  sellerUrl
+  sellerUrl,
+  ...chainProps
 }) => {
   const [selectedOrder, setSelectedOrder] = useState<OrderSchema>();
   const onSelectOrder = (order?: OrderSchema) => setSelectedOrder(order);
 
-  const exchangeInfo = getExchangeInfo(selectedOrder, candyShop);
+  const exchangeInfo =
+    chainProps.blockchain === Blockchain.Solana
+      ? getExchangeInfo(selectedOrder, chainProps.candyShop)
+      : getDefaultExchange(chainProps.candyShop);
   const isUserListing =
-    selectedOrder && wallet?.publicKey && selectedOrder.walletAddress === wallet.publicKey.toString();
+    selectedOrder &&
+    chainProps.wallet?.publicKey &&
+    selectedOrder.walletAddress === chainProps.wallet.publicKey.toString();
 
   return (
     <>
@@ -47,11 +54,10 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
               <OrderComponent
                 order={order}
                 walletConnectComponent={walletConnectComponent}
-                wallet={wallet}
                 url={url}
-                candyShop={candyShop}
                 sellerUrl={sellerUrl}
                 onOrderSelection={onSelectOrder}
+                {...chainProps}
               />
             </div>
           ))}
@@ -61,28 +67,24 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
         <BuyModal
           order={selectedOrder}
           onClose={() => onSelectOrder(undefined)}
-          wallet={wallet}
-          walletConnectComponent={walletConnectComponent}
           exchangeInfo={exchangeInfo}
-          connection={candyShop.connection()}
-          isEnterprise={candyShop.isEnterprise}
-          shopPriceDecimalsMin={candyShop.priceDecimalsMin}
-          shopPriceDecimals={candyShop.priceDecimals}
+          connection={chainProps.blockchain === Blockchain.Solana ? chainProps.candyShop.connection() : undefined}
+          isEnterprise={chainProps.blockchain === Blockchain.Solana ? chainProps.candyShop.isEnterprise : false}
+          shopPriceDecimalsMin={chainProps.blockchain === Blockchain.Solana ? chainProps.candyShop.priceDecimalsMin : 0}
+          shopPriceDecimals={chainProps.blockchain === Blockchain.Solana ? chainProps.candyShop.priceDecimals : 0}
           sellerUrl={sellerUrl}
-          candyShop={candyShop}
+          walletConnectComponent={walletConnectComponent}
+          {...chainProps}
         />
       ) : null}
-
-      {selectedOrder && isUserListing && wallet ? (
+      {selectedOrder && isUserListing && chainProps.wallet ? (
         <CancelModal
           onClose={() => onSelectOrder(undefined)}
           order={selectedOrder}
-          wallet={wallet}
           exchangeInfo={exchangeInfo}
-          connection={candyShop.connection()}
-          shopPriceDecimalsMin={candyShop.priceDecimalsMin}
-          shopPriceDecimals={candyShop.priceDecimals}
-          candyShop={candyShop}
+          shopPriceDecimalsMin={isSolana(chainProps.blockchain) ? chainProps.candyShop.priceDecimalsMin : 0}
+          shopPriceDecimals={isSolana(chainProps.blockchain) ? chainProps.candyShop.priceDecimals : 0}
+          {...chainProps}
         />
       ) : null}
     </>

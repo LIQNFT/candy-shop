@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { CandyShop, CandyShopPay, fetchNFTByMintAddress, getCandyShopSync } from '@liqnft/candy-shop-sdk';
+import {
+  Blockchain,
+  CandyShop,
+  CandyShopPay,
+  EthCandyShop,
+  fetchNFTByMintAddress,
+  getCandyShopSync
+} from '@liqnft/candy-shop-sdk';
 import { Nft, Order as OrderSchema, SingleBase } from '@liqnft/candy-shop-types';
 import { web3 } from '@project-serum/anchor';
 
@@ -8,32 +15,36 @@ import { NftStat } from 'components/NftStat';
 import { NftVerification } from 'components/Tooltip/NftVerification';
 import { Viewer } from 'components/Viewer';
 
-import { CreditCardPayAvailability, ShopExchangeInfo } from 'model';
+import { CommonChain, CreditCardPayAvailability, EthWallet, ShopExchangeInfo } from 'model';
 import { getPrice } from 'utils/getPrice';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 
 const Logger = 'CandyShopUI/BuyModalDetail';
 
-export interface BuyModalDetailProps {
+export interface BuyModalDetailType<C, S, W> extends CommonChain<C, S, W> {
   order: OrderSchema;
   buy: () => void;
-  walletPublicKey: web3.PublicKey | undefined;
+  // walletPublicKey: web3.PublicKey | undefined;
   walletConnectComponent: React.ReactElement;
   exchangeInfo: ShopExchangeInfo;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
   sellerUrl?: string;
-  candyShop: CandyShop;
+  // candyShop: CandyShop;
   onPayment: () => void;
   setCountdownElement: React.Dispatch<React.SetStateAction<null | HTMLSpanElement>>;
   paymentPrice?: number;
   creditCardPayAvailable: CreditCardPayAvailability;
 }
+type BuyModalDetailProps =
+  | BuyModalDetailType<Blockchain.Solana, CandyShop, AnchorWallet>
+  | BuyModalDetailType<Blockchain.Ethereum, EthCandyShop, EthWallet>;
 
 export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   order,
   buy,
-  walletPublicKey,
+  wallet,
   walletConnectComponent,
   exchangeInfo,
   shopPriceDecimalsMin,
@@ -43,7 +54,8 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   onPayment,
   setCountdownElement,
   paymentPrice,
-  creditCardPayAvailable
+  creditCardPayAvailable,
+  blockchain
 }) => {
   const [loadingNftInfo, setLoadingNftInfo] = useState(false);
   const [nftInfo, setNftInfo] = useState<Nft>();
@@ -97,7 +109,7 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
               </span>
             </div>
           </div>
-          {walletPublicKey && (
+          {wallet?.publicKey ? (
             <div>
               <button className="candy-button candy-buy-modal-button" onClick={buy}>
                 Buy Now
@@ -114,8 +126,9 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
                 </button>
               )}
             </div>
+          ) : (
+            walletConnectComponent
           )}
-          {!walletPublicKey && walletConnectComponent}
         </div>
         {order.nftDescription && (
           <div className="candy-stat">
@@ -123,13 +136,14 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
             <div className="candy-value">{order?.nftDescription}</div>
           </div>
         )}
-        <NftStat
+        {/* <NftStat
           owner={order.walletAddress}
           tokenMint={order.tokenMint}
           edition={order.edition}
           sellerUrl={sellerUrl}
           candyShop={candyShop}
-        />
+          blockchain={blockchain}
+        /> */}
         <NftAttributes loading={loadingNftInfo} attributes={nftInfo?.attributes} />
       </div>
     </>

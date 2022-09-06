@@ -1,7 +1,9 @@
 import React from 'react';
 import { web3 } from '@project-serum/anchor';
 import { shortenAddress } from 'utils/helperFunc';
-import { ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+import { CommonChain, EthWallet } from 'model';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 
 export const BaseUrlType = {
   [ExplorerLinkBase.SolScan]: 'https://solscan.io',
@@ -15,15 +17,21 @@ const getClusterQuery = (network: string | undefined, baseUrl: ExplorerLinkBase)
   return `?cluster=devnet`;
 };
 
-export const ExplorerLink = (props: {
+interface ExplorerLinkType<C, S, W> extends CommonChain<C, S, W> {
   address: string | web3.PublicKey;
   type: string;
   length?: number;
   children?: React.ReactNode;
-  source: ExplorerLinkBase;
-  env: web3.Cluster;
-}): JSX.Element | null => {
-  const { type, children, length = 4, address, source, env } = props;
+}
+
+type ExplorerLinkProps =
+  | ExplorerLinkType<Blockchain.Ethereum, EthCandyShop, EthWallet>
+  | ExplorerLinkType<Blockchain.Solana, CandyShop, AnchorWallet>;
+
+export const ExplorerLink: React.FC<ExplorerLinkProps> = (props) => {
+  const { type, children, length = 4, address, candyShop, blockchain } = props;
+  const env = blockchain === Blockchain.Solana ? candyShop.env : undefined;
+  const source = blockchain === Blockchain.Solana ? candyShop.explorerLink : ExplorerLinkBase.Explorer; // TODO: update source for ETh
   if (!address) return null;
   const addressString = typeof address === 'string' ? address : address?.toBase58();
   return (

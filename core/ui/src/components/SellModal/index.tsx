@@ -3,10 +3,11 @@ import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
 import {
+  Blockchain,
   CandyShop,
   CandyShopTrade,
   CandyShopTradeSellParams,
-  CandyShopVersion,
+  EthCandyShop,
   getTokenMetadataByMintAddress,
   NftMetadata,
   SingleTokenInfo
@@ -20,32 +21,32 @@ import { Processing } from 'components/Processing';
 import { Tooltip } from 'components/Tooltip';
 
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
-import { TransactionState } from 'model';
+import { CommonChain, EthWallet, TransactionState } from 'model';
 import { ErrorMsgMap, ErrorType, handleError } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
 import { TIMEOUT_EXTRA_LOADING } from 'constant';
 import IconTick from 'assets/IconTick';
 import './style.less';
 
-export interface SellModalProps {
+export interface SellModalType<C, S, W> extends CommonChain<C, S, W> {
   onCancel: () => void;
   nft: SingleTokenInfo;
-  wallet: AnchorWallet;
   shop: CandyShopResponse;
-  connection: web3.Connection;
+  connection?: web3.Connection;
   shopAddress: string;
-  candyShopProgramId: string;
+  candyShopProgramId?: string;
   baseUnitsPerCurrency: number;
   shopTreasuryMint: string;
   shopCreatorAddress: string;
   currencySymbol: string;
-  candyShop: CandyShop;
 }
+type SellModalProps =
+  | SellModalType<Blockchain.Ethereum, EthCandyShop, EthWallet>
+  | SellModalType<Blockchain.Solana, CandyShop, AnchorWallet>;
 
 export const SellModal: React.FC<SellModalProps> = ({
   onCancel: onUnSelectItem,
   nft,
-  wallet,
   shop,
   connection,
   shopAddress,
@@ -54,7 +55,7 @@ export const SellModal: React.FC<SellModalProps> = ({
   shopTreasuryMint,
   shopCreatorAddress,
   currencySymbol,
-  candyShop
+  ...chainProps
 }) => {
   const [formState, setFormState] = useState<{ price: number | undefined }>({
     price: undefined
@@ -69,7 +70,7 @@ export const SellModal: React.FC<SellModalProps> = ({
   const sell = async () => {
     setState(TransactionState.PROCESSING);
 
-    if (!wallet) {
+    if (!chainProps?.wallet) {
       notification(ErrorMsgMap[ErrorType.InvalidWallet], NotificationType.Error);
       return;
     }
@@ -82,26 +83,38 @@ export const SellModal: React.FC<SellModalProps> = ({
 
     const price = formState.price * baseUnitsPerCurrency;
 
-    const tradeSellParams: CandyShopTradeSellParams = {
-      connection,
-      tokenAccount: new web3.PublicKey(nft.tokenAccountAddress),
-      tokenMint: new web3.PublicKey(nft.tokenMintAddress),
-      price: new BN(price),
-      wallet,
-      shopAddress: new web3.PublicKey(shopAddress),
-      candyShopProgramId: new web3.PublicKey(candyShopProgramId),
-      shopTreasuryMint: new web3.PublicKey(shopTreasuryMint),
-      shopCreatorAddress: new web3.PublicKey(shopCreatorAddress)
+    const getAction = (): any => {
+      switch (chainProps.blockchain) {
+        case Blockchain.Solana: {
+          if (!connection || !chainProps.wallet || !candyShopProgramId) return;
+          const tradeSellParams: CandyShopTradeSellParams = {
+            connection,
+            tokenAccount: new web3.PublicKey(nft.tokenAccountAddress),
+            tokenMint: new web3.PublicKey(nft.tokenMintAddress),
+            price: new BN(price),
+            wallet: chainProps.wallet,
+            shopAddress: new web3.PublicKey(shopAddress),
+            candyShopProgramId: new web3.PublicKey(candyShopProgramId),
+            shopTreasuryMint: new web3.PublicKey(shopTreasuryMint),
+            shopCreatorAddress: new web3.PublicKey(shopCreatorAddress)
+          };
+
+          return CandyShopTrade.sell(tradeSellParams);
+        }
+        default: {
+          console.log('WIP ETH1');
+        }
+      }
     };
 
-    return CandyShopTrade.sell(tradeSellParams)
-      .then((txHash) => {
+    return getAction()
+      .then((txHash: string) => {
         console.log('SellModal: Place sell order with transaction hash= ', txHash);
         timeoutRef.current = setTimeout(() => {
           setState(TransactionState.CONFIRMED);
         }, TIMEOUT_EXTRA_LOADING);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         console.log('SellModal: error= ', err);
         handleError({ error: err });
         setState(TransactionState.DISPLAY);
@@ -126,21 +139,30 @@ export const SellModal: React.FC<SellModalProps> = ({
   }, [onUnSelectItem]);
 
   useEffect(() => {
-    console.log('getTokenMetadataByMintAddress', {
-      mint: nft.tokenMintAddress
-    });
+    console.log('getTokenMetadataByMintAddress', { mint: nft.tokenMintAddress });
     setLoading(true);
-    getTokenMetadataByMintAddress(nft.tokenMintAddress, connection)
+
+    const getAction = (): any => {
+      switch (chainProps.blockchain) {
+        case Blockchain.Solana: {
+          if (!connection) return;
+          return getTokenMetadataByMintAddress(nft.tokenMintAddress, connection);
+        }
+        default:
+          console.log('ETH WIP');
+      }
+    };
+    getAction()
       .then((data: NftMetadata) => {
         setRoyalties(data.sellerFeeBasisPoints / 100);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         console.log('ERROR getTokenMetadataByMintAddress', err);
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [connection, nft.tokenMintAddress]);
+  }, [chainProps.blockchain, connection, nft.tokenMintAddress]);
 
   const onCloseModal = () => {
     onCancel();
@@ -162,7 +184,7 @@ export const SellModal: React.FC<SellModalProps> = ({
               <div>
                 <div className="candy-sell-modal-nft-name">{nft?.metadata?.data?.name}</div>
                 <div className="candy-sell-modal-symbol">{nft?.metadata?.data?.symbol}</div>
-                <NftStat tokenMint={nft.tokenMintAddress} edition={nft.edition} candyShop={candyShop} />
+                <NftStat tokenMint={nft.tokenMintAddress} edition={nft.edition} {...chainProps} />
               </div>
             </div>
             <div className="candy-sell-modal-hr"></div>

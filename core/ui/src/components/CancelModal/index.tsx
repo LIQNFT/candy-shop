@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import {
+  Blockchain,
   CandyShop,
   CandyShopTrade,
   CandyShopTradeCancelParams,
   CandyShopVersion,
+  EthCandyShop,
   getCandyShopSync
 } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
@@ -14,7 +16,7 @@ import { PoweredByInBuyModal } from 'components/PoweredBy/PowerByInBuyModal';
 import { Processing } from 'components/Processing';
 import { TIMEOUT_EXTRA_LOADING } from 'constant';
 import { useUnmountTimeout } from 'hooks/useUnmountTimeout';
-import { ShopExchangeInfo, TransactionState } from 'model';
+import { CommonChain, EthWallet, ShopExchangeInfo, TransactionState } from 'model';
 import { handleError } from 'utils/ErrorHandler';
 import { CancelModalConfirm } from './CancelModalConfirm';
 import { CancelModalDetail } from './CancelModalDetail';
@@ -22,26 +24,26 @@ import './index.less';
 
 const Logger = 'CandyShopUI/CancelModal';
 
-export interface CancelModalProps {
+interface CancelModalType<C, S, W> extends CommonChain<C, S, W> {
   order: OrderSchema;
   onClose: any;
-  wallet: AnchorWallet;
   exchangeInfo: ShopExchangeInfo;
-  connection: web3.Connection;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
-  candyShop: CandyShop;
 }
+type CancelModalProps =
+  | CancelModalType<Blockchain.Ethereum, EthCandyShop, EthWallet>
+  | CancelModalType<Blockchain.Solana, CandyShop, AnchorWallet>;
 
 export const CancelModal: React.FC<CancelModalProps> = ({
   order,
   onClose,
   wallet,
   exchangeInfo,
-  connection,
   shopPriceDecimalsMin,
   shopPriceDecimals,
-  candyShop
+  candyShop,
+  blockchain
 }) => {
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
   const timeoutRef = useUnmountTimeout();
@@ -54,19 +56,31 @@ export const CancelModal: React.FC<CancelModalProps> = ({
   const cancel = async () => {
     setState(TransactionState.PROCESSING);
 
-    const tradeCancelParams: CandyShopTradeCancelParams = {
-      connection: connection,
-      tokenAccount: new web3.PublicKey(order.tokenAccount),
-      tokenMint: new web3.PublicKey(order.tokenMint),
-      price: new BN(order.price),
-      wallet: wallet,
-      shopAddress: new web3.PublicKey(shopAddress),
-      candyShopProgramId: new web3.PublicKey(order.programId),
-      shopTreasuryMint: new web3.PublicKey(order.treasuryMint),
-      shopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress)
+    const getAction = (): Promise<any> => {
+      switch (blockchain) {
+        case Blockchain.Solana: {
+          if (!wallet?.publicKey) return new Promise((res) => res(''));
+
+          const tradeCancelParams: CandyShopTradeCancelParams = {
+            connection: candyShop.connection(),
+            tokenAccount: new web3.PublicKey(order.tokenAccount),
+            tokenMint: new web3.PublicKey(order.tokenMint),
+            price: new BN(order.price),
+            wallet: wallet,
+            shopAddress: new web3.PublicKey(shopAddress),
+            candyShopProgramId: new web3.PublicKey(order.programId),
+            shopTreasuryMint: new web3.PublicKey(order.treasuryMint),
+            shopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress)
+          };
+
+          return CandyShopTrade.cancel(tradeCancelParams);
+        }
+        default:
+          return new Promise((res) => res(''));
+      }
     };
 
-    return CandyShopTrade.cancel(tradeCancelParams)
+    return getAction()
       .then((txHash) => {
         console.log(`${Logger}: Cancel order made with transaction hash=${txHash}`);
         timeoutRef.current = setTimeout(() => {
@@ -85,7 +99,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
       onCancel={onClose}
       width={state !== TransactionState.DISPLAY ? 600 : 1000}
     >
-      {state === TransactionState.DISPLAY && wallet && (
+      {/* {state === TransactionState.DISPLAY && wallet && (
         <CancelModalDetail
           order={order}
           cancel={cancel}
@@ -93,8 +107,9 @@ export const CancelModal: React.FC<CancelModalProps> = ({
           shopPriceDecimalsMin={shopPriceDecimalsMin}
           shopPriceDecimals={shopPriceDecimals}
           candyShop={candyShop}
+          blockchain={blockchain}
         />
-      )}
+      )} */}
       {state === TransactionState.PROCESSING && <Processing text="Canceling your sale" />}
       {state === TransactionState.CONFIRMED && <CancelModalConfirm order={order} onCancel={onClose} />}
       <PoweredByInBuyModal />

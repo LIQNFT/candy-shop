@@ -52,49 +52,49 @@ export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children 
     localStorage.setItem(subject, timestamp.toString());
   }, []);
 
-  const polling = useCallback(
-    (candyShopAddress: string) => {
-      const targets: ShopStatusType[] = [];
-      let key: keyof Subject;
-      for (key in subjects) {
-        if (Number(subjects[key]) > 0) targets.push(key);
-      }
+  // const polling = useCallback(
+  //   (candyShopAddress: string) => {
+  //     const targets: ShopStatusType[] = [];
+  //     let key: keyof Subject;
+  //     for (key in subjects) {
+  //       if (Number(subjects[key]) > 0) targets.push(key);
+  //     }
 
-      if (targets.length === 0) return;
-      fetchShopStatusByShopAddress(candyShopAddress, {
-        targets,
-        walletAddress
-      })
-        .then((res: SingleBase<ShopStatus[]>) => {
-          if (res.result) {
-            for (const shopStatus of res.result) {
-              const prevTimestamp = localStorage.getItem(shopStatus.type);
-              const resTimestamp = JSON.stringify(shopStatus.timestamp);
-              const isShopRefreshed = prevTimestamp !== resTimestamp;
-              if (isShopRefreshed) {
-                console.log(`%c${Logger}: ${shopStatus.type}`, 'color: #e9ae00', prevTimestamp, res);
-                localStorage.setItem(shopStatus.type, shopStatus.timestamp.toString());
-              }
-            }
-          } else {
-            console.log(`${Logger}: fetchShopStatus res.result is undefined`);
-          }
-        })
-        .catch((err: any) => {
-          console.log(`${Logger}: fetchShopStatus failed, error=`, err);
-        });
-    },
-    [subjects, walletAddress]
-  );
+  //     if (targets.length === 0) return;
+  //     fetchShopStatusByShopAddress(candyShopAddress, {
+  //       targets,
+  //       walletAddress
+  //     })
+  //       .then((res: SingleBase<ShopStatus[]>) => {
+  //         if (res.result) {
+  //           for (const shopStatus of res.result) {
+  //             const prevTimestamp = localStorage.getItem(shopStatus.type);
+  //             const resTimestamp = JSON.stringify(shopStatus.timestamp);
+  //             const isShopRefreshed = prevTimestamp !== resTimestamp;
+  //             if (isShopRefreshed) {
+  //               console.log(`%c${Logger}: ${shopStatus.type}`, 'color: #e9ae00', prevTimestamp, res);
+  //               localStorage.setItem(shopStatus.type, shopStatus.timestamp.toString());
+  //             }
+  //           }
+  //         } else {
+  //           console.log(`${Logger}: fetchShopStatus res.result is undefined`);
+  //         }
+  //       })
+  //       .catch((err: any) => {
+  //         console.log(`${Logger}: fetchShopStatus failed, error=`, err);
+  //       });
+  //   },
+  //   [subjects, walletAddress]
+  // );
 
-  // polling update shop content
-  useInterval(
-    () => {
-      if (!candyShopAddress) return;
-      polling(candyShopAddress);
-    },
-    candyShopAddress ? POLLING_SHOP_INTERVAL : null
-  );
+  // // polling update shop content
+  // useInterval(
+  //   () => {
+  //     if (!candyShopAddress) return;
+  //     polling(candyShopAddress);
+  //   },
+  //   candyShopAddress ? POLLING_SHOP_INTERVAL : null
+  // );
 
   return (
     <CandyContext.Provider

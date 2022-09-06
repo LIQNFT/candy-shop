@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { CandyShop, fetchStatsByShopAddress } from '@liqnft/candy-shop-sdk';
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { StatActionsStatus } from 'constant';
 
@@ -49,8 +49,7 @@ export const Stat: React.FC<StatProps> = ({ title, description, style, candyShop
 
   // handle fetch data
   useEffect(() => {
-    candyShop
-      .stats()
+    fetchStatsByShopAddress(candyShop.candyShopAddress)
       .then((data: any) => {
         if (!data) return;
         setStat(data);

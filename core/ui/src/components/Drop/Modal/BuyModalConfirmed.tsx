@@ -6,11 +6,12 @@ import { formatDate } from 'utils/timer';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { LiqImage } from 'components/LiqImage';
 import IconTick from 'assets/IconTick';
-import { ShopExchangeInfo } from 'model';
+import { CommonChain, EthWallet, ShopExchangeInfo } from 'model';
 import { getPrice } from 'utils/getPrice';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop } from '@liqnft/candy-shop-sdk';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 
-interface BuyModalConfirmedProps {
+interface BuyModalConfirmedType<C, S, W> extends CommonChain<C, S, W> {
   order: OrderSchema;
   txHash: string;
   walletPublicKey: web3.PublicKey | undefined;
@@ -18,8 +19,11 @@ interface BuyModalConfirmedProps {
   exchangeInfo: ShopExchangeInfo;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
-  candyShop: CandyShop;
+  // candyShop: CandyShop;
 }
+type BuyModalConfirmedProps =
+  | BuyModalConfirmedType<Blockchain.Ethereum, EthCandyShop, EthWallet>
+  | BuyModalConfirmedType<Blockchain.Solana, CandyShop, AnchorWallet>;
 
 export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
   order,
@@ -29,7 +33,8 @@ export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
   exchangeInfo,
   shopPriceDecimalsMin,
   shopPriceDecimals,
-  candyShop
+  candyShop,
+  blockchain
 }) => {
   const walletAddress = walletPublicKey?.toBase58();
 
@@ -60,31 +65,26 @@ export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
         <div className="candy-buy-modal-confirmed-item">
           <div className="candy-label">FROM</div>
           <div className="candy-value">
-            <ExplorerLink
-              type="address"
-              address={order.walletAddress}
-              source={candyShop.explorerLink}
-              env={candyShop.env}
-            />
+            {/* <ExplorerLink type="address" address={order.walletAddress} candyShop={candyShop} blockchain={blockchain} /> */}
           </div>
         </div>
         <div className="candy-buy-modal-confirmed-item">
           <div className="candy-label">TO</div>
           <div className="candy-value">
-            {walletAddress && (
+            {/* {walletAddress && (
               <ExplorerLink
                 type="address"
                 address={walletAddress}
-                source={candyShop.explorerLink}
-                env={candyShop.env}
+                candyShop={candyShop}
+                blockchain={blockchain}
               />
-            )}
+            )} */}
           </div>
         </div>
         <div className="candy-buy-modal-confirmed-item">
           <div className="candy-label">TRANSACTION HASH</div>
           <div className="candy-value">
-            <ExplorerLink type="tx" address={txHash} source={candyShop.explorerLink} env={candyShop.env} />
+            {/* <ExplorerLink type="tx" address={txHash} candyShop={candyShop} blockchain={blockchain} /> */}
           </div>
         </div>
         <div className="candy-buy-modal-confirmed-item">

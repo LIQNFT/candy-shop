@@ -1,13 +1,14 @@
 import React from 'react';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { web3, BN } from '@project-serum/anchor';
-import { CandyShop, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
 
 import { FormType } from '../AuctionForm';
 import { AuctionNftHeader } from '../AuctionNftHeader';
 
 import { notification, NotificationType } from 'utils/rc-notification';
 import { getStartTime, convertTime12to24 } from 'utils/timer';
+import { CommonChain, EthWallet } from 'model';
 
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -15,9 +16,7 @@ dayjs.extend(utc);
 
 import './style.less';
 
-interface CreateAuctionProps {
-  wallet: AnchorWallet | undefined;
-  candyShop: CandyShop;
+interface CreateAuctionConfirmType<C, S, W> extends CommonChain<C, S, W> {
   selected: SingleTokenInfo;
   onBack: () => void;
   auctionForm: FormType;
@@ -25,16 +24,21 @@ interface CreateAuctionProps {
   fee?: number;
 }
 
+type CreateAuctionConfirmProps =
+  | CreateAuctionConfirmType<Blockchain.Solana, CandyShop, AnchorWallet>
+  | CreateAuctionConfirmType<Blockchain.Ethereum, EthCandyShop, EthWallet>;
+
 const Logger = 'CandyShopUI/CreateAuction';
 
-export const CreateAuctionConfirm: React.FC<CreateAuctionProps> = ({
+export const CreateAuctionConfirm: React.FC<CreateAuctionConfirmProps> = ({
   candyShop,
   wallet,
   selected,
   onBack,
   auctionForm,
   onCreateAuctionSuccess,
-  fee
+  fee,
+  blockchain
 }) => {
   const onCreateAuction = () => {
     if (!wallet || !auctionForm || !selected) return;
@@ -50,17 +54,29 @@ export const CreateAuctionConfirm: React.FC<CreateAuctionProps> = ({
       : null;
     const tickSize = new BN(Number(auctionForm.tickSize) * 10 ** candyShop.currencyDecimals);
 
-    candyShop
-      .createAuction({
-        startingBid,
-        startTime,
-        biddingPeriod,
-        buyNowPrice,
-        tokenAccount: new web3.PublicKey(selected.tokenAccountAddress),
-        tokenMint: new web3.PublicKey(selected.tokenMintAddress),
-        wallet,
-        tickSize
-      })
+    const getAction = () => {
+      switch (blockchain) {
+        case Blockchain.Solana:
+          return candyShop.createAuction({
+            startingBid,
+            startTime,
+            biddingPeriod,
+            buyNowPrice,
+            tokenAccount: new web3.PublicKey(selected.tokenAccountAddress),
+            tokenMint: new web3.PublicKey(selected.tokenMintAddress),
+            wallet,
+            tickSize
+          });
+
+        default:
+          return new Promise((res) => {
+            console.log('Create Auction');
+            res('');
+          });
+      }
+    };
+
+    getAction()
       .then(() => {
         notification('Auction created', NotificationType.Success);
         onCreateAuctionSuccess && onCreateAuctionSuccess(selected);

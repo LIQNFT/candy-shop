@@ -9,48 +9,58 @@ import { Countdown } from 'components/Countdown';
 import { Price } from 'components/Price';
 
 import { Auction, AuctionBid, SingleBase, AuctionStatus, BidStatus } from '@liqnft/candy-shop-types';
-import { CandyShop, fetchAuctionBidByWalletAddress } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop, fetchAuctionBidByWalletAddress } from '@liqnft/candy-shop-sdk';
+import { CommonChain, EthWallet } from 'model';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 
 const Logger = 'CandyShopUI/AuctionModalDetail';
-export interface AuctionModalDetailProps {
+interface AuctionModalDetailType<C, S, W> extends CommonChain<C, S, W> {
   auction: Auction;
   placeBid: (price: number) => void;
   buyNow: () => void;
   onWithdrew: () => void;
-  walletPublicKey: web3.PublicKey | undefined;
+  // walletPublicKey: web3.PublicKey | undefined;
   walletConnectComponent: React.ReactElement;
-  candyShop: CandyShop;
 }
+type AuctionModalDetailProps =
+  | AuctionModalDetailType<Blockchain.Ethereum, EthCandyShop, EthWallet>
+  | AuctionModalDetailType<Blockchain.Solana, CandyShop, AnchorWallet>;
 
 export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
   auction,
   placeBid,
   buyNow,
   onWithdrew,
-  walletPublicKey,
+  // walletPublicKey,
   walletConnectComponent,
-  candyShop
+  candyShop,
+  wallet,
+  blockchain
 }) => {
   const [bidInfo, setBidInfo] = useState<AuctionBid | null>(null);
   const [price, setPrice] = useState<number>();
 
   useEffect(() => {
-    if (!walletPublicKey) return;
+    if (!wallet?.publicKey) return;
 
-    fetchAuctionBidByWalletAddress(auction.auctionAddress, walletPublicKey.toString())
+    fetchAuctionBidByWalletAddress(auction.auctionAddress, wallet.publicKey.toString())
       .then((res: SingleBase<AuctionBid>) => {
         if (res.success) {
           setBidInfo(res.result);
           console.log(`${Logger}: fetchAuctionBidByWalletAddress success=`, res.result);
           console.log(`${Logger}: fetchAuctionBidAPI BidStatus=`, mappedBidStatusString(res.result.status));
         } else {
-          console.log(`${Logger}: fetchAuctionBidAPI failed, ${walletPublicKey.toString()} has not placed any bid yet`);
+          console.log(
+            `${Logger}: fetchAuctionBidAPI failed, ${wallet.publicKey.toString()} has not placed any bid yet`
+          );
         }
       })
       .catch((error: any) => {
         console.log(`${Logger}: fetchAuctionBidAPI failed, error=`, error);
       });
-  }, [auction, walletPublicKey]);
+  }, [auction, wallet?.publicKey]);
+
+  const walletPublicKey = wallet?.publicKey.toString();
 
   const isEnableBuyNow = Boolean(auction.buyNowPrice);
 
@@ -59,7 +69,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
     : Number(auction.startingBid);
   const acceptNextBid = !isEnableBuyNow || (isEnableBuyNow && minNextBid < Number(auction.buyNowPrice));
 
-  const PlaceBidButton = walletPublicKey ? (
+  const PlaceBidButton = wallet?.publicKey ? (
     <button disabled={Boolean(!price)} className="candy-button" onClick={() => price && placeBid(Number(price))}>
       Place Bid
     </button>
@@ -70,19 +80,11 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
   const ModalAlertElement = () => {
     if (!bidInfo) return null;
 
-    if (
-      auction.highestBidBuyer &&
-      auction.highestBidBuyer === walletPublicKey?.toString() &&
-      bidInfo.status !== BidStatus.WON
-    ) {
+    if (auction.highestBidBuyer && auction.highestBidBuyer === walletPublicKey && bidInfo.status !== BidStatus.WON) {
       return <div className="candy-auction-modal-notice">Congratulations, you are currently the highest bidder!</div>;
     }
 
-    if (
-      auction.highestBidBuyer &&
-      auction.highestBidBuyer === walletPublicKey?.toString() &&
-      bidInfo.status === BidStatus.WON
-    ) {
+    if (auction.highestBidBuyer && auction.highestBidBuyer === walletPublicKey && bidInfo.status === BidStatus.WON) {
       return <div className="candy-auction-modal-notice">Congratulations, you have won the auction!</div>;
     }
 
@@ -126,7 +128,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
             <div>
               <div className="candy-label">BUY NOW PRICE</div>
               <div className="candy-price">
-                <Price value={auction.buyNowPrice} candyShop={candyShop} />
+                {/* <Price blockchain={blockchain} value={auction.buyNowPrice} candyShop={candyShop} /> */}
               </div>
             </div>
           </div>
@@ -135,7 +137,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
         <div className="candy-auction-modal-form-item">
           <div className="candy-label">STARTING BID</div>
           <div className="candy-price">
-            <Price value={auction.startingBid} candyShop={candyShop} />
+            {/* <Price blockchain={blockchain} value={auction.startingBid} candyShop={candyShop} /> */}
           </div>
         </div>
       </>
@@ -148,7 +150,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
             <div>
               <div className="candy-label">BUY NOW PRICE</div>
               <div className="candy-price">
-                <Price value={auction.buyNowPrice} candyShop={candyShop} />
+                {/* <Price blockchain={blockchain} value={auction.buyNowPrice} candyShop={candyShop} /> */}
               </div>
             </div>
             {walletPublicKey ? (
@@ -166,14 +168,14 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
             <>
               <div className="candy-label">CURRENT BID</div>
               <div className="candy-price">
-                <Price value={auction.highestBidPrice} candyShop={candyShop} />
+                {/* <Price blockchain={blockchain} value={auction.highestBidPrice} candyShop={candyShop} /> */}
               </div>
             </>
           ) : (
             <>
               <div className="candy-label">STARTING BID</div>
               <div className="candy-price">
-                <Price value={auction.startingBid} candyShop={candyShop} />
+                {/* <Price blockchain={blockchain} value={auction.startingBid} candyShop={candyShop} /> */}
               </div>
             </>
           )}
@@ -198,7 +200,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
               {PlaceBidButton}
             </div>
             <div className="candy-auction-modal-prompt">
-              Place bid of <Price value={minNextBid} candyShop={candyShop} /> or more
+              {/* Place bid of <Price blockchain={blockchain} value={minNextBid} candyShop={candyShop} /> or more */}
             </div>
           </>
         ) : (
@@ -216,19 +218,25 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
         <div className="candy-auction-modal-form-item">
           <div className="candy-label">WINNING BID</div>
           <div className="candy-price">
-            <Price value={auction.highestBidPrice} candyShop={candyShop} emptyValue="No winner" />
+            {/* <Price
+              blockchain={blockchain}
+              value={auction.highestBidPrice}
+              candyShop={candyShop}
+              emptyValue="No winner"
+            /> */}
           </div>
         </div>
         {auction.highestBidBuyer && (
           <div className="candy-stat">
             <div className="candy-label">WINNER</div>
             <div className="candy-value">
-              <ExplorerLink
+              WIP ETH ExplorerLink
+              {/* <ExplorerLink
                 type="address"
                 address={auction.highestBidBuyer}
                 source={candyShop.explorerLink}
                 env={candyShop.env}
-              />
+              /> */}
             </div>
           </div>
         )}
@@ -264,7 +272,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
             </div>
           )}
 
-          <NftStat owner={auction.sellerAddress} tokenMint={auction.tokenMint} candyShop={candyShop} />
+          {/* <NftStat owner={auction.sellerAddress} tokenMint={auction.tokenMint} candyShop={candyShop} /> */}
           <NftAttributes loading={false} attributes={auction.attributes} />
         </div>
       </div>

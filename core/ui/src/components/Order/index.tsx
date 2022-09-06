@@ -1,5 +1,5 @@
 import React from 'react';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { IconPlayer } from 'assets/IconPlayer';
@@ -8,18 +8,20 @@ import { NftVerification } from 'components/Tooltip/NftVerification';
 import { getExchangeInfo } from 'utils/getExchangeInfo';
 import { getPrice } from 'utils/getPrice';
 import './index.less';
+import { CommonChain, EthWallet } from 'model';
 
-export interface OrderProps {
+interface OrderType<C, S, W> extends CommonChain<C, S, W> {
   order: OrderSchema;
-  wallet: AnchorWallet | undefined;
   walletConnectComponent: React.ReactElement;
   url?: string;
-  candyShop: CandyShop;
   sellerUrl?: string;
   onOrderSelection: (order?: OrderSchema) => void;
 }
+type OrderProps =
+  | OrderType<Blockchain.Solana, CandyShop, AnchorWallet>
+  | OrderType<Blockchain.Ethereum, EthCandyShop, EthWallet>;
 
-export const Order: React.FC<OrderProps> = ({ order, wallet, url, candyShop, onOrderSelection }) => {
+export const Order: React.FC<OrderProps> = ({ order, candyShop, onOrderSelection, blockchain, wallet, url }) => {
   const onClick = () => {
     if (url) {
       window.location.href = url.replace(':tokenMint', order.tokenMint);
@@ -28,7 +30,13 @@ export const Order: React.FC<OrderProps> = ({ order, wallet, url, candyShop, onO
     onOrderSelection(order);
   };
 
-  const exchangeInfo = getExchangeInfo(order, candyShop);
+  const exchangeInfo =
+    blockchain === Blockchain.Solana
+      ? getExchangeInfo(order, candyShop)
+      : {
+          symbol: candyShop.currencySymbol,
+          decimals: candyShop.currencyDecimals
+        };
   const orderPrice = getPrice(candyShop.priceDecimalsMin, candyShop.priceDecimals, order.price, exchangeInfo);
   const isUserListing = wallet?.publicKey && order.walletAddress === wallet.publicKey.toString();
 

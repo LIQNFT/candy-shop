@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop } from '@liqnft/candy-shop-sdk';
 import { Nft, Order as OrderSchema, SingleBase } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
@@ -11,29 +11,31 @@ import { NftStat } from 'components/NftStat';
 import { Processing } from 'components/Processing';
 import { Viewer } from 'components/Viewer';
 import { NftVerification } from 'components/Tooltip/NftVerification';
-import { TransactionState } from 'model';
+import { CommonChain, EthWallet, TransactionState } from '../../model';
 import { handleError } from 'utils/ErrorHandler';
-import { getExchangeInfo } from 'utils/getExchangeInfo';
+import { getDefaultExchange, getExchangeInfo } from 'utils/getExchangeInfo';
 
 import './style.less';
 import { Price } from 'components/Price';
 
-interface OrderDetailProps {
+interface OrderDetailType<C, S, W> extends CommonChain<C, S, W> {
   tokenMint: string;
   backUrl?: string;
   walletConnectComponent: React.ReactElement;
-  wallet: AnchorWallet | undefined;
-  candyShop: CandyShop;
+  // wallet: AnchorWallet | undefined;
+  // candyShop: CandyShop;
   sellerUrl?: string;
 }
+type OrderDetailProps =
+  | OrderDetailType<Blockchain.Ethereum, EthCandyShop, EthWallet>
+  | OrderDetailType<Blockchain.Solana, CandyShop, AnchorWallet>;
 
 export const OrderDetail: React.FC<OrderDetailProps> = ({
   tokenMint,
   backUrl = '/',
   walletConnectComponent,
-  wallet,
-  candyShop,
-  sellerUrl
+  sellerUrl,
+  ...chainProps
 }) => {
   const [loadingOrder, setLoadingOrder] = useState<boolean>(false);
   const [loadingNftInfo, setLoadingNftInfo] = useState<boolean>(false);
@@ -42,19 +44,27 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
   const [hash, setHash] = useState('');
 
-  const exchangeInfo = order
-    ? getExchangeInfo(order, candyShop)
-    : {
-        symbol: candyShop.currencySymbol,
-        decimals: candyShop.currencyDecimals
-      };
-  const isUserListing = wallet?.publicKey && order && order.walletAddress === wallet.publicKey.toString();
+  const exchangeInfo =
+    order && chainProps.blockchain === Blockchain.Solana
+      ? getExchangeInfo(order, chainProps.candyShop)
+      : getDefaultExchange(chainProps.candyShop);
+  const publicKey = chainProps.wallet?.publicKey.toString();
+  const isUserListing = publicKey && order && order.walletAddress === publicKey;
 
   useEffect(() => {
     if (!order) {
       setLoadingOrder(true);
-      candyShop
-        .activeOrderByMintAddress(tokenMint)
+
+      const getAction = (): Promise<any> => {
+        switch (chainProps.blockchain) {
+          case Blockchain.Solana:
+            return chainProps.candyShop.activeOrderByMintAddress(tokenMint);
+          default:
+            return new Promise((res) => res(''));
+        }
+      };
+
+      getAction()
         .then((res: SingleBase<OrderSchema>) => {
           if (!res.success) throw new Error('Order not found');
           setOrder(res.result);
@@ -70,8 +80,15 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
 
     if (order && !nftInfo) {
       setLoadingNftInfo(true);
-      candyShop
-        .nftInfo(order.tokenMint)
+      const getAction = (): any => {
+        switch (chainProps.blockchain) {
+          case Blockchain.Solana:
+            return chainProps.candyShop.nftInfo(order.tokenMint);
+          default:
+            return new Promise((res) => res(''));
+        }
+      };
+      getAction()
         .then((nft: Nft) => setNftInfo(nft))
         .catch((err: Error) => {
           console.info('fetchNftByMint failed:', err);
@@ -80,19 +97,30 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
           setLoadingNftInfo(false);
         });
     }
-  }, [order, candyShop, nftInfo, tokenMint]);
+  }, [order, nftInfo, tokenMint, chainProps.blockchain, chainProps.candyShop]);
 
   const buy = async () => {
-    if (order && wallet && candyShop) {
+    if (order && publicKey && chainProps.candyShop) {
       setState(TransactionState.PROCESSING);
-      return candyShop
-        .buy({
-          seller: new web3.PublicKey(order.walletAddress),
-          tokenAccount: new web3.PublicKey(order.tokenAccount),
-          tokenMint: new web3.PublicKey(order.tokenMint),
-          price: new BN(order.price),
-          wallet
-        })
+
+      const getAction = (): any => {
+        switch (chainProps.blockchain) {
+          case Blockchain.Solana: {
+            if (!chainProps.wallet?.publicKey) return;
+            return chainProps.candyShop.buy({
+              seller: new web3.PublicKey(order.walletAddress),
+              tokenAccount: new web3.PublicKey(order.tokenAccount),
+              tokenMint: new web3.PublicKey(order.tokenMint),
+              price: new BN(order.price),
+              wallet: chainProps.wallet
+            });
+          }
+          default:
+            return new Promise((res) => res(''));
+        }
+      };
+
+      return getAction()
         .then((txHash: any) => {
           setHash(txHash);
           console.log('Buy made with transaction hash', txHash);
@@ -125,7 +153,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
           <div className="candy-stat">
             <div className="candy-label">PRICE</div>
             <div className="candy-price">
-              <Price candyShop={candyShop} value={order?.price} />
+              <Price value={order?.price} {...chainProps} />
             </div>
           </div>
           <div className="candy-stat">
@@ -138,12 +166,12 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
               edition={order.edition}
               tokenMint={order.tokenMint}
               sellerUrl={sellerUrl}
-              candyShop={candyShop}
+              {...chainProps}
             />
           ) : null}
           <NftAttributes loading={loadingNftInfo} attributes={nftInfo?.attributes} />
 
-          {!wallet ? (
+          {!chainProps.wallet ? (
             walletConnectComponent
           ) : (
             <button
@@ -162,18 +190,17 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
             </div>
           </Modal>
         )}
-        {state === TransactionState.CONFIRMED && wallet && order && (
+        {state === TransactionState.CONFIRMED && chainProps.wallet && order && (
           <Modal onCancel={goToMarketplace} width={600}>
             <div className="buy-modal">
               <BuyModalConfirmed
-                walletPublicKey={wallet.publicKey}
                 order={order}
                 txHash={hash}
                 onClose={goToMarketplace}
                 exchangeInfo={exchangeInfo}
-                shopPriceDecimalsMin={candyShop.priceDecimalsMin}
-                shopPriceDecimals={candyShop.priceDecimals}
-                candyShop={candyShop}
+                shopPriceDecimalsMin={chainProps.candyShop.priceDecimalsMin}
+                shopPriceDecimals={chainProps.candyShop.priceDecimals}
+                {...chainProps}
               />
             </div>
           </Modal>

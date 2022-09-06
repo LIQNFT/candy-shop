@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop } from '@liqnft/candy-shop-sdk';
 import { Auction, AuctionStatus } from '@liqnft/candy-shop-types';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { AuctionModal } from '../AuctionModal';
 import { Countdown } from 'components/Countdown';
 import { Price } from 'components/Price';
 import { Card } from 'components/Card';
+import { CommonChain, EthWallet } from 'model';
 
-interface AuctionCardProps {
+interface AuctionCardType<C, S, W> extends CommonChain<C, S, W> {
   auction: Auction;
-  candyShop: CandyShop;
-  wallet?: AnchorWallet;
   walletConnectComponent: React.ReactElement;
 }
+
+type AuctionCardProps =
+  | AuctionCardType<Blockchain.Solana, CandyShop, AnchorWallet>
+  | AuctionCardType<Blockchain.Ethereum, EthCandyShop, EthWallet>;
 
 interface LastBidInfo {
   price: string | undefined;
@@ -24,7 +27,7 @@ interface statusTagInfo {
   styleName: string;
 }
 
-export const AuctionCard: React.FC<AuctionCardProps> = ({ auction, candyShop, wallet, walletConnectComponent }) => {
+export const AuctionCard: React.FC<AuctionCardProps> = ({ auction, walletConnectComponent, ...chainProps }) => {
   const [selected, setSelected] = useState<any>();
   const [lastBid, setLastBid] = useState<LastBidInfo>();
   const [statusTag, setStatusTag] = useState<statusTagInfo>({ tagName: '', styleName: '' });
@@ -39,9 +42,13 @@ export const AuctionCard: React.FC<AuctionCardProps> = ({ auction, candyShop, wa
       } else {
         setLastBid({ price: auction.startingBid, title: 'Starting bid' });
       }
-      if (auction.highestBidBuyer && auction.highestBidBuyer === wallet?.publicKey.toString()) {
+      if (auction.highestBidBuyer && auction.highestBidBuyer === chainProps.wallet?.publicKey.toString()) {
         setStatusTag({ tagName: 'HIGHEST BID', styleName: 'candy-status-tag' });
-      } else if (auction.userBid && wallet && auction.highestBidBuyer !== wallet.publicKey.toString()) {
+      } else if (
+        auction.userBid &&
+        chainProps.wallet &&
+        auction.highestBidBuyer !== chainProps.wallet.publicKey.toString()
+      ) {
         setStatusTag({ tagName: 'OUTBID', styleName: 'candy-status-tag candy-status-tag-yellow' });
       }
     } else if (
@@ -52,7 +59,7 @@ export const AuctionCard: React.FC<AuctionCardProps> = ({ auction, candyShop, wa
       setLastBid({ price: auction.highestBidPrice, title: 'Winning bid' });
       setStatusTag({ tagName: 'ENDED', styleName: 'candy-status-tag candy-status-tag-gray' });
     }
-  }, [auction, wallet]);
+  }, [auction, chainProps.wallet]);
 
   return (
     <div>
@@ -66,7 +73,7 @@ export const AuctionCard: React.FC<AuctionCardProps> = ({ auction, candyShop, wa
         footer={
           <div className="candy-card-footer">
             <div className="candy-card-stat">
-              {lastBid?.title}: <Price value={lastBid?.price} candyShop={candyShop} />
+              {lastBid?.title}: <Price value={lastBid?.price} {...chainProps} />
             </div>
             <div className="candy-card-stat">
               <Countdown
@@ -78,13 +85,12 @@ export const AuctionCard: React.FC<AuctionCardProps> = ({ auction, candyShop, wa
           </div>
         }
       />
-      {selected && candyShop ? (
+      {selected && chainProps.candyShop ? (
         <AuctionModal
           auction={auction}
           onClose={() => setSelected(false)}
-          wallet={wallet}
-          candyShop={candyShop}
           walletConnectComponent={walletConnectComponent}
+          {...chainProps}
         />
       ) : null}
     </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyShop, fetchAuctionsByShopAddress } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop, fetchAuctionsByShopAddress } from '@liqnft/candy-shop-sdk';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { LoadingSkeleton } from 'components/LoadingSkeleton';
 import { AuctionCard } from 'components/Auction';
@@ -10,32 +10,33 @@ import { ORDER_FETCH_LIMIT, BACKGROUND_UPDATE_LIMIT } from 'constant/Orders';
 import { AuctionActionsStatus, DEFAULT_LIST_AUCTION_STATUS } from 'constant';
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { useUpdateSubject } from 'public/Context/CandyShopDataValidator';
+import { CommonChain, EthWallet } from '../../model';
 
 const Logger = 'CandyShopUI/Auctions';
 
-interface AuctionsProps {
-  wallet?: AnchorWallet;
+interface AuctionsType<C, S, W> extends CommonChain<C, S, W> {
   walletConnectComponent: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
-  candyShop: CandyShop;
   statusFilters?: AuctionStatus[];
 }
+type AuctionsProps =
+  | AuctionsType<Blockchain.Ethereum, EthCandyShop, EthWallet>
+  | AuctionsType<Blockchain.Solana, CandyShop, AnchorWallet>;
 
 export const Auctions: React.FC<AuctionsProps> = ({
   walletConnectComponent,
-  wallet,
-  candyShop,
-  statusFilters = DEFAULT_LIST_AUCTION_STATUS
+  statusFilters = DEFAULT_LIST_AUCTION_STATUS,
+  ...chainProps
 }) => {
   const [auctionedNfts, setAuctionedNfts] = useState<Auction[]>([]);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
   const [startIndex, setStartIndex] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
 
-  useUpdateSubject({ subject: ShopStatusType.Auction, candyShopAddress: candyShop.candyShopAddress });
+  useUpdateSubject({ subject: ShopStatusType.Auction, candyShopAddress: chainProps.candyShop.candyShopAddress });
   const updateStatus = useValidateStatus(AuctionActionsStatus);
   const updateStatusRef = useRef<number>(updateStatus);
 
-  const walletKeyString = wallet?.publicKey.toString();
+  const walletKeyString = chainProps.wallet?.publicKey.toString();
 
   const loadNextPage = (startIndex: number) => () => {
     if (startIndex === 0) return;
@@ -46,7 +47,7 @@ export const Auctions: React.FC<AuctionsProps> = ({
     (startIndex: number) => {
       setHasNextPage(true);
       setLoading(true);
-      fetchAuctionsByShopAddress(candyShop.candyShopAddress.toString(), {
+      fetchAuctionsByShopAddress(chainProps.candyShop.candyShopAddress.toString(), {
         offset: startIndex,
         limit: ORDER_FETCH_LIMIT,
         status: statusFilters,
@@ -77,7 +78,7 @@ export const Auctions: React.FC<AuctionsProps> = ({
           setLoading(false);
         });
     },
-    [candyShop.candyShopAddress, statusFilters, walletKeyString]
+    [chainProps.candyShop.candyShopAddress, statusFilters, walletKeyString]
   );
 
   useEffect(() => {
@@ -87,7 +88,7 @@ export const Auctions: React.FC<AuctionsProps> = ({
     const batches = Array.from({ length: Math.ceil(startIndex / BACKGROUND_UPDATE_LIMIT) });
     Promise.all(
       batches.map((_, idx) =>
-        fetchAuctionsByShopAddress(candyShop.candyShopAddress.toString(), {
+        fetchAuctionsByShopAddress(chainProps.candyShop.candyShopAddress.toString(), {
           offset: idx * BACKGROUND_UPDATE_LIMIT,
           limit: BACKGROUND_UPDATE_LIMIT,
           status: statusFilters,
@@ -114,7 +115,7 @@ export const Auctions: React.FC<AuctionsProps> = ({
       .catch((err: any) => {
         console.log(`${Logger} BackgroundUpdate failed, error=`, err);
       });
-  }, [candyShop.candyShopAddress, startIndex, statusFilters, updateStatus, walletKeyString]);
+  }, [chainProps.candyShop.candyShopAddress, startIndex, statusFilters, updateStatus, walletKeyString]);
 
   useEffect(() => {
     fetchAuctions(0);
@@ -136,9 +137,8 @@ export const Auctions: React.FC<AuctionsProps> = ({
               <AuctionCard
                 key={auction.tokenAccount}
                 auction={auction}
-                candyShop={candyShop}
-                wallet={wallet}
                 walletConnectComponent={walletConnectComponent}
+                {...chainProps}
               />
             ))}
           </div>

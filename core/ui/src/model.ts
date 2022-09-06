@@ -59,3 +59,13 @@ export interface PaymentErrorDetails {
   content: string;
   moreInfo?: PaymentErrorMoreInfo;
 }
+
+export interface EthWallet {
+  publicKey: string;
+}
+
+export interface CommonChain<C, S, W> {
+  blockchain: C;
+  candyShop: S;
+  wallet?: W;
+}

@@ -1,20 +1,24 @@
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { NftVerification } from 'components/Tooltip/NftVerification';
 import { Viewer } from 'components/Viewer';
-import { ShopExchangeInfo } from 'model';
+import { CommonChain, EthWallet, ShopExchangeInfo } from 'model';
 import React from 'react';
 import { getPrice } from 'utils/getPrice';
 
-export interface CancelModalDetailProps {
+export interface CancelModalDetailType<C, S, W> extends CommonChain<C, S, W> {
   order: OrderSchema;
   cancel: () => void;
   exchangeInfo: ShopExchangeInfo;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
-  candyShop: CandyShop;
+  // candyShop: CandyShop;
 }
+type CancelModalDetailProps =
+  | CancelModalDetailType<Blockchain.Ethereum, EthCandyShop, EthWallet>
+  | CancelModalDetailType<Blockchain.Solana, CandyShop, AnchorWallet>;
 
 export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
   order,
@@ -22,7 +26,8 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
   exchangeInfo,
   shopPriceDecimalsMin,
   shopPriceDecimals,
-  candyShop
+  candyShop,
+  blockchain
 }) => {
   const orderPrice = getPrice(shopPriceDecimalsMin, shopPriceDecimals, order.price, exchangeInfo);
 
@@ -56,12 +61,12 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
           <div>
             <div className="candy-label">MINT ADDRESS</div>
             <div className="candy-value">
-              <ExplorerLink
+              {/* <ExplorerLink
+                candyShop={candyShop}
+                blockchain={blockchain}
                 type="address"
                 address={order.tokenMint}
-                source={candyShop.explorerLink}
-                env={candyShop.env}
-              />
+              /> */}
             </div>
           </div>
           {order?.edition ? (
@@ -77,12 +82,12 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
           <div>
             <div className="candy-label">CURRENT OWNER</div>
             <div className="candy-value">
-              <ExplorerLink
+              {/* <ExplorerLink
+                candyShop={candyShop}
+                blockchain={blockchain}
                 type="address"
                 address={order.walletAddress}
-                source={candyShop.explorerLink}
-                env={candyShop.env}
-              />
+              /> */}
             </div>
           </div>
         </div>

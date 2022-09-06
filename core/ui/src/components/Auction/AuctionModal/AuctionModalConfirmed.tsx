@@ -1,33 +1,33 @@
 import React from 'react';
-
-import { web3 } from '@project-serum/anchor';
 import { formatDate } from 'utils/timer';
 import { Auction } from '@liqnft/candy-shop-types';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { LiqImage } from 'components/LiqImage';
 import IconTick from 'assets/IconTick';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop } from '@liqnft/candy-shop-sdk';
+import { CommonChain, EthWallet } from 'model';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 
-interface AuctionModalConfirmedProps {
+interface AuctionModalConfirmedType<C, S, W> extends CommonChain<C, S, W> {
   auction: Auction;
   txHash: string;
-  walletPublicKey: web3.PublicKey | undefined;
   onClose: () => void;
   titleText: string;
   descriptionText?: string;
-  candyShop: CandyShop;
 }
+type AuctionModalConfirmedProps =
+  | AuctionModalConfirmedType<Blockchain.Ethereum, EthCandyShop, EthWallet>
+  | AuctionModalConfirmedType<Blockchain.Solana, CandyShop, AnchorWallet>;
 
 export const AuctionModalConfirmed: React.FC<AuctionModalConfirmedProps> = ({
   auction,
   txHash,
-  walletPublicKey,
   onClose,
   titleText,
   descriptionText,
-  candyShop
+  ...chainProps
 }) => {
-  const walletAddress = walletPublicKey?.toBase58();
+  const walletAddress = chainProps.wallet?.publicKey.toString();
 
   return (
     <div className="candy-auction-modal-confirmed">
@@ -55,31 +55,19 @@ export const AuctionModalConfirmed: React.FC<AuctionModalConfirmedProps> = ({
         <div className="candy-auction-modal-confirmed-item">
           <div className="candy-label">FROM</div>
           <div className="candy-value">
-            <ExplorerLink
-              type="address"
-              address={auction.sellerAddress}
-              source={candyShop.explorerLink}
-              env={candyShop.env}
-            />
+            <ExplorerLink {...chainProps} type="address" address={auction.sellerAddress} />
           </div>
         </div>
         <div className="candy-auction-modal-confirmed-item">
           <div className="candy-label">TO</div>
           <div className="candy-value">
-            {walletAddress && (
-              <ExplorerLink
-                type="address"
-                address={walletAddress}
-                source={candyShop.explorerLink}
-                env={candyShop.env}
-              />
-            )}
+            {walletAddress && <ExplorerLink {...chainProps} type="address" address={walletAddress} />}
           </div>
         </div>
         <div className="candy-auction-modal-confirmed-item">
           <div className="candy-label">TRANSACTION HASH</div>
           <div className="candy-value">
-            <ExplorerLink type="tx" address={txHash} source={candyShop.explorerLink} env={candyShop.env} />
+            <ExplorerLink {...chainProps} type="tx" address={txHash} />
           </div>
         </div>
         <div className="candy-auction-modal-confirmed-item">

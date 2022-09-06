@@ -6,42 +6,53 @@ import { IconSolScan } from 'assets/IconSolScan';
 import { IconExplorer } from 'assets/IconExplorer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import { CandyShop, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop } from '@liqnft/candy-shop-sdk';
 import { Trade, ListBase, ShopStatusType, SortBy } from '@liqnft/candy-shop-types';
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { useUpdateSubject } from 'public/Context/CandyShopDataValidator';
 import { ActivityActionsStatus } from 'constant';
 import { removeDuplicate, EMPTY_FUNCTION } from 'utils/helperFunc';
 import { IconSolanaFM } from 'assets/IconSolanaFM';
+import { CommonChain, EthWallet } from '../../model';
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 import './style.less';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 
-interface ActivityProps {
-  candyShop: CandyShop;
+interface ActivityType<C, S, W> extends CommonChain<C, S, W> {
   identifiers?: number[];
   orderBy?: SortBy[] | SortBy;
 }
+type ActivityProps =
+  | ActivityType<Blockchain.Ethereum, EthCandyShop, EthWallet>
+  | ActivityType<Blockchain.Solana, CandyShop, AnchorWallet>;
 
 const LIMIT = 10;
 
 const Logger = 'CandyShopUI/Activity';
 
-export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orderBy }) => {
+export const Activity: React.FC<ActivityProps> = ({ identifiers, orderBy, ...chainProps }) => {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [offset, setOffset] = useState<number>(0);
-
-  useUpdateSubject({ subject: ShopStatusType.Trade, candyShopAddress: candyShop.candyShopAddress });
+  const candyShopAddress = chainProps.candyShop.candyShopAddress.toString();
+  useUpdateSubject({ subject: ShopStatusType.Trade, candyShopAddress: candyShopAddress });
   const updateActivityStatus = useValidateStatus(ActivityActionsStatus);
 
   const getTrades = useCallback(
     (offset: number, limit: number, firstLoad?: boolean) => () => {
-      candyShop
-        .transactions({ identifiers, offset, limit, sortBy: orderBy })
+      const getAction = (): Promise<any> => {
+        switch (chainProps.blockchain) {
+          case Blockchain.Solana:
+            return chainProps.candyShop.transactions({ identifiers, offset, limit, sortBy: orderBy });
+          default:
+            return new Promise((res) => res(''));
+        }
+      };
+      getAction()
         .then((res: ListBase<Trade>) => {
           const { result, offset, totalCount, count, success } = res;
           if (!success) {
@@ -62,7 +73,7 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
           console.log(`${Logger}: candyShop.transactions failed, error=`, error);
         });
     },
-    [candyShop, identifiers, orderBy]
+    [chainProps.blockchain, chainProps.candyShop, identifiers, orderBy]
   );
 
   useEffect(() => {
@@ -73,8 +84,16 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
   useEffect(() => {
     if (!updateActivityStatus) return;
 
-    candyShop
-      .transactions({ identifiers, offset: 0, limit: 10 })
+    const getAction = (): Promise<any> => {
+      switch (chainProps.blockchain) {
+        case Blockchain.Solana:
+          return chainProps.candyShop.transactions({ identifiers, offset: 0, limit: 10, sortBy: orderBy });
+        default:
+          return new Promise((res) => res(''));
+      }
+    };
+
+    getAction()
       .then((res: ListBase<Trade>) => {
         if (!res.success) return;
         setTrades((list) => {
@@ -87,7 +106,7 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
       .catch((error: any) => {
         console.log(`${Logger}: candyShop.transactions failed, error=`, error);
       });
-  }, [candyShop, identifiers, updateActivityStatus]);
+  }, [chainProps.blockchain, chainProps.candyShop, identifiers, orderBy, updateActivityStatus]);
 
   return (
     <div className="candy-activity">
@@ -122,54 +141,29 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
                       {trade.nftName}
                     </span>
                     <div className="candy-activity-icons">
-                      <ExplorerLink
-                        type="tx"
-                        address={trade.txHashAtCreation}
-                        source={ExplorerLinkBase.SolanaFM}
-                        env={candyShop.env}
-                      >
+                      <ExplorerLink type="tx" address={trade.txHashAtCreation} {...chainProps}>
                         <IconSolanaFM />
                       </ExplorerLink>
-                      <ExplorerLink
-                        type="tx"
-                        address={trade.txHashAtCreation}
-                        source={ExplorerLinkBase.SolScan}
-                        env={candyShop.env}
-                      >
+                      <ExplorerLink type="tx" address={trade.txHashAtCreation} {...chainProps}>
                         <IconSolScan />
                       </ExplorerLink>
-                      <ExplorerLink
-                        type="tx"
-                        address={trade.txHashAtCreation}
-                        source={ExplorerLinkBase.Explorer}
-                        env={candyShop.env}
-                      >
+                      <ExplorerLink type="tx" address={trade.txHashAtCreation} {...chainProps}>
                         <IconExplorer />
                       </ExplorerLink>
                     </div>
                   </div>
                 </div>
                 <div className="candy-activity-price">
-                  {`${(Number(trade.price) / candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
-                    minimumFractionDigits: candyShop.priceDecimalsMin,
-                    maximumFractionDigits: candyShop.priceDecimals
+                  {`${(Number(trade.price) / chainProps.candyShop.baseUnitsPerCurrency).toLocaleString(undefined, {
+                    minimumFractionDigits: chainProps.candyShop.priceDecimalsMin,
+                    maximumFractionDigits: chainProps.candyShop.priceDecimals
                   })} ${trade.shopSymbol}`}
                 </div>
                 <div>
-                  <ExplorerLink
-                    type="address"
-                    address={trade.sellerAddress}
-                    source={candyShop.explorerLink}
-                    env={candyShop.env}
-                  />
+                  <ExplorerLink type="address" address={trade.sellerAddress} {...chainProps} />
                 </div>
                 <div>
-                  <ExplorerLink
-                    type="address"
-                    address={trade.buyerAddress}
-                    source={candyShop.explorerLink}
-                    env={candyShop.env}
-                  />
+                  <ExplorerLink type="address" address={trade.buyerAddress} {...chainProps} />
                 </div>
                 <div className="candy-activity-time">{tradeTime}</div>
               </div>

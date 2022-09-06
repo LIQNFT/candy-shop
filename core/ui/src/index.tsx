@@ -9,7 +9,6 @@ export { AuctionActivity } from './public/AuctionActivity';
 export * from './public/Auction';
 export { CreateDrop, Drops } from './public/Drop';
 export * from './public/Modal';
-
 export { TransactionState, OrderDefaultFilter } from './model';
 export { CandyContext, CandyShopDataValidator } from './public/Context/CandyShopDataValidator';
 /* Don't export every usages from contexts */

@@ -8,8 +8,8 @@ import { Processing } from 'components/Processing';
 import { AuctionModalConfirmed } from './AuctionModalConfirmed';
 import { AuctionModalDetail } from './AuctionModalDetail';
 
-import { TransactionState } from 'model';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { CommonChain, EthWallet, TransactionState } from 'model';
+import { Blockchain, CandyShop, EthCandyShop } from '@liqnft/candy-shop-sdk';
 import { Auction } from '@liqnft/candy-shop-types';
 
 import { notification, NotificationType } from 'utils/rc-notification';
@@ -17,13 +17,15 @@ import './style.less';
 
 const Logger = 'CandyShopUI/AuctionModal';
 
-export interface AuctionModalProps {
+export interface AuctionModalType<C, S, W> extends CommonChain<C, S, W> {
   auction: Auction;
   onClose: () => void;
-  wallet: AnchorWallet | undefined;
   walletConnectComponent: React.ReactElement;
-  candyShop: CandyShop;
 }
+
+type AuctionModalProps =
+  | AuctionModalType<Blockchain.Ethereum, EthCandyShop, EthWallet>
+  | AuctionModalType<Blockchain.Solana, CandyShop, AnchorWallet>;
 
 enum TitleTextType {
   BID_CONFIRMED = 'Bid Confirmed',
@@ -39,9 +41,8 @@ enum ProcessingTextType {
 export const AuctionModal: React.FC<AuctionModalProps> = ({
   auction,
   onClose,
-  wallet,
   walletConnectComponent,
-  candyShop
+  ...chainProps
 }) => {
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
   const [hash, setHash] = useState<string>('');
@@ -50,16 +51,28 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
   const [bidPrice, setBidPrice] = useState<number>();
 
   const buyNow = () => {
-    if (!wallet) return;
+    if (!chainProps.wallet) return;
 
     setProcessingText(ProcessingTextType.TRANSACTION);
     setState(TransactionState.PROCESSING);
-    candyShop
-      .buyNowAuction({
-        wallet,
-        tokenMint: new web3.PublicKey(auction.tokenMint),
-        tokenAccount: new web3.PublicKey(auction.tokenAccount)
-      })
+    const getAction = (): any => {
+      switch (chainProps.blockchain) {
+        case Blockchain.Solana: {
+          if (!chainProps.wallet) return;
+          return chainProps.candyShop.buyNowAuction({
+            wallet: chainProps.wallet,
+            tokenMint: new web3.PublicKey(auction.tokenMint),
+            tokenAccount: new web3.PublicKey(auction.tokenAccount)
+          });
+        }
+        default:
+          return new Promise((res) => {
+            console.log('WIP');
+            res('');
+          });
+      }
+    };
+    getAction()
       .then((txId: string) => {
         console.log(`${Logger}: buyNowAuction request success, txId=`, txId);
         setHash(txId);
@@ -75,14 +88,14 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
 
   const placeBid = (price: number) => {
     // buy now when price > buyNowPrice
-    if (price * candyShop.baseUnitsPerCurrency >= Number(auction.buyNowPrice)) return buyNow();
+    if (price * chainProps.candyShop.baseUnitsPerCurrency >= Number(auction.buyNowPrice)) return buyNow();
 
-    if (!wallet) return;
+    if (!chainProps.wallet) return;
 
     const minBidPrice =
       (auction.highestBidPrice
         ? Number(auction.highestBidPrice) + Number(auction.tickSize)
-        : Number(auction.startingBid)) / candyShop.baseUnitsPerCurrency;
+        : Number(auction.startingBid)) / chainProps.candyShop.baseUnitsPerCurrency;
 
     if (price < minBidPrice) {
       return notification(`You must bid at least ${minBidPrice}`, NotificationType.Error);
@@ -90,13 +103,27 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
 
     setProcessingText(ProcessingTextType.BID);
     setState(TransactionState.PROCESSING);
-    candyShop
-      .bidAuction({
-        wallet,
-        tokenMint: new web3.PublicKey(auction.tokenMint),
-        tokenAccount: new web3.PublicKey(auction.tokenAccount),
-        bidPrice: new BN(price * candyShop.baseUnitsPerCurrency)
-      })
+
+    // TODO: refactor get Action function
+    const getAction = (): any => {
+      switch (chainProps.blockchain) {
+        case Blockchain.Solana: {
+          if (!chainProps.wallet) return;
+          return chainProps.candyShop.bidAuction({
+            wallet: chainProps.wallet,
+            tokenMint: new web3.PublicKey(auction.tokenMint),
+            tokenAccount: new web3.PublicKey(auction.tokenAccount),
+            bidPrice: new BN(price * chainProps.candyShop.baseUnitsPerCurrency)
+          });
+        }
+        default:
+          return new Promise((res) => {
+            console.log('WIP ETH');
+            res('');
+          });
+      }
+    };
+    getAction()
       .then((txId: string) => {
         console.log(`${Logger}: bidAuction request success, txId=`, txId);
         setHash(txId);
@@ -112,16 +139,30 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
   };
 
   const withdraw = () => {
-    if (!wallet) return;
+    if (!chainProps.wallet) return;
 
     setProcessingText(ProcessingTextType.WITHDRAW);
     setState(TransactionState.PROCESSING);
-    candyShop
-      .withdrawAuctionBid({
-        wallet,
-        tokenMint: new web3.PublicKey(auction.tokenMint),
-        tokenAccount: new web3.PublicKey(auction.tokenAccount)
-      })
+
+    const getAction = (): any => {
+      switch (chainProps.blockchain) {
+        case Blockchain.Solana: {
+          if (!chainProps.wallet) return;
+          return chainProps.candyShop.withdrawAuctionBid({
+            wallet: chainProps.wallet,
+            tokenMint: new web3.PublicKey(auction.tokenMint),
+            tokenAccount: new web3.PublicKey(auction.tokenAccount)
+          });
+        }
+        default:
+          return new Promise((res) => {
+            console.log('WIP ETH');
+            res('');
+          });
+      }
+    };
+
+    getAction()
       .then((txId: string) => {
         console.log(`${Logger}: withdrawAuctionBid request success, txId=`, txId);
         setHash(txId);
@@ -144,21 +185,19 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
             placeBid={placeBid}
             buyNow={buyNow}
             onWithdrew={withdraw}
-            walletPublicKey={wallet?.publicKey}
             walletConnectComponent={walletConnectComponent}
-            candyShop={candyShop}
+            {...chainProps}
           />
         )}
         {state === TransactionState.PROCESSING && <Processing text={processingText} />}
-        {state === TransactionState.CONFIRMED && wallet && (
+        {state === TransactionState.CONFIRMED && chainProps.wallet && (
           <AuctionModalConfirmed
             titleText={titleText}
-            walletPublicKey={wallet.publicKey}
             auction={auction}
             txHash={hash}
             onClose={onClose}
-            descriptionText={bidPrice ? `${bidPrice} ${candyShop.currencySymbol}` : undefined}
-            candyShop={candyShop}
+            descriptionText={bidPrice ? `${bidPrice} ${chainProps.candyShop.currencySymbol}` : undefined}
+            {...chainProps}
           />
         )}
       </div>

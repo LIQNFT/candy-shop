@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Blockchain,
   CandyShop,
   CandyShopPay,
   CandyShopTrade,
   CandyShopTradeBuyParams,
+  EthCandyShop,
   getCandyShopSync
 } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema, PaymentCurrencyType, PaymentErrorName } from '@liqnft/candy-shop-types';
@@ -14,7 +16,14 @@ import { StripePayment } from 'components/Payment';
 import { PoweredByInBuyModal } from 'components/PoweredBy/PowerByInBuyModal';
 import { Processing } from 'components/Processing';
 import { useCandyShopPayContext } from 'contexts/CandyShopPayProvider';
-import { ShopExchangeInfo, BuyModalState, PaymentErrorDetails, CreditCardPayAvailability } from 'model';
+import {
+  ShopExchangeInfo,
+  BuyModalState,
+  PaymentErrorDetails,
+  CreditCardPayAvailability,
+  CommonChain,
+  EthWallet
+} from 'model';
 import { ErrorMsgMap, ErrorType, handleError } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
 import { BuyModalConfirmed } from './BuyModalConfirmed';
@@ -29,24 +38,26 @@ enum ProcessingTextType {
 
 const Logger = 'CandyShopUI/BuyModalDetail';
 
-export interface BuyModalProps {
+export interface BuyModalType<C, S, W> extends CommonChain<C, S, W> {
   order: OrderSchema;
   onClose: () => void;
-  wallet: AnchorWallet | undefined;
+  // wallet: AnchorWallet | undefined;
   walletConnectComponent: React.ReactElement;
   exchangeInfo: ShopExchangeInfo;
-  connection: web3.Connection;
+  connection?: web3.Connection;
   isEnterprise: boolean;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
   sellerUrl?: string;
-  candyShop: CandyShop;
+  // candyShop: CandyShop;
 }
+type BuyModalProps =
+  | BuyModalType<Blockchain.Ethereum, EthCandyShop, EthWallet>
+  | BuyModalType<Blockchain.Solana, CandyShop, AnchorWallet>;
 
 export const BuyModal: React.FC<BuyModalProps> = ({
   order,
   onClose,
-  wallet,
   walletConnectComponent,
   exchangeInfo,
   connection,
@@ -54,7 +65,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   shopPriceDecimalsMin,
   shopPriceDecimals,
   sellerUrl,
-  candyShop
+  ...chainProps
 }) => {
   const [state, setState] = useState<BuyModalState>(BuyModalState.DISPLAY);
   const [hash, setHash] = useState(''); // txHash
@@ -78,27 +89,39 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   );
 
   const buy = async () => {
-    if (!wallet) {
+    if (!chainProps.wallet) {
       notification(ErrorMsgMap[ErrorType.InvalidWallet], NotificationType.Error);
       return;
     }
     setState(BuyModalState.PROCESSING);
+    const getAction = (): Promise<any> => {
+      switch (chainProps.blockchain) {
+        case Blockchain.Solana: {
+          if (!chainProps.wallet?.publicKey || !connection) return new Promise((res) => res(''));
 
-    const tradeBuyParams: CandyShopTradeBuyParams = {
-      tokenAccount: new web3.PublicKey(order.tokenAccount),
-      tokenMint: new web3.PublicKey(order.tokenMint),
-      price: new BN(order.price),
-      wallet: wallet,
-      seller: new web3.PublicKey(order.walletAddress),
-      connection: connection,
-      shopAddress: new web3.PublicKey(shopAddress),
-      candyShopProgramId: new web3.PublicKey(order.programId),
-      isEnterprise: isEnterprise,
-      shopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress),
-      shopTreasuryMint: new web3.PublicKey(order.treasuryMint)
+          const tradeBuyParams: CandyShopTradeBuyParams = {
+            tokenAccount: new web3.PublicKey(order.tokenAccount),
+            tokenMint: new web3.PublicKey(order.tokenMint),
+            price: new BN(order.price),
+            wallet: chainProps.wallet,
+            seller: new web3.PublicKey(order.walletAddress),
+            connection,
+            shopAddress: new web3.PublicKey(shopAddress),
+            candyShopProgramId: new web3.PublicKey(order.programId),
+            isEnterprise: isEnterprise,
+            shopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress),
+            shopTreasuryMint: new web3.PublicKey(order.treasuryMint)
+          };
+
+          return CandyShopTrade.buy(tradeBuyParams);
+        }
+
+        default:
+          return new Promise((res) => res(''));
+      }
     };
 
-    return CandyShopTrade.buy(tradeBuyParams)
+    getAction()
       .then((txHash: string) => {
         setHash(txHash);
         console.log('Buy order made with transaction hash', txHash);
@@ -252,48 +275,50 @@ export const BuyModal: React.FC<BuyModalProps> = ({
           <BuyModalDetail
             order={order}
             buy={buy}
-            walletPublicKey={wallet?.publicKey}
             walletConnectComponent={walletConnectComponent}
             exchangeInfo={exchangeInfo}
             shopPriceDecimalsMin={shopPriceDecimalsMin}
             shopPriceDecimals={shopPriceDecimals}
             sellerUrl={sellerUrl}
-            candyShop={candyShop}
             onPayment={onPaymentCallback}
             paymentPrice={paymentPrice}
             creditCardPayAvailable={creditCardPayAvailable}
             setCountdownElement={setCountdownElement}
+            {...chainProps}
           />
         )}
         {state === BuyModalState.PROCESSING && <Processing text={processingText} />}
-        {(state === BuyModalState.CONFIRMED || state === BuyModalState.PAYMENT_ERROR) && wallet && (
+        {(state === BuyModalState.CONFIRMED || state === BuyModalState.PAYMENT_ERROR) && chainProps.wallet && (
           <BuyModalConfirmed
-            walletPublicKey={wallet.publicKey}
             order={order}
             txHash={hash}
             onClose={onClose}
             exchangeInfo={exchangeInfo}
             shopPriceDecimalsMin={shopPriceDecimalsMin}
             shopPriceDecimals={shopPriceDecimals}
-            candyShop={candyShop}
             paymentPrice={paymentPrice}
             error={paymentError}
+            {...chainProps}
           />
         )}
 
-        {state === BuyModalState.PAYMENT && stripePublicKey && wallet?.publicKey && order && paymentPrice && (
-          <StripePayment
-            stripePublicKey={stripePublicKey}
-            shopAddress={shopAddress}
-            walletAddress={wallet.publicKey.toString()}
-            order={order}
-            shopPriceDecimals={shopPriceDecimals}
-            shopPriceDecimalsMin={shopPriceDecimalsMin}
-            exchangeInfo={exchangeInfo}
-            onProcessingPay={onProcessingPay}
-            paymentPrice={paymentPrice}
-          />
-        )}
+        {state === BuyModalState.PAYMENT &&
+          stripePublicKey &&
+          chainProps.wallet?.publicKey &&
+          order &&
+          paymentPrice && (
+            <StripePayment
+              stripePublicKey={stripePublicKey}
+              shopAddress={shopAddress}
+              walletAddress={chainProps.wallet.publicKey.toString()}
+              order={order}
+              shopPriceDecimals={shopPriceDecimals}
+              shopPriceDecimalsMin={shopPriceDecimalsMin}
+              exchangeInfo={exchangeInfo}
+              onProcessingPay={onProcessingPay}
+              paymentPrice={paymentPrice}
+            />
+          )}
       </div>
       <PoweredByInBuyModal />
     </Modal>
