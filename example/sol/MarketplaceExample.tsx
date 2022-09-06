@@ -3,9 +3,9 @@ import React from 'react';
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 
-import { CandyShop } from '../core/sdk/.';
-import { SortBy } from '../core/types';
-import { Activity, OrderDetail, Orders, Sell, Stat } from '../core/ui/.';
+import { Blockchain, CandyShop } from '../../core/sdk/dist';
+import { SortBy } from '../../core/types/dist';
+import { Activity, OrderDetail, Orders, Sell, Stat } from '../../core/ui/.';
 
 import 'antd/dist/antd.min.css';
 interface MarketplaceExampleProps {
@@ -27,6 +27,7 @@ export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ candySho
       </div>
 
       <Orders
+        blockchain={Blockchain.Solana}
         wallet={wallet}
         walletConnectComponent={<WalletMultiButton />}
         candyShop={candyShop}
@@ -42,18 +43,20 @@ export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ candySho
         walletConnectComponent={<WalletMultiButton />}
         wallet={wallet}
         candyShop={candyShop}
+        blockchain={Blockchain.Solana}
       />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Sell</h1>
       <Sell
-        wallet={wallet}
-        candyShop={candyShop}
         walletConnectComponent={<WalletMultiButton />}
         enableCacheNFT={true}
+        blockchain={Blockchain.Solana}
+        wallet={wallet}
+        candyShop={candyShop}
       />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', margin: '80px 0 30px' }}>Activity</h1>
-      <Activity candyShop={candyShop} orderBy={ORDER_ACTIVITY} />
+      <Activity candyShop={candyShop} blockchain={Blockchain.Solana} orderBy={ORDER_ACTIVITY} />
     </div>
   );
 };

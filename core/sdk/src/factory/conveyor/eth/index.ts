@@ -106,7 +106,7 @@ export class EthereumSDK implements EthereumSDKInterface {
         logoUrl: event.logoUrl
       }
     );
-    return await ApiCaller.request('/shop/${event.uuid}', RequestMethod.Patch, {
+    return await ApiCaller.request(`/shop/${event.uuid}`, RequestMethod.Patch, {
       name: event.name,
       paymentSplit: percentage,
       logoUrl: event.logoUrl,

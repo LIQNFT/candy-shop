@@ -1,13 +1,4 @@
 /**
- * Blockchain
- */
-export enum Blockchain {
-  Ethereum = 'ethereum',
-  Solana = 'solana',
-  Polygon = 'polygon'
-}
-
-/**
  * Custom Shop settings
  *
  * @property {string} currencySymbol

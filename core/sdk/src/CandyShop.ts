@@ -1,5 +1,4 @@
 import { BaseShop } from './shop/base/BaseShop';
-import { Blockchain } from './shop/base/BaseShopModel';
 import {
   CandyShop as CandyShopResponse,
   ListBase,
@@ -27,6 +26,7 @@ import {
   fetchTradeByShopAddress
 } from './CandyShopInfoAPI';
 import {
+  Blockchain,
   CandyShopBidAuctionParams,
   CandyShopBuyNowParams,
   CandyShopBuyParams,

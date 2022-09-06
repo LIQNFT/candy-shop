@@ -3,6 +3,15 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { ShopSettings } from './shop/base/BaseShopModel';
 
 /**
+ * Blockchain
+ */
+export enum Blockchain {
+  Ethereum = 'ethereum',
+  Solana = 'solana',
+  Polygon = 'polygon'
+}
+
+/**
  * Program version that CandyShop was created with
  */
 export enum CandyShopVersion {

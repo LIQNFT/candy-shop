@@ -1,12 +1,14 @@
 import { BaseShop } from '../base/BaseShop';
-import { Blockchain, ShopSettings } from '../base/BaseShopModel';
+import { ShopSettings } from '../base/BaseShopModel';
 import { EthereumSDK } from '../../factory/conveyor/eth';
 import { MetamaskProvider } from '../../factory/conveyor/eth/types/sdk';
+import { Blockchain } from '../../CandyShopModel';
 
+export type EthNetwork = 'mainnet' | 'ropsten' | 'kovan' | 'rinkeby' | 'goerli';
 interface CandyShopConstructorParams {
   candyShopCreatorAddress: string;
   treasuryMint: string;
-  env: 'mainnet' | 'ropsten' | 'kovan' | 'rinkeby' | 'goerli';
+  env: EthNetwork;
   settings?: Partial<ShopSettings>;
 }
 
@@ -32,7 +34,7 @@ export class EthCandyShop extends BaseShop {
     super(params);
     const { candyShopCreatorAddress, treasuryMint, env, settings } = params;
 
-    this._candyShopAddress = ''; // TODO: get candyShopAddress from backend
+    this._candyShopAddress = '6eba3fe4-cd6c-405b-8f46-529221b81a90'; // TODO: get candyShopAddress from backend
     this._candyShopCreatorAddress = candyShopCreatorAddress;
     this._treasuryMint = treasuryMint;
     this._env = env ?? 'goerli';

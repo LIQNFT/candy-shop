@@ -11,7 +11,7 @@ import Consumption from './signature/Consumption';
 import BuyerAllowance from './signature/BuyerAllowance';
 import SellerAllowance from './signature/SellerAllowance';
 
-export const EthSdkExample: React.FC<EthSdkExampleProps> = () => {
+export const EthSdkExample: React.FC = () => {
   return (
     <div style={{ paddingBottom: 50, textAlign: 'center' }}>
       <h1>Eth SDK</h1>

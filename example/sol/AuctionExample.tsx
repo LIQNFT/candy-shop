@@ -2,9 +2,9 @@ import React from 'react';
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 
-import { CandyShop, SingleTokenInfo } from '../core/sdk/.';
-import { CreateAuction, Auctions, AuctionActivity } from '../core/ui/.';
-import { AuctionStatus, SortBy } from '../core/types/.';
+import { Blockchain, CandyShop, SingleTokenInfo } from '../../core/sdk/.';
+import { CreateAuction, Auctions, AuctionActivity } from '../../core/ui/.';
+import { AuctionStatus, SortBy } from '../../core/types/.';
 
 import 'antd/dist/antd.min.css';
 
@@ -24,6 +24,7 @@ export const AuctionExample: React.FC<AuctionExampleProps> = ({ candyShop }) => 
         Note: To create an auction in your shop, click the Config button on the top right and enter your creator address
       </p>
       <CreateAuction
+        blockchain={Blockchain.Solana}
         candyShop={candyShop}
         wallet={wallet}
         walletConnectComponent={<WalletMultiButton />}
@@ -33,6 +34,7 @@ export const AuctionExample: React.FC<AuctionExampleProps> = ({ candyShop }) => 
 
       <h1 style={{ marginTop: 40, marginBottom: 40 }}>Auctions</h1>
       <Auctions
+        blockchain={Blockchain.Solana}
         candyShop={candyShop}
         wallet={wallet}
         walletConnectComponent={<WalletMultiButton />}

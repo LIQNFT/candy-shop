@@ -1,4 +1,5 @@
-import { ShopSettings, Blockchain } from './BaseShopModel';
+import { Blockchain } from '../../CandyShopModel';
+import { ShopSettings } from './BaseShopModel';
 
 export abstract class BaseShop {
   constructor(params: any) {}

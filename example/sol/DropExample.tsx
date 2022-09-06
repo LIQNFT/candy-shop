@@ -2,8 +2,8 @@ import React from 'react';
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyShop } from '../core/sdk/dist';
-import { CreateDrop, Drops } from '../core/ui/.';
+import { CandyShop } from '../../core/sdk/dist';
+import { CreateDrop, Drops } from '../../core/ui/.';
 
 import 'antd/dist/antd.min.css';
 
