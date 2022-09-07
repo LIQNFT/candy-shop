@@ -2,11 +2,11 @@ import React from 'react';
 import { Blockchain, EthCandyShop } from '../../core/sdk';
 
 import { EthConnectionButton } from './ConnectionButton';
-import { Orders, Stat, Sell } from '../../core/ui/.';
+import { Orders, Stat, Sell, Activity } from '../../core/ui/.';
 import { useEthConnection } from './context/connection';
 
 interface EthShopExampleProps {
-  candyShop: EthCandyShop | null;
+  candyShop: EthCandyShop;
 }
 
 export const EthShopExample: React.FC<EthShopExampleProps> = ({ candyShop }) => {
@@ -49,6 +49,9 @@ export const EthShopExample: React.FC<EthShopExampleProps> = ({ candyShop }) => 
           blockchain={Blockchain.Ethereum}
         />
       )}
+
+      <h1 style={{ textAlign: 'center', fontWeight: 'bold', margin: '80px 0 30px' }}>Activity</h1>
+      {candyShop && <Activity candyShop={candyShop} blockchain={Blockchain.Ethereum} />}
     </div>
   );
 };

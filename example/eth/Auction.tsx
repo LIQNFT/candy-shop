@@ -2,7 +2,7 @@ import React from 'react';
 import { WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 
 import { Blockchain, EthCandyShop } from '../../core/sdk/.';
-import { CreateAuction, Auctions, AuctionActivity } from '../../core/ui/dist';
+import { CreateAuction, Auctions, AuctionActivity } from '../../core/ui/.';
 import { AuctionStatus, SortBy } from '../../core/types/.';
 
 import 'antd/dist/antd.min.css';
@@ -14,7 +14,7 @@ interface AuctionExampleProps {
 
 export const Auction: React.FC<AuctionExampleProps> = ({ candyShop }) => {
   const { publicKey } = useEthConnection();
-  const wallet = { publicKey, signTransaction: () => {}, signAllTransactions: () => {} };
+  const wallet = publicKey ? { publicKey } : undefined;
 
   const onCreatedAuctionSuccessCallback = (auctionedToken: any) => {
     console.log('Auction: onCreatedAuction, token=', auctionedToken);

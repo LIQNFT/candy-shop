@@ -5,10 +5,12 @@ import { Route, Switch, Link, useLocation } from 'react-router-dom';
 import { CandyShopDataValidator } from '../../core/ui/.';
 import { EthCandyShop } from '../../core/sdk/.';
 import { useEthConnection } from './context/connection';
+import { Auction } from './Auction';
 
 enum PageRoute {
   Shop = '/eth',
-  SDK = '/eth/sdk'
+  SDK = '/eth/sdk',
+  Auction = '/eth/auction'
 }
 
 const disableStyle = { pointerEvent: 'none', color: 'black', paddingRight: 20, fontWeight: 'bold' };
@@ -18,11 +20,11 @@ export const EthExample: React.FC = () => {
   const { pathname } = useLocation();
   const { network } = useEthConnection();
 
-  const candyShop = useMemo<EthCandyShop | null>(() => {
+  const candyShop = useMemo<EthCandyShop>(() => {
     let candyShop: any = null;
     try {
       candyShop = new EthCandyShop({
-        candyShopCreatorAddress: 'TestShop',
+        candyShopCreatorAddress: '0x66AEe77371d992cdAacE956F5993094781997Bc0',
         treasuryMint: 'ETH',
         env: network
       });
@@ -54,6 +56,7 @@ export const EthExample: React.FC = () => {
         <Switch>
           <Route path={PageRoute.SDK} component={() => <EthSdkExample />} />
           <Route path={PageRoute.Shop} component={() => <EthShopExample candyShop={candyShop} />} />
+          <Route path={PageRoute.Auction} component={() => <Auction candyShop={candyShop} />} />
         </Switch>
       </div>
     </CandyShopDataValidator>
