@@ -2235,6 +2235,11 @@
       "code": 6026,
       "name": "InvalidExtensionSettings",
       "msg": "Extension period must not be greater than the extension increment"
+    },
+    {
+      "code": 6027,
+      "name": "InvalidBiddingPeriod",
+      "msg": "Invalid bidding period"
     }
   ],
   "metadata": {

@@ -398,6 +398,10 @@ export class CandyShop extends BaseShop {
       throw new CandyShopError(CandyShopErrorType.NonShopOwner);
     }
 
+    if (biddingPeriod.isZero()) {
+      throw new CandyShopError(CandyShopErrorType.InvalidAuctionBiddingPeriod);
+    }
+
     console.log(`${Logger}: Performing create auction`, {
       tokenMint: tokenMint.toString(),
       tokenAccount: tokenAccount.toString(),
