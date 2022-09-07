@@ -68,12 +68,14 @@ export const CandyShopDataValidator: React.FC<CandyProviderProps> = ({ children 
         .then((res: SingleBase<ShopStatus[]>) => {
           if (res.result) {
             for (const shopStatus of res.result) {
-              const prevTimestamp = localStorage.getItem(shopStatus.type);
-              const resTimestamp = JSON.stringify(shopStatus.timestamp);
-              const isShopRefreshed = prevTimestamp !== resTimestamp;
-              if (isShopRefreshed) {
-                console.log(`%c${Logger}: ${shopStatus.type}`, 'color: #e9ae00', prevTimestamp, res);
-                localStorage.setItem(shopStatus.type, shopStatus.timestamp.toString());
+              if (shopStatus.timestamp) {
+                const prevTimestamp = localStorage.getItem(shopStatus.type);
+                const resTimestamp = JSON.stringify(shopStatus.timestamp);
+                const isShopRefreshed = prevTimestamp !== resTimestamp;
+                if (isShopRefreshed) {
+                  console.log(`%c${Logger}: ${shopStatus.type}`, 'color: #e9ae00', prevTimestamp, res);
+                  localStorage.setItem(shopStatus.type, shopStatus.timestamp.toString());
+                }
               }
             }
           } else {
