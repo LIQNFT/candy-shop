@@ -1,5 +1,8 @@
 import { deserializeUnchecked } from 'borsh';
 import { BN, web3 } from '@project-serum/anchor';
+import { Connection, PublicKey } from '@solana/web3.js';
+import { safeAwait } from '../utils';
+import { CandyShopError, CandyShopErrorType } from '../error';
 
 // eslint-disable-next-line
 export const METADATA_REPLACE = new RegExp('\u0000', 'g');
@@ -197,6 +200,19 @@ export const parseEditionMarker = (buffer: Buffer): EditionMarker => {
 
 export const parseEdition = (buffer: Buffer) => {
   return deserializeUnchecked(METADATA_SCHEMA, Edition, buffer) as Edition;
+};
+
+export const parseNftUpdateAuthority = async (
+  metadataAddress: PublicKey,
+  connection: Connection
+): Promise<PublicKey> => {
+  const metadataAccount = await safeAwait(connection.getAccountInfo(metadataAddress));
+  if (metadataAccount.error || !metadataAccount.result) {
+    throw new CandyShopError(CandyShopErrorType.NodeRequestFailed);
+  }
+
+  const metadata = parseMetadata(metadataAccount.result!.data);
+  return new PublicKey(metadata.updateAuthority);
 };
 
 export interface RawTokenInfo {

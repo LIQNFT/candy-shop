@@ -37,7 +37,8 @@ export enum CandyShopErrorType {
   InvalidDropWhitelistTime = 'InvalidDropWhitelistTime',
   MissingExtensionSetting = 'MissingExtensionSetting',
   InvalidExtensionSettings = 'InvalidExtensionSettings',
-  InvalidAuctionBiddingPeriod = 'InvalidAuctionBiddingPeriod'
+  InvalidAuctionBiddingPeriod = 'InvalidAuctionBiddingPeriod',
+  NodeRequestFailed = 'NodeRequestFailed'
 }
 
 export const CandyShopErrorMsgMap = {
@@ -83,7 +84,8 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.InvalidDropWhitelistTime]: 'Invalid Drop whitelist time',
   [CandyShopErrorType.InvalidExtensionSettings]: 'Extension period must not be greater than the extension increment.',
   [CandyShopErrorType.MissingExtensionSetting]: 'Both extension settings must be provided to use this functionality.',
-  [CandyShopErrorType.InvalidAuctionBiddingPeriod]: 'Invalid auction bidding period.'
+  [CandyShopErrorType.InvalidAuctionBiddingPeriod]: 'Invalid auction bidding period.',
+  [CandyShopErrorType.NodeRequestFailed]: 'Node request failed.'
 };
 
 export class CandyShopError extends Error {

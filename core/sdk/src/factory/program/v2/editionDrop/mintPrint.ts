@@ -1,4 +1,11 @@
-import { AccountMeta, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction, TransactionInstruction } from '@solana/web3.js';
+import {
+  AccountMeta,
+  PublicKey,
+  SystemProgram,
+  SYSVAR_RENT_PUBKEY,
+  Transaction,
+  TransactionInstruction
+} from '@solana/web3.js';
 import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { MintPrintParams } from '../../model';
 import {
@@ -8,7 +15,12 @@ import {
   getMasterEditionAccount,
   getEditionMarkAccount,
   checkEditionMintPeriod,
-  sendTx
+  sendTx,
+  safeAwait,
+  CandyShopErrorType,
+  CandyShopError,
+  parseMetadata,
+  parseNftUpdateAuthority
 } from '../../../../vendor';
 import { TOKEN_METADATA_PROGRAM_ID, WRAPPED_SOL_MINT } from '../../../constants';
 
@@ -85,6 +97,8 @@ export const mintPrint = async (newTokenInstruction: TransactionInstruction[], p
     getEditionMarkAccount(masterMint, editionNumber.toNumber())
   ]);
 
+  const updateAuthority = await parseNftUpdateAuthority(masterEditionMetadata, program.provider.connection);
+
   const transaction = new Transaction();
 
   transaction.add(...newTokenInstruction);
@@ -97,6 +111,7 @@ export const mintPrint = async (newTokenInstruction: TransactionInstruction[], p
         vaultAccount,
         vaultTokenAccount,
         masterEditionMetadata,
+        masterEditionUpdateAuthority: updateAuthority,
         masterEditionAccount: masterEdition,
         masterEditionMint: masterMint,
         masterEditionTokenAccount: nftOwnerTokenAccount,
