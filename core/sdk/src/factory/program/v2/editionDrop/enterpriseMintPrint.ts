@@ -9,6 +9,8 @@ import {
   TransactionInstruction
 } from '@solana/web3.js';
 import {
+  CandyShopError,
+  CandyShopErrorType,
   checkEditionMintPeriod,
   getAtaForMint,
   getAuctionHouseTreasuryAcct,
@@ -16,6 +18,9 @@ import {
   getEditionMarkAccount,
   getMasterEditionAccount,
   getMetadataAccount,
+  parseMetadata,
+  parseNftUpdateAuthority,
+  safeAwait,
   sendTx
 } from '../../../../vendor';
 import { TOKEN_METADATA_PROGRAM_ID } from '../../../constants';
@@ -111,6 +116,8 @@ export const mintPrint = async (
     getEditionMarkAccount(masterMint, editionNumber.toNumber())
   ]);
 
+  const updateAuthority = await parseNftUpdateAuthority(masterEditionMetadata, program.provider.connection);
+
   const transaction = new Transaction();
   transaction.add(...newTokenInstruction);
 
@@ -122,6 +129,7 @@ export const mintPrint = async (
         vaultAccount,
         vaultTokenAccount,
         masterEditionMetadata,
+        masterEditionUpdateAuthority: updateAuthority,
         masterEditionAccount: masterEdition,
         masterEditionMint: masterMint,
         masterEditionTokenAccount: nftOwnerTokenAccount,

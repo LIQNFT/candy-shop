@@ -209,6 +209,11 @@
               "isSigner": false
             },
             {
+              "name": "masterEditionUpdateAuthority",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
               "name": "masterEditionAccount",
               "isMut": true,
               "isSigner": false
@@ -311,6 +316,11 @@
             },
             {
               "name": "masterEditionMetadata",
+              "isMut": false,
+              "isSigner": false
+            },
+            {
+              "name": "masterEditionUpdateAuthority",
               "isMut": false,
               "isSigner": false
             },
@@ -489,69 +499,9 @@
           }
         ]
       }
-    },
-    {
-      "name": "FeesAccount",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "campaignName",
-            "type": {
-              "array": ["u8", 20]
-            }
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          }
-        ]
-      }
-    },
-    {
-      "name": "SalesRevenueAccount",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "claimer",
-            "type": "publicKey"
-          },
-          {
-            "name": "campaignName",
-            "type": {
-              "array": ["u8", 20]
-            }
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          }
-        ]
-      }
     }
   ],
   "types": [
-    {
-      "name": "CommitNftBumps",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "vaultAccount",
-            "type": "u8"
-          },
-          {
-            "name": "feesAccount",
-            "type": "u8"
-          },
-          {
-            "name": "salesRevenueAccount",
-            "type": "u8"
-          }
-        ]
-      }
-    },
     {
       "name": "MintPrintReturnType",
       "type": {
@@ -753,6 +703,11 @@
       "code": 6031,
       "name": "InvalidStartTime",
       "msg": "invalid start time"
+    },
+    {
+      "code": 6032,
+      "name": "InvalidUpdateAuthority",
+      "msg": "invalid update authority"
     }
   ],
   "metadata": {
