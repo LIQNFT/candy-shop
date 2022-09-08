@@ -23,6 +23,7 @@ interface CreateAuctionProps {
   auctionForm: FormType;
   onCreateAuctionSuccess?: (auctionedToken: SingleTokenInfo) => void;
   fee?: number;
+  showExtensionBidding: boolean;
 }
 
 const Logger = 'CandyShopUI/CreateAuction';
@@ -34,7 +35,8 @@ export const CreateAuctionConfirm: React.FC<CreateAuctionProps> = ({
   onBack,
   auctionForm,
   onCreateAuctionSuccess,
-  fee
+  fee,
+  showExtensionBidding
 }) => {
   const onCreateAuction = () => {
     if (!wallet || !auctionForm || !selected) return;
@@ -50,17 +52,27 @@ export const CreateAuctionConfirm: React.FC<CreateAuctionProps> = ({
       : null;
     const tickSize = new BN(Number(auctionForm.tickSize) * 10 ** candyShop.currencyDecimals);
 
+    let params: Parameters<typeof candyShop.createAuction>[0] = {
+      startingBid,
+      startTime,
+      biddingPeriod,
+      buyNowPrice,
+      tokenAccount: new web3.PublicKey(selected.tokenAccountAddress),
+      tokenMint: new web3.PublicKey(selected.tokenMintAddress),
+      wallet,
+      tickSize
+    };
+
+    if (showExtensionBidding && !auctionForm.disableBiddingExtension) {
+      params = {
+        ...params,
+        extensionPeriod: new BN(Number(auctionForm.extensionPeriod)),
+        extensionIncrement: new BN(Number(auctionForm.extensionPeriod))
+      };
+    }
+
     candyShop
-      .createAuction({
-        startingBid,
-        startTime,
-        biddingPeriod,
-        buyNowPrice,
-        tokenAccount: new web3.PublicKey(selected.tokenAccountAddress),
-        tokenMint: new web3.PublicKey(selected.tokenMintAddress),
-        wallet,
-        tickSize
-      })
+      .createAuction(params)
       .then(() => {
         notification('Auction created', NotificationType.Success);
         onCreateAuctionSuccess && onCreateAuctionSuccess(selected);
@@ -94,6 +106,13 @@ export const CreateAuctionConfirm: React.FC<CreateAuctionProps> = ({
       })
     }
   ];
+
+  if (showExtensionBidding && !auctionForm.disableBiddingExtension) {
+    confirmDetails.push({
+      name: 'Final Bidding Window',
+      value: `${Number(auctionForm.extensionPeriod) / 60} mins`
+    });
+  }
 
   return (
     <div className="candy-auction-confirm-container">

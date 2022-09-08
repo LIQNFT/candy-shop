@@ -7,7 +7,8 @@ import {
   fetchNftsFromWallet,
   fetchShopByShopAddress,
   FetchNFTBatchParam,
-  CacheNFTParam
+  CacheNFTParam,
+  CandyShopVersion
 } from '@liqnft/candy-shop-sdk';
 import { Order, SingleBase, CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
 
@@ -223,6 +224,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
             setAuctionForm(undefined);
           }}
           onSubmit={(form: FormType) => onFilledUpAuctionForm(form)}
+          showExtensionBidding={candyShop.version === CandyShopVersion.V2}
         />
       ) : null}
       {stage === AuctionStage.CONFIRMING && selected && auctionForm && (
@@ -234,6 +236,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
           auctionForm={auctionForm}
           onCreateAuctionSuccess={(token: SingleTokenInfo) => onCreatedAuctionSuccess && onCreatedAuctionSuccess(token)}
           fee={fee}
+          showExtensionBidding={candyShop.version === CandyShopVersion.V2}
         />
       )}
     </div>
