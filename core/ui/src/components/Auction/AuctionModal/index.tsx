@@ -14,6 +14,7 @@ import { Auction } from '@liqnft/candy-shop-types';
 
 import { notification, NotificationType } from 'utils/rc-notification';
 import './style.less';
+import { PoweredByInBuyModal } from 'components/PoweredBy/PowerByInBuyModal';
 
 const Logger = 'CandyShopUI/AuctionModal';
 
@@ -162,6 +163,7 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
           />
         )}
       </div>
+      <PoweredByInBuyModal />
     </Modal>
   );
 };

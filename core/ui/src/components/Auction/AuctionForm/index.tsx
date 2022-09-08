@@ -19,13 +19,16 @@ interface AuctionFormProps {
   nft: SingleTokenInfo;
   auctionForm?: FormType;
   onBack: () => void;
+  showExtensionBidding: boolean;
 }
 
 enum CheckEnum {
   PERIOD = 'biddingPeriod',
   CLOCK_FORMAT = 'clockFormat',
   BUY_NOW = 'buyNow',
-  START_NOW = 'startNow'
+  START_NOW = 'startNow',
+  DISABLE_BIDDING_EXTENSION = 'disableBiddingExtension',
+  EXTENSION_PERIOD = 'extensionPeriod'
 }
 
 export type FormType = {
@@ -39,12 +42,15 @@ export type FormType = {
   startNow?: boolean;
   startDate: string;
   tickSize: string;
+  disableBiddingExtension: boolean;
+  extensionPeriod: string;
 };
 
 const VALIDATE_MESSAGE: { [key: string]: string } = {
   startingBid: 'Starting Bid must be greater than 0.',
   tickSize: 'Minimum Incremental Bid must be greater than 0.',
-  buyNowPrice: 'Buy Now Price must be greater than 0.'
+  buyNowPrice: 'Buy Now Price must be greater than 0.',
+  extensionPeriod: ''
 };
 
 const validateInput = (nodeId: string, message: string) => {
@@ -57,9 +63,9 @@ const reportValidity = () => {
 
 const onResetValidation = () => {
   Object.keys(VALIDATE_MESSAGE).forEach((nodeId) =>
-    (document.getElementById(nodeId) as HTMLInputElement).setCustomValidity('')
+    (document.getElementById(nodeId) as HTMLInputElement)?.setCustomValidity('')
   );
-  (document.getElementById('startDate') as HTMLInputElement).setCustomValidity('');
+  (document.getElementById('startDate') as HTMLInputElement)?.setCustomValidity('');
 };
 
 export const AuctionForm: React.FC<AuctionFormProps> = ({
@@ -68,7 +74,8 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
   fee,
   nft,
   auctionForm,
-  onBack
+  onBack,
+  showExtensionBidding
 }) => {
   const [form, setForm] = useState<FormType>({
     startingBid: '',
@@ -80,7 +87,9 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
     auctionMinute: '00',
     startNow: false,
     buyNow: false,
-    startDate: dayjs().add(1, 'd').format('YYYY-MM-DD')
+    startDate: dayjs().add(1, 'd').format('YYYY-MM-DD'),
+    disableBiddingExtension: false,
+    extensionPeriod: ''
   });
 
   const onCheck = (key: CheckEnum, value?: any) => (e: any) => {
@@ -124,6 +133,9 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
     if (
       VALIDATES.some(({ nodeId, trigger }) => {
         if (!trigger) return false;
+        if (form[nodeId] === '') {
+          return true;
+        }
         return Number(form[nodeId]) <= 0;
       })
     ) {
@@ -204,7 +216,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
       <Checkbox
         onClick={onCheckbox(CheckEnum.BUY_NOW)}
         checked={Boolean(form[CheckEnum.BUY_NOW])}
-        id="auction-buy-now"
+        id={CheckEnum.BUY_NOW}
         label="Enable buy now"
       />
 
@@ -251,10 +263,53 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
         />
       </div>
 
+      {showExtensionBidding && (
+        <>
+          <Checkbox
+            onClick={onCheckbox(CheckEnum.DISABLE_BIDDING_EXTENSION)}
+            checked={Boolean(form[CheckEnum.DISABLE_BIDDING_EXTENSION])}
+            id={CheckEnum.DISABLE_BIDDING_EXTENSION}
+            label="Disable Automatic Bid Extension"
+          />
+          <div
+            className="candy-auction-period"
+            style={{ display: form[CheckEnum.DISABLE_BIDDING_EXTENSION] ? 'none' : 'block' }}
+          >
+            <label>Select Final Bidding Window</label>
+
+            <div className="candy-auction-period-extension">
+              {BIDDING_WINDOWS.map((item) => (
+                <button
+                  key={item.value}
+                  className={`candy-auction-radio ${
+                    form[CheckEnum.EXTENSION_PERIOD] === item.value ? '' : 'candy-auction-radio-disable'
+                  }`}
+                  onClick={onCheck(CheckEnum.EXTENSION_PERIOD, item.value)}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <input
+            className="candy-auction-input-hidden"
+            style={{ width: '10px', height: '1px' }}
+            required={!form[CheckEnum.DISABLE_BIDDING_EXTENSION]}
+            value={form[CheckEnum.EXTENSION_PERIOD]}
+            id={CheckEnum.EXTENSION_PERIOD}
+            name={CheckEnum.EXTENSION_PERIOD}
+            onInvalid={(e) => {
+              (e.currentTarget as HTMLInputElement).setCustomValidity('Bidding Window is required.');
+            }}
+            onChange={EMPTY_FUNCTION}
+          />
+        </>
+      )}
+
       <Checkbox
         onClick={onCheckbox(CheckEnum.START_NOW)}
         checked={Boolean(form[CheckEnum.START_NOW])}
-        id="startNow"
+        id={CheckEnum.START_NOW}
         label="Start immediately"
       />
 
@@ -355,4 +410,10 @@ const PERIODS = [
   { label: '12h', value: 12 },
   { label: '24h', value: 24 },
   { label: '48h', value: 48 }
+];
+const BIDDING_WINDOWS = [
+  { label: '3m', value: '180' },
+  { label: '5m', value: '300' },
+  { label: '10m', value: '600' },
+  { label: '15m', value: '900' }
 ];
