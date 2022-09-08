@@ -71,7 +71,7 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
       name: nft.name,
       whitelistAddress: '',
       launchTimeFormat: 'AM',
-      whitelistTimeFormat: 'AM',
+      whitelistTimeFormat: dayjs.utc().hour() >= 12 ? 'PM' : 'AM',
       launchHour: '12',
       launchMinute: '00',
       whitelistHour: getHour(),
