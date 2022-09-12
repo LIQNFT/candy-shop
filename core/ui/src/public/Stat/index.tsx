@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from 'react';
 
-import { CandyShop, fetchStatsByShopAddress } from '@liqnft/candy-shop-sdk';
+import { Blockchain, CandyShop, EthCandyShop, fetchStatsByShopAddress } from '@liqnft/candy-shop-sdk';
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { StatActionsStatus } from 'constant';
 
 import './index.less';
 import { useUpdateSubject } from 'public/Context/CandyShopDataValidator';
 import { ShopStatusType } from '@liqnft/candy-shop-types';
+import { CommonChain, EthWallet } from '../../model';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 
-export interface StatProps {
+export interface StatType<C, S, W> extends CommonChain<C, S, W> {
   title: string | undefined;
   description: string | undefined;
   style?: { [key: string]: string | number } | undefined;
-  candyShop: CandyShop;
 }
+type StatProps =
+  | StatType<Blockchain.Ethereum, EthCandyShop, EthWallet>
+  | StatType<Blockchain.Solana, CandyShop, AnchorWallet>;
 
 const getFloorPrice = (candyShop: CandyShop, stat: any) => {
   if (!stat?.floorPrice) return null;
@@ -41,28 +45,32 @@ const getTotalVolume = (candyShop: CandyShop, stat: any) => {
   });
 };
 
-export const Stat: React.FC<StatProps> = ({ title, description, style, candyShop }): JSX.Element => {
+const Logger = 'CandyShopUI/Stat: ';
+export const Stat: React.FC<StatProps> = ({ title, description, style, ...chainProps }): JSX.Element => {
   const [stat, setStat] = useState<any>();
 
-  const statUpdateStatus = useValidateStatus(StatActionsStatus);
-  useUpdateSubject({ subject: ShopStatusType.Order, candyShopAddress: candyShop.candyShopAddress });
+  const candyShopAddress = chainProps.candyShop.candyShopAddress;
 
-  // handle fetch data
+  const statUpdateStatus = useValidateStatus(StatActionsStatus);
+  useUpdateSubject({ subject: ShopStatusType.Order, candyShopAddress });
+
   useEffect(() => {
-    fetchStatsByShopAddress(candyShop.candyShopAddress)
+    fetchStatsByShopAddress(candyShopAddress)
       .then((data: any) => {
         if (!data) return;
+        // TODO: handle data from ETH
+        console.log({ data });
         setStat(data);
       })
-      .catch((err: any) => {
-        console.info('fetchOrdersByStoreId failed: ', err);
+      .catch((err: Error) => {
+        console.log(`${Logger} fetchOrdersByStoreId failed, error=`, err);
       });
     // statUpdateStatus on polling
-  }, [candyShop, statUpdateStatus]);
+  }, [candyShopAddress, statUpdateStatus]);
 
-  const floorPrice = getFloorPrice(candyShop, stat);
-  const totalListed = getTotalListed(stat);
-  const totalVolume = getTotalVolume(candyShop, stat);
+  const floorPrice = chainProps.blockchain === Blockchain.Solana ? getFloorPrice(chainProps.candyShop, stat) : 0;
+  const totalListed = chainProps.blockchain === Blockchain.Solana ? getTotalListed(stat) : 0;
+  const totalVolume = chainProps.blockchain === Blockchain.Solana ? getTotalVolume(chainProps.candyShop, stat) : 0;
 
   return (
     <div style={style}>
@@ -76,7 +84,7 @@ export const Stat: React.FC<StatProps> = ({ title, description, style, candyShop
             <div className="candy-stat-component-item">
               <div className="candy-label">FLOOR PRICE</div>
               <div className="candy-value-lg">
-                {floorPrice === null ? 'N/A' : `${floorPrice} ${candyShop.currencySymbol}`}
+                {floorPrice === null ? 'N/A' : `${floorPrice} ${chainProps.candyShop.currencySymbol}`}
               </div>
             </div>
             <div className="candy-stat-component-item">
@@ -86,7 +94,7 @@ export const Stat: React.FC<StatProps> = ({ title, description, style, candyShop
             <div className="candy-stat-component-item">
               <div className="candy-label">VOLUME</div>
               <div className="candy-value-lg">
-                {totalVolume} {candyShop.currencySymbol}
+                {totalVolume} {chainProps.candyShop.currencySymbol}
               </div>
             </div>
           </div>

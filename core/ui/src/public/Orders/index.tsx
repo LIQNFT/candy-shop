@@ -94,8 +94,10 @@ export const Orders: React.FC<OrdersProps> = ({
 
   const loadingMountRef = useRef(false);
 
+  const candyShopAddress = chainProps.candyShop.candyShopAddress;
+
   const updateOrderStatus = useValidateStatus(OrdersActionsStatus);
-  useUpdateSubject({ subject: ShopStatusType.Order, candyShopAddress: chainProps.candyShop.candyShopAddress });
+  useUpdateSubject({ subject: ShopStatusType.Order, candyShopAddress });
 
   const onSearchNft = useCallback((nftName: string) => {
     setNftKeyword(nftName);
@@ -103,7 +105,9 @@ export const Orders: React.FC<OrdersProps> = ({
 
   const fetchOrders = useCallback(
     (offset: number) => {
-      fetchOrdersByShopAddress(chainProps.candyShop.candyShopAddress, {
+      if (!candyShopAddress) return;
+
+      fetchOrdersByShopAddress(candyShopAddress, {
         sortBy: [sortedByOption.value],
         offset,
         limit: ORDER_FETCH_LIMIT,
@@ -136,14 +140,15 @@ export const Orders: React.FC<OrdersProps> = ({
         });
     },
     [
-      chainProps.candyShop,
-      collectionFilter,
-      identifiers,
+      candyShopAddress,
+      sortedByOption.value,
       sellerAddress,
+      identifiers,
+      collectionFilter?.identifier,
+      collectionFilter?.attribute,
+      selectedCollection?.id,
+      selectedShop?.candyShopAddress,
       shopFilter?.shopId,
-      sortedByOption,
-      selectedCollection,
-      selectedShop,
       nftKeyword
     ]
   );

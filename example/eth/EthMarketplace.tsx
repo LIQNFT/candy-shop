@@ -1,5 +1,5 @@
 import React from 'react';
-import { Blockchain, EthCandyShop } from '../../core/sdk';
+import { Blockchain, EthCandyShop } from '../../core/sdk/dist';
 
 import { EthConnectionButton } from './ConnectionButton';
 import { Orders, Stat, Sell, Activity } from '../../core/ui/.';
@@ -14,15 +14,16 @@ export const EthShopExample: React.FC<EthShopExampleProps> = ({ candyShop }) => 
   const wallet = publicKey ? { publicKey } : undefined;
   return (
     <div style={{ paddingBottom: 50, textAlign: 'center' }}>
-      <h1>Eth Candy Shop</h1>
-      <EthConnectionButton />
+      {/* <h1>Eth Candy Shop</h1>
+      <EthConnectionButton /> */}
 
       <Stat
+        candyShop={candyShop}
+        blockchain={Blockchain.Ethereum}
         title={'Marketplace'}
         description={
           'Candy Shop is an open source on-chain protocol that empowers DAOs, NFT projects and anyone interested in creating an NFT marketplace to do so within minutes!'
         }
-        candyShop={candyShop as any}
       />
 
       <div style={{ padding: '15px' }} />
@@ -45,7 +46,6 @@ export const EthShopExample: React.FC<EthShopExampleProps> = ({ candyShop }) => 
           wallet={wallet}
           candyShop={candyShop}
           walletConnectComponent={<EthConnectionButton />}
-          enableCacheNFT={true}
           blockchain={Blockchain.Ethereum}
         />
       )}

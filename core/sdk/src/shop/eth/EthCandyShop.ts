@@ -34,7 +34,7 @@ export class EthCandyShop extends BaseShop {
     super(params);
     const { candyShopCreatorAddress, treasuryMint, env, settings } = params;
 
-    this._candyShopAddress = '6eba3fe4-cd6c-405b-8f46-529221b81a90'; // TODO: get candyShopAddress from backend
+    this._candyShopAddress = '45cc8c2a-6b17-495c-960e-99aac8fe5583'; // TODO: get candyShopAddress from backend
     this._candyShopCreatorAddress = candyShopCreatorAddress;
     this._treasuryMint = treasuryMint;
     this._env = env ?? 'goerli';

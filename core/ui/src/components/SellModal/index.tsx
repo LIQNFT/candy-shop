@@ -32,7 +32,6 @@ export interface SellModalType<C, S, W> extends CommonChain<C, S, W> {
   onCancel: () => void;
   nft: SingleTokenInfo;
   shop: CandyShopResponse;
-  connection?: web3.Connection;
   shopAddress: string;
   candyShopProgramId?: string;
   baseUnitsPerCurrency: number;
@@ -48,7 +47,6 @@ export const SellModal: React.FC<SellModalProps> = ({
   onCancel: onUnSelectItem,
   nft,
   shop,
-  connection,
   shopAddress,
   candyShopProgramId,
   baseUnitsPerCurrency,
@@ -66,7 +64,6 @@ export const SellModal: React.FC<SellModalProps> = ({
 
   const timeoutRef = useUnmountTimeout();
 
-  // List for sale and move to next step
   const sell = async () => {
     setState(TransactionState.PROCESSING);
 
@@ -86,9 +83,9 @@ export const SellModal: React.FC<SellModalProps> = ({
     const getAction = (): any => {
       switch (chainProps.blockchain) {
         case Blockchain.Solana: {
-          if (!connection || !chainProps.wallet || !candyShopProgramId) return;
+          if (!chainProps.wallet || !candyShopProgramId) return;
           const tradeSellParams: CandyShopTradeSellParams = {
-            connection,
+            connection: chainProps.candyShop.connection(),
             tokenAccount: new web3.PublicKey(nft.tokenAccountAddress),
             tokenMint: new web3.PublicKey(nft.tokenMintAddress),
             price: new BN(price),
@@ -142,14 +139,16 @@ export const SellModal: React.FC<SellModalProps> = ({
     console.log('getTokenMetadataByMintAddress', { mint: nft.tokenMintAddress });
     setLoading(true);
 
-    const getAction = (): any => {
+    const getAction = (): Promise<any> => {
       switch (chainProps.blockchain) {
         case Blockchain.Solana: {
-          if (!connection) return;
-          return getTokenMetadataByMintAddress(nft.tokenMintAddress, connection);
+          return getTokenMetadataByMintAddress(nft.tokenMintAddress, chainProps.candyShop.connection());
         }
         default:
-          console.log('ETH WIP');
+          return new Promise((res) => {
+            console.log('WIP ETH');
+            res({ sellerFeeBasisPoints: 0 });
+          });
       }
     };
     getAction()
@@ -162,14 +161,14 @@ export const SellModal: React.FC<SellModalProps> = ({
       .finally(() => {
         setLoading(false);
       });
-  }, [chainProps.blockchain, connection, nft.tokenMintAddress]);
+  }, [chainProps.blockchain, chainProps.candyShop, nft.tokenMintAddress]);
 
   const onCloseModal = () => {
     onCancel();
   };
 
   const disableListedBtn = formState.price === undefined || loading;
-  const transactionFee = shop.feeRate / 100;
+  const transactionFee = shop ? shop.feeRate / 100 : 0;
 
   return (
     <Modal onCancel={onCloseModal} width={600}>

@@ -23,6 +23,7 @@ export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ candySho
             'Candy Shop is an open source on-chain protocol that empowers DAOs, NFT projects and anyone interested in creating an NFT marketplace to do so within minutes!'
           }
           candyShop={candyShop}
+          blockchain={Blockchain.Solana}
         />
       </div>
 

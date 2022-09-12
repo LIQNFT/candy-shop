@@ -45,22 +45,6 @@ export const shortenAddress = (address: string, chars = NUMBER_OF_CHAR): string 
   return `${address.slice(0, chars)}...${address.slice(-chars)}`;
 };
 
-interface GetChainActionType<T, S, E> {
-  sol: () => T;
-  solArgs: S;
-  eth: () => T;
-  ethArgs: E;
-  blockchain: Blockchain;
-}
-export function getChainAction<T, S, E>({ sol, blockchain, eth }: GetChainActionType<T, S, E>): T {
-  switch (blockchain) {
-    case Blockchain.Solana:
-      return sol();
-    default:
-      return eth();
-  }
-}
-
 export function isSolana(blockchain: Blockchain): boolean {
   return blockchain === Blockchain.Solana;
 }

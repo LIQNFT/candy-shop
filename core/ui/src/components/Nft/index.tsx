@@ -19,7 +19,7 @@ type NftProps =
   | NftType<Blockchain.Solana, CandyShop, AnchorWallet>;
 
 export const Nft = ({ nft, sellDetail, shop, ...chainProps }: NftProps): JSX.Element => {
-  const [selection, setSelection] = useState<SingleTokenInfo | undefined>();
+  const [selection, setSelection] = useState<SingleTokenInfo>();
 
   const onClose = () => {
     setSelection(undefined);
@@ -49,7 +49,6 @@ export const Nft = ({ nft, sellDetail, shop, ...chainProps }: NftProps): JSX.Ele
           onCancel={onClose}
           nft={selection}
           shop={shop}
-          connection={chainProps.blockchain === Blockchain.Solana ? chainProps.candyShop.connection() : undefined}
           shopAddress={chainProps.candyShop.candyShopAddress}
           candyShopProgramId={chainProps.blockchain === Blockchain.Solana ? chainProps.candyShop.programId : undefined}
           baseUnitsPerCurrency={

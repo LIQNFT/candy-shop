@@ -14,7 +14,6 @@ export interface CancelModalDetailType<C, S, W> extends CommonChain<C, S, W> {
   exchangeInfo: ShopExchangeInfo;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
-  // candyShop: CandyShop;
 }
 type CancelModalDetailProps =
   | CancelModalDetailType<Blockchain.Ethereum, EthCandyShop, EthWallet>
@@ -26,8 +25,7 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
   exchangeInfo,
   shopPriceDecimalsMin,
   shopPriceDecimals,
-  candyShop,
-  blockchain
+  ...chainProps
 }) => {
   const orderPrice = getPrice(shopPriceDecimalsMin, shopPriceDecimals, order.price, exchangeInfo);
 
@@ -61,12 +59,7 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
           <div>
             <div className="candy-label">MINT ADDRESS</div>
             <div className="candy-value">
-              {/* <ExplorerLink
-                candyShop={candyShop}
-                blockchain={blockchain}
-                type="address"
-                address={order.tokenMint}
-              /> */}
+              <ExplorerLink type="address" address={order.tokenMint} {...chainProps} />
             </div>
           </div>
           {order?.edition ? (
@@ -82,12 +75,7 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
           <div>
             <div className="candy-label">CURRENT OWNER</div>
             <div className="candy-value">
-              {/* <ExplorerLink
-                candyShop={candyShop}
-                blockchain={blockchain}
-                type="address"
-                address={order.walletAddress}
-              /> */}
+              <ExplorerLink type="address" address={order.walletAddress} {...chainProps} />
             </div>
           </div>
         </div>

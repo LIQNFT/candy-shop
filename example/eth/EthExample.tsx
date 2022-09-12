@@ -1,11 +1,13 @@
 import React, { useMemo } from 'react';
 import { EthSdkExample } from './EthSdkExample';
-import { EthShopExample } from './EthShopExample';
+import { EthShopExample } from './EthMarketplace';
 import { Route, Switch, Link, useLocation } from 'react-router-dom';
 import { CandyShopDataValidator } from '../../core/ui/.';
 import { EthCandyShop } from '../../core/sdk/.';
 import { useEthConnection } from './context/connection';
 import { Auction } from './Auction';
+import { EthConnectionButton } from './ConnectionButton';
+// import { ConfigureShop } from '../sol/ConfigureShop';
 
 enum PageRoute {
   Shop = '/eth',
@@ -13,7 +15,7 @@ enum PageRoute {
   Auction = '/eth/auction'
 }
 
-const disableStyle = { pointerEvent: 'none', color: 'black', paddingRight: 20, fontWeight: 'bold' };
+const activeStyle = { pointerEvent: 'none', color: 'black', paddingRight: 20, fontWeight: 'bold' };
 const normalStyle = { paddingRight: 20 };
 
 export const EthExample: React.FC = () => {
@@ -31,11 +33,12 @@ export const EthExample: React.FC = () => {
     } catch (err) {
       console.log(`CandyShop: create instance failed, error=`, err);
     }
-
-    console.log(candyShop);
-
     return candyShop;
   }, []);
+
+  const getStyle = (pageUrl: PageRoute) => {
+    return pathname === pageUrl ? activeStyle : normalStyle;
+  };
 
   return (
     <CandyShopDataValidator>
@@ -45,18 +48,28 @@ export const EthExample: React.FC = () => {
           alignItems: 'center'
         }}
       >
-        <div>
-          <Link style={pathname === PageRoute.Shop ? disableStyle : normalStyle} to={PageRoute.Shop}>
-            ETH Shop
-          </Link>
-          <Link style={pathname === PageRoute.SDK ? disableStyle : normalStyle} to={PageRoute.SDK}>
-            ETH SDK
-          </Link>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div>
+            <Link style={getStyle(PageRoute.Shop)} to={PageRoute.Shop}>
+              Marketplace
+            </Link>
+            <Link style={getStyle(PageRoute.Auction)} to={PageRoute.Auction}>
+              Auction
+            </Link>
+            <Link style={getStyle(PageRoute.SDK)} to={PageRoute.SDK}>
+              ETH SDK
+            </Link>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div>Config Shop (WIP)</div>
+            <EthConnectionButton />
+          </div>
         </div>
         <Switch>
           <Route path={PageRoute.SDK} component={() => <EthSdkExample />} />
-          <Route path={PageRoute.Shop} component={() => <EthShopExample candyShop={candyShop} />} />
           <Route path={PageRoute.Auction} component={() => <Auction candyShop={candyShop} />} />
+          <Route path={PageRoute.Shop} component={() => <EthShopExample candyShop={candyShop} />} />
         </Switch>
       </div>
     </CandyShopDataValidator>

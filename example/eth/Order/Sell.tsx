@@ -48,10 +48,7 @@ const Sell = () => {
           <strong>Address: </strong> {wallet.address}
         </div>
         <div>
-          <Button onClick={btnhandler} variant="primary">
-            {' '}
-            Connect to wallet{' '}
-          </Button>
+          <Button onClick={btnhandler}> Connect to wallet </Button>
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <label>shopUuid</label>

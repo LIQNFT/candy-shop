@@ -4,7 +4,6 @@ import {
   CandyShop,
   CandyShopTrade,
   CandyShopTradeCancelParams,
-  CandyShopVersion,
   EthCandyShop,
   getCandyShopSync
 } from '@liqnft/candy-shop-sdk';
@@ -38,27 +37,29 @@ type CancelModalProps =
 export const CancelModal: React.FC<CancelModalProps> = ({
   order,
   onClose,
-  wallet,
   exchangeInfo,
   shopPriceDecimalsMin,
   shopPriceDecimals,
-  candyShop,
-  blockchain
+  ...chainProps
 }) => {
   const [state, setState] = useState<TransactionState>(TransactionState.DISPLAY);
   const timeoutRef = useUnmountTimeout();
-  const shopAddress = getCandyShopSync(
-    new web3.PublicKey(order.candyShopCreatorAddress),
-    new web3.PublicKey(order.treasuryMint),
-    new web3.PublicKey(order.programId)
-  )[0].toString();
+  const shopAddress =
+    chainProps.blockchain === Blockchain.Solana
+      ? getCandyShopSync(
+          new web3.PublicKey(order.candyShopCreatorAddress),
+          new web3.PublicKey(order.treasuryMint),
+          new web3.PublicKey(order.programId)
+        )[0].toString()
+      : '';
 
   const cancel = async () => {
     setState(TransactionState.PROCESSING);
 
     const getAction = (): Promise<any> => {
-      switch (blockchain) {
+      switch (chainProps.blockchain) {
         case Blockchain.Solana: {
+          const { wallet, candyShop } = chainProps;
           if (!wallet?.publicKey) return new Promise((res) => res(''));
 
           const tradeCancelParams: CandyShopTradeCancelParams = {
@@ -99,17 +100,16 @@ export const CancelModal: React.FC<CancelModalProps> = ({
       onCancel={onClose}
       width={state !== TransactionState.DISPLAY ? 600 : 1000}
     >
-      {/* {state === TransactionState.DISPLAY && wallet && (
+      {state === TransactionState.DISPLAY && chainProps.wallet?.publicKey && (
         <CancelModalDetail
           order={order}
           cancel={cancel}
           exchangeInfo={exchangeInfo}
           shopPriceDecimalsMin={shopPriceDecimalsMin}
           shopPriceDecimals={shopPriceDecimals}
-          candyShop={candyShop}
-          blockchain={blockchain}
+          {...chainProps}
         />
-      )} */}
+      )}
       {state === TransactionState.PROCESSING && <Processing text="Canceling your sale" />}
       {state === TransactionState.CONFIRMED && <CancelModalConfirm order={order} onCancel={onClose} />}
       <PoweredByInBuyModal />
