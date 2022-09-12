@@ -108,7 +108,7 @@ export const CreateAuctionConfirm: React.FC<CreateAuctionProps> = ({
   ];
 
   if (showExtensionBidding && !auctionForm.disableBiddingExtension) {
-    confirmDetails.push({
+    confirmDetails.splice(-1, 0, {
       name: 'Final Bidding Window',
       value: `${Number(auctionForm.extensionPeriod) / 60} mins`
     });
