@@ -128,21 +128,23 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
     });
 
     if (willUpdateDrop === undefined) return;
-
-    const timeout = setTimeout(() => {
+    if (remainSecondTime <= 0) return;
+    const interval = setInterval(() => {
       setDropNfts((drops) => {
         const NOW = dayjs().unix();
         return drops?.map((drop) => {
-          if (Number(drop.whitelistTime) >= NOW) return { ...drop, status: DropStatus.WHITELIST_STARTED };
-          if (Number(drop.startTime) >= NOW) return { ...drop, status: DropStatus.SALE_STARTED };
-          if (Number(drop.startTime) + Number(drop.salesPeriod) >= NOW)
+          if (NOW >= Number(drop.startTime) + Number(drop.salesPeriod)) {
             return { ...drop, status: DropStatus.SALE_COMPLETED };
+          }
+          if (NOW >= Number(drop.startTime)) return { ...drop, status: DropStatus.SALE_STARTED };
+          if (drop.whitelistTime && NOW >= Number(drop.whitelistTime))
+            return { ...drop, status: DropStatus.WHITELIST_STARTED };
           return drop;
         });
       });
-    }, remainSecondTime * 1000);
+    }, 1_000);
 
-    return () => clearTimeout(timeout);
+    return () => clearTimeout(interval);
   }, [dropNfts]);
 
   useObserver({ callbackFn: fetchDrops, triggerTargetId: 'DROP_TARGET', enable: Boolean(target && hasMore) });
