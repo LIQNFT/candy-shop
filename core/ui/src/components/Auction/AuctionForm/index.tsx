@@ -313,86 +313,87 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
         label="Start immediately"
       />
 
-      <div style={{ display: form[CheckEnum.START_NOW] ? 'none' : 'block' }}>
-        <div className="candy-auction-form-item">
-          <label htmlFor="startDate">Auction start date</label>
-          <input
-            id="startDate"
-            name="startDate"
-            type="date"
-            required={!form[CheckEnum.START_NOW]}
-            onChange={onChangeInput}
-            value={form['startDate']}
-            min={dayjs.utc().format('YYYY-MM-DD')}
-          />
-        </div>
-
-        <label htmlFor="auctionHour" className="candy-auction-time-label">
-          Auction start time (UTC)
-        </label>
-        <div className="candy-auction-form-time">
-          <input
-            id="auctionHour"
-            name="auctionHour"
-            type="number"
-            onWheel={preventUpdateNumberOnWheel}
-            placeholder={'1'}
-            min={1}
-            max={12}
-            required={!form[CheckEnum.START_NOW]}
-            value={form['auctionHour']}
-            onChange={onChangeInput}
-            maxLength={2}
-            step="any"
-          />
-          <span>:</span>
-          <input
-            id="auctionMinute"
-            name="auctionMinute"
-            type="number"
-            onWheel={preventUpdateNumberOnWheel}
-            placeholder={'00'}
-            min={0}
-            max={59}
-            required={!form[CheckEnum.START_NOW]}
-            value={form['auctionMinute']}
-            onChange={onChangeInput}
-            maxLength={2}
-            step="any"
-            onBlur={() => {
-              const num = Number(form['auctionMinute']);
-              setForm((form) => ({ ...form, ['auctionMinute']: num >= 10 ? `${num}` : `0${num}` }));
-            }}
-          />
-          <div className="candy-auction-time-checkbox">
-            <button
-              className={`candy-auction-radio ${
-                form[CheckEnum.CLOCK_FORMAT] === 'AM' ? '' : 'candy-auction-radio-disable'
-              }`}
-              onClick={onCheck(CheckEnum.CLOCK_FORMAT, 'AM')}
-            >
-              AM
-            </button>
-            <button
-              className={`candy-auction-radio ${
-                form[CheckEnum.CLOCK_FORMAT] === 'PM' ? '' : 'candy-auction-radio-disable'
-              }`}
-              onClick={onCheck(CheckEnum.CLOCK_FORMAT, 'PM')}
-            >
-              PM
-            </button>
+      {!form[CheckEnum.START_NOW] ? (
+        <div>
+          <div className="candy-auction-form-item">
+            <label htmlFor="startDate">Auction start date</label>
             <input
+              id="startDate"
+              name="startDate"
+              type="date"
               required={!form[CheckEnum.START_NOW]}
-              value={form[CheckEnum.CLOCK_FORMAT]}
-              className="candy-auction-input-hidden"
-              id="auctionClockFormat"
-              name="auctionClockFormat"
-              onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Clock format is required.')}
-              onChange={EMPTY_FUNCTION}
+              onChange={onChangeInput}
+              value={form['startDate']}
+              min={dayjs.utc().format('YYYY-MM-DD')}
             />
           </div>
+
+          <label htmlFor="auctionHour" className="candy-auction-time-label">
+            Auction start time (UTC)
+          </label>
+          <div className="candy-auction-form-time">
+            <input
+              id="auctionHour"
+              name="auctionHour"
+              type="number"
+              onWheel={preventUpdateNumberOnWheel}
+              placeholder={'1'}
+              min={1}
+              max={12}
+              required={!form[CheckEnum.START_NOW]}
+              value={form['auctionHour']}
+              onChange={onChangeInput}
+              onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Auction hour time is required.')}
+              maxLength={2}
+              step="any"
+            />
+            <span>:</span>
+            <input
+              id="auctionMinute"
+              name="auctionMinute"
+              type="number"
+              onWheel={preventUpdateNumberOnWheel}
+              placeholder={'00'}
+              max={59}
+              value={form['auctionMinute']}
+              onChange={onChangeInput}
+              step="any"
+              onBlur={(e) => {
+                const num = Number(form['auctionMinute']);
+                (e.target as HTMLInputElement).setCustomValidity('');
+                setForm((form) => ({ ...form, ['auctionMinute']: num >= 10 ? `${num}` : `0${num}` }));
+              }}
+            />
+            <div className="candy-auction-time-checkbox">
+              <button
+                className={`candy-auction-radio ${
+                  form[CheckEnum.CLOCK_FORMAT] === 'AM' ? '' : 'candy-auction-radio-disable'
+                }`}
+                onClick={onCheck(CheckEnum.CLOCK_FORMAT, 'AM')}
+              >
+                AM
+              </button>
+              <button
+                className={`candy-auction-radio ${
+                  form[CheckEnum.CLOCK_FORMAT] === 'PM' ? '' : 'candy-auction-radio-disable'
+                }`}
+                onClick={onCheck(CheckEnum.CLOCK_FORMAT, 'PM')}
+              >
+                PM
+              </button>
+              <input
+                required={!form[CheckEnum.START_NOW]}
+                value={form[CheckEnum.CLOCK_FORMAT]}
+                className="candy-auction-input-hidden"
+                id="auctionClockFormat"
+                name="auctionClockFormat"
+                onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Clock format is required.')}
+                onChange={EMPTY_FUNCTION}
+              />
+            </div>
+          </div>
         </div>
-      </div>
+      ) : null}
 
       <div className="candy-auction-confirm-button-container">
         <button className="candy-button candy-button-default" onClick={onBack}>
