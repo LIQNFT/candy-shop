@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Input, Modal, Select } from 'antd';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { CANDY_SHOP_PROGRAM_ID, CREATOR_ADDRESS, TREASURY_MINT } from './constant/publicKey';
 import { LS_CANDY_FORM, DEFAULT_FORM_CONFIG } from './constant/formConfiguration';
 
 interface ConfigureShopProps {
@@ -19,20 +18,12 @@ enum InputType {
 
 export const ConfigureShop: React.FC<ConfigureShopProps> = ({ setCandyForm, candyForm }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [creatorAddressInput, setCreatorAddressInput] = useState<string>(CREATOR_ADDRESS);
-  const [treasuryMintInput, setTreasuryMintInput] = useState<string>(TREASURY_MINT);
-  const [programIdInput, setProgramIdInput] = useState<string>(CANDY_SHOP_PROGRAM_ID);
-  const [networkInput, setNetworkInput] = useState<string>(WalletAdapterNetwork.Devnet);
-  const [settingsInput, setSettingsInput] = useState<string>(
-    JSON.stringify({
-      mainnetConnectionUrl: 'https://ssc-dao.genesysgo.net/'
-    })
-  );
-  const [paymentProviderObject, setPaymentProviderObject] = useState<string>(
-    JSON.stringify({
-      stripePublicKey: ''
-    })
-  );
+  const [creatorAddressInput, setCreatorAddressInput] = useState<string>(DEFAULT_FORM_CONFIG.creatorAddress);
+  const [treasuryMintInput, setTreasuryMintInput] = useState<string>(DEFAULT_FORM_CONFIG.treasuryMint);
+  const [programIdInput, setProgramIdInput] = useState<string>(DEFAULT_FORM_CONFIG.programId);
+  const [networkInput, setNetworkInput] = useState<string>(DEFAULT_FORM_CONFIG.network);
+  const [settingsInput, setSettingsInput] = useState<string>(DEFAULT_FORM_CONFIG.settings);
+  const [paymentProviderObject, setPaymentProviderObject] = useState<string>(DEFAULT_FORM_CONFIG.paymentProvider);
 
   const onCreateNewCandyShop = () => {
     const data = {
@@ -157,7 +148,7 @@ export const ConfigureShop: React.FC<ConfigureShopProps> = ({ setCandyForm, cand
 
         <div style={{ fontSize: 16, lineHeight: '24px', fontWeight: 500 }}>Candy Shop Settings</div>
         <Input.TextArea
-          rows={3}
+          rows={5}
           placeholder="Candy Shop Settings"
           value={settingsInput}
           onChange={(e) => handleInputChange(e, InputType.SETTINGS)}
