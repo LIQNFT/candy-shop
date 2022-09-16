@@ -69,9 +69,32 @@ export interface DropQuery extends CommonQuery {
   nftName?: string;
   attributes?: NftAttributeQuery[];
 }
+
 export interface DropActivityQuery extends CommonQuery {
   walletAddress: string;
 }
 export interface AuctionBidQuery extends CommonQuery {
   orderByArr?: SortBy;
+}
+
+export enum EvmChainQuery {
+  ETH = 'eth',
+  GOERLI = 'goerli',
+  POLYGON = 'polygon',
+  ROPSTEN = 'ropsten',
+  RINKEBY = 'rinkeby',
+  KOVAN = 'kovan',
+  BSC = 'bsc',
+  BSC_TESTNET = 'bsc_testnet',
+  AVALANCHE = 'avalanche',
+  FUJI = 'fuji',
+  FANTOM = 'fantom',
+  CRONOS = 'cronos',
+  CRONOS_TESTNET = 'cronos_testnet'
+}
+
+export interface EthWalletNftQuery {
+  limit?: number;
+  chain?: EvmChainQuery;
+  cursor?: string;
 }
