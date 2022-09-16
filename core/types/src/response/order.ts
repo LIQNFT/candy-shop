@@ -29,6 +29,8 @@ export interface Order {
   tokenMint: string;
   nftDescription: string;
   programId: string;
+  updatedAt: string;
+  createdAt: string;
   // link to find more description of the NFT,
   // e.g. "https://arweave.net/rB039m8EdmcngPmlUgiXg6X_v7wOKBPPHWuP0dLZpro"
   // in https://explorer.solana.com/address/62EhPTBsBtWwkLu8pV6oTVJEuzpJSwYp2XGD4RQaFxW5/metadata
