@@ -1,4 +1,4 @@
-import { Side, Status, ShopStatusType, DropStatus } from '../response';
+import { Side, Status, ShopStatusType, DropStatus, AuctionStatus } from '../response';
 
 export interface NftAttributeQuery {
   [trait_type: string]: string;
@@ -101,3 +101,9 @@ export interface FetchEvmWalletNftQuery {
   chain?: EvmChainQuery;
   cursor?: string;
 }
+export type AuctionQuery = {
+  offset?: number;
+  limit?: number;
+  status?: AuctionStatus[];
+  walletAddress?: string;
+};

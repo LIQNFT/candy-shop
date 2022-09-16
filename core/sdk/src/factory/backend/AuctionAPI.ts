@@ -1,15 +1,8 @@
-import { SingleBase, ListBase, Auction, AuctionBid, AuctionStatus, AuctionBidQuery } from '@liqnft/candy-shop-types';
+import { SingleBase, ListBase, Auction, AuctionBid, AuctionQuery, AuctionBidQuery } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
 
 const Logger = 'CandyShopSDK/AuctionAPI';
-
-export type AuctionQuery = {
-  offset?: number;
-  limit?: number;
-  status?: AuctionStatus[];
-  walletAddress?: string;
-};
 
 export function fetchAuctionsByShop(
   axiosInstance: AxiosInstance,
