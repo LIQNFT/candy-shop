@@ -91,10 +91,12 @@ export enum EvmChainQuery {
   FUJI = 'fuji',
   FANTOM = 'fantom',
   CRONOS = 'cronos',
-  CRONOS_TESTNET = 'cronos_testnet'
+  CRONOS_TESTNET = 'cronos_testnet',
+  // polygon testnet
+  MUMBAI = 'mumbai'
 }
 
-export interface EthWalletNftQuery {
+export interface FetchEvmWalletNftQuery {
   limit?: number;
   chain?: EvmChainQuery;
   cursor?: string;
