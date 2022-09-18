@@ -1,4 +1,4 @@
-import { SingleBase, Nft, EthWalletNftQuery, ListBaseWithCurSor } from '@liqnft/candy-shop-types';
+import { SingleBase, Nft, EthWalletNftQuery, ListBaseWithCursor } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 
 export async function fetchNftByMint(axiosInstance: AxiosInstance, mint: string): Promise<Nft> {
@@ -10,10 +10,10 @@ export async function fetchUserEthWalletNft(
   axiosInstance: AxiosInstance,
   walletAddress: string,
   query?: EthWalletNftQuery
-): Promise<ListBaseWithCurSor<Nft>> {
+): Promise<ListBaseWithCursor<Nft>> {
   console.log(`CandyShop: fetchUserEthWalletNft by wallet address=${walletAddress} with query`, query);
   return await axiosInstance
-    .get<ListBaseWithCurSor<Nft>>(`/nft/eth-wallet/:${walletAddress}`, {
+    .get<ListBaseWithCursor<Nft>>(`/nft/eth-wallet/:${walletAddress}`, {
       params: query
     })
     .then((response) => response.data);
