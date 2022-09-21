@@ -1,4 +1,12 @@
-import { ListBase, Order, OrdersFilterQuery, Side, SingleBase, Status } from '@liqnft/candy-shop-types';
+import {
+  ListBase,
+  Order,
+  OrdersFilterQuery,
+  OrdersEditionFilterQuery,
+  Side,
+  SingleBase,
+  Status
+} from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
 
@@ -16,7 +24,8 @@ export async function fetchOrdersByStoreId(
     candyShopAddress,
     attribute,
     collectionId,
-    nftName
+    nftName,
+    masterEdition
   } = ordersFilterQuery;
   let queryParams: any = { offset, limit };
 
@@ -48,6 +57,10 @@ export async function fetchOrdersByStoreId(
       collectionId,
       nftName
     });
+  }
+
+  if (masterEdition) {
+    queryParams.masterEdition = true;
   }
 
   console.log(`CandyShop: fetching orders from ${storeId}`, { query: ordersFilterQuery });
@@ -107,4 +120,23 @@ export async function fetchOrdersByStoreIdAndWalletAddress(
   }
 
   return orders;
+}
+
+export async function fetchOrdersByStoreIdAndMasterEditionMint(
+  axiosInstance: AxiosInstance,
+  storeId: string,
+  masterMint: string,
+  ordersEditionFilterQuery: OrdersEditionFilterQuery
+): Promise<ListBase<Order>> {
+  const { offset = 0, limit = 10 } = ordersEditionFilterQuery;
+  console.log(`CandyShop: fetching orders by shop address=${storeId}, masterMint=${masterMint}`);
+  const url = `/order/edition/mint/${masterMint}/shop/${storeId}?`;
+  return axiosInstance
+    .get<ListBase<Order>>(url, {
+      params: {
+        offset,
+        limit
+      }
+    })
+    .then((response) => response.data);
 }

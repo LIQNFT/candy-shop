@@ -18,7 +18,8 @@ import {
   TradeQuery,
   ShopQuery,
   CollectionQuery,
-  NftCollection
+  NftCollection,
+  OrdersEditionFilterQuery
 } from '@liqnft/candy-shop-types';
 import {
   fetchNftByMint,
@@ -32,7 +33,8 @@ import {
   fetchShopStatusByShopId,
   fetchShop,
   fetchCollection,
-  fetchCollectionByShopId
+  fetchCollectionByShopId,
+  fetchOrdersByStoreIdAndMasterEditionMint
 } from './factory/backend';
 import axiosInstance from './vendor/config';
 
@@ -60,6 +62,19 @@ export function fetchOrdersByShopAndWalletAddress(
   walletAddressStr: string
 ): Promise<Order[]> {
   return fetchOrdersByStoreIdAndWalletAddress(axiosInstance, candyShopAddress, walletAddressStr);
+}
+
+export function fetchOrdersByShopAndMasterEditionMint(
+  candyShopAddress: string,
+  masterMint: string,
+  ordersEditionFilterQuery: OrdersEditionFilterQuery
+): Promise<ListBase<Order>> {
+  return fetchOrdersByStoreIdAndMasterEditionMint(
+    axiosInstance,
+    candyShopAddress,
+    masterMint,
+    ordersEditionFilterQuery
+  );
 }
 
 export function fetchShopWhitelistNftByShopAddress(candyShopAddress: string): Promise<ListBase<WhitelistNft>> {
