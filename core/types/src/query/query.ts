@@ -26,7 +26,10 @@ export interface OrdersFilterQuery extends CommonQuery {
   candyShopAddress?: string;
   collectionId?: string;
   nftName?: string;
+  masterEdition?: boolean;
 }
+
+export interface OrdersEditionFilterQuery extends CommonQuery {}
 
 export interface TradeQuery extends CommonQuery {
   identifiers?: number[];
