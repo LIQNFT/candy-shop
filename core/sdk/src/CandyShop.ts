@@ -5,6 +5,7 @@ import {
   ListBase,
   Nft,
   Order,
+  OrdersChildEditionFilterQuery,
   OrdersFilterQuery,
   ShopStats,
   SingleBase,
@@ -20,6 +21,7 @@ import {
   fetchNFTByMintAddress,
   fetchOrderByShopAndMintAddress,
   fetchOrdersByShopAddress,
+  fetchOrdersByShopAndMasterEditionMint,
   fetchOrdersByShopAndWalletAddress,
   fetchShopByShopAddress,
   fetchShopWhitelistNftByShopAddress,
@@ -846,6 +848,18 @@ export class CandyShop extends BaseShop {
    */
   public orders(ordersFilterQuery: OrdersFilterQuery): Promise<ListBase<Order>> {
     return fetchOrdersByShopAddress(this.candyShopAddress, ordersFilterQuery);
+  }
+  /**
+   * Fetch child edition order associated with master edition
+   *
+   * @param {OrdersChildEditionFilterQuery} ordersChildEditionFilterQuery filters to apply to search
+   * @param {string} masterMint base 58 encoded mint key string
+   */
+  public childEditionOrders(
+    masterMint: string,
+    ordersChildEditionFilterQuery: OrdersChildEditionFilterQuery
+  ): Promise<ListBase<Order>> {
+    return fetchOrdersByShopAndMasterEditionMint(this.candyShopAddress, masterMint, ordersChildEditionFilterQuery);
   }
   /**
    * Fetch active orders created by specified wallet address
