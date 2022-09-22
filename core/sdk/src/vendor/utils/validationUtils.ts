@@ -278,14 +278,7 @@ export const checkEditionMintPeriod = async (vaultAccount: PublicKey, program: P
 export const checkRedeemable = async (vaultAccount: PublicKey, program: Program) => {
   const vaultData = await getEditionVaultData(vaultAccount, program);
 
-  const currentTime: BN = new BN(Date.now() / 1000);
-  const salesEndTime: BN = vaultData.startingTime.add(vaultData.salesPeriod);
-
-  if (
-    vaultData.currentSupply.gt(new BN(0)) ||
-    (vaultData.whitelistTime !== null && currentTime.gte(vaultData.whitelistTime) && currentTime.lt(salesEndTime)) ||
-    (vaultData.startingTime !== null && currentTime.gte(vaultData.startingTime) && currentTime.lt(salesEndTime))
-  ) {
+  if (vaultData.currentSupply.gt(new BN(0))) {
     throw new CandyShopError(CandyShopErrorType.DropNotRedeemable);
   }
 };
