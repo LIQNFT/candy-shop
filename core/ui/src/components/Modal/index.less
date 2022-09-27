@@ -26,6 +26,11 @@
     @media @desktopXM {
       padding: 30px 40px 10px;
     }
+    // Set height to fit visible screen height when screen height <= 660px
+    // TODO: We should define more generic breakpoints for max-width and max-height
+    @media screen and (max-height: 660px) {
+      height: 100vh;
+    }
   }
 
   &-close-btn {
