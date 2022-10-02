@@ -1,18 +1,19 @@
 import * as anchor from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { web3 } from '@project-serum/anchor';
 import {
+  isValidWhitelistNft,
   SingleTokenInfo,
   singleTokenInfoPromise,
-  SingleTokenInfoPromiseParam,
-  isValidWhitelistNft
+  SingleTokenInfoPromiseParam
 } from './fetchMetadata';
-import { web3 } from '@project-serum/anchor';
 import { deleteCandyShopIDB, retrieveWalletNftFromIDB, storeWalletNftToIDB } from '../../idb';
 import { safeAwait, sleepPromise } from '../utils/promiseUtils';
 import { EditionDrop, parseEdition, parseMasterEditionV2, RawTokenInfo } from './parseData';
 import { TOKEN_METADATA_PROGRAM_ID } from '../../factory/constants';
+import { CacheNFTParam, FetchNFTBatchParam } from './fetch.type';
 
-const Logger = 'CandyShopSDK/fetchNfts';
+const Logger = 'CandyShopSDK/fetchSolNftsFromWallet';
 
 // The endpoint we're using has request limitation.
 // To play safe, set upper bound is 40 batches per 1000 ms
@@ -22,32 +23,12 @@ const DEFAULT_INTERVAL_MS = 1000;
 const PER_BATCH_UPPER_BOUND_MS = DEFAULT_INTERVAL_MS / DEFAULT_BATCH_SIZE;
 
 /**
- * @field batchSize will be restricted to 40 as maximum due to endpoint limitation,
- * will increase it or have flexibility to allow caller to set the limitation by
- * their specified endpoint.
- */
-export interface FetchNFTBatchParam {
-  batchCallback?: (batchTokenInfos: SingleTokenInfo[]) => void;
-  batchSize?: number;
-}
-
-/**
- * Object to help using IndexedDB to cache NFT, default is disabled.
- * If enable, CandyShop will cache wallet's NFT token as SingleTokenInfo array in relevant storeObj.
- * Can disable it even it was enabled, CandyShop will clean up the relevant storeObj in IDB.
- *
- * TODO: provide more flexibility for caller to cacheNFT such as store name, duration,
- * upper bound of entries, maximum size of memory usage, etc.
- */
-export interface CacheNFTParam {
-  enable: boolean;
-}
-
-/**
+ * @note Fetch all NFTs from target wallet on Solana chain
  * @param connection anchor.web3.Connection
  * @param walletAddress target wallet anchor.web3.PublicKey to fetch the NFTs
  * @param identifiers for differentiate the collection
- * @param fetchNFTBatchParam the param object to specify batchCallback and batchSize
+ * @param fetchNFTBatchParam the param object to specify batchCallback and batchSize,
+ * batchSize will be restricted to 40 as maximum due to endpoint limitation
  * @param cacheNFTParam the param object to specify cache options
  * @returns array of the SingleTokenInfo in Promise
  */

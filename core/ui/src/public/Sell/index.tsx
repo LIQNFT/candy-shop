@@ -132,6 +132,14 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
         fetchBatchParam,
         cacheNFTParam
       );
+
+      // TODO: include EVM NFTs in current ui with similar progressive loading logic
+      /*const userNFTs = fetchAllEvmNftsFromWallet(
+        '0x182814577a866A14D5e97D6d2ddAfE56dFb1cE2d',
+        EvmChainType.MUMBAI, 
+        fetchBatchParam
+      );*/
+
       return userNFTs;
     },
     [candyShop, getShopIdentifiers, getUserNFTFromBatch, enableCacheNFT]

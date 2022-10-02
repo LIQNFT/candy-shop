@@ -1,4 +1,9 @@
+export * from './fetch.type';
+
+/* Control exposure of fetch/cache methods for Solana */
 export * from './fetchMetadata';
-export * from './fetchNftsFromWallet';
+export * from './fetchSolNftsFromWallet';
 export * from './parseData';
-export { SingleTokenInfo } from '../token/fetchMetadata';
+
+/* Control exposure of fetch methods for Evm */
+export * from './fetchEvmNftsFromWallet';
