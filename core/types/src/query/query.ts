@@ -81,7 +81,14 @@ export interface AuctionBidQuery extends CommonQuery {
   orderByArr?: SortBy;
 }
 
-export enum EvmChainQuery {
+export type AuctionQuery = {
+  offset?: number;
+  limit?: number;
+  status?: AuctionStatus[];
+  walletAddress?: string;
+};
+
+export enum EvmChainType {
   ETH = 'eth',
   GOERLI = 'goerli',
   POLYGON = 'polygon',
@@ -101,12 +108,7 @@ export enum EvmChainQuery {
 
 export interface FetchEvmWalletNftQuery {
   limit?: number;
-  chain?: EvmChainQuery;
+  chain?: EvmChainType;
   cursor?: string;
+  collections?: string[];
 }
-export type AuctionQuery = {
-  offset?: number;
-  limit?: number;
-  status?: AuctionStatus[];
-  walletAddress?: string;
-};
