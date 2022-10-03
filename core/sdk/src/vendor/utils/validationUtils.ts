@@ -269,7 +269,10 @@ export const checkEditionMintPeriod = async (vaultAccount: PublicKey, program: P
   const currentTime: BN = new BN(Date.now() / 1000);
   const saleEndTime: BN = vaultData.startingTime.add(vaultData.salesPeriod);
 
-  if (currentTime.lt(vaultData.whitelistTime ?? vaultData.startingTime) || currentTime.gte(saleEndTime)) {
+  if (
+    currentTime.lt(vaultData.whitelistTime ?? vaultData.startingTime) ||
+    (currentTime.gte(saleEndTime) && !vaultData.salesPeriod.eq(new BN(0)))
+  ) {
     throw new CandyShopError(CandyShopErrorType.NotWithinSalesPeriod);
   }
   return vaultData;
