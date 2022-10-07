@@ -54,6 +54,17 @@ export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ candySho
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', margin: '80px 0 30px' }}>Activity</h1>
       <Activity candyShop={candyShop} orderBy={ORDER_ACTIVITY} />
+      {/* Can serve Activity with partial shop info without CandyShop instance to present the same */}
+      {/* 
+        <Activity candyShop={{
+          candyShopAddress: candyShop.candyShopAddress,
+          env: candyShop.env,
+          baseUnitsPerCurrency: candyShop.baseUnitsPerCurrency,
+          priceDecimalsMin: candyShop.priceDecimalsMin,
+          priceDecimals: candyShop.priceDecimals,
+          explorerLink: candyShop.explorerLink,
+        }} orderBy={ORDER_ACTIVITY} />
+      */}
     </div>
   );
 };
