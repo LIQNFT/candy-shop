@@ -6,7 +6,7 @@ import { IconSolScan } from 'assets/IconSolScan';
 import { IconExplorer } from 'assets/IconExplorer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import { CandyShop, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+import { CandyShop, ExplorerLinkBase, fetchTradeByShopAddress } from '@liqnft/candy-shop-sdk';
 import { Trade, ListBase, SortBy } from '@liqnft/candy-shop-types';
 import { removeDuplicate, EMPTY_FUNCTION } from 'utils/helperFunc';
 import { IconSolanaFM } from 'assets/IconSolanaFM';
@@ -18,9 +18,19 @@ dayjs.extend(relativeTime);
 import './style.less';
 import { useSocket } from 'public/Context/Socket';
 import { useUpdateCandyShopContext } from 'public/Context/CandyShopDataValidator';
+import { web3 } from '@project-serum/anchor';
+
+interface ShopInfo {
+  candyShopAddress: string;
+  env: web3.Cluster;
+  baseUnitsPerCurrency: number;
+  priceDecimalsMin: number;
+  priceDecimals: number;
+  explorerLink: ExplorerLinkBase;
+}
 
 interface ActivityProps {
-  candyShop: CandyShop;
+  candyShop: CandyShop | ShopInfo;
   identifiers?: number[];
   orderBy?: SortBy[] | SortBy;
 }
@@ -39,8 +49,7 @@ export const Activity: React.FC<ActivityProps> = ({ candyShop, identifiers, orde
 
   const getTrades = useCallback(
     (offset: number, limit: number, firstLoad?: boolean) => () => {
-      candyShop
-        .transactions({ identifiers, offset, limit, sortBy: orderBy })
+      fetchTradeByShopAddress(candyShop.candyShopAddress, { identifiers, offset, limit, sortBy: orderBy })
         .then((res: ListBase<Trade>) => {
           const { result, offset, totalCount, count, success } = res;
           if (!success) {
