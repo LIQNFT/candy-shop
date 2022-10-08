@@ -1,4 +1,4 @@
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { SystemProgram, SYSVAR_RENT_PUBKEY, Transaction } from '@solana/web3.js';
 import { checkRedeemable, getAtaForMint, sendTx } from '../../../../vendor';
 import { RedeemNftParams } from '../../model';
@@ -22,6 +22,7 @@ export const redeemNft = async (params: RedeemNftParams) => {
       nftMint: masterMint,
       systemProgram: SystemProgram.programId,
       tokenProgram: TOKEN_PROGRAM_ID,
+      associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
       rent: SYSVAR_RENT_PUBKEY
     })
     .instruction();
