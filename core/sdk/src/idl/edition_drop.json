@@ -6,64 +6,59 @@
       "name": "shopCommitNft",
       "accounts": [
         {
-          "name": "commitNftCtx",
-          "accounts": [
-            {
-              "name": "masterEditionTokenAccountAuthority",
-              "isMut": true,
-              "isSigner": true
-            },
-            {
-              "name": "masterEditionTokenAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "vaultAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "vaultTokenAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "masterEditionMetadata",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "masterEditionAccount",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "masterEditionMint",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "systemProgram",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "tokenProgram",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "associatedTokenProgram",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "rent",
-              "isMut": false,
-              "isSigner": false
-            }
-          ]
+          "name": "masterEditionTokenAccountAuthority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "masterEditionTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vaultAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vaultTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "masterEditionMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterEditionAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterEditionMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "candyShop",
@@ -96,64 +91,59 @@
       "name": "enterpriseCommitNft",
       "accounts": [
         {
-          "name": "commitNftCtx",
-          "accounts": [
-            {
-              "name": "masterEditionTokenAccountAuthority",
-              "isMut": true,
-              "isSigner": true
-            },
-            {
-              "name": "masterEditionTokenAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "vaultAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "vaultTokenAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "masterEditionMetadata",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "masterEditionAccount",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "masterEditionMint",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "systemProgram",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "tokenProgram",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "associatedTokenProgram",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "rent",
-              "isMut": false,
-              "isSigner": false
-            }
-          ]
+          "name": "masterEditionTokenAccountAuthority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "masterEditionTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vaultAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vaultTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "masterEditionMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterEditionAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterEditionMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "candyShop",
@@ -186,99 +176,94 @@
       "name": "shopMintPrint",
       "accounts": [
         {
-          "name": "mintPrintCtx",
-          "accounts": [
-            {
-              "name": "newEditionBuyer",
-              "isMut": true,
-              "isSigner": true
-            },
-            {
-              "name": "vaultAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "vaultTokenAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "masterEditionMetadata",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "masterEditionUpdateAuthority",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "masterEditionAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "masterEditionMint",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "masterEditionTokenAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "newEditionMetadata",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "newEditionAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "newEditionMarker",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "newEditionMint",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "newEditionTokenAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "shopTreasuryAddress",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "tokenMetadataProgram",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "systemProgram",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "tokenProgram",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "rent",
-              "isMut": false,
-              "isSigner": false
-            }
-          ]
+          "name": "newEditionBuyer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "vaultAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vaultTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "masterEditionMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterEditionUpdateAuthority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterEditionAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "masterEditionMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterEditionTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "newEditionMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "newEditionAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "newEditionMarker",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "newEditionMint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "newEditionTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "shopTreasuryAddress",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "candyShop",
@@ -297,99 +282,94 @@
       "name": "enterpriseMintPrint",
       "accounts": [
         {
-          "name": "mintPrintCtx",
-          "accounts": [
-            {
-              "name": "newEditionBuyer",
-              "isMut": true,
-              "isSigner": true
-            },
-            {
-              "name": "vaultAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "vaultTokenAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "masterEditionMetadata",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "masterEditionUpdateAuthority",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "masterEditionAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "masterEditionMint",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "masterEditionTokenAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "newEditionMetadata",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "newEditionAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "newEditionMarker",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "newEditionMint",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "newEditionTokenAccount",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "shopTreasuryAddress",
-              "isMut": true,
-              "isSigner": false
-            },
-            {
-              "name": "tokenMetadataProgram",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "systemProgram",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "tokenProgram",
-              "isMut": false,
-              "isSigner": false
-            },
-            {
-              "name": "rent",
-              "isMut": false,
-              "isSigner": false
-            }
-          ]
+          "name": "newEditionBuyer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "vaultAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vaultTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "masterEditionMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterEditionUpdateAuthority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterEditionAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "masterEditionMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterEditionTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "newEditionMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "newEditionAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "newEditionMarker",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "newEditionMint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "newEditionTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "shopTreasuryAddress",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "candyShop",
@@ -439,6 +419,11 @@
         },
         {
           "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
           "isMut": false,
           "isSigner": false
         },
