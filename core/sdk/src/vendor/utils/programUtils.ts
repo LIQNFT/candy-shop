@@ -333,13 +333,14 @@ export const getBidData = async (bid: web3.PublicKey, program: Program) => {
 
 export const compileAtaCreationIxs = async (
   payer: web3.PublicKey,
-  addresses: web3.PublicKey[],
+  addresses: string[],
   mint: web3.PublicKey,
   program: Program
 ): Promise<web3.TransactionInstruction[] | null> => {
   const ix: web3.TransactionInstruction[] = [];
   for (const addr of addresses) {
-    const ataAddress = (await getAtaForMint(mint, new web3.PublicKey(addr)))[0];
+    const addrPubKey = new web3.PublicKey(addr);
+    const ataAddress = (await getAtaForMint(mint, addrPubKey))[0];
 
     const ataAccountRes = await safeAwait(getAccount(program.provider.connection, ataAddress));
 
@@ -350,7 +351,7 @@ export const compileAtaCreationIxs = async (
         createAssociatedTokenAccountInstruction(
           payer,
           ataAddress,
-          addr,
+          addrPubKey,
           mint,
           TOKEN_PROGRAM_ID,
           ASSOCIATED_TOKEN_PROGRAM_ID
