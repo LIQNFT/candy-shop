@@ -32,9 +32,11 @@ Candy Shop is an open source JavaScript library that allows anyone to launch an 
 - Multi-currency marketplace (e.g. SOL + SPL token)
 - Multi-collection marketplace 
 - Fully customized marketplace
-- Auctions
-- Verified NFT collections [coming soon]
-- Credit card payments [coming soon]
+- NFT auctions
+- Verified NFT collections
+- Search for NFTs
+- Edition NFT drop
+- Pay with credit card [in beta]
 
 ## Install Candy Shop
 
