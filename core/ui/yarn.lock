@@ -1304,12 +1304,12 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-6.10.0.tgz#c012c1ecc1a0e53d50e6af381618dca5268461c1"
   integrity sha512-lLseUPEhSFUXYTKj6q7s2O3s2vW2ebgA11vMAlKodXGf5AFw4zUoEbTz9CoFOC9jS6xY4Qr8BmRnxP/odT4Uuw==
 
-"@liqnft/candy-shop-sdk@0.5.42":
-  version "0.5.42"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-sdk/-/candy-shop-sdk-0.5.42.tgz#97eec2862f7523588bad7576f3265ebe71622fa5"
-  integrity sha512-Qu5EungZEg8gP5tavL6e61ZZEbmw4OGslkPnfy1GzgmgAdYqJe1yvM/LVPGp1x+0+LHk1m60UtiSTQsX+Cr9iw==
+"@liqnft/candy-shop-sdk@0.5.43":
+  version "0.5.43"
+  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-sdk/-/candy-shop-sdk-0.5.43.tgz#88c8ca3b62d6ad0708de9060bf818275c0cb5e11"
+  integrity sha512-zUyDUguUHQ4Ewjj7C7n1fQaWs37zgSvqSEhEw3wQqipVoc3QnlTZ3/pYqM0ZhisXeCM70hyVul9TVXrvjzIcaQ==
   dependencies:
-    "@liqnft/candy-shop-types" "0.2.42"
+    "@liqnft/candy-shop-types" "0.2.43"
     "@project-serum/anchor" "^0.23.0"
     "@solana/spl-token" "^0.2.0"
     "@solana/wallet-adapter-react" "^0.15.4"
@@ -1324,10 +1324,10 @@
   resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.2.40.tgz#ae00eea79e7d1af5c9403950ac596e4fec9d21f4"
   integrity sha512-9GuKOAICxJbcgO+ZSaWMgsZA0f0Th0MPjm2+7WPBqnmSy+yZSjjdGLySYyudEF/xkmSZ3npDiTwtSXbIPaRrhg==
 
-"@liqnft/candy-shop-types@0.2.42":
-  version "0.2.42"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.2.42.tgz#529663d0cc825c660302ae933c12c63778fbd10f"
-  integrity sha512-cBqarbk9mBo3q89VlXDq0fbaqOzwCrvqa0OzMXrkpaCFE+Ye/rMNx5v6RJO+rcGqWJZBHGapBXNUT0X+vYkllA==
+"@liqnft/candy-shop-types@0.2.43":
+  version "0.2.43"
+  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.2.43.tgz#8125fce7f36845db74530f98feb95d2179ae8d78"
+  integrity sha512-PpW2OUBcd1vTT0bQhhgdJjj1F+2giaDk/v344bw5jAQS9gcLIQvGNnY3Q505luXFC/WjFf3kyhd4rZWRBk3LAw==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
