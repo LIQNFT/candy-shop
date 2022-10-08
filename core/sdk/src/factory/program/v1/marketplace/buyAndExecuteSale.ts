@@ -126,7 +126,8 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     isSigner: boolean;
   }>;
 
-  const accountsRequireAta = [] as Array<web3.PublicKey>;
+  // make sure there won't be duplicate addresses
+  const accountsRequireAtaSet = new Set<string>();
 
   if (metadataDecoded && metadataDecoded.data && metadataDecoded.data.creators) {
     for (let creator of metadataDecoded.data.creators) {
@@ -145,7 +146,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
           isWritable: true,
           isSigner: false
         });
-        accountsRequireAta.push(creatorPublicKey);
+        accountsRequireAtaSet.add(creatorPublicKey.toString());
       }
     }
   }
@@ -153,12 +154,17 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
   const sellerPaymentReceiptAccount = isNative ? counterParty : (await getAtaForMint(treasuryMint, counterParty))[0];
 
   if (!isNative) {
-    accountsRequireAta.push(counterParty);
+    accountsRequireAtaSet.add(counterParty.toString());
   }
 
   const allAtaIxs: web3.TransactionInstruction[] = [];
 
-  const treasuyMintAtaIxs = await compileAtaCreationIxs(wallet.publicKey, accountsRequireAta, treasuryMint, program);
+  const treasuyMintAtaIxs = await compileAtaCreationIxs(
+    wallet.publicKey,
+    Array.from(accountsRequireAtaSet.values()),
+    treasuryMint,
+    program
+  );
   if (treasuyMintAtaIxs) {
     allAtaIxs.push(...treasuyMintAtaIxs);
   }
@@ -170,7 +176,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
   if (!isNative) {
     const tokenMintAtaIxs = await compileAtaCreationIxs(
       wallet.publicKey,
-      [wallet.publicKey],
+      [wallet.publicKey.toString()],
       tokenAccountMint,
       program
     );
