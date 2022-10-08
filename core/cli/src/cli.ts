@@ -619,11 +619,21 @@ programCommand('mintPrint')
 programCommand('redeemDrop')
   .description('mint an edition-ed NFT from the master edition')
   .requiredOption('-ota, --nft-owner-token-account <string>', 'NFT token account address')
+  .requiredOption('-mem, --master-edition-mint <string>', 'NFT master edition mint address')
   .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .action(async (name, cmd) => {
-    let { keypair, env, nftOwnerTokenAccount, treasuryMint, rpcUrl, shopCreator, version, isEnterpriseArg } =
-      cmd.opts();
+    let {
+      keypair,
+      env,
+      nftOwnerTokenAccount,
+      masterEditionMint,
+      treasuryMint,
+      rpcUrl,
+      shopCreator,
+      version,
+      isEnterpriseArg
+    } = cmd.opts();
     const wallet = loadKey(keypair);
 
     if (version !== 'v2') {
@@ -644,12 +654,10 @@ programCommand('redeemDrop')
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
 
-    const tokenAccountInfo = await getAccount(candyShop.connection(), new PublicKey(nftOwnerTokenAccount), 'finalized');
-
     const txHash = await candyShop.redeemDrop({
       nftOwner: wallet,
       nftOwnerTokenAccount: new PublicKey(nftOwnerTokenAccount),
-      masterMint: tokenAccountInfo.mint
+      masterMint: new PublicKey(masterEditionMint)
     });
 
     console.log('txHash', txHash);
