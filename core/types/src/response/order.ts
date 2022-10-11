@@ -9,7 +9,9 @@ export enum Status {
   OPEN,
   FILLED,
   UNEXECUTABLE,
-  CANCELLED
+  CANCELLED,
+  PENDING_FILLED,
+  PENDING_CANCELLED
 }
 
 export interface Order {
