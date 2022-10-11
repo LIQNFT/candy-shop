@@ -1,5 +1,5 @@
 import React from 'react';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { CandyShop, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
 import { web3 } from '@project-serum/anchor';
 import { formatDate } from 'utils/timer';
@@ -10,6 +10,11 @@ import { ShopExchangeInfo, PaymentErrorDetails } from 'model';
 import { getPrice } from 'utils/getPrice';
 import { IconError } from 'assets/IconError';
 
+interface ShopInfo {
+  explorerLink: ExplorerLinkBase;
+  env: web3.Cluster;
+}
+
 interface BuyModalConfirmedProps {
   order: OrderSchema;
   txHash: string;
@@ -18,7 +23,7 @@ interface BuyModalConfirmedProps {
   exchangeInfo: ShopExchangeInfo;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
-  candyShop: CandyShop;
+  candyShop: CandyShop | ShopInfo;
   paymentPrice?: number;
   error?: PaymentErrorDetails;
 }

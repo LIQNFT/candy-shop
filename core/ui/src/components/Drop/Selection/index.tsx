@@ -35,7 +35,7 @@ export const DropSelection: React.FC<DropSelectionProps> = ({
   useEffect(() => {
     if (!wallet?.publicKey) return;
     setLoading(LoadStatus.Loading);
-    const connection = candyShop.connection();
+    const connection = candyShop.connection;
 
     fetchUserMasterNFTs(wallet.publicKey, connection)
       .then((result: EditionDrop[]) => {

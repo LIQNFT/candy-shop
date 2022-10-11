@@ -549,7 +549,7 @@ programCommand('commitEditionDropNft')
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
 
-    const tokenAccountInfo = await getAccount(candyShop.connection(), new PublicKey(nftOwnerTokenAccount), 'finalized');
+    const tokenAccountInfo = await getAccount(candyShop.connection, new PublicKey(nftOwnerTokenAccount), 'finalized');
 
     const txHash = await candyShop.commitMasterNft({
       nftOwnerTokenAccount: new anchor.web3.PublicKey(nftOwnerTokenAccount),
@@ -604,7 +604,7 @@ programCommand('mintPrint')
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
 
-    const tokenAccountInfo = await getAccount(candyShop.connection(), new PublicKey(nftOwnerTokenAccount), 'finalized');
+    const tokenAccountInfo = await getAccount(candyShop.connection, new PublicKey(nftOwnerTokenAccount), 'finalized');
 
     const txHash = await candyShop.mintNewPrint({
       nftOwnerTokenAccount: new PublicKey(nftOwnerTokenAccount),

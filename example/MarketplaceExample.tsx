@@ -44,6 +44,26 @@ export const MarketplaceExample: React.FC<MarketplaceExampleProps> = ({ candySho
         candyShop={candyShop}
       />
 
+      {/* Can serve Activity with partial shop info without CandyShop instance to present the same */}
+      {/* <OrderDetail
+        tokenMint={'6WpKPqGYu2ZyRZ1upnmYkPAu2CTGVBE5QErzSUsPptyD'}
+        backUrl={'/'}
+        walletConnectComponent={<WalletMultiButton />}
+        wallet={wallet}
+        candyShop={{
+          currencySymbol: candyShop.currencySymbol,
+          currencyDecimals: candyShop.currencyDecimals,
+          candyShopAddress: candyShop.candyShopAddress,
+          priceDecimalsMin: candyShop.priceDecimalsMin,
+          priceDecimals: candyShop.priceDecimals,
+          connection: candyShop.connection,
+          isEnterprise: candyShop.isEnterprise,
+          baseUnitsPerCurrency: candyShop.baseUnitsPerCurrency,
+          explorerLink: candyShop.explorerLink,
+          env: candyShop.env
+        }}
+      /> */}
+
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Sell</h1>
       <Sell
         wallet={wallet}

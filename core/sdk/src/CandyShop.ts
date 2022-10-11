@@ -237,7 +237,7 @@ export class CandyShop extends BaseShop {
   /**
    * Get JSON rpc connection
    */
-  public connection(): web3.Connection {
+  get connection(): web3.Connection {
     const options = Provider.defaultOptions();
     if (this._env === 'devnet') {
       return new web3.Connection(web3.clusterApiUrl('devnet'));
@@ -255,7 +255,7 @@ export class CandyShop extends BaseShop {
    */
   getStaticProgram(wallet: AnchorWallet | web3.Keypair): Program<Idl> {
     if (this._program) return this._program;
-    return getProgram(this.connection(), this._programId, wallet);
+    return getProgram(this.connection, this._programId, wallet);
   }
 
   /**
@@ -312,7 +312,7 @@ export class CandyShop extends BaseShop {
       price
     });
     const txHash = await CandyShopTrade.buy({
-      connection: this.connection(),
+      connection: this.connection,
       shopAddress: this._candyShopAddress,
       candyShopProgramId: this._programId,
       shopCreatorAddress: this._candyShopCreatorAddress,
@@ -340,7 +340,7 @@ export class CandyShop extends BaseShop {
       price
     });
     const txHash = await CandyShopTrade.sell({
-      connection: this.connection(),
+      connection: this.connection,
       tokenAccount: tokenAccount,
       tokenMint: tokenMint,
       price: price,
@@ -366,7 +366,7 @@ export class CandyShop extends BaseShop {
       price
     });
     const txHash = await CandyShopTrade.cancel({
-      connection: this.connection(),
+      connection: this.connection,
       tokenAccount: tokenAccount,
       tokenMint: tokenMint,
       price: price,
@@ -742,7 +742,7 @@ export class CandyShop extends BaseShop {
       salesPeriod,
       whitelistTime,
       isEnterprise: this._isEnterprise,
-      connection: this.connection(),
+      connection: this.connection,
       candyShopProgram: this.getStaticProgram(nftOwner)
     });
 
@@ -782,7 +782,7 @@ export class CandyShop extends BaseShop {
       editionBuyer,
       auctionHouse,
       isEnterprise: this._isEnterprise,
-      connection: this.connection(),
+      connection: this.connection,
       candyShopProgram: this.getStaticProgram(editionBuyer),
       treasuryMint: this._treasuryMint
     });
@@ -812,7 +812,7 @@ export class CandyShop extends BaseShop {
       nftOwnerTokenAccount,
       masterMint,
       isEnterprise: this._isEnterprise,
-      connection: this.connection(),
+      connection: this.connection,
       candyShopProgram: this.getStaticProgram(nftOwner)
     });
 
