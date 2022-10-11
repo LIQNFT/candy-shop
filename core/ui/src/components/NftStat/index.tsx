@@ -1,14 +1,20 @@
 import React from 'react';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { shortenAddress } from 'utils/helperFunc';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { CandyShop, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+import { web3 } from '@project-serum/anchor';
+
+interface ShopInfo {
+  explorerLink: ExplorerLinkBase;
+  env: web3.Cluster;
+}
 
 export interface NftStatProps {
   tokenMint: string;
   edition?: number | string | null;
   owner?: string;
   sellerUrl?: string;
-  candyShop: CandyShop;
+  candyShop: CandyShop | ShopInfo;
 }
 
 export const NftStat: React.FC<NftStatProps> = ({ tokenMint, edition, owner, sellerUrl, candyShop }) => {
