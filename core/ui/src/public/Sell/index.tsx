@@ -121,7 +121,7 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
         enable: enableCacheNFT ?? false
       };
       const userNFTs = fetchNftsFromWallet(
-        candyShop.connection(),
+        candyShop.connection,
         walletPublicKey,
         identifiers,
         fetchBatchParam,

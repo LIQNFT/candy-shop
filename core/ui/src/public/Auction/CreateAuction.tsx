@@ -93,7 +93,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
         enable: cacheUserNFT ?? false
       };
 
-      return fetchNftsFromWallet(candyShop.connection(), walletPublicKey, undefined, fetchBatchParam, cacheNFTParam);
+      return fetchNftsFromWallet(candyShop.connection, walletPublicKey, undefined, fetchBatchParam, cacheNFTParam);
     },
     [getUserNFTFromBatch, cacheUserNFT, candyShop]
   );

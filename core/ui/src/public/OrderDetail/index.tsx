@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import {
+  CandyShop,
+  fetchOrderByShopAndMintAddress,
+  fetchNFTByMintAddress,
+  CandyShopTrade,
+  ExplorerLinkBase
+} from '@liqnft/candy-shop-sdk';
 import { Nft, Order as OrderSchema, SingleBase } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
@@ -18,12 +24,25 @@ import { getExchangeInfo } from 'utils/getExchangeInfo';
 import './style.less';
 import { Price } from 'components/Price';
 
+interface ShopInfo {
+  currencySymbol: string;
+  currencyDecimals: number;
+  candyShopAddress: string;
+  priceDecimalsMin: number;
+  priceDecimals: number;
+  connection: web3.Connection;
+  isEnterprise: boolean;
+  baseUnitsPerCurrency: number;
+  explorerLink: ExplorerLinkBase;
+  env: web3.Cluster;
+}
+
 interface OrderDetailProps {
   tokenMint: string;
   backUrl?: string;
   walletConnectComponent: React.ReactElement;
   wallet: AnchorWallet | undefined;
-  candyShop: CandyShop;
+  candyShop: CandyShop | ShopInfo;
   sellerUrl?: string;
 }
 
@@ -53,8 +72,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   useEffect(() => {
     if (!order) {
       setLoadingOrder(true);
-      candyShop
-        .activeOrderByMintAddress(tokenMint)
+      fetchOrderByShopAndMintAddress(candyShop.candyShopAddress, tokenMint)
         .then((res: SingleBase<OrderSchema>) => {
           if (!res.success) throw new Error('Order not found');
           setOrder(res.result);
@@ -70,8 +88,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
 
     if (order && !nftInfo) {
       setLoadingNftInfo(true);
-      candyShop
-        .nftInfo(order.tokenMint)
+      fetchNFTByMintAddress(order.tokenMint)
         .then((nft: Nft) => setNftInfo(nft))
         .catch((err: Error) => {
           console.info('fetchNftByMint failed:', err);
@@ -85,14 +102,19 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   const buy = async () => {
     if (order && wallet && candyShop) {
       setState(TransactionState.PROCESSING);
-      return candyShop
-        .buy({
-          seller: new web3.PublicKey(order.walletAddress),
-          tokenAccount: new web3.PublicKey(order.tokenAccount),
-          tokenMint: new web3.PublicKey(order.tokenMint),
-          price: new BN(order.price),
-          wallet
-        })
+      return CandyShopTrade.buy({
+        tokenAccount: new web3.PublicKey(order.tokenAccount),
+        tokenMint: new web3.PublicKey(order.tokenMint),
+        price: new BN(order.price),
+        wallet: wallet,
+        seller: new web3.PublicKey(order.walletAddress),
+        connection: candyShop.connection,
+        shopAddress: new web3.PublicKey(candyShop.candyShopAddress),
+        candyShopProgramId: new web3.PublicKey(order.programId),
+        isEnterprise: candyShop.isEnterprise,
+        shopCreatorAddress: new web3.PublicKey(order.candyShopCreatorAddress),
+        shopTreasuryMint: new web3.PublicKey(order.treasuryMint)
+      })
         .then((txHash: any) => {
           setHash(txHash);
           console.log('Buy made with transaction hash', txHash);
