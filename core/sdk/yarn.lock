@@ -435,10 +435,10 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
-"@liqnft/candy-shop-types@0.2.45":
-  version "0.2.45"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.2.45.tgz#b7dc2ee9d34954291803f5a0cd4ccb4ddce98d2e"
-  integrity sha512-K1Kf1vHOWCiBroUTjAN8bsk2MLgluip3mAUO+1AUYemBnOl4+A5wPNSWbpMdORimOEcAAvSWRPSrii0ZSlyALQ==
+"@liqnft/candy-shop-types@0.2.46":
+  version "0.2.46"
+  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.2.46.tgz#e46dc960b7f3aaae6e65b18be7312269fbadbf4c"
+  integrity sha512-UUsa84EE8N63/H4fHTa3dw2niG4nfdWujZH9tHnT1Pb88AEJTubU6pmenOai2KGyNbgFQDt4cB84o5PqCvS4PA==
 
 "@metaplex-foundation/beet-solana@^0.1.1":
   version "0.1.1"
