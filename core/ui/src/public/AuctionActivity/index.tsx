@@ -4,17 +4,29 @@ import { ExplorerLink } from 'components/ExplorerLink';
 import { Processing } from 'components/Processing';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import { CandyShop, fetchAuctionHistory } from '@liqnft/candy-shop-sdk';
+import { CandyShop, fetchAuctionHistory, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
 import { AuctionBid, AuctionStatus, ListBase, SortBy } from '@liqnft/candy-shop-types';
 import { removeDuplicate, EMPTY_FUNCTION } from 'utils/helperFunc';
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+
+import { web3 } from '@project-serum/anchor';
+
 dayjs.extend(relativeTime);
 import './style.less';
 
+interface ShopInfo {
+  env: web3.Cluster;
+  explorerLink: ExplorerLinkBase;
+  baseUnitsPerCurrency: number;
+  priceDecimalsMin: number;
+  priceDecimals: number;
+  currencySymbol: string;
+}
+
 interface AuctionActivityProps {
-  candyShop: CandyShop;
+  candyShop: CandyShop | ShopInfo;
   orderBy?: SortBy;
   auctionAddress: string;
 }

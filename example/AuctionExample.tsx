@@ -45,6 +45,19 @@ export const AuctionExample: React.FC<AuctionExampleProps> = ({ candyShop }) => 
         auctionAddress="91cr87Pib1ue3obYrZnDmzsa4KAok6UvRFi2F2c6LxQa"
         orderBy={AUCTION_ORDER}
       />
+      {/* Can serve AuctionActivity with partial shop info without CandyShop instance to present the same */}
+      {/* <AuctionActivity
+        candyShop={{
+          env: candyShop.env,
+          explorerLink: candyShop.explorerLink,
+          baseUnitsPerCurrency: candyShop.baseUnitsPerCurrency,
+          priceDecimalsMin: candyShop.priceDecimalsMin,
+          priceDecimals: candyShop.priceDecimals,
+          currencySymbol: candyShop.currencySymbol,
+        }}
+        auctionAddress="91cr87Pib1ue3obYrZnDmzsa4KAok6UvRFi2F2c6LxQa"
+        orderBy={AUCTION_ORDER}
+      /> */}
     </div>
   );
 };
