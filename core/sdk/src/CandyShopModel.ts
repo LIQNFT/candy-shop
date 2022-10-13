@@ -187,15 +187,44 @@ export interface CandyShopBidAuctionParams extends CandyShopAuctionParams {
   bidPrice: BN;
 }
 
+export interface CandyShopAuctionBidParams extends CandyShopAuctionParams {
+  shopAddress: web3.PublicKey;
+  candyShopProgramId: web3.PublicKey;
+  shopTreasuryMint: web3.PublicKey;
+  shopCreatorAddress: web3.PublicKey;
+  connection: web3.Connection;
+  version: CandyShopVersion;
+  bidPrice: BN;
+}
+
 /**
  * Arguments required for calling Candy Shop withdraw auction bid action
  */
 export interface CandyShopWithdrawAuctionBidParams extends CandyShopAuctionParams {}
 
+export interface CandyShopAuctionWithdrawBidParams extends CandyShopAuctionParams {
+  shopAddress: web3.PublicKey;
+  candyShopProgramId: web3.PublicKey;
+  shopTreasuryMint: web3.PublicKey;
+  shopCreatorAddress: web3.PublicKey;
+  connection: web3.Connection;
+  version: CandyShopVersion;
+}
+
 /**
  * Arguments required for calling Candy Shop the auction buy now action
  */
 export interface CandyShopBuyNowParams extends CandyShopAuctionParams {}
+
+export interface CandyShopAuctionBuyNowParams extends CandyShopAuctionParams {
+  shopAddress: web3.PublicKey;
+  shopCreatorAddress: web3.PublicKey;
+  candyShopProgramId: web3.PublicKey;
+  shopTreasuryMint: web3.PublicKey;
+  connection: web3.Connection;
+  env: web3.Cluster;
+  version: CandyShopVersion;
+}
 
 /**
  * Arguments required for calling Candy Shop settle auction and distribute proceed actions
