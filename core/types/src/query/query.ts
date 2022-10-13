@@ -27,6 +27,7 @@ export interface OrdersFilterQuery extends CommonQuery {
   collectionId?: string;
   nftName?: string;
   masterEdition?: boolean;
+  collectionKey?: string;
 }
 
 export interface OrdersEditionFilterQuery extends CommonQuery {}

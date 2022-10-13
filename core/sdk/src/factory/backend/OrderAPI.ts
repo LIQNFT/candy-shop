@@ -25,7 +25,8 @@ export async function fetchOrdersByStoreId(
     attribute,
     collectionId,
     nftName,
-    masterEdition
+    masterEdition,
+    collectionKey
   } = ordersFilterQuery;
   let queryParams: any = { offset, limit };
 
@@ -61,6 +62,9 @@ export async function fetchOrdersByStoreId(
 
   if (masterEdition) {
     queryParams.masterEdition = true;
+  }
+  if (collectionKey) {
+    queryParams.collectionKey = collectionKey;
   }
 
   console.log(`CandyShop: fetching orders from ${storeId}`, { query: ordersFilterQuery });
