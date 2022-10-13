@@ -6,7 +6,12 @@ import { Auction } from '@liqnft/candy-shop-types';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { LiqImage } from 'components/LiqImage';
 import IconTick from 'assets/IconTick';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { CandyShop, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+
+interface ShopInfo {
+  env: web3.Cluster;
+  explorerLink: ExplorerLinkBase;
+}
 
 interface AuctionModalConfirmedProps {
   auction: Auction;
@@ -15,7 +20,7 @@ interface AuctionModalConfirmedProps {
   onClose: () => void;
   titleText: string;
   descriptionText?: string;
-  candyShop: CandyShop;
+  candyShop: CandyShop | ShopInfo;
 }
 
 export const AuctionModalConfirmed: React.FC<AuctionModalConfirmedProps> = ({

@@ -9,7 +9,7 @@ import { AuctionModalConfirmed } from './AuctionModalConfirmed';
 import { AuctionModalDetail } from './AuctionModalDetail';
 
 import { TransactionState } from 'model';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { CandyShop, CandyShopAuction, CandyShopVersion, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
 import { Auction } from '@liqnft/candy-shop-types';
 
 import { notification, NotificationType } from 'utils/rc-notification';
@@ -18,12 +18,27 @@ import { PoweredByInBuyModal } from 'components/PoweredBy/PowerByInBuyModal';
 
 const Logger = 'CandyShopUI/AuctionModal';
 
+interface ShopInfo {
+  candyShopAddress: string;
+  programId: string;
+  treasuryMint: string;
+  candyShopCreatorAddress: string;
+  connection: () => web3.Connection;
+  env: web3.Cluster;
+  version: CandyShopVersion;
+  baseUnitsPerCurrency: number;
+  currencySymbol: string;
+  explorerLink: ExplorerLinkBase;
+  priceDecimalsMin: number;
+  priceDecimals: number;
+}
+
 export interface AuctionModalProps {
   auction: Auction;
   onClose: () => void;
   wallet: AnchorWallet | undefined;
   walletConnectComponent: React.ReactElement;
-  candyShop: CandyShop;
+  candyShop: CandyShop | ShopInfo;
 }
 
 enum TitleTextType {
@@ -55,12 +70,18 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
 
     setProcessingText(ProcessingTextType.TRANSACTION);
     setState(TransactionState.PROCESSING);
-    candyShop
-      .buyNowAuction({
-        wallet,
-        tokenMint: new web3.PublicKey(auction.tokenMint),
-        tokenAccount: new web3.PublicKey(auction.tokenAccount)
-      })
+    CandyShopAuction.buyNow({
+      tokenAccount: new web3.PublicKey(auction.tokenAccount),
+      tokenMint:new web3.PublicKey(auction.tokenMint),
+      wallet,
+      shopAddress: new web3.PublicKey(candyShop.candyShopAddress),
+      candyShopProgramId: new web3.PublicKey(candyShop.programId),
+      shopTreasuryMint: new web3.PublicKey(candyShop.treasuryMint),
+      shopCreatorAddress: new web3.PublicKey(candyShop.candyShopCreatorAddress),
+      connection: candyShop.connection(),
+      env: candyShop.env,
+      version: candyShop.version
+    })
       .then((txId: string) => {
         console.log(`${Logger}: buyNowAuction request success, txId=`, txId);
         setHash(txId);
@@ -91,13 +112,18 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
 
     setProcessingText(ProcessingTextType.BID);
     setState(TransactionState.PROCESSING);
-    candyShop
-      .bidAuction({
-        wallet,
-        tokenMint: new web3.PublicKey(auction.tokenMint),
-        tokenAccount: new web3.PublicKey(auction.tokenAccount),
-        bidPrice: new BN(price * candyShop.baseUnitsPerCurrency)
-      })
+    CandyShopAuction.bid({
+      tokenAccount: new web3.PublicKey(auction.tokenAccount),
+      tokenMint: new web3.PublicKey(auction.tokenMint),
+      wallet,
+      shopAddress: new web3.PublicKey(candyShop.candyShopAddress),
+      candyShopProgramId: new web3.PublicKey(candyShop.programId),
+      shopTreasuryMint: new web3.PublicKey(candyShop.treasuryMint),
+      shopCreatorAddress: new web3.PublicKey(candyShop.candyShopCreatorAddress),
+      connection: candyShop.connection(),
+      version: candyShop.version,
+      bidPrice: new BN(price * candyShop.baseUnitsPerCurrency)
+    })
       .then((txId: string) => {
         console.log(`${Logger}: bidAuction request success, txId=`, txId);
         setHash(txId);
@@ -117,12 +143,17 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
 
     setProcessingText(ProcessingTextType.WITHDRAW);
     setState(TransactionState.PROCESSING);
-    candyShop
-      .withdrawAuctionBid({
-        wallet,
-        tokenMint: new web3.PublicKey(auction.tokenMint),
-        tokenAccount: new web3.PublicKey(auction.tokenAccount)
-      })
+    CandyShopAuction.withdrawBid({
+      tokenAccount: new web3.PublicKey(auction.tokenAccount),
+      tokenMint: new web3.PublicKey(auction.tokenMint),
+      wallet,
+      shopAddress: new web3.PublicKey(candyShop.candyShopAddress),
+      candyShopProgramId: new web3.PublicKey(candyShop.programId),
+      shopTreasuryMint: new web3.PublicKey(candyShop.treasuryMint),
+      shopCreatorAddress: new web3.PublicKey(candyShop.candyShopCreatorAddress),
+      connection: candyShop.connection(),
+      version: candyShop.version,
+    })
       .then((txId: string) => {
         console.log(`${Logger}: withdrawAuctionBid request success, txId=`, txId);
         setHash(txId);

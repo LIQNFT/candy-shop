@@ -1,15 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { CandyShop } from '@liqnft/candy-shop-sdk';
+import { CandyShop, CandyShopVersion, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
 import { Auction, AuctionStatus } from '@liqnft/candy-shop-types';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { AuctionModal } from '../AuctionModal';
 import { Countdown } from 'components/Countdown';
 import { Price } from 'components/Price';
 import { Card } from 'components/Card';
+import { web3 } from '@project-serum/anchor';
+
+
+interface ShopInfo {
+  priceDecimalsMin: number;
+  priceDecimals: number;
+  candyShopAddress: string;
+  programId: string;
+  treasuryMint: string;
+  candyShopCreatorAddress: string;
+  connection: () => web3.Connection;
+  env: web3.Cluster;
+  version: CandyShopVersion;
+  baseUnitsPerCurrency: number;
+  currencySymbol: string;
+  explorerLink: ExplorerLinkBase;
+}
 
 interface AuctionCardProps {
   auction: Auction;
-  candyShop: CandyShop;
+  candyShop: CandyShop | ShopInfo;
   wallet?: AnchorWallet;
   walletConnectComponent: React.ReactElement;
 }

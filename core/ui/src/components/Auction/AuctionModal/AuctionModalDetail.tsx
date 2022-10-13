@@ -9,9 +9,19 @@ import { Countdown } from 'components/Countdown';
 import { Price } from 'components/Price';
 
 import { Auction, AuctionBid, SingleBase, AuctionStatus, BidStatus } from '@liqnft/candy-shop-types';
-import { CandyShop, fetchAuctionBidByWalletAddress } from '@liqnft/candy-shop-sdk';
+import { CandyShop, fetchAuctionBidByWalletAddress, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
 
 const Logger = 'CandyShopUI/AuctionModalDetail';
+
+interface ShopInfo {
+  priceDecimalsMin: number;
+  priceDecimals: number;
+  env: web3.Cluster;
+  baseUnitsPerCurrency: number;
+  currencySymbol: string;
+  explorerLink: ExplorerLinkBase;
+}
+
 export interface AuctionModalDetailProps {
   auction: Auction;
   placeBid: (price: number) => void;
@@ -19,7 +29,7 @@ export interface AuctionModalDetailProps {
   onWithdrew: () => void;
   walletPublicKey: web3.PublicKey | undefined;
   walletConnectComponent: React.ReactElement;
-  candyShop: CandyShop;
+  candyShop: CandyShop | ShopInfo;
 }
 
 export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({

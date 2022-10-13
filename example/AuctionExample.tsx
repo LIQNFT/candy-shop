@@ -38,6 +38,26 @@ export const AuctionExample: React.FC<AuctionExampleProps> = ({ candyShop }) => 
         walletConnectComponent={<WalletMultiButton />}
         statusFilters={AUCTION_FILTER}
       />
+      {/* Can serve Auction with partial shop info without CandyShop instance to present the same */}
+      {/* <Auctions
+        candyShop={{
+          priceDecimalsMin: candyShop.priceDecimalsMin,
+          priceDecimals: candyShop.priceDecimals,
+          candyShopAddress: candyShop.candyShopAddress,
+          programId: candyShop.programId,
+          treasuryMint: candyShop.treasuryMint,
+          candyShopCreatorAddress: candyShop.candyShopCreatorAddress,
+          connection: candyShop.connection,
+          env: candyShop.env,
+          version: candyShop.version,
+          baseUnitsPerCurrency: candyShop.baseUnitsPerCurrency,
+          currencySymbol: candyShop.currencySymbol,
+          explorerLink: candyShop.explorerLink,
+        }}
+        wallet={wallet}
+        walletConnectComponent={<WalletMultiButton />}
+        statusFilters={AUCTION_FILTER}
+      /> */}
 
       <h1 style={{ marginTop: 40, marginBottom: 40 }}>Auction Activities</h1>
       <AuctionActivity

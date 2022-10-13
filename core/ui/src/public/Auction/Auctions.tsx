@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyShop, fetchAuctionsByShopAddress } from '@liqnft/candy-shop-sdk';
+import { CandyShop, fetchAuctionsByShopAddress, CandyShopVersion, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { LoadingSkeleton } from 'components/LoadingSkeleton';
 import { AuctionCard } from 'components/Auction';
@@ -11,13 +11,29 @@ import { DEFAULT_LIST_AUCTION_STATUS } from 'constant';
 import { useUpdateCandyShopContext } from 'public/Context/CandyShopDataValidator';
 import { EventName, useSocket } from 'public/Context/Socket';
 import { removeDuplicate, removeListeners } from 'utils/helperFunc';
+import { web3 } from '@project-serum/anchor';
+
 
 const Logger = 'CandyShopUI/Auctions';
 
+interface ShopInfo {
+  priceDecimalsMin: number;
+  priceDecimals: number;
+  candyShopAddress: string;
+  programId: string;
+  treasuryMint: string;
+  candyShopCreatorAddress: string;
+  connection: () => web3.Connection;
+  env: web3.Cluster;
+  version: CandyShopVersion;
+  baseUnitsPerCurrency: number;
+  currencySymbol: string;
+  explorerLink: ExplorerLinkBase;
+}
 interface AuctionsProps {
   wallet?: AnchorWallet;
   walletConnectComponent: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
-  candyShop: CandyShop;
+  candyShop: CandyShop | ShopInfo;
   statusFilters?: AuctionStatus[];
 }
 
