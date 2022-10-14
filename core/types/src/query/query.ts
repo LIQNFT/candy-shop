@@ -89,27 +89,17 @@ export type AuctionQuery = {
   walletAddress?: string;
 };
 
-export enum EvmChainType {
-  ETH = 'eth',
-  GOERLI = 'goerli',
-  POLYGON = 'polygon',
-  ROPSTEN = 'ropsten',
-  RINKEBY = 'rinkeby',
-  KOVAN = 'kovan',
-  BSC = 'bsc',
-  BSC_TESTNET = 'bsc_testnet',
-  AVALANCHE = 'avalanche',
-  FUJI = 'fuji',
-  FANTOM = 'fantom',
-  CRONOS = 'cronos',
-  CRONOS_TESTNET = 'cronos_testnet',
-  // polygon testnet
-  MUMBAI = 'mumbai'
+export enum Blockchain {
+  Sol = 'SOL',
+  Eth = 'ETH',
+  Eth_Testnet = 'GOERLI',
+  Polygon = 'MATIC',
+  Polygon_Testnet = 'MUMBAI'
 }
 
 export interface FetchEvmWalletNftQuery {
   limit?: number;
-  chain?: EvmChainType;
+  chain?: Blockchain;
   cursor?: string;
   collections?: string[];
 }
