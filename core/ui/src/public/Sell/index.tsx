@@ -131,7 +131,7 @@ export const Sell: React.FC<SellProps> = ({ wallet, walletConnectComponent, styl
       // TODO: include EVM NFTs in current ui with similar progressive loading logic
       /*const userNFTs = fetchAllEvmNftsFromWallet(
         '0x182814577a866A14D5e97D6d2ddAfE56dFb1cE2d',
-        EvmChainType.MUMBAI, 
+        Blockchain.Polygon_Testnet, 
         fetchBatchParam
       );*/
 

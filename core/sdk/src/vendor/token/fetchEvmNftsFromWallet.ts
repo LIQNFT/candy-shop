@@ -1,5 +1,5 @@
 import axiosInstance from '../config';
-import { EvmChainType, FetchEvmWalletNftQuery, ListBaseWithCursor } from '@liqnft/candy-shop-types';
+import { Blockchain, FetchEvmWalletNftQuery, ListBaseWithCursor } from '@liqnft/candy-shop-types';
 import { fetchEvmChainNftsFromWallet } from '../../factory/backend';
 import { SingleTokenInfo } from './fetchMetadata';
 import { FetchNFTBatchParam } from './fetch.type';
@@ -13,14 +13,14 @@ const DEFAULT_PAGE_SIZE_LIMIT = 20;
  * those removed/added Evm nfts to update cached nfts.
  * @note Fetch all NFTs from target wallet on certain Evm chain
  * @param walletAddress
- * @param chain EvmChainType
+ * @param chain Blockchain
  * @param fetchNFTBatchParam the param object to specify batchCallback and batchSize
  * @param collections specify the EVM collection to fetch by array of smart contract address
  * @returns array of the SingleTokenInfo in Promise
  */
 export const fetchAllEvmNftsFromWallet = async (
   walletAddress: string,
-  chain: EvmChainType,
+  chain: Blockchain,
   fetchNFTBatchParam?: FetchNFTBatchParam,
   collections?: string[]
 ): Promise<SingleTokenInfo[]> => {
