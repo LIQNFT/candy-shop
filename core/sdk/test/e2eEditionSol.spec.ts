@@ -52,7 +52,7 @@ describe('e2e drop flow', function () {
       user1,
       user1,
       new BN(10),
-      candyShop.connection()
+      candyShop.connection
     );
 
     const commitTxHash = await candyShop.commitMasterNft({
@@ -90,7 +90,7 @@ describe('e2e drop flow', function () {
       user1,
       user1,
       new BN(10),
-      candyShop.connection()
+      candyShop.connection
     );
 
     const commitTxHash = await candyShop.commitMasterNft({
@@ -130,7 +130,7 @@ describe('e2e drop flow', function () {
       user1,
       user1,
       new BN(10),
-      candyShop.connection()
+      candyShop.connection
     );
 
     const commitTxHash = await candyShop.commitMasterNft({
@@ -173,7 +173,7 @@ describe('e2e drop flow', function () {
       user1,
       user1,
       new BN(10),
-      candyShop.connection()
+      candyShop.connection
     );
 
     const commitTxHash = await candyShop.commitMasterNft({
