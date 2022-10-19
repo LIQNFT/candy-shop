@@ -87,8 +87,6 @@ export const Auctions: React.FC<AuctionsProps> = ({
 
   //socket
   useEffect(() => {
-    if (!walletKeyString) return;
-
     const controllers = [
       onSocketEvent(EventName.auctionCreated, (auction: Auction) => {
         if (!statusFilters.includes(auction.status)) return;
@@ -113,7 +111,16 @@ export const Auctions: React.FC<AuctionsProps> = ({
             })
           );
         }
-      }),
+      })
+    ];
+
+    return () => removeListeners(controllers);
+  }, [onSocketEvent, onSendEvent, statusFilters]);
+
+  useEffect(() => {
+    if (!walletKeyString) return;
+
+    const controllers = [
       onSocketEvent(EventName.auctionUpdateBid, (data: { auctionAddress: string }) => {
         // find current auction in list:
         setAuctions((list) => {
@@ -133,7 +140,7 @@ export const Auctions: React.FC<AuctionsProps> = ({
     ];
 
     return () => removeListeners(controllers);
-  }, [onSocketEvent, onSendEvent, statusFilters, walletKeyString]);
+  }, [onSendEvent, onSocketEvent, walletKeyString]);
 
   return (
     <div className="candy-container">
