@@ -10,7 +10,7 @@ export const DEFAULT_FORM_CONFIG = {
   network: WalletAdapterNetwork.Devnet,
   settings: JSON.stringify(
     {
-      mainnetConnectionUrl: 'https://ssc-dao.genesysgo.net/',
+      mainnetConnectionUrl: 'https://api.mainnet-beta.solana.com',
       currencySymbol: 'SOL',
       currencyDecimals: 9
     },

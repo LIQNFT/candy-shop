@@ -95,7 +95,7 @@ const DEFAULT_PRICE_DECIMALS = 3;
 const DEFAULT_PRICE_DECIMALS_MIN = 0;
 const DEFAULT_VOLUME_DECIMALS = 1;
 const DEFAULT_VOLUME_DECIMALS_MIN = 0;
-const DEFAULT_MAINNET_CONNECTION_URL = 'https://ssc-dao.genesysgo.net/';
+const DEFAULT_MAINNET_CONNECTION_URL = 'https://api.mainnet-beta.solana.com';
 
 /**
  * @class CandyShop
