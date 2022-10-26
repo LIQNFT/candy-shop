@@ -197,10 +197,8 @@ export class EthCandyShop extends BaseShop {
     const offerNftAssets = [
       {
         tokenId: nft.tokenAccountAddress,
-        symbol: nft.metadata?.data.symbol,
         address: nft.tokenMintAddress.split(':')[0],
         type: AssetType.ERC721,
-        name: nft.metadata?.data.name,
         // hardcode to 1 for now, as only supports ERC721
         value: `1`
       }
