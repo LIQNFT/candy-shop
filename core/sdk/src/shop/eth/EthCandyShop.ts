@@ -20,7 +20,7 @@ import {
   WhitelistNft
 } from '@liqnft/candy-shop-types';
 import { SeaportHelper } from '../../factory/conveyor/eth/seaport';
-import { fetchShopsByOwnerAddress, fetchShopByShopAddress } from '../../CandyShopInfoAPI';
+import { fetchShopsByOwnerAddress, fetchShopByShopAddress, fetchShopsByIdentifier } from '../../CandyShopInfoAPI';
 import Decimal from 'decimal.js';
 import { Program, Idl } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
@@ -29,6 +29,7 @@ import { PublicKey, Keypair } from '@solana/web3.js';
 interface CandyShopConstructorParams {
   candyShopCreatorAddress: string;
   treasuryMint: string;
+  programId: string;
   env: Blockchain;
   settings?: Partial<ShopSettings>;
 }
@@ -316,28 +317,21 @@ export async function getEthCandyShop(params: CandyShopConstructorParams): Promi
   const ethereumSDK = new EthereumSDK(apiCaller);
   configBaseUrl(url.slice(0, -4));
 
-  const shops = await safeAwait(fetchShopsByOwnerAddress(params.candyShopCreatorAddress));
-  if (shops.error) {
-    console.log('EthCandyShop getEthCandyShop failed, error=', shops.error);
-    return;
-  }
-  const shop = shops.result.result.find((shop) => shop.treasuryMint === params.treasuryMint);
-  if (!shop) {
-    console.log(`${Logger} Shop treasuryMint not found.`);
-    return;
+  const shopDetailRes = await safeAwait(
+    fetchShopsByIdentifier(params.candyShopCreatorAddress, params.treasuryMint, params.programId)
+  );
+  if (shopDetailRes.error || !shopDetailRes.result.success) {
+    console.log(`${Logger} fetchShopsByIdentifier failed, error=`, { shopDetailRes });
   }
 
-  const detail = await safeAwait(fetchShopByShopAddress(shop.candyShopAddress));
-  if (detail.error) {
-    console.log('EthCandyShop fetchShopByShopAddress failed, error=', detail.error);
-  }
-
+  const shopDetails = shopDetailRes.result?.result!;
   if (!params.settings) {
     params.settings = {};
   }
-  params.settings.currencySymbol = shop.symbol;
-  params.settings.currencyDecimals = shop.decimals;
+
+  params.settings.currencySymbol = shopDetails.symbol;
+  params.settings.currencyDecimals = shopDetails.decimals;
   const ethCandyShop = new EthCandyShop(params, ethereumSDK);
-  ethCandyShop.candyShopAddress = shop.candyShopAddress;
+  ethCandyShop.candyShopAddress = shopDetails.candyShopAddress;
   return ethCandyShop;
 }

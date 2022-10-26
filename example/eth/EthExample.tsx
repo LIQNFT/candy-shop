@@ -32,6 +32,7 @@ export const EthExample: React.FC = () => {
     const params = {
       candyShopCreatorAddress: candyForm.creatorAddress,
       treasuryMint: candyForm.treasuryMint,
+      programId: candyForm.programId,
       env: candyForm.network,
       settings: JSON.parse(candyForm.settings)
     };

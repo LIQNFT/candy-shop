@@ -11,6 +11,7 @@ interface ShopConfigProps {
 enum InputType {
   CREATOR_ADDRESS = 'CREATOR_ADDRESS',
   TREASURY_MINT = 'TREASURY_MINT',
+  PROGRAM_ID = 'PROGRAM_ID',
   SETTINGS = 'SETTINGS',
   PAYMENT_PROVIDER = 'PAYMENT_PROVIDER'
 }
@@ -19,6 +20,7 @@ export const ShopConfig: React.FC<ShopConfigProps> = ({ setCandyForm, candyForm 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [creatorAddressInput, setCreatorAddressInput] = useState<string>(ETH_DEFAULT_FORM_CONFIG.creatorAddress);
   const [treasuryMintInput, setTreasuryMintInput] = useState<string>(ETH_DEFAULT_FORM_CONFIG.treasuryMint);
+  const [programIdInput, setProgramIdInput] = useState<string>(ETH_DEFAULT_FORM_CONFIG.programId);
   const [networkInput, setNetworkInput] = useState<string>(ETH_DEFAULT_FORM_CONFIG.network);
   const [settingsInput, setSettingsInput] = useState<string>(ETH_DEFAULT_FORM_CONFIG.settings);
   const [paymentProviderObject, setPaymentProviderObject] = useState<string>(ETH_DEFAULT_FORM_CONFIG.paymentProvider);
@@ -27,6 +29,7 @@ export const ShopConfig: React.FC<ShopConfigProps> = ({ setCandyForm, candyForm 
     const data = {
       creatorAddress: creatorAddressInput,
       treasuryMint: treasuryMintInput,
+      programId: programIdInput,
       network: networkInput,
       settings: settingsInput,
       paymentProvider: paymentProviderObject
@@ -41,9 +44,10 @@ export const ShopConfig: React.FC<ShopConfigProps> = ({ setCandyForm, candyForm 
   };
 
   const onUpdateFormState = useCallback((data) => {
-    const { treasuryMint, creatorAddress, network, settings, paymentProvider } = data;
+    const { treasuryMint, creatorAddress, programId, network, settings, paymentProvider } = data;
     setCreatorAddressInput(creatorAddress);
     setTreasuryMintInput(treasuryMint);
+    setProgramIdInput(programId);
     setNetworkInput(network);
     setSettingsInput(settings);
     setPaymentProviderObject(paymentProvider);
@@ -60,6 +64,10 @@ export const ShopConfig: React.FC<ShopConfigProps> = ({ setCandyForm, candyForm 
         break;
       }
       case InputType.SETTINGS: {
+        setSettingsInput(e.target.value);
+        break;
+      }
+      case InputType.PROGRAM_ID: {
         setSettingsInput(e.target.value);
         break;
       }
@@ -113,6 +121,14 @@ export const ShopConfig: React.FC<ShopConfigProps> = ({ setCandyForm, candyForm 
           placeholder="Candy Shop Treasury Mint"
           value={treasuryMintInput}
           onChange={(e) => handleInputChange(e, InputType.TREASURY_MINT)}
+        />
+
+        <div style={{ fontSize: 16, lineHeight: '24px', fontWeight: 500 }}>Candy Shop Program Id</div>
+        <Input
+          style={{ marginBottom: 15 }}
+          placeholder="Candy Shop Program Id"
+          value={programIdInput}
+          onChange={(e) => handleInputChange(e, InputType.PROGRAM_ID)}
         />
 
         <div style={{ fontSize: 16, lineHeight: '24px', fontWeight: 500 }}>Network</div>

@@ -37,6 +37,16 @@ export async function fetchShopByOwnerAddress(
   return axiosInstance.get(url).then((response) => response.data);
 }
 
+export async function fetchShopByIdentifier(
+  axiosInstance: AxiosInstance,
+  ownerAddress: string,
+  mint: string,
+  programId: string
+): Promise<SingleBase<CandyShop>> {
+  const url = `/shop/owner/${ownerAddress}/mint/${mint}/programId/${programId}`;
+  return axiosInstance.get(url).then((response) => response.data);
+}
+
 export async function fetchShop(axiosInstance: AxiosInstance, shopQuery?: ShopQuery): Promise<ListBase<CandyShop>> {
   console.log(`${Logger}: fetching shop, query=`, shopQuery);
   const { offset, limit = FETCH_LIST_LIMIT, name } = shopQuery || {};
