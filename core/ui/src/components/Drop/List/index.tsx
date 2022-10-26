@@ -43,7 +43,7 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
   const [keyword, setKeyword] = useState<string>();
 
   const [target, setTarget] = useState<HTMLDivElement>();
-  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [hasMore, setHasMore] = useState<boolean>(false);
   const dropQueries = useRef({ offset: 0, limit: 12 });
   const prevFilterRef = useRef(filterOption);
 
@@ -167,6 +167,12 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
 
     return () => clearTimeout(interval);
   }, [dropNfts]);
+
+  useEffect(() => {
+    dropQueries.current.offset = 0;
+    setDropNfts([]);
+    setHasMore(true);
+  }, [candyShop]);
 
   useObserver({ callbackFn: fetchDrops, triggerTargetId: 'DROP_TARGET', enable: Boolean(target && hasMore) });
 
