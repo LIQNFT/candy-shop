@@ -309,7 +309,6 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
           )}
 
           <NftStat
-            tokenId={auction.tokenAccount}
             tokenMint={auction.tokenMint}
             owner={auction.sellerAddress}
             candyShopEnv={candyShopEnv}

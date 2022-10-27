@@ -12,7 +12,6 @@ interface NftStatProps {
   sellerUrl?: string;
   candyShopEnv: Blockchain;
   explorerLink: ExplorerLinkBase;
-  tokenId?: string;
 }
 
 export const NftStat: React.FC<NftStatProps> = ({
@@ -21,10 +20,10 @@ export const NftStat: React.FC<NftStatProps> = ({
   owner,
   sellerUrl,
   candyShopEnv,
-  explorerLink,
-  tokenId
+  explorerLink
 }) => {
   const blockchain = getBlockChain(candyShopEnv);
+  const [contractAddress, tokenId] = tokenMint.split(':');
 
   return (
     <div className="candy-stat-horizontal">
@@ -33,7 +32,12 @@ export const NftStat: React.FC<NftStatProps> = ({
           {blockchain === BlockchainType.Ethereum ? 'CONTRACT ADDRESS' : 'MINT ADDRESS'}
         </div>
         <div className="candy-value">
-          <ExplorerLink type="address" address={tokenMint} candyShopEnv={candyShopEnv} explorerLink={explorerLink} />
+          <ExplorerLink
+            type="address"
+            address={contractAddress}
+            candyShopEnv={candyShopEnv}
+            explorerLink={explorerLink}
+          />
         </div>
       </div>
       {tokenId && (
@@ -41,9 +45,7 @@ export const NftStat: React.FC<NftStatProps> = ({
           <div className="candy-stat-horizontal-line" />
           <div>
             <div className="candy-label">TOKEN ID</div>
-            <div className="candy-value">
-              <ExplorerLink type="address" address={tokenId} candyShopEnv={candyShopEnv} explorerLink={explorerLink} />
-            </div>
+            <div className="candy-value">{tokenId}</div>
           </div>
         </>
       )}

@@ -30,6 +30,7 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
 }) => {
   const orderPrice = getPrice(shopPriceDecimalsMin, shopPriceDecimals, order.price, exchangeInfo);
   const blockchain = getBlockChain(candyShopEnv);
+  const [contractAddress, tokenId] = order.tokenMint.split(':');
 
   return (
     <div className="candy-cancel-modal">
@@ -63,26 +64,25 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
               {blockchain === BlockchainType.Ethereum ? 'CONTRACT ADDRESS' : 'MINT ADDRESS'}
             </div>
             <div className="candy-value">
-              <ExplorerLink
-                type="address"
-                address={order.tokenMint}
-                candyShopEnv={candyShopEnv}
-                explorerLink={explorerLink}
-              />
+              <div className="candy-value">
+                {
+                  <ExplorerLink
+                    type="address"
+                    address={contractAddress}
+                    candyShopEnv={candyShopEnv}
+                    explorerLink={explorerLink}
+                  />
+                }
+              </div>
             </div>
           </div>
           <div className="candy-stat-horizontal-line" />
-          <div>
-            <div className="candy-label">TOKEN ID</div>
-            <div className="candy-value">
-              <ExplorerLink
-                type="address"
-                address={order.tokenAccount}
-                candyShopEnv={candyShopEnv}
-                explorerLink={explorerLink}
-              />
+          {tokenId && (
+            <div>
+              <div className="candy-label">TOKEN ID</div>
+              <div className="candy-value">{tokenId}</div>
             </div>
-          </div>
+          )}
           {order?.edition ? (
             <>
               <div className="candy-stat-horizontal-line" />

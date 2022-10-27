@@ -144,7 +144,6 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
           </div>
           {order?.tokenMint ? (
             <NftStat
-              tokenId={order.tokenAccount}
               owner={order.walletAddress}
               edition={order.edition}
               tokenMint={order.tokenMint}
