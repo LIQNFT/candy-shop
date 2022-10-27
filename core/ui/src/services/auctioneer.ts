@@ -45,7 +45,7 @@ class SolanaAuctioneer extends Auctioneer<'Solana'> {
   }
 
   createAuction(params: any): Promise<string> {
-    throw this.candyShop.createAuction(params);
+    return this.candyShop.createAuction(params);
   }
 }
 

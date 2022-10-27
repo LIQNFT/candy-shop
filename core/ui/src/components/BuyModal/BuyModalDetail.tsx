@@ -126,6 +126,7 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
           </div>
         )}
         <NftStat
+          tokenId={order.tokenAccount}
           owner={order.walletAddress}
           tokenMint={order.tokenMint}
           edition={order.edition}

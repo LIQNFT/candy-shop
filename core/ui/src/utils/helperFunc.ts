@@ -40,7 +40,7 @@ export function getCountdownTimerString(countdown: number): string {
 
 const NUMBER_OF_CHAR = 4;
 export const shortenAddress = (address: string, chars = NUMBER_OF_CHAR): string => {
-  return `${address.slice(0, chars)}...${address.slice(-chars)}`;
+  return address.length <= NUMBER_OF_CHAR ? address : `${address.slice(0, chars)}...${address.slice(-chars)}`;
 };
 
 /**

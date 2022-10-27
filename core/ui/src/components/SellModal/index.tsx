@@ -131,6 +131,7 @@ export const SellModal: React.FC<SellModalProps> = ({
                 <div className="candy-sell-modal-nft-name">{nft?.metadata?.data?.name}</div>
                 <div className="candy-sell-modal-symbol">{nft?.metadata?.data?.symbol}</div>
                 <NftStat
+                  tokenId={nft.tokenAccountAddress}
                   tokenMint={nft.tokenMintAddress}
                   edition={nft.edition}
                   candyShopEnv={candyShopEnv}

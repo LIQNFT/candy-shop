@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { EthSdkExample } from './EthSdkExample';
 import { EthMarketplaceExample } from './EthMarketplaceExample';
 import { Route, Switch, Link, useLocation } from 'react-router-dom';
 import { CandyShopDataValidator } from '../../core/ui/.';
 import { EthCandyShop, getEthCandyShop } from '../../core/sdk/.';
-import { EthAuctionExample } from './EthAuctionExample';
 import { EthConnectButton } from './components/EthConnectButton';
 import { EthConnectionProvider } from './components/EthConnectionProvider';
 import { ShopConfig } from './ShopConfig';
@@ -42,13 +40,13 @@ export const EthExample: React.FC = () => {
         console.log(candyShop);
 
         if (candyShop === undefined) {
-          setCandyShop(null);
+          setCandyShop(undefined);
         } else {
           setCandyShop(candyShop);
         }
       })
       .catch((error: Error) => {
-        setCandyShop(null);
+        setCandyShop(undefined);
         console.log('getEthCandyShop failed, error=', error);
       });
   }, [candyForm]);

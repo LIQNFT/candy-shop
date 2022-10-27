@@ -1,8 +1,9 @@
 import React from 'react';
 import { ExplorerLink } from 'components/ExplorerLink';
 import { shortenAddress } from 'utils/helperFunc';
-import { ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+import { BlockchainType, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
 import { Blockchain } from '@liqnft/candy-shop-types';
+import { getBlockChain } from 'utils/getBlockchain';
 
 interface NftStatProps {
   tokenMint: string;
@@ -11,6 +12,7 @@ interface NftStatProps {
   sellerUrl?: string;
   candyShopEnv: Blockchain;
   explorerLink: ExplorerLinkBase;
+  tokenId?: string;
 }
 
 export const NftStat: React.FC<NftStatProps> = ({
@@ -19,16 +21,32 @@ export const NftStat: React.FC<NftStatProps> = ({
   owner,
   sellerUrl,
   candyShopEnv,
-  explorerLink
+  explorerLink,
+  tokenId
 }) => {
+  const blockchain = getBlockChain(candyShopEnv);
+
   return (
     <div className="candy-stat-horizontal">
       <div>
-        <div className="candy-label">MINT ADDRESS</div>
+        <div className="candy-label">
+          {blockchain === BlockchainType.Ethereum ? 'CONTRACT ADDRESS' : 'MINT ADDRESS'}
+        </div>
         <div className="candy-value">
           <ExplorerLink type="address" address={tokenMint} candyShopEnv={candyShopEnv} explorerLink={explorerLink} />
         </div>
       </div>
+      {tokenId && (
+        <>
+          <div className="candy-stat-horizontal-line" />
+          <div>
+            <div className="candy-label">TOKEN ID</div>
+            <div className="candy-value">
+              <ExplorerLink type="address" address={tokenId} candyShopEnv={candyShopEnv} explorerLink={explorerLink} />
+            </div>
+          </div>
+        </>
+      )}
       {edition && edition !== '0' ? (
         <>
           <div className="candy-stat-horizontal-line" />

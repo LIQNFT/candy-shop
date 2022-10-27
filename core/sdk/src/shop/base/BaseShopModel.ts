@@ -22,8 +22,7 @@ export enum CandyShopVersion {
  */
 export enum BlockchainType {
   Ethereum = 'Ethereum',
-  Solana = 'Solana',
-  Polygon = 'Polygon'
+  Solana = 'Solana'
 }
 
 /**
