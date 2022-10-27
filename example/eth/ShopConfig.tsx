@@ -68,7 +68,7 @@ export const ShopConfig: React.FC<ShopConfigProps> = ({ setCandyForm, candyForm 
         break;
       }
       case InputType.PROGRAM_ID: {
-        setSettingsInput(e.target.value);
+        setProgramIdInput(e.target.value);
         break;
       }
       case InputType.PAYMENT_PROVIDER: {

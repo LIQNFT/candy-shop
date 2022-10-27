@@ -6,11 +6,12 @@ import { IconSolScan } from 'assets/IconSolScan';
 import { IconExplorer } from 'assets/IconExplorer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import { fetchTradeByShopAddress } from '@liqnft/candy-shop-sdk';
+import { fetchTradeByShopAddress, ExplorerLinkBase, BlockchainType } from '@liqnft/candy-shop-sdk';
 import { EventName } from 'constant/SocketEvent';
-import { Trade, ListBase, SortBy } from '@liqnft/candy-shop-types';
+import { Blockchain, Trade, ListBase, SortBy } from '@liqnft/candy-shop-types';
 import { removeDuplicate, EMPTY_FUNCTION } from 'utils/helperFunc';
 import { IconSolanaFM } from 'assets/IconSolanaFM';
+import { IconPolygon } from 'assets/IconPolygon';
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -20,6 +21,9 @@ import './style.less';
 import { useSocket } from 'public/Context/Socket';
 import { useUpdateCandyShopContext } from 'public/Context/CandyShopDataValidator';
 import { ShopProps } from '../../model';
+
+import { getBlockChain } from 'utils/getBlockchain';
+import { IconEth } from 'assets/IconEth';
 
 interface ActivityProps extends ShopProps {
   identifiers?: number[];
@@ -85,6 +89,19 @@ export const Activity: React.FC<ActivityProps> = ({ identifiers, orderBy, candyS
     return () => controller.abort();
   }, [onSocketEvent]);
 
+  const etherumEnvIconTrans = (env: Blockchain) => {
+    switch (env) {
+      case Blockchain.Eth:
+        return <IconEth />;
+      case Blockchain.EthTestnet:
+        return <IconEth />;
+      case Blockchain.Polygon:
+        return <IconPolygon />;
+      case Blockchain.PolygonTestnet:
+        return <IconPolygon />;
+    }
+  };
+
   return (
     <div className="candy-activity">
       <div className="candy-activity-table-container" id="candy-activity-scroll-target">
@@ -109,6 +126,8 @@ export const Activity: React.FC<ActivityProps> = ({ identifiers, orderBy, candyS
             const NOW = dayjs().format('YYYY-MM-DD');
 
             const tradeTime = NOW === tradeDate ? tradeHour : tradeDate;
+            const blockchain = getBlockChain(candyShop.env);
+
             return (
               <div key={trade.txHashAtCreation} className="candy-activity-item">
                 <div>
@@ -118,30 +137,45 @@ export const Activity: React.FC<ActivityProps> = ({ identifiers, orderBy, candyS
                       {trade.nftName}
                     </span>
                     <div className="candy-activity-icons">
-                      <ExplorerLink
-                        type="tx"
-                        address={trade.txHashAtCreation}
-                        candyShopEnv={candyShop.env}
-                        explorerLink={candyShop.explorerLink}
-                      >
-                        <IconSolanaFM />
-                      </ExplorerLink>
-                      <ExplorerLink
-                        type="tx"
-                        address={trade.txHashAtCreation}
-                        candyShopEnv={candyShop.env}
-                        explorerLink={candyShop.explorerLink}
-                      >
-                        <IconSolScan />
-                      </ExplorerLink>
-                      <ExplorerLink
-                        type="tx"
-                        address={trade.txHashAtCreation}
-                        candyShopEnv={candyShop.env}
-                        explorerLink={candyShop.explorerLink}
-                      >
-                        <IconExplorer />
-                      </ExplorerLink>
+                      {blockchain == BlockchainType.Solana ? (
+                        <>
+                          <ExplorerLink
+                            type="tx"
+                            address={trade.txHashAtCreation}
+                            candyShopEnv={candyShop.env}
+                            explorerLink={ExplorerLinkBase.SolanaFM}
+                          >
+                            <IconSolanaFM />
+                          </ExplorerLink>
+                          <ExplorerLink
+                            type="tx"
+                            address={trade.txHashAtCreation}
+                            candyShopEnv={candyShop.env}
+                            explorerLink={ExplorerLinkBase.SolScan}
+                          >
+                            <IconSolScan />
+                          </ExplorerLink>
+                          <ExplorerLink
+                            type="tx"
+                            address={trade.txHashAtCreation}
+                            candyShopEnv={candyShop.env}
+                            explorerLink={ExplorerLinkBase.Explorer}
+                          >
+                            <IconExplorer />
+                          </ExplorerLink>
+                        </>
+                      ) : (
+                        <>
+                          <ExplorerLink
+                            type="tx"
+                            address={trade.txHashAtCreation}
+                            candyShopEnv={candyShop.env}
+                            explorerLink={candyShop.explorerLink}
+                          >
+                            {etherumEnvIconTrans(candyShop.env)}
+                          </ExplorerLink>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>

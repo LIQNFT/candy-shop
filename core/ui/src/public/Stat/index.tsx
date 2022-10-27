@@ -52,8 +52,8 @@ export const Stat: React.FC<StatProps> = ({ title, description, style, candyShop
     // statUpdateStatus on polling
   }, [candyShopAddress, statUpdateStatus]);
 
-  const floorPrice = blockchain === BlockchainType.Solana ? getFloorPrice(candyShop, stat) : 0;
-  const totalVolume = blockchain === BlockchainType.Solana ? getTotalVolume(candyShop, stat) : 0;
+  const floorPrice = getFloorPrice(candyShop, stat);
+  const totalVolume = getTotalVolume(candyShop, stat);
 
   return (
     <div style={style}>

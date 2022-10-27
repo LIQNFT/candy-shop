@@ -6,7 +6,10 @@ export enum ExplorerLinkBase {
   SolScan = 'SolScan',
   SolanaFM = 'SolanaFM',
   Explorer = 'Explorer',
-  Polygon = 'Polygon'
+  Polygon = 'Polygon',
+  Mumbai = 'Mumbai',
+  Eth = 'Eth',
+  Goerli = 'Goerli'
 }
 
 /**
