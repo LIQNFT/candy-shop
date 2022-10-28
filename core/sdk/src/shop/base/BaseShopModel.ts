@@ -8,7 +8,7 @@ export enum ExplorerLinkBase {
   Explorer = 'Explorer',
   Polygon = 'Polygon',
   Mumbai = 'Mumbai',
-  ETH = 'ETH',
+  Eth = 'Eth',
   Goerli = 'Goerli'
 }
 
