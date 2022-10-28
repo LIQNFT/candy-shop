@@ -46,8 +46,6 @@ export const ExplorerLink: React.FC<ExplorerLinkProps> = ({
   if (!address) return null;
   const addressString = typeof address === 'string' ? address : address?.toBase58();
 
-  console.log('ExplorerLink:::', { source, type, address, candyShopEnv, children, explorerLink });
-
   const aLink =
     blockchain === BlockchainType.Solana
       ? `${BaseUrlType[source]}/${type}/${address}${getClusterQuery(candyShopEnv, source)}`
