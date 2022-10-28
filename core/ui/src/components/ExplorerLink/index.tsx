@@ -11,7 +11,7 @@ export const BaseUrlType = {
   [ExplorerLinkBase.Explorer]: 'https://explorer.solana.com',
   [ExplorerLinkBase.Polygon]: 'https://polygonscan.com',
   [ExplorerLinkBase.Mumbai]: 'https://mumbai.polygonscan.com',
-  [ExplorerLinkBase.ETH]: 'https://etherscan.io',
+  [ExplorerLinkBase.Eth]: 'https://etherscan.io',
   [ExplorerLinkBase.Goerli]: 'https://goerli.etherscan.io'
 };
 
@@ -40,16 +40,31 @@ export const ExplorerLink: React.FC<ExplorerLinkProps> = ({
 }) => {
   const blockchain = getBlockChain(candyShopEnv);
 
-  // Not sure default ETH source ExplorerLink
-  const source =
-    explorerLink || (blockchain === BlockchainType.Solana ? ExplorerLinkBase.Explorer : ExplorerLinkBase.Mumbai);
+  let aLink = '';
+
+  if (blockchain === BlockchainType.Solana) {
+    aLink = `${BaseUrlType[explorerLink || ExplorerLinkBase.Explorer]}/${type}/${address}${getClusterQuery(
+      candyShopEnv,
+      explorerLink || ExplorerLinkBase.Explorer
+    )}`;
+  } else {
+    switch (candyShopEnv) {
+      case Blockchain.Eth:
+        aLink = `${BaseUrlType[ExplorerLinkBase.Eth]}/${type}/${address}`;
+        break;
+      case Blockchain.EthTestnet:
+        aLink = `${BaseUrlType[ExplorerLinkBase.Goerli]}/${type}/${address}`;
+        break;
+      case Blockchain.Polygon:
+        aLink = `${BaseUrlType[ExplorerLinkBase.Polygon]}/${type}/${address}`;
+        break;
+      case Blockchain.PolygonTestnet:
+        aLink = `${BaseUrlType[ExplorerLinkBase.Mumbai]}/${type}/${address}`;
+    }
+  }
+
   if (!address) return null;
   const addressString = typeof address === 'string' ? address : address?.toBase58();
-
-  const aLink =
-    blockchain === BlockchainType.Solana
-      ? `${BaseUrlType[source]}/${type}/${address}${getClusterQuery(candyShopEnv, source)}`
-      : `${BaseUrlType[source]}/${type}/${address}`;
 
   return (
     <div className="candy-link">
