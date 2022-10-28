@@ -181,7 +181,7 @@ async function createNewMintInstructions(payer: PublicKey, connection: Connectio
       programId: TOKEN_PROGRAM_ID
     })
   );
-  instructions.push(createInitializeMintInstruction(newMint.publicKey, 0, payer, null));
+  instructions.push(createInitializeMintInstruction(newMint.publicKey, 0, payer, payer));
   instructions.push(createAssociatedTokenAccountInstruction(payer, userTokenAccountAddress, payer, newMint.publicKey));
   instructions.push(createMintToInstruction(newMint.publicKey, userTokenAccountAddress, payer, 1));
   return { instructions, newEditionMint: newMint, newEditionTokenAccount: userTokenAccountAddress };
