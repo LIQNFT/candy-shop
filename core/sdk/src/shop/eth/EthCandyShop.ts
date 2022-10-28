@@ -318,7 +318,6 @@ export async function getEthCandyShop(params: CandyShopConstructorParams): Promi
   const shopDetailRes = await safeAwait(
     fetchShopsByIdentifier(params.candyShopCreatorAddress, params.treasuryMint, params.programId)
   );
-  console.log('shopDetailRes:::', shopDetailRes);
   if (shopDetailRes.error || !shopDetailRes.result.success) {
     console.log(`${Logger} fetchShopsByIdentifier failed, error=`, { shopDetailRes });
   }
