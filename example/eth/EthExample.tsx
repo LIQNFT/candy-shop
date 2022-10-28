@@ -32,6 +32,7 @@ export const EthExample: React.FC = () => {
       treasuryMint: candyForm.treasuryMint,
       programId: candyForm.programId,
       env: candyForm.network,
+      explorerLink: candyForm.network,
       settings: JSON.parse(candyForm.settings)
     };
 

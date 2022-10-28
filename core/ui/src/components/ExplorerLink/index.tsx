@@ -1,14 +1,18 @@
 import React from 'react';
 import { web3 } from '@project-serum/anchor';
 import { shortenAddress } from 'utils/helperFunc';
-import { ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+import { ExplorerLinkBase, BlockchainType } from '@liqnft/candy-shop-sdk';
 import { Blockchain } from '@liqnft/candy-shop-types';
+import { getBlockChain } from 'utils/getBlockchain';
 
 export const BaseUrlType = {
   [ExplorerLinkBase.SolScan]: 'https://solscan.io',
   [ExplorerLinkBase.SolanaFM]: 'https://solana.fm',
   [ExplorerLinkBase.Explorer]: 'https://explorer.solana.com',
-  [ExplorerLinkBase.Polygon]: 'https://mumbai.polygonscan.com'
+  [ExplorerLinkBase.Polygon]: 'https://polygonscan.com',
+  [ExplorerLinkBase.Mumbai]: 'https://mumbai.polygonscan.com',
+  [ExplorerLinkBase.ETH]: 'https://etherscan.io',
+  [ExplorerLinkBase.Goerli]: 'https://goerli.etherscan.io'
 };
 
 const getClusterQuery = (network: string | undefined, baseUrl: ExplorerLinkBase) => {
@@ -34,18 +38,24 @@ export const ExplorerLink: React.FC<ExplorerLinkProps> = ({
   candyShopEnv,
   explorerLink
 }) => {
-  const source = explorerLink || ExplorerLinkBase.Explorer; // TODO: update source for ETh
+  const blockchain = getBlockChain(candyShopEnv);
+
+  // Not sure default ETH source ExplorerLink
+  const source =
+    explorerLink || (blockchain === BlockchainType.Solana ? ExplorerLinkBase.Explorer : ExplorerLinkBase.Mumbai);
   if (!address) return null;
   const addressString = typeof address === 'string' ? address : address?.toBase58();
 
+  console.log('ExplorerLink:::', { source, type, address, candyShopEnv, children, explorerLink });
+
+  const aLink =
+    blockchain === BlockchainType.Solana
+      ? `${BaseUrlType[source]}/${type}/${address}${getClusterQuery(candyShopEnv, source)}`
+      : `${BaseUrlType[source]}/${type}/${address}`;
+
   return (
     <div className="candy-link">
-      <a
-        href={`${BaseUrlType[source]}/${type}/${address}${getClusterQuery(candyShopEnv, source)}`}
-        target="_blank"
-        rel="noreferrer noopener"
-        title={addressString}
-      >
+      <a href={aLink} target="_blank" rel="noreferrer noopener" title={addressString}>
         {children || shortenAddress(addressString, length)}
       </a>
     </div>
