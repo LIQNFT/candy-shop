@@ -1304,12 +1304,12 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-6.10.0.tgz#c012c1ecc1a0e53d50e6af381618dca5268461c1"
   integrity sha512-lLseUPEhSFUXYTKj6q7s2O3s2vW2ebgA11vMAlKodXGf5AFw4zUoEbTz9CoFOC9jS6xY4Qr8BmRnxP/odT4Uuw==
 
-"@liqnft/candy-shop-sdk@0.5.47":
-  version "0.5.47"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-sdk/-/candy-shop-sdk-0.5.47.tgz#ba5250a99747f13196bb3f2e5f973f62ff2a20e0"
-  integrity sha512-zY9juHdWzMJuP8lya841wUVMptCpR8OJBmfbkV9wPwkiFCdaS0tSQzirfkW4CBSEuv5d/qCl/rABtlVVF+Jjqw==
+"@liqnft/candy-shop-sdk@0.5.48":
+  version "0.5.48"
+  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-sdk/-/candy-shop-sdk-0.5.48.tgz#7ad532b32bd120076fbfec2acdbbcf5975f69eb4"
+  integrity sha512-iAC9/YIGfD8RGl5l6BM5DfSws1ljaMacLC+k95LIWSXGQ5ICka11A5JJ46VEwqB6FWCGbXsIsNi/dwOWuLL09A==
   dependencies:
-    "@liqnft/candy-shop-types" "0.2.47"
+    "@liqnft/candy-shop-types" "0.2.48"
     "@project-serum/anchor" "^0.23.0"
     "@solana/spl-token" "^0.2.0"
     "@solana/wallet-adapter-react" "^0.15.4"
@@ -1319,15 +1319,10 @@
     idb "^7.0.1"
     qs "^6.10.3"
 
-"@liqnft/candy-shop-types@0.2.45":
-  version "0.2.45"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.2.45.tgz#b7dc2ee9d34954291803f5a0cd4ccb4ddce98d2e"
-  integrity sha512-K1Kf1vHOWCiBroUTjAN8bsk2MLgluip3mAUO+1AUYemBnOl4+A5wPNSWbpMdORimOEcAAvSWRPSrii0ZSlyALQ==
-
-"@liqnft/candy-shop-types@0.2.47":
-  version "0.2.47"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.2.47.tgz#bf5ed9d5928c3d23e9edf620ac7549441e9e99f1"
-  integrity sha512-VZplmDznwOsJSCgPO3eR9tX6S5M/uhxQDsivXLy3qtjThRTojuFIIcnOfXHF6HT461oJbgCJ65iT3IS93mMm+g==
+"@liqnft/candy-shop-types@0.2.48":
+  version "0.2.48"
+  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.2.48.tgz#b49e6e4eae16b80f4b82007661b127cb50b091ee"
+  integrity sha512-IxM4ZatwBUaIZ/fv+yfqcvn4U2ixZsd4imcD9UDGlJVUfaf4AGtrZSmPLCqY6bj0LnTnxjZD3bBV3BkvkccSOw==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
