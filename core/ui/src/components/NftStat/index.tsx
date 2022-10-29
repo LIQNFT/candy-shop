@@ -28,9 +28,7 @@ export const NftStat: React.FC<NftStatProps> = ({
   return (
     <div className="candy-stat-horizontal">
       <div>
-        <div className="candy-label">
-          {blockchain === BlockchainType.Ethereum ? 'CONTRACT ADDRESS' : 'MINT ADDRESS'}
-        </div>
+        <div className="candy-label">{blockchain === BlockchainType.EVM ? 'CONTRACT ADDRESS' : 'MINT ADDRESS'}</div>
         <div className="candy-value">
           <ExplorerLink
             type="address"

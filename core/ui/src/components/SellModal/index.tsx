@@ -18,7 +18,7 @@ import './style.less';
 export type SellModalProps = {
   nft: SingleTokenInfo;
   wallet: Wallet;
-  shop: CandyShopResponse;
+  shopResponse: CandyShopResponse;
   currencySymbol: string;
   candyShopEnv: Blockchain;
   explorerLink: ExplorerLinkBase;
@@ -31,7 +31,7 @@ export const SellModal: React.FC<SellModalProps> = ({
   onCancel: onUnSelectItem,
   nft,
   wallet,
-  shop,
+  shopResponse,
   currencySymbol,
   candyShopEnv,
   explorerLink,
@@ -108,7 +108,7 @@ export const SellModal: React.FC<SellModalProps> = ({
   };
 
   const disableListedBtn = formState.price === undefined || loading;
-  const transactionFee = shop ? shop.feeRate / 100 : 0;
+  const transactionFee = shopResponse ? shopResponse.feeRate / 100 : 0;
   const isEth = candyShopEnv !== Blockchain.SolDevnet && candyShopEnv !== Blockchain.SolMainnetBeta;
 
   return (

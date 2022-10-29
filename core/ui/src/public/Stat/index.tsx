@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BaseShop, BlockchainType, fetchStatsByShopAddress } from '@liqnft/candy-shop-sdk';
+import { BaseShop, fetchStatsByShopAddress } from '@liqnft/candy-shop-sdk';
 import { useValidateStatus } from 'hooks/useValidateStatus';
 import { StatActionsStatus } from 'constant';
 import { useUpdateCandyShopContext } from 'public/Context/CandyShopDataValidator';
@@ -31,7 +31,7 @@ const getTotalVolume = (candyShop: BaseShop, stat: any) => {
 };
 
 const Logger = 'CandyShopUI/Stat: ';
-export const Stat: React.FC<StatProps> = ({ title, description, style, candyShop, blockchain }): JSX.Element => {
+export const Stat: React.FC<StatProps> = ({ title, description, style, candyShop }): JSX.Element => {
   const [stat, setStat] = useState<ShopStats>();
 
   const candyShopAddress = candyShop.candyShopAddress;

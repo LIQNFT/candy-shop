@@ -137,7 +137,7 @@ export const Activity: React.FC<ActivityProps> = ({ identifiers, orderBy, candyS
                       {trade.nftName}
                     </span>
                     <div className="candy-activity-icons">
-                      {blockchain == BlockchainType.Solana ? (
+                      {blockchain == BlockchainType.SOL ? (
                         <>
                           <ExplorerLink
                             type="tx"

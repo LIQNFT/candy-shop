@@ -42,7 +42,7 @@ export const ExplorerLink: React.FC<ExplorerLinkProps> = ({
 
   let aLink = '';
 
-  if (blockchain === BlockchainType.Solana) {
+  if (blockchain === BlockchainType.SOL) {
     aLink = `${BaseUrlType[explorerLink || ExplorerLinkBase.Explorer]}/${type}/${address}${getClusterQuery(
       candyShopEnv,
       explorerLink || ExplorerLinkBase.Explorer

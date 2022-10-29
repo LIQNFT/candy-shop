@@ -1,17 +1,5 @@
-import {
-  Blockchain,
-  CandyShop,
-  ListBase,
-  Nft,
-  OrdersEditionFilterQuery,
-  OrdersFilterQuery,
-  SingleBase,
-  Trade,
-  TradeQuery,
-  WhitelistNft
-} from '@liqnft/candy-shop-types';
-import { Order } from '@opensea/seaport-js/lib/types';
-import { BlockchainType, CandyShopVersion, ExplorerLinkBase, ShopSettings } from './BaseShopModel';
+import { Blockchain, ListBase, Nft, OrdersEditionFilterQuery, Trade, TradeQuery } from '@liqnft/candy-shop-types';
+import { CandyShopVersion, ExplorerLinkBase, ShopSettings } from './BaseShopModel';
 
 export abstract class BaseShop {
   constructor(params: any) {}
@@ -21,7 +9,6 @@ export abstract class BaseShop {
   abstract get candyShopCreatorAddress(): string;
   abstract get treasuryMint(): string;
   abstract get settings(): Partial<ShopSettings>;
-  abstract get blockchain(): BlockchainType;
   abstract get baseUnitsPerCurrency(): number;
   abstract get currencySymbol(): string;
   abstract get currencyDecimals(): number;
@@ -29,12 +16,9 @@ export abstract class BaseShop {
   abstract get priceDecimals(): number;
   abstract get volumeDecimals(): number;
   abstract get volumeDecimalsMin(): number;
-  abstract get programId(): string | undefined;
   abstract get env(): Blockchain;
   abstract get version(): CandyShopVersion;
   abstract get explorerLink(): ExplorerLinkBase;
-  abstract get connection(): any;
-  abstract get isEnterprise(): boolean;
 
   // Marketplace
   abstract buy(params: any): Promise<string>;

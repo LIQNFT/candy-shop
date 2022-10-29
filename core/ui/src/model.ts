@@ -1,7 +1,7 @@
-import { BaseShop, BlockchainType, EthCandyShop, CandyShop, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
+import { BaseShop, ExplorerLinkBase } from '@liqnft/candy-shop-sdk';
 import Web3Modal from 'web3modal';
 
-import { Blockchain, NftAttributeQuery } from '@liqnft/candy-shop-types';
+import { Blockchain, NftAttributeQuery, CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
 export enum TransactionState {
@@ -84,21 +84,10 @@ export interface ShopInfo {
 
 export type Wallet = EthWallet | AnchorWallet;
 
-export type GenericShop<T extends keyof typeof BlockchainType> = T extends 'Ethereum'
-  ? EthCandyShop
-  : T extends 'Solana'
-  ? CandyShop
-  : BaseShop;
-export type GenericWallet<T extends keyof typeof BlockchainType> = T extends 'Ethereum'
-  ? EthWallet
-  : T extends 'Solana'
-  ? AnchorWallet
-  : null;
-
 export type ShopProps = {
-  blockchain: BlockchainType;
   candyShop: BaseShop;
   wallet?: Wallet;
+  shopResponse?: CandyShopResponse;
 };
 
 export interface ConfigPrice {

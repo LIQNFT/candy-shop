@@ -4,14 +4,13 @@ import { Nft } from 'components/Nft';
 import { LoadingSkeleton } from 'components/LoadingSkeleton';
 import { LoadStatus } from 'constant';
 import { ShopProps } from '../../model';
-import { BlockchainType, CandyShop, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
+import { CandyShop, EthCandyShop, SingleTokenInfo } from '@liqnft/candy-shop-sdk';
 import { CancelModal } from 'components/CancelModal';
 import { SellModal } from 'components/SellModal';
 import { getExchangeInfo } from 'utils/getExchangeInfo';
 import { Order } from '@liqnft/candy-shop-types';
-import { SellerFactory } from 'services/seller';
-import { CancelerFactory } from 'services/canceler';
 import useUserNfts from 'hooks/useUserNfts';
+import { SolStore, StoreProvider } from 'market';
 
 interface SellProps extends ShopProps {
   walletConnectComponent: React.ReactElement;
@@ -24,50 +23,36 @@ enum ModalType {
   CANCEL
 }
 
-export const Sell: React.FC<SellProps> = ({
-  walletConnectComponent,
-  style,
-  enableCacheNFT,
-  blockchain,
-  candyShop,
-  wallet
-}) => {
+export const Sell: React.FC<SellProps> = ({ walletConnectComponent, style, enableCacheNFT, candyShop, wallet }) => {
   const {
     loading: loadingSell,
     nfts,
     sellOrders,
-    shop
-  } = useUserNfts({ candyShop, blockchain, wallet }, { enableCacheNFT });
-  const seller = useMemo(
-    () => SellerFactory({ blockchain: blockchain, candyShop, wallet, shop }),
-    [blockchain, candyShop, shop, wallet]
-  );
-  const canceler = useMemo(
-    () => CancelerFactory({ blockchain: blockchain, candyShop, wallet }),
-    [blockchain, candyShop, wallet]
-  );
+    shopResponse
+  } = useUserNfts({ candyShop, wallet }, { enableCacheNFT });
+  const store = useMemo(() => StoreProvider({ candyShop, wallet, shopResponse }), [candyShop, shopResponse, wallet]);
 
   const [nftSelection, setNftSelection] = useState<SingleTokenInfo>();
   const [visibleModal, setVisibleModal] = useState<ModalType>();
 
   const getTokenMetadataByMintAddress = useCallback(
     (mintAddress: string) => {
-      if (candyShop.blockchain === BlockchainType.Solana) {
-        return seller.getTokenMetadataByMintAddress(mintAddress, (candyShop as CandyShop).connection);
+      if (store instanceof SolStore) {
+        return store.getTokenMetadataByMintAddress(mintAddress, (candyShop as CandyShop).connection);
       }
 
       return Promise.reject('getTokenMetadataByMintAddress no impl');
     },
-    [candyShop, seller]
+    [candyShop, store]
   );
 
   const sellNft = useCallback(
     async (nft: SingleTokenInfo, price: number) => {
-      if (candyShop.blockchain === BlockchainType.Ethereum) {
-        return seller.sell(nft, price, undefined);
+      if (candyShop instanceof EthCandyShop) {
+        return store.sell(nft, price, undefined);
       }
 
-      if (candyShop.blockchain === BlockchainType.Solana) {
+      if (candyShop instanceof CandyShop) {
         const payload = {
           shopAddress: candyShop.candyShopAddress,
           baseUnitsPerCurrency: candyShop.baseUnitsPerCurrency,
@@ -75,17 +60,16 @@ export const Sell: React.FC<SellProps> = ({
           shopTreasuryMint: candyShop.treasuryMint,
           candyShopProgramId: candyShop.programId
         };
-
-        return seller.sell(nft, price, payload);
+        return store.sell(nft, price, payload);
       }
 
       return Promise.reject('Blockchain no impl');
     },
-    [candyShop, seller]
+    [candyShop, store]
   );
 
   const cancelOrder = (order: Order) => {
-    return canceler.cancel(order);
+    return store.cancel(order);
   };
 
   const onClose = () => {
@@ -115,7 +99,7 @@ export const Sell: React.FC<SellProps> = ({
     <div style={style} className="candy-sell-component">
       <div className="candy-container">
         {loading ? <LoadingSkeleton /> : null}
-        {!loading && nfts.length && shop ? (
+        {!loading && nfts.length && shopResponse ? (
           <div className="candy-container-list">
             {nfts.map((item) => (
               <div
@@ -130,11 +114,11 @@ export const Sell: React.FC<SellProps> = ({
         {!loading && nfts.length === 0 && <Empty description="No NFTs found" />}
       </div>
 
-      {visibleModal === ModalType.SELL && nftSelection && shop && (
+      {visibleModal === ModalType.SELL && nftSelection && shopResponse && (
         <SellModal
           onCancel={onClose}
           nft={nftSelection}
-          shop={shop}
+          shopResponse={shopResponse}
           wallet={wallet}
           candyShopEnv={candyShop.env}
           currencySymbol={candyShop.currencySymbol}

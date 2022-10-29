@@ -60,9 +60,7 @@ export const CancelModalDetail: React.FC<CancelModalDetailProps> = ({
         )}
         <div className="candy-stat-horizontal">
           <div>
-            <div className="candy-label">
-              {blockchain === BlockchainType.Ethereum ? 'CONTRACT ADDRESS' : 'MINT ADDRESS'}
-            </div>
+            <div className="candy-label">{blockchain === BlockchainType.EVM ? 'CONTRACT ADDRESS' : 'MINT ADDRESS'}</div>
             <div className="candy-value">
               <div className="candy-value">
                 {

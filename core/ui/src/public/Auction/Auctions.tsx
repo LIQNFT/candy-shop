@@ -11,7 +11,7 @@ import { useUpdateCandyShopContext } from 'public/Context/CandyShopDataValidator
 import { EventName, useSocket } from 'public/Context/Socket';
 import { removeDuplicate, removeListeners } from 'utils/helperFunc';
 import { ShopProps } from '../../model';
-import { AuctioneerFactory } from 'services/auctioneer';
+import { SolStore, StoreProvider } from 'market';
 
 const Logger = 'CandyShopUI/Auctions';
 
@@ -23,14 +23,10 @@ interface AuctionsProps extends ShopProps {
 export const Auctions: React.FC<AuctionsProps> = ({
   walletConnectComponent,
   statusFilters = DEFAULT_LIST_AUCTION_STATUS,
-  blockchain,
   candyShop,
   wallet
 }) => {
-  const auctioneer = useMemo(
-    () => AuctioneerFactory({ candyShop, blockchain, wallet }),
-    [candyShop, blockchain, wallet]
-  );
+  const store = useMemo(() => StoreProvider({ candyShop, wallet }), [candyShop, wallet]);
 
   const [auctionSelected, setAuctionSelected] = useState<Auction>();
   const [auctionedNfts, setAuctions] = useState<Auction[]>([]);
@@ -150,23 +146,32 @@ export const Auctions: React.FC<AuctionsProps> = ({
 
   const buyNowAuction = useCallback(
     (auction: Auction) => {
-      return auctioneer.buyNowAuction(auction);
+      if (store instanceof SolStore) {
+        return store.buyNowAuction(auction);
+      }
+      throw new Error(`Trader ${store.constructor.name} doesn't support buyNowAuction`);
     },
-    [auctioneer]
+    [store]
   );
 
   const bidAuction = useCallback(
     (auction: Auction, price: number) => {
-      return auctioneer.bidAuction(auction, price);
+      if (store instanceof SolStore) {
+        return store.bidAuction(auction, price);
+      }
+      throw new Error(`Trader ${store.constructor.name} doesn't support bidAuction`);
     },
-    [auctioneer]
+    [store]
   );
 
   const withdrawAuctionBid = useCallback(
     (auction: Auction) => {
-      return auctioneer.withdrawAuctionBid(auction);
+      if (store instanceof SolStore) {
+        return store.withdrawAuctionBid(auction);
+      }
+      throw new Error(`Trader ${store.constructor.name} doesn't support withdrawAuctionBid`);
     },
-    [auctioneer]
+    [store]
   );
 
   return (

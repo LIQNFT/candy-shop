@@ -1,5 +1,5 @@
 import { BaseShop } from '../base/BaseShop';
-import { BlockchainType, CandyShopVersion, ExplorerLinkBase, ShopSettings } from '../base/BaseShopModel';
+import { CandyShopVersion, ExplorerLinkBase, ShopSettings } from '../base/BaseShopModel';
 import { AssetType, EthereumSDK } from '../../factory/conveyor/eth/conveyor';
 import { constants, ethers } from 'ethers';
 import { CreateOrderInterface, OrderInterface } from '../../factory/conveyor/eth/types/order.type';
@@ -55,7 +55,6 @@ export class EthCandyShop extends BaseShop {
   private _env: Blockchain;
   private _settings: ShopSettings;
   private _baseUnitsPerCurrency: number;
-  private _blockchainType: BlockchainType;
 
   set candyShopAddress(shopUuid: string) {
     this._candyShopAddress = shopUuid;
@@ -89,10 +88,6 @@ export class EthCandyShop extends BaseShop {
     return this._env;
   }
 
-  get blockchain(): BlockchainType {
-    return this._blockchainType;
-  }
-
   get baseUnitsPerCurrency(): number {
     return this._baseUnitsPerCurrency;
   }
@@ -121,18 +116,6 @@ export class EthCandyShop extends BaseShop {
     return this._settings.volumeDecimalsMin;
   }
 
-  get isEnterprise(): boolean {
-    throw new Error('Method not implemented.');
-  }
-
-  get programId(): string | undefined {
-    throw new Error('Method not implemented.');
-  }
-
-  get connection(): any {
-    throw new Error('Method not implemented.');
-  }
-
   /**
    * Instantiate a EthCandyShop object
    *
@@ -159,7 +142,6 @@ export class EthCandyShop extends BaseShop {
       explorerLink: settings?.explorerLink ?? ExplorerLinkBase.Polygon
     };
     this._baseUnitsPerCurrency = Math.pow(10, this._settings.currencyDecimals);
-    this._blockchainType = BlockchainType.Ethereum;
     console.log('EthCandyShop constructor: init CandyShop=', this);
   }
 

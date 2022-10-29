@@ -3,10 +3,10 @@ import { CandyShop as CandyShopResponse, Order, Trade } from '@liqnft/candy-shop
 
 import { LoadStatus } from 'constant';
 import { EventName } from 'constant/SocketEvent';
+import { StoreProvider } from 'market';
 import { ShopProps } from 'model';
 import { useSocket } from 'public/Context/Socket';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ShopDataFactory } from 'services/shopData';
 import { removeListeners } from 'utils/helperFunc';
 import { notification, NotificationType } from 'utils/rc-notification';
 
@@ -17,7 +17,7 @@ export enum ShopDataErrorType {
 }
 
 interface UseSellResponse {
-  shop?: CandyShopResponse;
+  shopResponse?: CandyShopResponse;
   nfts: SingleTokenInfo[];
   sellOrders: Record<string, Order>;
   loading: LoadStatus;
@@ -27,11 +27,8 @@ interface UseSellOptions {
 }
 const Logger = 'CandyShopUI/Sell-Service';
 
-const useUserNfts = (
-  { blockchain, candyShop, wallet }: ShopProps,
-  { enableCacheNFT }: UseSellOptions
-): UseSellResponse => {
-  const shopData = useMemo(() => ShopDataFactory({ blockchain, candyShop, wallet }), [blockchain, candyShop, wallet]);
+const useUserNfts = ({ candyShop, wallet }: ShopProps, { enableCacheNFT }: UseSellOptions): UseSellResponse => {
+  const store = useMemo(() => StoreProvider({ candyShop, wallet }), [candyShop, wallet]);
 
   const { onSocketEvent } = useSocket();
 
@@ -45,14 +42,14 @@ const useUserNfts = (
 
   const getNfts = useCallback(
     async (publicKey: string) => {
-      const shop = await safeAwait(shopData.getShop());
+      const shop = await safeAwait(store.getShop());
       if (shop.error) {
         shop.error.name = ShopDataErrorType.GetShop;
         throw shop.error;
       }
 
       const nfts = await safeAwait(
-        shopData.getNFTs(publicKey, { enableCacheNFT, allowSellAnyNft: shop.result.allowSellAnyNft })
+        store.getNFTs(publicKey, { enableCacheNFT, allowSellAnyNft: shop.result.allowSellAnyNft })
       );
       if (nfts.error) {
         nfts.error.name = ShopDataErrorType.GetNFTs;
@@ -64,12 +61,12 @@ const useUserNfts = (
         nfts: nfts.result
       };
     },
-    [enableCacheNFT, shopData]
+    [enableCacheNFT, store]
   );
 
   const getOrderNfts = useCallback(
     async (publicKey: string) => {
-      const orderNfts = await safeAwait(shopData.getOrderNfts(publicKey));
+      const orderNfts = await safeAwait(store.getOrderNfts(publicKey));
       if (orderNfts.error) {
         orderNfts.error.name = ShopDataErrorType.GetOrderNfts;
         throw orderNfts.error;
@@ -77,7 +74,7 @@ const useUserNfts = (
 
       return orderNfts.result;
     },
-    [shopData]
+    [store]
   );
 
   useEffect(() => {
@@ -129,14 +126,14 @@ const useUserNfts = (
     if (!publicKey) return;
     const controller = onSocketEvent(EventName.traded, (data: Trade) => {
       if (data.buyerAddress === publicKey) {
-        shopData.getNFTs(publicKey, { enableCacheNFT });
+        store.getNFTs(publicKey, { enableCacheNFT });
       }
     });
     return () => controller.abort();
-  }, [onSocketEvent, publicKey, shopData, enableCacheNFT]);
+  }, [onSocketEvent, publicKey, store, enableCacheNFT]);
 
   return {
-    shop,
+    shopResponse: shop,
     nfts,
     sellOrders,
     loading

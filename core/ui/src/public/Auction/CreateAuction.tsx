@@ -18,7 +18,7 @@ import './create-auction-style.less';
 import { notification, NotificationType } from 'utils/rc-notification';
 import { convertTime12to24 } from 'utils/timer';
 import useUserNfts from 'hooks/useUserNfts';
-import { AuctioneerFactory } from 'services/auctioneer';
+import { SolStore, StoreProvider } from 'market';
 
 interface CreateAuctionProps extends ShopProps {
   walletConnectComponent: React.ReactElement;
@@ -43,7 +43,6 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
   walletConnectComponent,
   onCreatedAuctionSuccess,
   cacheUserNFT,
-  blockchain,
   candyShop,
   wallet
 }) => {
@@ -51,12 +50,9 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
     loading: loadingSeller,
     nfts,
     sellOrders,
-    shop
-  } = useUserNfts({ blockchain, candyShop, wallet }, { enableCacheNFT: cacheUserNFT });
-  const auctioneer = useMemo(
-    () => AuctioneerFactory({ candyShop, blockchain, wallet }),
-    [candyShop, blockchain, wallet]
-  );
+    shopResponse: shop
+  } = useUserNfts({ candyShop, wallet }, { enableCacheNFT: cacheUserNFT });
+  const store = useMemo(() => StoreProvider({ candyShop, wallet }), [candyShop, wallet]);
 
   const [selected, setSelected] = useState<SingleTokenInfo>();
   const [stage, setStage] = useState<AuctionStage>(AuctionStage.SELECT);
@@ -97,6 +93,11 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
   const onCreateAuction = () => {
     if (!wallet || !auctionForm || !selected) return;
 
+    if (!(store instanceof SolStore)) {
+      console.warn(`${Logger}: Invalid request, Only Solana supports CreateAuction`);
+      return;
+    }
+
     const startingBid = new BN(Number(auctionForm.startingBid) * 10 ** candyShop.currencyDecimals);
     const startTime = new BN(
       //prettier-ignore
@@ -127,7 +128,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
       };
     }
 
-    auctioneer
+    store
       .createAuction(params)
       .then(() => {
         notification('Auction created', NotificationType.Success);
