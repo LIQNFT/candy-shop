@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { BlockchainType, CandyShop } from '@liqnft/candy-shop-sdk';
+import { CandyShop } from '@liqnft/candy-shop-sdk';
 import { Nft, Order as OrderSchema, SingleBase } from '@liqnft/candy-shop-types';
 
 import { BuyModalConfirmed } from 'components/BuyModal/BuyModalConfirmed';
@@ -12,11 +12,10 @@ import { NftVerification } from 'components/Tooltip/NftVerification';
 import { ShopProps, TransactionState } from '../../model';
 import { handleError } from 'utils/ErrorHandler';
 import { getDefaultExchange, getExchangeInfo } from 'utils/getExchangeInfo';
+import { Price } from 'components/Price';
+import { StoreProvider } from 'market';
 
 import './style.less';
-import { Price } from 'components/Price';
-import { BuyerFactory } from 'services/buyer';
-import { ShopDataFactory } from 'services/shopData';
 
 interface OrderDetailProps extends ShopProps {
   tokenMint: string;
@@ -30,18 +29,10 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   backUrl = '/',
   walletConnectComponent,
   sellerUrl,
-  blockchain,
   candyShop,
   wallet
 }) => {
-  const shopData = useMemo(
-    () => ShopDataFactory({ candyShop, blockchain: blockchain, wallet }),
-    [candyShop, blockchain, wallet]
-  );
-  const buyer = useMemo(
-    () => BuyerFactory({ candyShop, blockchain: blockchain, wallet }),
-    [candyShop, blockchain, wallet]
-  );
+  const store = useMemo(() => StoreProvider({ candyShop, wallet }), [candyShop, wallet]);
 
   const [loadingOrder, setLoadingOrder] = useState<boolean>(false);
   const [loadingNftInfo, setLoadingNftInfo] = useState<boolean>(false);
@@ -51,9 +42,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
   const [hash, setHash] = useState('');
 
   const exchangeInfo =
-    order && blockchain === BlockchainType.Solana
-      ? getExchangeInfo(order, candyShop as CandyShop)
-      : getDefaultExchange(candyShop);
+    order && candyShop instanceof CandyShop ? getExchangeInfo(order, candyShop) : getDefaultExchange(candyShop);
   const publicKey = wallet?.publicKey?.toString();
   const isUserListing = publicKey && order && order.walletAddress === publicKey;
 
@@ -61,7 +50,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
     if (!order) {
       setLoadingOrder(true);
 
-      shopData
+      store
         .getOrderNft(tokenMint)
         .then((res: SingleBase<OrderSchema>) => {
           if (!res.success) throw new Error('Order not found');
@@ -79,7 +68,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
     if (order && !nftInfo) {
       setLoadingNftInfo(true);
 
-      shopData
+      store
         .getNftInfo(order.tokenMint)
         .then((nft: Nft) => setNftInfo(nft))
         .catch((err: Error) => {
@@ -89,13 +78,13 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
           setLoadingNftInfo(false);
         });
     }
-  }, [order, nftInfo, tokenMint, blockchain, candyShop, shopData]);
+  }, [order, nftInfo, tokenMint, candyShop, store]);
 
   const buy = async () => {
     if (order && publicKey && candyShop) {
       setState(TransactionState.PROCESSING);
 
-      return buyer
+      return store
         .buy(order)
         .then((txHash: any) => {
           setHash(txHash);

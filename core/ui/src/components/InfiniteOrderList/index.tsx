@@ -1,17 +1,16 @@
 import React, { useMemo, useState } from 'react';
-import { Order as OrderComponent } from 'components/Order';
 import { Order } from '@liqnft/candy-shop-types';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { BlockchainType, CandyShop, getCandyShopSync } from '@liqnft/candy-shop-sdk';
+import { CandyShop, getCandyShopSync } from '@liqnft/candy-shop-sdk';
 import { Order as OrderSchema } from '@liqnft/candy-shop-types';
+import { web3 } from '@project-serum/anchor';
 import { getDefaultExchange, getExchangeInfo } from 'utils/getExchangeInfo';
 import { BuyModal } from 'components/BuyModal';
 import { CancelModal } from 'components/CancelModal';
 import { LoadingSkeleton } from 'components/LoadingSkeleton';
+import { Order as OrderComponent } from 'components/Order';
 import { ShopProps } from 'model';
-import { CancelerFactory } from 'services/canceler';
-import { BuyerFactory } from 'services/buyer';
-import { web3 } from '@project-serum/anchor';
+import { StoreProvider } from 'market';
 
 interface InfiniteOrderListProps extends ShopProps {
   orders: Order[];
@@ -29,32 +28,24 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
   hasNextPage,
   loadNextPage,
   sellerUrl,
-  blockchain,
   candyShop,
   wallet
 }) => {
-  const { canceler, buyer } = useMemo(() => {
-    return {
-      canceler: CancelerFactory({ candyShop, wallet, blockchain }),
-      buyer: BuyerFactory({ candyShop, wallet, blockchain })
-    };
-  }, [candyShop, blockchain, wallet]);
+  const store = useMemo(() => StoreProvider({ candyShop, wallet }), [candyShop, wallet]);
 
   const cancelOrder = (order: Order) => {
-    return canceler.cancel(order);
+    return store.cancel(order);
   };
 
   const buyNft = (order: Order) => {
-    return buyer.buy(order);
+    return store.buy(order);
   };
 
   const [selectedOrder, setSelectedOrder] = useState<OrderSchema>();
   const onSelectOrder = (order?: OrderSchema) => setSelectedOrder(order);
 
   const exchangeInfo =
-    blockchain === BlockchainType.Solana
-      ? getExchangeInfo(selectedOrder, candyShop as CandyShop)
-      : getDefaultExchange(candyShop);
+    candyShop instanceof CandyShop ? getExchangeInfo(selectedOrder, candyShop) : getDefaultExchange(candyShop);
 
   const isUserListing =
     selectedOrder &&
@@ -64,7 +55,7 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
   const shopAddress = useMemo(() => {
     if (!selectedOrder) return '';
 
-    if (blockchain === BlockchainType.Solana) {
+    if (candyShop instanceof CandyShop) {
       return getCandyShopSync(
         new web3.PublicKey(selectedOrder.candyShopCreatorAddress),
         new web3.PublicKey(selectedOrder.treasuryMint),
@@ -73,7 +64,7 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
     } else {
       return candyShop.candyShopAddress;
     }
-  }, [blockchain, candyShop.candyShopAddress, selectedOrder]);
+  }, [candyShop, selectedOrder]);
 
   return (
     <>
@@ -87,7 +78,6 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
                 url={url}
                 sellerUrl={sellerUrl}
                 onOrderSelection={onSelectOrder}
-                blockchain={blockchain}
                 candyShop={candyShop}
                 wallet={wallet}
               />

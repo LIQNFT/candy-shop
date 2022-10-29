@@ -1,5 +1,5 @@
 import React, { memo, useMemo } from 'react';
-import { BlockchainType, EthCandyShop } from '../../core/sdk/.';
+import { EthCandyShop } from '../../core/sdk/.';
 import { Orders, Stat, Sell, Activity, EthWallet } from '../../core/ui/.';
 import { EthConnectButton } from './components/EthConnectButton';
 import { useEthConnection } from './components/EthConnectionProvider';
@@ -19,7 +19,6 @@ export const EthMarketplaceExample: React.FC<EthMarketplaceExampleProps> = ({ ca
     <div style={{ paddingBottom: 50, textAlign: 'center' }}>
       <Stat
         candyShop={candyShop}
-        blockchain={BlockchainType.Ethereum}
         title={'Marketplace'}
         description={
           'Candy Shop is an open source on-chain protocol that empowers DAOs, NFT projects and anyone interested in creating an NFT marketplace to do so within minutes!'
@@ -28,7 +27,6 @@ export const EthMarketplaceExample: React.FC<EthMarketplaceExampleProps> = ({ ca
 
       <div style={{ padding: '15px' }} />
       <Orders
-        blockchain={BlockchainType.Ethereum}
         candyShop={candyShop}
         wallet={ethWallet}
         walletConnectComponent={<EthConnectButton />}
@@ -38,15 +36,10 @@ export const EthMarketplaceExample: React.FC<EthMarketplaceExampleProps> = ({ ca
       />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Sell</h1>
-      <Sell
-        wallet={ethWallet}
-        candyShop={candyShop}
-        walletConnectComponent={<EthConnectButton />}
-        blockchain={BlockchainType.Ethereum}
-      />
+      <Sell wallet={ethWallet} candyShop={candyShop} walletConnectComponent={<EthConnectButton />} />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', margin: '80px 0 30px' }}>Activity</h1>
-      <Activity candyShop={candyShop} blockchain={BlockchainType.Ethereum} />
+      <Activity candyShop={candyShop} />
     </div>
   );
 };

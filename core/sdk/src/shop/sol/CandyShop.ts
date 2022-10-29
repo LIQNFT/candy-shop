@@ -74,7 +74,7 @@ import {
 } from '../../vendor';
 import { configBaseUrl } from '../../vendor/config';
 import { supply } from '../../vendor/shipping';
-import { BlockchainType, CandyShopVersion, ExplorerLinkBase, ShopSettings } from '../base/BaseShopModel';
+import { CandyShopVersion, ExplorerLinkBase, ShopSettings } from '../base/BaseShopModel';
 
 const Logger = 'CandyShop';
 
@@ -102,7 +102,6 @@ export class CandyShop extends BaseShop {
   private _isEnterprise: boolean;
   private _version: CandyShopVersion;
   private _program: Program | undefined;
-  private _blockchainType: BlockchainType;
 
   get currencyDecimals(): number {
     return this._settings.currencyDecimals;
@@ -110,10 +109,6 @@ export class CandyShop extends BaseShop {
 
   get settings(): Partial<ShopSettings> {
     return this._settings;
-  }
-
-  get blockchain(): BlockchainType {
-    return this._blockchainType;
   }
 
   get env(): Blockchain {
@@ -177,6 +172,21 @@ export class CandyShop extends BaseShop {
   }
 
   /**
+   * Get JSON rpc connection
+   */
+  get connection(): web3.Connection {
+    const options = Provider.defaultOptions();
+    if (this._env === 'devnet') {
+      return new web3.Connection(web3.clusterApiUrl('devnet'));
+    }
+
+    return new web3.Connection(
+      this._settings.mainnetConnectionUrl,
+      this._settings.connectionConfig || options.commitment
+    );
+  }
+
+  /**
    * Instantiate a CandyShop object
    *
    * @constructor
@@ -212,7 +222,6 @@ export class CandyShop extends BaseShop {
       explorerLink: settings?.explorerLink ?? ExplorerLinkBase.SolanaFM
     };
     this._baseUnitsPerCurrency = Math.pow(10, this._settings.currencyDecimals);
-    this._blockchainType = BlockchainType.Solana;
     console.log('CandyShop constructor: init CandyShop=', this);
     const url = this._env === Blockchain.SolMainnetBeta ? SOL_BACKEND_PROD_URL : SOL_BACKEND_STAGING_URL;
 
@@ -230,20 +239,6 @@ export class CandyShop extends BaseShop {
     }
   }
 
-  /**
-   * Get JSON rpc connection
-   */
-  get connection(): web3.Connection {
-    const options = Provider.defaultOptions();
-    if (this._env === 'devnet') {
-      return new web3.Connection(web3.clusterApiUrl('devnet'));
-    }
-
-    return new web3.Connection(
-      this._settings.mainnetConnectionUrl,
-      this._settings.connectionConfig || options.commitment
-    );
-  }
   /**
    * Gets anchor Program object for Candy Shop program
    *

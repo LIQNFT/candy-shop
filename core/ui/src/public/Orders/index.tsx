@@ -52,7 +52,6 @@ export const Orders: React.FC<OrdersProps> = ({
   sellerUrl,
   search,
   filterSearch,
-  blockchain,
   candyShop,
   wallet
 }) => {
@@ -219,7 +218,6 @@ export const Orders: React.FC<OrdersProps> = ({
       hasNextPage={hasNextPage}
       loadNextPage={loadNextPage(startIndex)}
       sellerUrl={sellerUrl}
-      blockchain={blockchain}
       candyShop={candyShop}
       wallet={wallet}
     />

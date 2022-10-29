@@ -24,8 +24,8 @@ export enum CandyShopVersion {
  * Blockchains that CandyShop supports
  */
 export enum BlockchainType {
-  Ethereum = 'Ethereum',
-  Solana = 'Solana'
+  EVM = 'EVM',
+  SOL = 'SOL'
 }
 
 /**
