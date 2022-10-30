@@ -8,7 +8,7 @@ import { AssetType } from './types/asset.type';
 import { AssetInstanceInterface } from './types/order.type';
 import { SeaportHelper } from './seaport';
 
-const DEFAULT_GAS_LIMIT = BigNumber.from(1000000);
+export const DEFAULT_GAS_LIMIT = BigNumber.from(500000);
 
 declare global {
   interface Window {

@@ -4,7 +4,7 @@ import { ConsiderationItem, OfferItem, OrderComponents, OrderParameters } from '
 import { BigNumber, ethers, TypedDataDomain } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
 import { ApiCaller, RequestMethod } from './api';
-import BlockchainService from './blockchain';
+import BlockchainService, { DEFAULT_GAS_LIMIT } from './blockchain';
 import { AssetType } from './types/asset.type';
 import { AssetInstanceInterface, CreateOrderInterface, OrderResponse } from './types/order.type';
 import { ShopResponse, SplitReceiver } from './types/shop.type';
@@ -91,7 +91,10 @@ export class EthereumSDK {
     const orderStruct = { parameters: orderParams, signature: order.signature };
     const txData = await BlockchainService.getFulfillOrderTxData(orderStruct, seaport);
     const contractWithSigner = seaport.contract.connect(signer);
-    const gasLimit = await contractWithSigner.estimateGas.fulfillOrder(orderStruct, NO_CONDUIT);
+    const gasLimit = await contractWithSigner.estimateGas.fulfillOrder(orderStruct, NO_CONDUIT).catch((err: Error) => {
+      console.log(`${Logger}: fulfillOrder, failed to estimate gas fee, error ${err.message}`);
+      return DEFAULT_GAS_LIMIT;
+    });
     const { transactionHash } = await BlockchainService.executeTransaction(contractWithSigner, txData, gasLimit);
     return transactionHash;
   }
