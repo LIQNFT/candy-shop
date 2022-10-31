@@ -11,8 +11,6 @@ import {
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
 
-const DEFAULT_BLOCKCHAIN = Blockchain.Sol;
-
 export async function fetchOrdersByStoreId(
   axiosInstance: AxiosInstance,
   storeId: string,
@@ -29,9 +27,17 @@ export async function fetchOrdersByStoreId(
     collectionId,
     nftName,
     masterEdition,
-    collectionKey,
-    blockchain = DEFAULT_BLOCKCHAIN
+    collectionKey
   } = ordersFilterQuery;
+
+  let blockchain = ordersFilterQuery.blockchain;
+  if (
+    ordersFilterQuery.blockchain === Blockchain.SolDevnet ||
+    ordersFilterQuery.blockchain === Blockchain.SolMainnetBeta
+  ) {
+    blockchain = Blockchain.Sol;
+  }
+
   let queryParams: any = { offset, limit, blockchain };
 
   if (sortBy) {
