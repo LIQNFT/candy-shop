@@ -77,7 +77,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       })
       .catch((err: Error) => {
         console.log(`${Logger} buyNft failed, error=`, err);
-        err.message = (err as any).code || err.message;
+        err.message = (err as any).error?.data?.message || (err as any).code || err.message;
         handleError({ error: err });
         setState(BuyModalState.DISPLAY);
       });
