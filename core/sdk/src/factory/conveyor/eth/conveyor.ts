@@ -91,9 +91,15 @@ export class EthereumSDK {
     const orderStruct = { parameters: orderParams, signature: order.signature };
     const txData = await BlockchainService.getFulfillOrderTxData(orderStruct, seaport);
     const contractWithSigner = seaport.contract.connect(signer);
-    const gasLimit = await contractWithSigner.estimateGas.fulfillOrder(orderStruct, NO_CONDUIT).catch((err: Error) => {
-      console.log(`${Logger}: fulfillOrder, failed to estimate gas fee, error ${err.message}`);
-      return DEFAULT_GAS_LIMIT;
+    const gasLimit = await contractWithSigner.estimateGas.fulfillOrder(orderStruct, NO_CONDUIT).catch((err) => {
+      console.log(`${Logger}: error`);
+      console.log({ err });
+      // ref: https://github.com/ethers-io/ethers.js/blob/master/packages/providers/src.ts/json-rpc-provider.ts#L124
+      const DEFAULT_GAS_LIMIT_MSG = 'execution reverted';
+      if (err.error.data.message === DEFAULT_GAS_LIMIT_MSG) {
+        return DEFAULT_GAS_LIMIT;
+      }
+      throw err;
     });
     const { transactionHash } = await BlockchainService.executeTransaction(contractWithSigner, txData, gasLimit);
     return transactionHash;
