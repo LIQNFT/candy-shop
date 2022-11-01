@@ -1,8 +1,7 @@
 import { BaseShop } from '../base/BaseShop';
 import { CandyShopVersion, ExplorerLinkBase, ShopSettings } from '../base/BaseShopModel';
-import { AssetType, EthereumSDK } from '../../factory/conveyor/eth/conveyor';
-import { constants, ethers } from 'ethers';
-import { CreateOrderInterface, OrderInterface } from '../../factory/conveyor/eth/types/order.type';
+import { EthereumSDK } from '../../factory/conveyor/eth/conveyor';
+import { ethers } from 'ethers';
 import { configBaseUrl, safeAwait, SingleTokenInfo } from '../../vendor';
 import { ApiCaller } from '../../factory/conveyor/eth/api';
 import {
@@ -20,11 +19,14 @@ import {
   WhitelistNft
 } from '@liqnft/candy-shop-types';
 import { SeaportHelper } from '../../factory/conveyor/eth/seaport';
-import { fetchShopsByOwnerAddress, fetchShopByShopAddress, fetchShopsByIdentifier } from '../../CandyShopInfoAPI';
+import { fetchShopsByIdentifier } from '../../CandyShopInfoAPI';
 import Decimal from 'decimal.js';
 import { Program, Idl } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { PublicKey, Keypair } from '@solana/web3.js';
+import { ItemType } from '@opensea/seaport-js/lib/constants';
+import { CreateInputItem } from '@opensea/seaport-js/lib/types';
+import { SeaportOrderData } from '../../factory/conveyor/eth/types/order.type';
 
 interface CandyShopConstructorParams {
   candyShopCreatorAddress: string;
@@ -43,6 +45,8 @@ const DEFAULT_VOLUME_DECIMALS_MIN = 0;
 const DEFAULT_MAINNET_CONNECTION_URL = ''; // TODO
 const ETH_BACKEND_STAGING_URL = 'https://ckaho.liqnft.com/api/eth';
 const ETH_BACKEND_PROD_URL = 'https://candy-shop.liqnft.com/api/eth';
+
+const Logger = 'EthCandyShop';
 
 /**
  * @class EthCandyShop
@@ -175,42 +179,47 @@ export class EthCandyShop extends BaseShop {
     const shopResult = await this.ethereumSDK.getShopByUuid(this.candyShopAddress);
     const shop = shopResult.result;
 
+    const offerer = await wallet.getAddress();
     const priceValue = new Decimal(`${price}e${this.currencyDecimals}`).toString();
-    const offerNftAssets = [
+    const consideration = this.ethereumSDK.getConsiderationFromOrder(
+      offerer,
+      { address: shop.paymentAssets[0].address, type: shop.paymentAssets[0].type, value: priceValue },
+      shop
+    );
+
+    const offer: CreateInputItem[] = [
       {
-        tokenId: nft.tokenAccountAddress,
-        address: nft.tokenMintAddress.split(':')[0],
-        type: AssetType.ERC721,
-        // hardcode to 1 for now, as only supports ERC721
-        value: `1`
+        identifier: nft.tokenAccountAddress,
+        itemType: ItemType.ERC721,
+        token: nft.tokenMintAddress.split(':')[0]
       }
     ];
 
-    const order: OrderInterface = {
-      offererAddress: await wallet.getAddress(),
-      offerNftAssets,
-      considerationAssets: shop.paymentAssets.map((item) => ({ ...item, value: priceValue })),
-      shopUuid: this.candyShopAddress,
-      networkUuid: shop.paymentAssets[0].networkUuid,
-      createdAt: Date.now()
-    };
+    const { executeAllActions } = await seaport
+      .createOrder(
+        {
+          offer,
+          consideration
+        },
+        offerer
+      )
+      .catch((err: Error) => {
+        console.log(`${Logger}, failed to createOrder, err=${err.message}`);
+        throw err;
+      });
 
-    let data: CreateOrderInterface = {
-      ...order,
-      additional: {
-        seaportCounter: await seaport.getCounter(order.offererAddress),
-        seaportSalt: constants.HashZero,
-        seaportZoneAddress: constants.AddressZero
-      }
-    };
+    const orderRes = await executeAllActions().catch((err: Error) => {
+      console.log(`${Logger}, failed to executeAllActions, err=${err.message}`);
+      console.log(err);
+      throw err;
+    });
 
-    const orderParams = this.ethereumSDK.toOrderParameters(data, shop);
-    const approved = await this.ethereumSDK.checkOfferAllowance(wallet, data.offerNftAssets[0]);
-    if (!approved) {
-      await this.ethereumSDK.makeOfferAllowance(wallet, data.offerNftAssets[0]);
-    }
-    const signature = await this.ethereumSDK.signOrder(orderParams, wallet);
-    data = { ...data, ...{ signature: signature } };
+    const { signature, parameters } = orderRes;
+    const data = {
+      signature,
+      orderData: this.ethereumSDK.convertToSeaportOrderData(parameters),
+      shopUuid: shop.uuid
+    };
     const orderResult = await this.ethereumSDK.createOrder(data);
     return orderResult.uuid;
   }
@@ -288,7 +297,6 @@ export class EthCandyShop extends BaseShop {
   }
 }
 
-const Logger = 'EthCandyShop';
 export async function getEthCandyShop(params: CandyShopConstructorParams): Promise<EthCandyShop | undefined> {
   const isProduction =
     params.env === Blockchain.SolMainnetBeta || params.env === Blockchain.Eth || params.env === Blockchain.Polygon;
