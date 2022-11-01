@@ -1,6 +1,7 @@
 import { ListBase, Drop, DropQuery, DropActivityQuery, DropActivity } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
+import { getParametrizeQuery } from './utils';
 
 const Logger = 'CandyShopSDK/DropAPI';
 
@@ -24,7 +25,7 @@ export async function fetchDropsByStoreId(
   }
 
   queryString = qs.stringify(queryObj, { indices: false });
-  const url = `/drop/${storeId}?${queryString}`;
+  const url = `/drop/${storeId}`.concat(getParametrizeQuery(queryString));
 
   console.log(`${Logger}: fetching Drops By ShopId=${storeId}, query=${queryString}`);
   return axiosInstance.get<ListBase<Drop>>(url).then((response) => response.data);
@@ -33,6 +34,6 @@ export async function fetchDropsByStoreId(
 export async function fetchDropActivities(axiosInstance: AxiosInstance, dropActivityQuery: DropActivityQuery) {
   const { walletAddress, offset = 0, limit = 10 } = dropActivityQuery;
   const queryString = qs.stringify({ walletAddress, offset, limit });
-  const url = `/drop/activity?${queryString}`;
+  const url = `/drop/activity`.concat(getParametrizeQuery(queryString));
   return axiosInstance.get<ListBase<DropActivity>>(url).then((response) => response.data);
 }

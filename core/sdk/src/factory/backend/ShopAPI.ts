@@ -12,6 +12,7 @@ import {
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
 import { FETCH_LIST_LIMIT } from '../constants';
+import { getParametrizeQuery } from './utils';
 
 const Logger = 'CandyShopSDK/ShopAPI';
 
@@ -34,7 +35,7 @@ export async function fetchShopByOwnerAddress(
   ownerAddress: string
 ): Promise<ListBase<CandyShop>> {
   const url = `/shop/${ownerAddress}`;
-  return axiosInstance.get(url).then((response) => response.data);
+  return axiosInstance.get<ListBase<CandyShop>>(url).then((response) => response.data);
 }
 
 export async function fetchShopByIdentifier(
@@ -44,7 +45,7 @@ export async function fetchShopByIdentifier(
   programId: string
 ): Promise<SingleBase<CandyShop>> {
   const url = `/shop/owner/${ownerAddress}/mint/${mint}/programId/${programId}`;
-  return axiosInstance.get(url).then((response) => response.data);
+  return axiosInstance.get<SingleBase<CandyShop>>(url).then((response) => response.data);
 }
 
 export async function fetchShop(axiosInstance: AxiosInstance, shopQuery?: ShopQuery): Promise<ListBase<CandyShop>> {
@@ -59,7 +60,7 @@ export async function fetchShop(axiosInstance: AxiosInstance, shopQuery?: ShopQu
   }
 
   const queryString = qs.stringify(queryObject);
-  const url = `/shop?${queryString}`;
+  const url = `/shop`.concat(getParametrizeQuery(queryString));
   return axiosInstance.get<ListBase<CandyShop>>(url).then((res) => res.data);
 }
 
@@ -70,7 +71,7 @@ export async function fetchShopStatusByShopId(
 ): Promise<SingleBase<ShopStatus[]>> {
   const { targets, walletAddress } = query;
   const queryString = qs.stringify({ walletAddress, targets }, { indices: false });
-  const url = `/status/${shopId}?${queryString}`;
+  const url = `/status/${shopId}`.concat(getParametrizeQuery(queryString));
   return axiosInstance.get<SingleBase<ShopStatus[]>>(url).then((res) => res.data);
 }
 
@@ -88,9 +89,8 @@ export async function fetchCollection(
     queryObject.name = name;
   }
   const queryString = qs.stringify(queryObject);
-  return await axiosInstance
-    .get<ListBase<NftCollection>>(`/nftCollection?${queryString}`)
-    .then((response) => response.data);
+  const url = `/nftCollection`.concat(getParametrizeQuery(queryString));
+  return await axiosInstance.get<ListBase<NftCollection>>(url).then((response) => response.data);
 }
 
 export async function fetchCollectionByShopId(
@@ -106,9 +106,7 @@ export async function fetchCollectionByShopId(
     queryObject.name = name;
   }
   const queryString = qs.stringify(queryObject);
-
+  const url = `/nftCollection/${shopId}`.concat(getParametrizeQuery(queryString));
   console.log(`${Logger}: fetching NFT Collection by ShopId`, collectionQuery);
-  return await axiosInstance
-    .get<ListBase<NftCollection>>(`/nftCollection/${shopId}?${queryString}`)
-    .then((response) => response.data);
+  return await axiosInstance.get<ListBase<NftCollection>>(url).then((response) => response.data);
 }
