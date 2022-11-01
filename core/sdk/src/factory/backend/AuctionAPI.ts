@@ -1,6 +1,7 @@
 import { SingleBase, ListBase, Auction, AuctionBid, AuctionQuery, AuctionBidQuery } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
+import { getParametrizeQuery } from './utils';
 
 const Logger = 'CandyShopSDK/AuctionAPI';
 
@@ -23,7 +24,7 @@ export function fetchAuctionsByShop(
     queryObj = { ...queryObj, walletAddress };
   }
   const queryString = qs.stringify(queryObj, { indices: false });
-  const url = `/auction/${shopId}?${queryString}`;
+  const url = `/auction/${shopId}`.concat(getParametrizeQuery(queryString));
   return axiosInstance.get<ListBase<Auction>>(url).then((response) => response.data);
 }
 
@@ -34,13 +35,13 @@ export function fetchAuctionBid(
 ): Promise<SingleBase<AuctionBid>> {
   console.log(`${Logger}: fetching Auction bid by auctionAddress=${auctionAddress}, walletAddress=${walletAddress}`);
   const url = `/auction/${auctionAddress}/wallet/${walletAddress}`;
-  return axiosInstance.get(url).then((res) => res.data);
+  return axiosInstance.get<SingleBase<AuctionBid>>(url).then((res) => res.data);
 }
 
 export function fetchAuction(axiosInstance: AxiosInstance, auctionAddress: string): Promise<SingleBase<Auction>> {
   console.log(`${Logger}: fetching Auction detail, auctionAddress=${auctionAddress}`);
   const url = `/auction/${auctionAddress}`;
-  return axiosInstance.get(url).then((res) => res.data);
+  return axiosInstance.get<SingleBase<Auction>>(url).then((res) => res.data);
 }
 
 export function fetchAuctionHistoryByAddress(
@@ -58,6 +59,6 @@ export function fetchAuctionHistoryByAddress(
     }
   }
   console.log(`${Logger}: fetching Auction bid history by auctionAddress=`, auctionAddress, `query=`, queryString);
-  const url = `/auction/history/${auctionAddress}?${queryString}`;
-  return axiosInstance.get(url).then((res) => res.data);
+  const url = `/auction/history/${auctionAddress}`.concat(getParametrizeQuery(queryString));
+  return axiosInstance.get<ListBase<AuctionBid>>(url).then((res) => res.data);
 }

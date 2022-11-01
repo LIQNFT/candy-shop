@@ -1,13 +1,13 @@
 import { ListBase, Trade, TradeQuery } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
+import { getParametrizeQuery } from './utils';
 
 export async function fetchTradeById(
   axiosInstance: AxiosInstance,
   storeId: string,
   queryDto?: TradeQuery
 ): Promise<ListBase<Trade>> {
-  let queryString: string = '';
   const { offset, limit = 10, identifiers, sortBy } = queryDto || {};
   let queryObj: any = {};
 
@@ -24,7 +24,8 @@ export async function fetchTradeById(
     queryObj.orderByArr = sortByArr.map((item) => JSON.stringify(item));
   }
 
-  queryString = qs.stringify(queryObj, { indices: false });
+  const queryString = qs.stringify(queryObj, { indices: false });
+  const url = `/trade/${storeId}`.concat(getParametrizeQuery(queryString));
 
-  return axiosInstance.get<ListBase<Trade>>(`/trade/${storeId}?${queryString}`).then((response) => response.data);
+  return axiosInstance.get<ListBase<Trade>>(url).then((response) => response.data);
 }

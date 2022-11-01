@@ -10,6 +10,7 @@ import {
 } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
+import { getParametrizeQuery } from './utils';
 
 export async function fetchOrdersByStoreId(
   axiosInstance: AxiosInstance,
@@ -78,7 +79,8 @@ export async function fetchOrdersByStoreId(
   }
 
   console.log(`CandyShop: fetching orders from ${storeId}`, { query: ordersFilterQuery });
-  const url = `/order/${storeId}?${qs.stringify(queryParams, { indices: false })}`;
+  const queryString = qs.stringify(queryParams, { indices: false });
+  const url = `/order/${storeId}`.concat(getParametrizeQuery(queryString));
   return axiosInstance.get<ListBase<Order>>(url).then((response) => response.data);
 }
 
@@ -126,7 +128,8 @@ export async function fetchOrdersByStoreIdAndWalletAddress(
         walletAddress
       })
     };
-    const url = `/order/${storeId}?${qs.stringify(queryParams, { indices: false })}`;
+    const queryString = qs.stringify(queryParams, { indices: false });
+    const url = `/order/${storeId}`.concat(getParametrizeQuery(queryString));
     const page: Order[] = await axiosInstance.get<ListBase<Order>>(url).then((response) => response.data?.result);
     resCount = page.length;
     offset = offset + limit;
