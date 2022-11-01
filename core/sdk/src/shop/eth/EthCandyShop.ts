@@ -199,7 +199,7 @@ export class EthCandyShop extends BaseShop {
       ...order,
       additional: {
         seaportCounter: await seaport.getCounter(order.offererAddress),
-        seaportSalt: constants.HashZero,
+        seaportSalt: SeaportHelper.generateRandomSalt(),
         seaportZoneAddress: constants.AddressZero
       }
     };
