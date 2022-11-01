@@ -20,7 +20,7 @@ import {
   WhitelistNft
 } from '@liqnft/candy-shop-types';
 import { SeaportHelper } from '../../factory/conveyor/eth/seaport';
-import { fetchShopsByOwnerAddress, fetchShopByShopAddress, fetchShopsByIdentifier } from '../../CandyShopInfoAPI';
+import { fetchShopsByIdentifier } from '../../CandyShopInfoAPI';
 import Decimal from 'decimal.js';
 import { Program, Idl } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';

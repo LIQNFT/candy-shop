@@ -2,7 +2,6 @@ import { Seaport } from '@opensea/seaport-js';
 import { ERC1155ABI } from '@opensea/seaport-js/lib/abi/ERC1155';
 import { ERC20ABI } from '@opensea/seaport-js/lib/abi/ERC20';
 import { ERC721ABI } from '@opensea/seaport-js/lib/abi/ERC721';
-import { OrderComponents, OrderParameters } from '@opensea/seaport-js/lib/types';
 import { BigNumber, BigNumberish, BytesLike, ethers } from 'ethers';
 import { AssetType } from './types/asset.type';
 import { AssetInstanceInterface } from './types/order.type';
@@ -55,15 +54,6 @@ export default class BlockchainService {
     }
   }
 
-  static async getCancelOrderTxData(order: OrderComponents[], seaport: Seaport) {
-    return {
-      contractAddress: seaport.contract.address,
-      domain: await SeaportHelper.getDomainData(seaport),
-      functionName: 'cancel',
-      params: [order]
-    };
-  }
-
   static getConsiderationAllowanceTxData(assetAddress: string, seaportAddress: string, paymentValue: string) {
     return {
       contractAddress: assetAddress,
@@ -83,21 +73,6 @@ export default class BlockchainService {
       contractAddress: assetAddress,
       functionName: 'setApprovalForAll',
       params: [seaportAddress, approved]
-    };
-  }
-
-  static async getFulfillOrderTxData(order: { parameters: OrderParameters; signature: string }, seaport: Seaport) {
-    return {
-      contractAddress: seaport.contract.address,
-      domain: await SeaportHelper.getDomainData(seaport),
-      functionName: 'fulfillOrder',
-      params: [
-        {
-          parameters: order.parameters,
-          signature: order.signature
-        },
-        order.parameters.conduitKey
-      ]
     };
   }
 

@@ -62,13 +62,12 @@ export class EthereumSDK {
    */
   async cancelOrder(signer: ethers.providers.JsonRpcSigner, uuid: string): Promise<string> {
     const seaport = SeaportHelper.getSeaport(signer);
+    const accountAddress = await signer.getAddress();
+
     const order = await this.getOrderByUuid(uuid);
-    const orderComponents = [JSON.parse(order.rawOrderParams)];
-    const txData = await BlockchainService.getCancelOrderTxData(orderComponents, seaport);
-    const contractWithSigner = seaport.contract.connect(signer);
-    const gasLimit = await contractWithSigner.estimateGas.cancel(orderComponents);
-    const { transactionHash } = await BlockchainService.executeTransaction(contractWithSigner, txData, gasLimit);
-    return transactionHash;
+    const orders = [JSON.parse(order.rawOrderParams)];
+    const tx = await seaport.cancelOrders(orders, accountAddress).transact();
+    return tx.hash;
   }
 
   /**
@@ -80,29 +79,15 @@ export class EthereumSDK {
   async fulfillOrder(signer: ethers.providers.JsonRpcSigner, uuid: string): Promise<string> {
     const seaport = SeaportHelper.getSeaport(signer);
     const order = await this.getOrderByUuid(uuid);
-    await this.checkPaymentAccountBalance(signer, order.considerations[0]);
-    const approved = await this.checkPaymentAllowance(signer, order.considerations[0]);
-    console.log(`${Logger}: fulfillOrder, payment approved ${approved}`);
-    if (!approved) {
-      await this.makeConsiderationAllowance(signer, order.considerations[0]);
-    }
+    const accountAddress = await signer.getAddress();
     const orderComponents: OrderComponents = JSON.parse(order.rawOrderParams);
-    const orderParams = { ...orderComponents, totalOriginalConsiderationItems: orderComponents.consideration.length };
-    const orderStruct = { parameters: orderParams, signature: order.signature };
-    const txData = await BlockchainService.getFulfillOrderTxData(orderStruct, seaport);
-    const contractWithSigner = seaport.contract.connect(signer);
-    const gasLimit = await contractWithSigner.estimateGas.fulfillOrder(orderStruct, NO_CONDUIT).catch((err) => {
-      console.log(`${Logger}: error`);
-      console.log({ err });
-      // ref: https://github.com/ethers-io/ethers.js/blob/master/packages/providers/src.ts/json-rpc-provider.ts#L124
-      const DEFAULT_GAS_LIMIT_MSG = 'execution reverted';
-      if (err.error.data.message === DEFAULT_GAS_LIMIT_MSG) {
-        return DEFAULT_GAS_LIMIT;
-      }
-      throw err;
+    const { executeAllActions } = await seaport.fulfillOrder({
+      order: { parameters: orderComponents, signature: order.signature },
+      accountAddress
     });
-    const { transactionHash } = await BlockchainService.executeTransaction(contractWithSigner, txData, gasLimit);
-    return transactionHash;
+    const execution = await executeAllActions();
+    const receipt = await execution.wait();
+    return receipt.transactionHash;
   }
 
   /**
@@ -115,44 +100,6 @@ export class EthereumSDK {
     const contract = BlockchainService.getNftContract(asset, signer);
     const account = await signer.getAddress();
     return contract.isApprovedForAll(account, seaport.contract.address);
-  }
-
-  /**
-   * Check if the buying wallet has enough token balance.
-   * @param signer
-   * @param asset
-   */
-  async checkPaymentAccountBalance(
-    signer: ethers.providers.JsonRpcSigner,
-    asset: AssetInstanceInterface
-  ): Promise<void> {
-    const contract = BlockchainService.getPaymentContract(asset, signer);
-    const price = BigNumber.from(asset.value!);
-    const account = await signer.getAddress();
-    const balance = (await contract.balanceOf(account)) as BigNumber;
-    console.log(`${Logger}: checkPaymentAccountBalance, balance: ${balance.toString()}`);
-    if (balance.lt(price)) {
-      throw new Error('Not enough balance');
-    }
-  }
-
-  /**
-   * Check if the buying wallet has enough token approved.
-   * @param signer
-   * @param asset
-   * @returns
-   */
-  async checkPaymentAllowance(signer: ethers.providers.JsonRpcSigner, asset: AssetInstanceInterface): Promise<boolean> {
-    const seaport = SeaportHelper.getSeaport(signer);
-    const contract = BlockchainService.getPaymentContract(asset, signer);
-    const price = BigNumber.from(asset.value!);
-    const account = await signer.getAddress();
-    const allowance = (await contract.allowance(account, seaport.contract.address)) as BigNumber;
-    console.log(`${Logger}: checkPaymentAllowance, allowance: ${allowance.toString()}`);
-    if (allowance.lt(price)) {
-      return false;
-    }
-    return true;
   }
 
   private convertItemType = (type: AssetType): ItemType => {
