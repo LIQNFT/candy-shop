@@ -42,7 +42,7 @@ const DEFAULT_VOLUME_DECIMALS = 1;
 const DEFAULT_VOLUME_DECIMALS_MIN = 0;
 const DEFAULT_MAINNET_CONNECTION_URL = ''; // TODO
 const ETH_BACKEND_STAGING_URL = 'https://ckaho.liqnft.com/api/eth';
-const ETH_BACKEND_PROD_URL = 'https://candy.liqnft.com/api/eth';
+const ETH_BACKEND_PROD_URL = 'https://candy-shop.liqnft.com/api/eth';
 
 /**
  * @class EthCandyShop
