@@ -107,20 +107,19 @@ export abstract class CandyShopDrop {
       editionBuyer,
       auctionHouse,
       candyShopProgram,
-      treasuryMint
+      treasuryMint,
+      mintEditionNumber,
+      instructions,
+      newEditionMint,
+      newEditionTokenAccount
     } = params;
 
     const [vaultAccount] = await getEditionVaultAccount(candyShop, nftOwnerTokenAccount);
 
-    const editionNumber = await generateEditionNumber(vaultAccount, connection);
+    const editionNumber = mintEditionNumber ? mintEditionNumber : await generateEditionNumber(vaultAccount, connection);
     console.log('editionNumber ', editionNumber.toString());
 
     const program = this.getProgram(connection, editionBuyer);
-
-    const { instructions, newEditionMint, newEditionTokenAccount } = await createNewMintInstructions(
-      editionBuyer.publicKey,
-      connection
-    );
 
     const mintPrintParams: MintPrintParams = {
       candyShop,
@@ -168,7 +167,7 @@ interface NewToken {
   newEditionTokenAccount: PublicKey;
 }
 
-async function createNewMintInstructions(payer: PublicKey, connection: Connection): Promise<NewToken> {
+export async function createNewMintInstructions(payer: PublicKey, connection: Connection): Promise<NewToken> {
   const newMint = web3.Keypair.generate();
   const instructions: TransactionInstruction[] = [];
   const userTokenAccountAddress = (await getAtaForMint(newMint.publicKey, payer))[0];
@@ -187,7 +186,7 @@ async function createNewMintInstructions(payer: PublicKey, connection: Connectio
   return { instructions, newEditionMint: newMint, newEditionTokenAccount: userTokenAccountAddress };
 }
 
-async function generateEditionNumber(vaultAccount: PublicKey, connection: Connection): Promise<number> {
+export async function getAvailableEditionNumbers(vaultAccount: PublicKey, connection: Connection): Promise<string[]> {
   const vaultAccountInfoResult = await safeAwait(connection.getAccountInfo(vaultAccount));
   if (vaultAccountInfoResult.error) {
     throw new CandyShopError(CandyShopErrorType.AuctionDoesNotExist);
@@ -206,6 +205,11 @@ async function generateEditionNumber(vaultAccount: PublicKey, connection: Connec
   }
   editionArray = editionArray.slice(0, vaultMaxSupply);
   editionArray = editionArray.map((v, i) => (v === '1' ? '-1' : String(i + 1))).filter((i) => i !== '-1');
+  return editionArray;
+}
+
+async function generateEditionNumber(vaultAccount: PublicKey, connection: Connection): Promise<number> {
+  let editionArray: Array<string> = await getAvailableEditionNumbers(vaultAccount, connection);
   const edition = Number(editionArray[Math.floor(Math.random() * editionArray.length)]);
   return edition;
 }
