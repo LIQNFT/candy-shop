@@ -72,6 +72,7 @@ export interface DropQuery extends CommonQuery {
   creator?: string;
   nftMint?: string;
   nftName?: string;
+  collectionKey?: string;
   attributes?: NftAttributeQuery[];
   sortBy?: SortBy[] | SortBy;
 }
