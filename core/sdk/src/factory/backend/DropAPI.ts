@@ -11,8 +11,18 @@ export async function fetchDropsByStoreId(
   queryDto?: DropQuery
 ): Promise<ListBase<Drop>> {
   let queryString: string = '';
-  const { offset = 0, limit = 10, status, creator, nftMint, attributes, nftName, sortBy } = queryDto || {};
-  let queryObj: any = { offset, limit, creator, nftMint, nftName };
+  const {
+    offset = 0,
+    limit = 10,
+    status,
+    creator,
+    nftMint,
+    attributes,
+    nftName,
+    collectionKey,
+    sortBy
+  } = queryDto || {};
+  let queryObj: any = { offset, limit, creator, nftMint, nftName, collectionKey };
   if (status !== undefined) {
     queryObj.status = status;
   }
