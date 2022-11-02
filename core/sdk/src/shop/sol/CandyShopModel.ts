@@ -222,6 +222,7 @@ export interface CandyShopCommitNftParams extends CandyShopEditionDropParams {
 
 export interface CandyShopMintPrintParams extends CandyShopEditionDropParams {
   editionBuyer: AnchorWallet | web3.Keypair;
+  mintEditionNumber?: string;
 }
 
 export interface CandyShopRedeemParams extends CandyShopEditionDropParams {
@@ -240,6 +241,9 @@ export interface EditionDropCommitNftParams extends EditionDropParams, CandyShop
 export interface EditionDropMintPrintParams extends EditionDropParams, CandyShopMintPrintParams {
   auctionHouse: web3.PublicKey;
   treasuryMint: web3.PublicKey;
+  instructions: web3.TransactionInstruction[];
+  newEditionMint: web3.Keypair;
+  newEditionTokenAccount: web3.PublicKey;
 }
 
 export interface EditionDropRedeemParams extends EditionDropParams, CandyShopRedeemParams {}

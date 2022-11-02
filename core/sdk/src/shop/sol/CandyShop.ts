@@ -16,7 +16,7 @@ import {
 import { Idl, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CandyShopCommitNftParams, CandyShopMintPrintParams } from './CandyShopModel';
-import { CandyShopDrop } from '../../CandyShopDrop';
+import { CandyShopDrop, createNewMintInstructions } from '../../CandyShopDrop';
 import {
   fetchNFTByMintAddress,
   fetchOrderByShopAndMintAddress,
@@ -673,7 +673,7 @@ export class CandyShop extends BaseShop {
    * @param {CandyShopMintPrintParams} params required parameters for mint print action
    */
   public async mintNewPrint(params: CandyShopMintPrintParams) {
-    const { nftOwnerTokenAccount, masterMint, whitelistMint, editionBuyer } = params;
+    const { nftOwnerTokenAccount, masterMint, whitelistMint, editionBuyer, mintEditionNumber } = params;
 
     if (this._version !== CandyShopVersion.V2) {
       throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
@@ -692,6 +692,12 @@ export class CandyShop extends BaseShop {
       this._programId
     );
     const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
+
+    const { instructions, newEditionMint, newEditionTokenAccount } = await createNewMintInstructions(
+      editionBuyer.publicKey,
+      this.connection
+    );
+
     const txHash = await CandyShopDrop.mintPrint({
       candyShop: this._candyShopAddress,
       nftOwnerTokenAccount,
@@ -702,7 +708,11 @@ export class CandyShop extends BaseShop {
       isEnterprise: this._isEnterprise,
       connection: this.connection,
       candyShopProgram: this.getStaticProgram(editionBuyer),
-      treasuryMint: this._treasuryMint
+      treasuryMint: this._treasuryMint,
+      mintEditionNumber,
+      instructions,
+      newEditionMint,
+      newEditionTokenAccount
     });
 
     return txHash;

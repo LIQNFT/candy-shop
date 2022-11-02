@@ -1,5 +1,8 @@
 import { CandyShop, CandyShopError, CandyShopErrorType } from '../../sdk/src';
+import { getAvailableEditionNumbers, createNewMintInstructions, CandyShopDrop } from '../../sdk/src/CandyShopDrop';
+import { getEditionVaultAccount, getAuctionHouse, getAuctionHouseAuthority } from '../../sdk/src/vendor';
 import * as anchor from '@project-serum/anchor';
+import { BN } from '@project-serum/anchor';
 import { getAccount } from '@solana/spl-token';
 import { PublicKey } from '@solana/web3.js';
 import { Command } from 'commander';
@@ -11,7 +14,7 @@ import {
   findAssociatedTokenAddress,
   isEnterprise
 } from './helper/utils';
-import BN from 'bn.js';
+import fs from 'fs';
 
 const CMD = new Command();
 
@@ -614,6 +617,119 @@ programCommand('mintPrint')
     });
 
     console.log('txHash', txHash);
+  });
+
+programCommand('mintAllPrint')
+  .description('mint an editioned NFT from the master edition')
+  .requiredOption('-ota, --nft-owner-token-account <string>', 'NFT token account address')
+  .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
+  .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
+  .option('-wtm, --whitelist-mint <string>', 'whitelist mint')
+  .option('-fop, --file-output-path <string>', 'Mint Edition NFT PublicKey Array')
+  .action(async (name, cmd) => {
+    let {
+      keypair,
+      env,
+      nftOwnerTokenAccount,
+      treasuryMint,
+      whitelistMint,
+      rpcUrl,
+      shopCreator,
+      version,
+      isEnterpriseArg,
+      fileOutputPath
+    } = cmd.opts();
+    const wallet = loadKey(keypair);
+
+    if (version !== 'v2') {
+      throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
+    }
+
+    // default to v2
+    const candyShopProgramId = CANDY_SHOP_V2_PROGRAM_ID;
+
+    const candyShop = new CandyShop({
+      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
+      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
+      candyShopProgramId,
+      env,
+      settings: {
+        mainnetConnectionUrl: rpcUrl
+      },
+      isEnterprise: isEnterprise(isEnterpriseArg)
+    });
+
+    const tokenAccountInfo = await getAccount(candyShop.connection, new PublicKey(nftOwnerTokenAccount), 'finalized');
+
+    const [vaultAccount] = await getEditionVaultAccount(
+      new PublicKey(candyShop.candyShopAddress),
+      new PublicKey(nftOwnerTokenAccount)
+    );
+
+    const availableEditionNumbers = await getAvailableEditionNumbers(vaultAccount, candyShop.connection);
+
+    const [auctionHouseAuthority] = await getAuctionHouseAuthority(
+      new PublicKey(candyShop.candyShopCreatorAddress),
+      new PublicKey(candyShop.treasuryMint),
+      new PublicKey(candyShop.programId)
+    );
+    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, new PublicKey(candyShop.treasuryMint));
+
+    const newEditions = await Promise.allSettled(
+      availableEditionNumbers.map(async (mintEditionNumber, i) => {
+        // delay for each mint in case of node rate limit
+        await new Promise((resolve) => {
+          setTimeout(() => {
+            resolve('ok');
+          }, i * 2000);
+        });
+
+        const { instructions, newEditionMint, newEditionTokenAccount } = await createNewMintInstructions(
+          wallet.publicKey,
+          candyShop.connection
+        );
+
+        let txHash = await CandyShopDrop.mintPrint({
+          candyShop: new PublicKey(candyShop.candyShopAddress),
+          nftOwnerTokenAccount: new PublicKey(nftOwnerTokenAccount),
+          masterMint: tokenAccountInfo.mint,
+          whitelistMint,
+          editionBuyer: wallet,
+          auctionHouse,
+          isEnterprise: candyShop.isEnterprise,
+          connection: candyShop.connection,
+          candyShopProgram: candyShop.getStaticProgram(wallet),
+          treasuryMint: new PublicKey(candyShop.treasuryMint),
+          mintEditionNumber,
+          instructions,
+          newEditionMint,
+          newEditionTokenAccount
+        });
+
+        console.log('Minted:: txHash: ' + txHash + ',editionMint: ' + newEditionMint.publicKey.toString());
+
+        return {
+          txHash,
+          editionMint: newEditionMint.publicKey.toString()
+        };
+      })
+    );
+
+    if (fileOutputPath) {
+      console.log('fileOutputPath: ', fileOutputPath);
+      const newEditionMintTokenArray = newEditions
+        .filter(
+          (result): result is PromiseFulfilledResult<{ txHash: string; editionMint: string }> =>
+            result.status === 'fulfilled'
+        )
+        .map((result) => result.value.editionMint);
+
+      fs.writeFile(fileOutputPath, JSON.stringify(newEditionMintTokenArray), (err) => {
+        if (err) {
+          console.error(err);
+        }
+      });
+    }
   });
 
 programCommand('redeemDrop')
