@@ -6,6 +6,7 @@ import {
   CandyShopTradeSellParams,
   fetchNftsFromWallet,
   fetchShopByShopAddress,
+  fetchShopWhitelistNftByShopAddress,
   getCandyShopSync,
   getTokenMetadataByMintAddress,
   NftMetadata,
@@ -42,12 +43,10 @@ export class SolStore extends Store implements Auctionner {
     return getTokenMetadataByMintAddress(mintAddress, connection);
   }
 
-  getShopIdentifiers(): Promise<string[]> {
-    return this.shop
-      .shopWlNfts()
-      .then((nfts: ListBase<WhitelistNft>) =>
-        nfts.result.reduce((arr: string[], item: WhitelistNft) => arr.concat(item.identifier), [])
-      );
+  getShopIdentifiers(candyShopAddress: string): Promise<string[]> {
+    return fetchShopWhitelistNftByShopAddress(candyShopAddress).then((nfts: ListBase<WhitelistNft>) =>
+      nfts.result.reduce((arr: string[], item: WhitelistNft) => arr.concat(item.identifier), [])
+    );
   }
 
   /* Implement required common methods */
@@ -65,7 +64,7 @@ export class SolStore extends Store implements Auctionner {
 
   async getNFTs(
     walletPublicKey: string,
-    options: { enableCacheNFT?: boolean; allowSellAnyNft?: number }
+    options: { enableCacheNFT?: boolean; allowSellAnyNft?: number; candyShopAddress: string }
   ): Promise<SingleTokenInfo[]> {
     const fetchBatchParam: any = {
       batchSize: 8
@@ -76,7 +75,7 @@ export class SolStore extends Store implements Auctionner {
       enable: options.enableCacheNFT ?? false
     };
 
-    const identifiers = options.allowSellAnyNft ? undefined : await this.getShopIdentifiers();
+    const identifiers = options.allowSellAnyNft ? undefined : await this.getShopIdentifiers(options.candyShopAddress);
 
     return fetchNftsFromWallet(
       this.connection,

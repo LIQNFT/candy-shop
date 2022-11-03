@@ -11,6 +11,14 @@ export interface FetchNFTBatchParam {
 }
 
 /**
+ * Object to help determining the wallet NFT options.
+ * @property shopId for filtering out the non-defined NFT collections for given shop
+ */
+export interface FetchNFTCollectionParams {
+  shopId: string;
+}
+
+/**
  * Object to help using IndexedDB to cache NFT, default is disabled.
  * @property enable a boolean if want to enable/disable Cache in IndexedDB
  */

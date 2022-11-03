@@ -49,7 +49,11 @@ const useUserNfts = ({ candyShop, wallet }: ShopProps, { enableCacheNFT }: UseSe
       }
 
       const nfts = await safeAwait(
-        store.getNFTs(publicKey, { enableCacheNFT, allowSellAnyNft: shop.result.allowSellAnyNft })
+        store.getNFTs(publicKey, {
+          enableCacheNFT,
+          allowSellAnyNft: shop.result.allowSellAnyNft,
+          candyShopAddress: shop.result.candyShopAddress
+        })
       );
       if (nfts.error) {
         nfts.error.name = ShopDataErrorType.GetNFTs;
@@ -125,9 +129,7 @@ const useUserNfts = ({ candyShop, wallet }: ShopProps, { enableCacheNFT }: UseSe
   useEffect(() => {
     if (!publicKey) return;
     const controller = onSocketEvent(EventName.traded, (data: Trade) => {
-      if (data.buyerAddress === publicKey) {
-        store.getNFTs(publicKey, { enableCacheNFT });
-      }
+      // TODO
     });
     return () => controller.abort();
   }, [onSocketEvent, publicKey, store, enableCacheNFT]);

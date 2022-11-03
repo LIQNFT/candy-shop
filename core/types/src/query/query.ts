@@ -104,5 +104,4 @@ export interface FetchEvmWalletNftQuery {
   limit?: number;
   chain?: Blockchain;
   cursor?: string;
-  collections?: string[];
 }

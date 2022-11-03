@@ -28,7 +28,7 @@ export abstract class Store {
   abstract getShop(): Promise<CandyShopResponse>;
   abstract getNFTs(
     walletPublicKey: string,
-    options: { enableCacheNFT?: boolean; allowSellAnyNft?: number }
+    options: { enableCacheNFT?: boolean; allowSellAnyNft?: number; candyShopAddress: string }
   ): Promise<SingleTokenInfo[]>;
   abstract getOrderNft(tokenMint: string): Promise<SingleBase<Order>>;
   abstract getNftInfo(tokenMint: string): Promise<Nft>;
