@@ -33,9 +33,10 @@ export class EthStore extends Store {
     throw new Error('Method not implemented.');
   }
 
-  getNFTs(walletPublicKey: string): Promise<SingleTokenInfo[]> {
+  getNFTs(walletPublicKey: string, options: { candyShopAddress: string }): Promise<SingleTokenInfo[]> {
     const fetchBatchParam = { batchSize: 8 };
-    return fetchAllEvmNftsFromWallet(walletPublicKey, this.shop.env, fetchBatchParam);
+    const fetchNftParam = { shopId: options.candyShopAddress };
+    return fetchAllEvmNftsFromWallet(walletPublicKey, this.shop.env, fetchNftParam, fetchBatchParam);
   }
 
   getOrderNfts(publicKey: string): Promise<Order[]> {

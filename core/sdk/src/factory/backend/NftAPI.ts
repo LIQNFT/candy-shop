@@ -10,9 +10,10 @@ export async function fetchNftByMint(axiosInstance: AxiosInstance, mint: string)
 export async function fetchEvmChainNftsFromWallet(
   axiosInstance: AxiosInstance,
   walletAddress: string,
+  shopId: string,
   query?: FetchEvmWalletNftQuery
 ): Promise<ListBaseWithCursor<SingleTokenInfo>> {
-  const url = `/nft/eth-wallet/${walletAddress}`;
+  const url = `/nft/eth-wallet/${walletAddress}/shopId/${shopId}`;
   return await axiosInstance
     .get<ListBaseWithCursor<SingleTokenInfo>>(url, {
       params: query

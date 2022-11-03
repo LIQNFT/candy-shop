@@ -2,7 +2,7 @@ import axiosInstance from '../config';
 import { Blockchain, FetchEvmWalletNftQuery, ListBaseWithCursor } from '@liqnft/candy-shop-types';
 import { fetchEvmChainNftsFromWallet } from '../../factory/backend';
 import { SingleTokenInfo } from './fetchMetadata';
-import { FetchNFTBatchParam } from './fetch.type';
+import { FetchNFTBatchParam, FetchNFTCollectionParams } from './fetch.type';
 
 const Logger = 'CandyShopSDK/fetchEvmNftsFromWallet';
 
@@ -21,8 +21,8 @@ const DEFAULT_PAGE_SIZE_LIMIT = 20;
 export const fetchAllEvmNftsFromWallet = async (
   walletAddress: string,
   chain: Blockchain,
-  fetchNFTBatchParam?: FetchNFTBatchParam,
-  collections?: string[]
+  fetchNFTCollectionParams: FetchNFTCollectionParams,
+  fetchNFTBatchParam?: FetchNFTBatchParam
 ): Promise<SingleTokenInfo[]> => {
   // Apply the batchCallback logic to page limit call from DB
   const limit = fetchNFTBatchParam?.batchSize ?? DEFAULT_PAGE_SIZE_LIMIT;
@@ -30,13 +30,12 @@ export const fetchAllEvmNftsFromWallet = async (
 
   const fetchQuery: FetchEvmWalletNftQuery = {
     limit: limit,
-    chain: chain,
-    collections: collections
+    chain: chain
   };
   let singleTokenInfos: SingleTokenInfo[] = [];
   let evmNfts = null;
   while (totalCount > singleTokenInfos.length) {
-    evmNfts = await fetchEvmNftsFromWalletByLimit(walletAddress, fetchQuery);
+    evmNfts = await fetchEvmNftsFromWalletByLimit(walletAddress, fetchNFTCollectionParams.shopId, fetchQuery);
     if (evmNfts.success) {
       singleTokenInfos = singleTokenInfos.concat(evmNfts.result);
     }
@@ -58,7 +57,8 @@ export const fetchAllEvmNftsFromWallet = async (
 
 const fetchEvmNftsFromWalletByLimit = async (
   walletAddress: string,
+  shopId: string,
   query?: FetchEvmWalletNftQuery
 ): Promise<ListBaseWithCursor<SingleTokenInfo>> => {
-  return fetchEvmChainNftsFromWallet(axiosInstance, walletAddress, query);
+  return fetchEvmChainNftsFromWallet(axiosInstance, walletAddress, shopId, query);
 };

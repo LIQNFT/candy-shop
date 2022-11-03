@@ -10,9 +10,6 @@ export interface ListBase<T> {
 export interface ListBaseWithCursor<T> {
   success: boolean;
   msg: undefined | string;
-  limit: number;
-  totalCount: number;
-  count: number;
   cursor: string;
   result: T[];
 }
