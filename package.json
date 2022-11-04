@@ -19,7 +19,8 @@
     "clean:sdk": "rm -rf core/sdk/node_modules && rm -rf core/sdk/dist",
     "clean:types": "rm -rf core/types/node_modules && rm -rf core/types/dist",
     "clean:ui": "rm -rf core/ui/node_modules && rm -rf core/ui/dist",
-    "clean:all": "yarn clean:root && yarn clean:sdk && yarn clean:ui && yarn clean:types"
+    "clean:all": "yarn clean:root && yarn clean:sdk && yarn clean:ui && yarn clean:types",
+    "lint": "eslint . --ext .tsx,.ts"
   },
   "devDependencies": {
     "@parcel/packager-raw-url": "2.4.1",
@@ -42,7 +43,13 @@
     "stream-http": "^3.2.0",
     "typescript": ">=3.0.0",
     "url": "^0.11.0",
-    "util": "^0.12.4"
+    "util": "^0.12.4",
+    "@typescript-eslint/eslint-plugin": "^4.14.0",
+    "@typescript-eslint/parser": "^4.14.0",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react-hooks": "^4.4.0"
   },
   "alias": {
     "react": "./core/ui/node_modules/react",

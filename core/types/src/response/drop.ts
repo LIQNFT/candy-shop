@@ -28,7 +28,7 @@ export interface Drop {
   blockTimeAtCreation: string;
   nftTokenAccount: string;
   salesPeriod: string;
-  programId: String;
+  programId: string;
   createdAt: string;
   updatedAt: string;
   status: DropStatus;

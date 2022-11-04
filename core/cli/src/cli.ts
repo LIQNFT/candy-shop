@@ -40,12 +40,12 @@ programCommand('sellMany')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
-    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl, version, isEnterpriseArg } =
+    const { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl, version, isEnterpriseArg } =
       cmd.opts();
 
     const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
-    let wallet = loadKey(keypair);
+    const wallet = loadKey(keypair);
 
     const candyShop = new CandyShop({
       candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
@@ -58,10 +58,10 @@ programCommand('sellMany')
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
 
-    let tokenMints = loadTokenAccountMints(tokenAccountMintList);
+    const tokenMints = loadTokenAccountMints(tokenAccountMintList);
 
     tokenMints.forEach(async (tokenMint) => {
-      let tokenAccount = await findAssociatedTokenAddress(
+      const tokenAccount = await findAssociatedTokenAddress(
         new anchor.web3.PublicKey(wallet.publicKey),
         new anchor.web3.PublicKey(tokenMint)
       );
@@ -84,10 +84,10 @@ programCommand('cancelMany')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
-    let { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl, version, isEnterpriseArg } =
+    const { keypair, env, tokenAccountMintList, treasuryMint, price, shopCreator, rpcUrl, version, isEnterpriseArg } =
       cmd.opts();
 
-    let wallet = loadKey(keypair);
+    const wallet = loadKey(keypair);
 
     const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
@@ -102,10 +102,10 @@ programCommand('cancelMany')
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
 
-    let tokenMints = loadTokenAccountMints(tokenAccountMintList);
+    const tokenMints = loadTokenAccountMints(tokenAccountMintList);
 
     tokenMints.forEach(async (tokenMint) => {
-      let tokenAccount = await findAssociatedTokenAddress(
+      const tokenAccount = await findAssociatedTokenAddress(
         new anchor.web3.PublicKey(wallet.publicKey),
         new anchor.web3.PublicKey(tokenMint)
       );
@@ -128,7 +128,7 @@ programCommand('sell')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
-    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl, version, isEnterpriseArg } =
+    const { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl, version, isEnterpriseArg } =
       cmd.opts();
 
     const wallet = loadKey(keypair);
@@ -146,7 +146,7 @@ programCommand('sell')
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
 
-    let tokenAccount = await findAssociatedTokenAddress(
+    const tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
       new anchor.web3.PublicKey(tokenAccountMint)
     );
@@ -168,7 +168,7 @@ programCommand('cancel')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
-    let { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl, version, isEnterpriseArg } =
+    const { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl, version, isEnterpriseArg } =
       cmd.opts();
 
     const wallet = loadKey(keypair);
@@ -186,7 +186,7 @@ programCommand('cancel')
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
 
-    let tokenAccount = await findAssociatedTokenAddress(
+    const tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
       new anchor.web3.PublicKey(tokenAccountMint)
     );
@@ -210,7 +210,7 @@ programCommand('buy')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
-    let {
+    const {
       keypair,
       env,
       seller,
@@ -263,7 +263,7 @@ programCommand('createAuction')
   .option('-ep, --extension-period <string>', 'Extension period, in seconds, optional')
   .option('-ei, --extension-increment <string>', 'Extension increment, in seconds, optional')
   .action(async (name, cmd) => {
-    let {
+    const {
       keypair,
       env,
       tokenAccountMint,
@@ -296,7 +296,7 @@ programCommand('createAuction')
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
 
-    let tokenAccount = await findAssociatedTokenAddress(
+    const tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
       new anchor.web3.PublicKey(tokenAccountMint)
     );
@@ -323,7 +323,7 @@ programCommand('cancelAuction')
   .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .action(async (name, cmd) => {
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version, isEnterpriseArg } = cmd.opts();
+    const { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version, isEnterpriseArg } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -340,7 +340,7 @@ programCommand('cancelAuction')
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
 
-    let tokenAccount = await findAssociatedTokenAddress(
+    const tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
       new anchor.web3.PublicKey(tokenAccountMint)
     );
@@ -361,7 +361,7 @@ programCommand('makeBid')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .requiredOption('-p, --price <string>', 'price in token decimals')
   .action(async (name, cmd) => {
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, price, version, isEnterpriseArg } =
+    const { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, price, version, isEnterpriseArg } =
       cmd.opts();
 
     const wallet = loadKey(keypair);
@@ -379,7 +379,7 @@ programCommand('makeBid')
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
 
-    let tokenAccount = await findAssociatedTokenAddress(
+    const tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
       new anchor.web3.PublicKey(tokenAccountMint)
     );
@@ -400,7 +400,7 @@ programCommand('withdrawBid')
   .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .action(async (name, cmd) => {
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version, isEnterpriseArg } = cmd.opts();
+    const { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version, isEnterpriseArg } = cmd.opts();
 
     const wallet = loadKey(keypair);
     const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
@@ -416,7 +416,7 @@ programCommand('withdrawBid')
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
 
-    let tokenAccount = await findAssociatedTokenAddress(
+    const tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
       new anchor.web3.PublicKey(tokenAccountMint)
     );
@@ -436,7 +436,7 @@ programCommand('buyNow')
   .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .action(async (name, cmd) => {
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version, isEnterpriseArg } = cmd.opts();
+    const { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version, isEnterpriseArg } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -453,7 +453,7 @@ programCommand('buyNow')
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
 
-    let tokenAccount = await findAssociatedTokenAddress(
+    const tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
       new anchor.web3.PublicKey(tokenAccountMint)
     );
@@ -473,7 +473,7 @@ programCommand('settleAndDistribute')
   .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .action(async (name, cmd) => {
-    let { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version, isEnterpriseArg } = cmd.opts();
+    const { keypair, env, tokenAccountMint, treasuryMint, rpcUrl, shopCreator, version, isEnterpriseArg } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -490,7 +490,7 @@ programCommand('settleAndDistribute')
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
 
-    let tokenAccount = await findAssociatedTokenAddress(
+    const tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
       new anchor.web3.PublicKey(tokenAccountMint)
     );
@@ -516,7 +516,7 @@ programCommand('commitEditionDropNft')
   .option('-wtt, --whitelist-time <string>', 'whitelist time, unix timestamp')
 
   .action(async (name, cmd) => {
-    let {
+    const {
       keypair,
       env,
       nftOwnerTokenAccount,
@@ -576,7 +576,7 @@ programCommand('mintPrint')
   .option('-wtm, --whitelist-mint <string>', 'whitelist mint')
 
   .action(async (name, cmd) => {
-    let {
+    const {
       keypair,
       env,
       nftOwnerTokenAccount,
@@ -627,7 +627,7 @@ programCommand('mintAllPrint')
   .option('-wtm, --whitelist-mint <string>', 'whitelist mint')
   .option('-fop, --file-output-path <string>', 'Mint Edition NFT PublicKey Array')
   .action(async (name, cmd) => {
-    let {
+    const {
       keypair,
       env,
       nftOwnerTokenAccount,
@@ -689,7 +689,7 @@ programCommand('mintAllPrint')
           candyShop.connection
         );
 
-        let txHash = await CandyShopDrop.mintPrint({
+        const txHash = await CandyShopDrop.mintPrint({
           candyShop: new PublicKey(candyShop.candyShopAddress),
           nftOwnerTokenAccount: new PublicKey(nftOwnerTokenAccount),
           masterMint: tokenAccountInfo.mint,
@@ -739,7 +739,7 @@ programCommand('redeemDrop')
   .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .action(async (name, cmd) => {
-    let {
+    const {
       keypair,
       env,
       nftOwnerTokenAccount,

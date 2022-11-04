@@ -251,7 +251,7 @@ export const getSignedTx = (
     return signedTx;
   }
 
-  let signers: web3.Signer[] = [
+  const signers: web3.Signer[] = [
     {
       publicKey: wallet.publicKey,
       secretKey: wallet.secretKey

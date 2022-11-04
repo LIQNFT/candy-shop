@@ -43,20 +43,19 @@ export const withdrawBid = async ({
   console.log('bidAccount');
   console.log(bidAccount);
 
-  const [[userTreasuryAta], [escrowPaymentAccount, escrowPaymentAccountBump], [bidTradeState, bidTradeStateBump]] =
-    await Promise.all([
-      getAtaForMint(treasuryMint, buyer.publicKey),
-      getAuctionHouseEscrow(auctionHouse, bidWallet),
-      getAuctionHouseTradeState(
-        auctionHouse,
-        bidWallet,
-        auctionEscrow,
-        treasuryMint,
-        nftMint,
-        new anchor.BN(1),
-        bidAccount.price
-      )
-    ]);
+  const [[userTreasuryAta], [escrowPaymentAccount, escrowPaymentAccountBump], [bidTradeState]] = await Promise.all([
+    getAtaForMint(treasuryMint, buyer.publicKey),
+    getAuctionHouseEscrow(auctionHouse, bidWallet),
+    getAuctionHouseTradeState(
+      auctionHouse,
+      bidWallet,
+      auctionEscrow,
+      treasuryMint,
+      nftMint,
+      new anchor.BN(1),
+      bidAccount.price
+    )
+  ]);
 
   const bidReceiptAccount = isNative ? bidWallet : (await getAtaForMint(treasuryMint, bidWallet))[0];
 

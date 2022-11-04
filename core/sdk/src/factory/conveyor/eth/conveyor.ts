@@ -81,7 +81,7 @@ export class EthereumSDK {
     shop: ShopResponse
   ): ConsiderationInputItem[] {
     const shopSplit = shop.paymentSplit;
-    let considerations = [];
+    const considerations = [];
     for (const split of shopSplit) {
       const percentage = split.percentage;
       const splitReceiver = this.getSplitReceiver(split.receiver, offerer, shop);

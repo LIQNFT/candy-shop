@@ -31,8 +31,7 @@ export const settleAndDistributeProceeds = async ({
   auction,
   auctionBump,
   nftMint,
-  program,
-  env
+  program
 }: SettleAndDistributeProceedParams) => {
   await checkAHFeeAccountBalance(feeAccount, program.provider.connection);
 

@@ -50,7 +50,6 @@ export function fetchAuctionHistory(
 export abstract class CandyShopAuction {
   static async buyNow(params: CandyShopAuctionBuyNowParams): Promise<string> {
     const {
-      tokenAccount,
       tokenMint,
       wallet,
       shopAddress,
@@ -103,7 +102,6 @@ export abstract class CandyShopAuction {
 
   static async bid(params: CandyShopAuctionBidParams): Promise<string> {
     const {
-      tokenAccount,
       tokenMint,
       wallet,
       shopAddress,
@@ -158,7 +156,6 @@ export abstract class CandyShopAuction {
 
   static async withdrawBid(params: CandyShopAuctionWithdrawBidParams): Promise<string> {
     const {
-      tokenAccount,
       tokenMint,
       wallet,
       shopAddress,

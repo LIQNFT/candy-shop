@@ -130,7 +130,7 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
   const accountsRequireAtaSet = new Set<string>();
 
   if (metadataDecoded && metadataDecoded.data && metadataDecoded.data.creators) {
-    for (let creator of metadataDecoded.data.creators) {
+    for (const creator of metadataDecoded.data.creators) {
       const creatorPublicKey = new anchor.web3.PublicKey(creator.address);
 
       remainingAccounts.push({

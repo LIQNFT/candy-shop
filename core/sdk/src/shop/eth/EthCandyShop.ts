@@ -123,7 +123,7 @@ export class EthCandyShop extends BaseShop {
    * @returns
    */
   async sell(params: { providers: any; nft: SingleTokenInfo; price: number }): Promise<string> {
-    let { providers, nft, price } = params;
+    const { providers, nft, price } = params;
 
     const provider = new ethers.providers.Web3Provider(providers);
     const wallet = provider.getSigner();

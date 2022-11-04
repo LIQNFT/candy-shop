@@ -209,7 +209,7 @@ export async function getAvailableEditionNumbers(vaultAccount: PublicKey, connec
 }
 
 async function generateEditionNumber(vaultAccount: PublicKey, connection: Connection): Promise<number> {
-  let editionArray: Array<string> = await getAvailableEditionNumbers(vaultAccount, connection);
+  const editionArray: Array<string> = await getAvailableEditionNumbers(vaultAccount, connection);
   const edition = Number(editionArray[Math.floor(Math.random() * editionArray.length)]);
   return edition;
 }

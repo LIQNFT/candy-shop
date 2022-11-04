@@ -13,14 +13,18 @@ interface EthConnectionProps {
   disconnectWallet: () => void;
 }
 
+const DEFAULT_CONTEXT_FUNCTION = () => {
+  //
+};
+
 const EthConnectionContext = createContext<EthConnectionProps>({
   address: undefined,
-  setAddress: () => {},
+  setAddress: DEFAULT_CONTEXT_FUNCTION,
   network: Blockchain.PolygonTestnet,
-  setNetwork: () => {},
+  setNetwork: DEFAULT_CONTEXT_FUNCTION,
   web3Modal: new Web3Modal(),
-  connectWallet: () => {},
-  disconnectWallet: () => {}
+  connectWallet: DEFAULT_CONTEXT_FUNCTION,
+  disconnectWallet: DEFAULT_CONTEXT_FUNCTION
 });
 
 export const EthConnectionProvider = ({
