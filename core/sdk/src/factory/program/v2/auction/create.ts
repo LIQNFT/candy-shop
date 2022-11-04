@@ -14,7 +14,6 @@ export const createAuction = async (params: CreateAuctionParams) => {
   const {
     seller,
     auction,
-    auctionBump,
     candyShop,
     treasuryMint,
     nftMint,

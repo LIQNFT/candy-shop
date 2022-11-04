@@ -1,7 +1,7 @@
 import { Blockchain } from '@liqnft/candy-shop-types';
 import { web3, BN, Program, Idl } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyShopVersion, ShopSettings } from '../base/BaseShopModel';
+import { CandyShopVersion } from '../base/BaseShopModel';
 
 /**
  * Arguments required for calling Update Candy Shop action

@@ -14,7 +14,6 @@ import {
   checkBidPeriod,
   checkBuyNowAvailable
 } from '../../../../vendor';
-import { getBid } from '../../../../vendor/utils/programUtils';
 import { BuyNowAuctionParams } from '../../model';
 import { requestExtraComputeIx } from './requestExtraComputeIx';
 
@@ -30,8 +29,7 @@ export const buyNowAuction = async ({
   auctionHouse,
   feeAccount,
   treasuryAccount,
-  program,
-  env
+  program
 }: BuyNowAuctionParams) => {
   await checkAHFeeAccountBalance(feeAccount, program.provider.connection);
 
@@ -92,8 +90,6 @@ export const buyNowAuction = async ({
     treasuryMint,
     isNative
   );
-
-  const [bid] = await getBid(auction, buyer.publicKey, program.programId);
 
   const transaction = new Transaction();
 

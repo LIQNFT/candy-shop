@@ -39,7 +39,7 @@ export async function fetchOrdersByStoreId(
     blockchain = Blockchain.Sol;
   }
 
-  let queryParams: any = { offset, limit, blockchain };
+  const queryParams: any = { offset, limit, blockchain };
 
   if (sortBy) {
     const arrSortBy = Array.isArray(sortBy) ? sortBy : [sortBy];

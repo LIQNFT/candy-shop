@@ -87,7 +87,7 @@ export const ShopConfig: React.FC<ShopConfigProps> = ({ setCandyForm, candyForm 
 
   useEffect(() => {
     if (candyForm) onUpdateFormState(candyForm);
-  }, [candyForm]);
+  }, [candyForm, onUpdateFormState]);
 
   return (
     <>

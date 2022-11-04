@@ -9,8 +9,6 @@ import {
   TransactionInstruction
 } from '@solana/web3.js';
 import {
-  CandyShopError,
-  CandyShopErrorType,
   checkEditionMintPeriod,
   getAtaForMint,
   getAuctionHouseTreasuryAcct,
@@ -18,9 +16,7 @@ import {
   getEditionMarkAccount,
   getMasterEditionAccount,
   getMetadataAccount,
-  parseMetadata,
   parseNftUpdateAuthority,
-  safeAwait,
   sendTx
 } from '../../../../vendor';
 import { TOKEN_METADATA_PROGRAM_ID } from '../../../constants';

@@ -31,7 +31,7 @@ export const checkTradeStateExist = async (
   connection: web3.Connection,
   sellTradeState: web3.PublicKey,
   sellTradeStateBump: number
-) => {
+): Promise<void> => {
   const sellTradeStateInfo = await connection.getAccountInfo(sellTradeState);
   if (sellTradeStateInfo?.data[0] === sellTradeStateBump) {
     throw new CandyShopError(CandyShopErrorType.TradeStateExists);
@@ -44,7 +44,7 @@ export const checkNftAvailability = async (
   sellTradeState: web3.PublicKey,
   sellTradeStateBump: number,
   amount: number
-) => {
+): Promise<void> => {
   const [programAsSigner] = await getAuctionHouseProgramAsSigner();
   const tokenAccountInfo = await getAccount(connection, tokenAccount);
   const sellTradeStateInfo = await connection.getAccountInfo(sellTradeState);
@@ -64,7 +64,7 @@ export const checkPaymentAccountBalance = async (
   paymentAccount: web3.PublicKey,
   isNative: boolean,
   price: number
-) => {
+): Promise<void> => {
   // If isNative = true then payment account = calling user's pubkey
   // i.e. connection.getAccountInfo(paymentAccount) will not return null
   let paymentAccountBalance: number | undefined | null;
@@ -92,7 +92,7 @@ export const checkDelegateOnReceiptAccounts = async (
   connection: web3.Connection,
   sellerPaymentReceiptAccount: web3.PublicKey,
   buyerReceiptTokenAccount: web3.PublicKey
-) => {
+): Promise<void> => {
   const sellerPaymentReceiptAccountInfoRes = await safeAwait(getAccount(connection, sellerPaymentReceiptAccount));
   const buyerReceiptTokenAccountInfoRes = await safeAwait(getAccount(connection, buyerReceiptTokenAccount));
 
@@ -108,7 +108,7 @@ export const checkDelegateOnReceiptAccounts = async (
   }
 };
 
-export const checkCreationParams = (startTime: BN, startingBid: BN, buyNowPrice: BN | null, tickSize: BN) => {
+export const checkCreationParams = (startTime: BN, startingBid: BN, buyNowPrice: BN | null, tickSize: BN): void => {
   if (
     tickSize.lten(0) ||
     startTime.ltn(Date.now() / 1000 - 60) ||

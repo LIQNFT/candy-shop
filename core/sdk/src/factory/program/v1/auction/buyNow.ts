@@ -11,7 +11,6 @@ import {
   sendTx,
   treasuryMintIsNative
 } from '../../../../vendor';
-import { getBid } from '../../../../vendor/utils/programUtils';
 import { requestExtraComputeIx } from './requestExtraComputeIx';
 import {
   checkAHFeeAccountBalance,
@@ -32,8 +31,7 @@ export const buyNowAuction = async ({
   auctionHouse,
   feeAccount,
   treasuryAccount,
-  program,
-  env
+  program
 }: BuyNowAuctionParams) => {
   await checkAHFeeAccountBalance(feeAccount, program.provider.connection);
 

@@ -10,7 +10,7 @@ export async function fetchDropsByStoreId(
   storeId: string,
   queryDto?: DropQuery
 ): Promise<ListBase<Drop>> {
-  let queryString: string = '';
+  let queryString = '';
   const {
     offset = 0,
     limit = 10,
@@ -22,7 +22,7 @@ export async function fetchDropsByStoreId(
     collectionKey,
     sortBy
   } = queryDto || {};
-  let queryObj: any = { offset, limit, creator, nftMint, nftName, collectionKey };
+  const queryObj: any = { offset, limit, creator, nftMint, nftName, collectionKey };
   if (status !== undefined) {
     queryObj.status = status;
   }
