@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { EthMarketplaceExample } from './EthMarketplaceExample';
 import { Route, Switch, Link, useLocation } from 'react-router-dom';
 import { CandyShopDataValidator } from '../../core/ui/.';
-import { EthCandyShop, getEthCandyShop } from '../../core/sdk/.';
+import { EthCandyShop, EthShopConstructorParams } from '../../core/sdk/.';
 import { EthConnectButton } from './components/EthConnectButton';
 import { EthConnectionProvider } from './components/EthConnectionProvider';
 import { ShopConfig } from './ShopConfig';
@@ -27,23 +27,17 @@ export const EthExample: React.FC = () => {
   useEffect(() => {
     if (!candyForm.creatorAddress) return;
 
-    const params = {
-      candyShopCreatorAddress: candyForm.creatorAddress,
+    const params: EthShopConstructorParams = {
+      shopCreatorAddress: candyForm.creatorAddress,
       treasuryMint: candyForm.treasuryMint,
       programId: candyForm.programId,
       env: candyForm.network,
       settings: JSON.parse(candyForm.settings)
     };
 
-    getEthCandyShop(params)
+    EthCandyShop.initEthCandyShop(params)
       .then((candyShop) => {
-        console.log(candyShop);
-
-        if (candyShop === undefined) {
-          setCandyShop(undefined);
-        } else {
-          setCandyShop(candyShop);
-        }
+        setCandyShop(candyShop);
       })
       .catch((error: Error) => {
         setCandyShop(undefined);

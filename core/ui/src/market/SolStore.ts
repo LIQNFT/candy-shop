@@ -1,5 +1,6 @@
 import {
   CandyShop,
+  CandyShopCreateAuctionParams,
   CandyShopTrade,
   CandyShopTradeBuyParams,
   CandyShopTradeCancelParams,
@@ -26,12 +27,14 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { SolSellerOptions, Store, Auctionner } from './catalog';
 
 export class SolStore extends Store implements Auctionner {
+  private candyShop: CandyShop;
   private wallet: AnchorWallet;
   private connection: web3.Connection;
   private isEnterprise: boolean;
 
   constructor(shop: CandyShop, wallet: AnchorWallet, connection: web3.Connection, isEnterprise: boolean) {
     super(shop);
+    this.candyShop = shop;
     this.wallet = wallet;
     this.connection = connection;
     this.isEnterprise = isEnterprise;
@@ -52,14 +55,10 @@ export class SolStore extends Store implements Auctionner {
   /* Implement required common methods */
 
   getShop(): Promise<CandyShopResponse> {
-    const candyShopAddress = this.shop.candyShopAddress.toString();
-    return fetchShopByShopAddress(candyShopAddress).then((data) =>
+    const candyShopAddress = this.baseShop.candyShopAddress.toString();
+    return fetchShopByShopAddress(candyShopAddress).then((data: SingleBase<CandyShopResponse>) =>
       data.success ? data.result : ({} as CandyShopResponse)
     );
-  }
-
-  getNftInfo(tokenMint: string): Promise<Nft> {
-    return this.shop.nftInfo(tokenMint);
   }
 
   async getNFTs(
@@ -87,7 +86,11 @@ export class SolStore extends Store implements Auctionner {
   }
 
   getOrderNft(tokenMint: string): Promise<SingleBase<Order>> {
-    return this.shop.activeOrderByMintAddress(tokenMint);
+    return this.candyShop.activeOrderByMintAddress(tokenMint);
+  }
+
+  getNftInfo(tokenMint: string): Promise<Nft> {
+    return this.candyShop.nftInfo(tokenMint);
   }
 
   buy(order: Order): Promise<string> {
@@ -173,7 +176,7 @@ export class SolStore extends Store implements Auctionner {
   withdrawAuctionBid(auction: Auction): Promise<string> {
     if (!this.wallet) return Promise.reject('Wallet not found');
 
-    return this.shop.withdrawAuctionBid({
+    return this.candyShop.withdrawAuctionBid({
       wallet: this.wallet,
       tokenMint: new web3.PublicKey(auction.tokenMint),
       tokenAccount: new web3.PublicKey(auction.tokenAccount)
@@ -183,25 +186,25 @@ export class SolStore extends Store implements Auctionner {
   bidAuction(auction: Auction, price: number): Promise<string> {
     if (!this.wallet) return Promise.reject('Wallet not found');
 
-    return this.shop.bidAuction({
+    return this.candyShop.bidAuction({
       wallet: this.wallet,
       tokenMint: new web3.PublicKey(auction.tokenMint),
       tokenAccount: new web3.PublicKey(auction.tokenAccount),
-      bidPrice: new BN(price * this.shop.baseUnitsPerCurrency)
+      bidPrice: new BN(price * this.baseShop.baseUnitsPerCurrency)
     });
   }
 
   buyNowAuction(auction: Auction): Promise<string> {
     if (!this.wallet) return Promise.reject('Wallet not found');
 
-    return this.shop.buyNowAuction({
+    return this.candyShop.buyNowAuction({
       wallet: this.wallet,
       tokenMint: new web3.PublicKey(auction.tokenMint),
       tokenAccount: new web3.PublicKey(auction.tokenAccount)
     });
   }
 
-  createAuction(params: any): Promise<string> {
-    return this.shop.createAuction(params);
+  createAuction(params: CandyShopCreateAuctionParams): Promise<string> {
+    return this.candyShop.createAuction(params);
   }
 }

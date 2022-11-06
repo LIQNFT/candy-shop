@@ -4,17 +4,26 @@ import { ConsiderationInputItem, OrderComponents, OrderParameters } from '@opens
 import { ethers, TypedDataDomain } from 'ethers';
 import { ApiCaller, RequestMethod } from './api';
 import { SeaportHelper } from './seaport';
-import { AssetType } from './types/asset.type';
-import { AssetInstanceInterface, CreateOrderInterface, OrderResponse, SeaportOrderData } from './types/order.type';
-import { ShopResponse, SplitReceiver } from './types/shop.type';
+import {
+  AssetType,
+  AssetInstanceInterface,
+  CreateOrderInterface,
+  OrderResponse,
+  SeaportOrderData,
+  ShopResponse,
+  SplitReceiver
+} from './types';
 
 const Logger = 'EthereumSDK';
 
-export { AssetType };
-export { ApiCaller };
 export class EthereumSDK {
+  private readonly apiPath = '/eth';
+  private apiCaller: ApiCaller;
   private percentageBase = 100;
-  constructor(private apiCaller: ApiCaller) {}
+
+  constructor(baseUrl: string) {
+    this.apiCaller = new ApiCaller(`${baseUrl}${this.apiPath}`);
+  }
 
   /**
    * Seller uses this function to cancel a listing.
@@ -124,7 +133,7 @@ export class EthereumSDK {
   }
 
   async createOrder(createOrder: CreateOrderInterface): Promise<OrderResponse> {
-    return this.apiCaller.request('/order', RequestMethod.Post, createOrder);
+    return this.apiCaller.request(`/order`, RequestMethod.Post, createOrder);
   }
 
   async getOrderByUuid(uuid: string): Promise<OrderResponse> {

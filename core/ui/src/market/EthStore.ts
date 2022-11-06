@@ -1,7 +1,8 @@
 import {
   EthCandyShop,
   fetchAllEvmNftsFromWallet,
-  fetchOrdersByShopAndWalletAddress,
+  FetchNFTBatchParam,
+  FetchNFTCollectionParams,
   fetchShopByShopAddress,
   SingleTokenInfo
 } from '@liqnft/candy-shop-sdk';
@@ -20,27 +21,23 @@ export class EthStore extends Store {
   /* Implement required common methods */
 
   getShop(): Promise<CandyShopResponse> {
-    return fetchShopByShopAddress(this.shop.candyShopAddress).then(
+    return fetchShopByShopAddress(this.baseShop.candyShopAddress).then(
       (data: SingleBase<CandyShopResponse>) => data.result
     );
   }
 
+  getNFTs(walletPublicKey: string, options: { candyShopAddress: string }): Promise<SingleTokenInfo[]> {
+    const fetchBatchParam: FetchNFTBatchParam = { batchSize: 8 };
+    const fetchNftParam: FetchNFTCollectionParams = { shopId: options.candyShopAddress };
+    return fetchAllEvmNftsFromWallet(walletPublicKey, this.baseShop.env, fetchNftParam, fetchBatchParam);
+  }
+
   getNftInfo(): Promise<Nft> {
-    throw new Error('Method not implemented.');
+    throw new Error('Method has not implemented.');
   }
 
   getOrderNft(): Promise<SingleBase<Order>> {
-    throw new Error('Method not implemented.');
-  }
-
-  getNFTs(walletPublicKey: string, options: { candyShopAddress: string }): Promise<SingleTokenInfo[]> {
-    const fetchBatchParam = { batchSize: 8 };
-    const fetchNftParam = { shopId: options.candyShopAddress };
-    return fetchAllEvmNftsFromWallet(walletPublicKey, this.shop.env, fetchNftParam, fetchBatchParam);
-  }
-
-  getOrderNfts(publicKey: string): Promise<Order[]> {
-    return fetchOrdersByShopAndWalletAddress(this.shop.candyShopAddress, publicKey);
+    throw new Error('Method has not implemented.');
   }
 
   async buy(order: Order): Promise<string> {
@@ -48,7 +45,7 @@ export class EthStore extends Store {
       throw new Error(`Invalid EthWallet`);
     }
     const providers = await this.wallet.web3Modal.connect();
-    return this.shop.buy({
+    return this.baseShop.buy({
       orderUuid: order.txHash,
       providers
     });
@@ -57,7 +54,7 @@ export class EthStore extends Store {
   async sell(nft: SingleTokenInfo, price: number): Promise<string> {
     if (!this.wallet?.web3Modal || !this.wallet?.publicKey) return Promise.reject('Wallet not found');
     const providers = await this.wallet?.web3Modal.connect();
-    return this.shop.sell({
+    return this.baseShop.sell({
       price,
       nft,
       providers
@@ -66,6 +63,6 @@ export class EthStore extends Store {
 
   async cancel(order: Order): Promise<any> {
     const providers = await this.wallet?.web3Modal.connect();
-    return this.shop.cancel({ providers, orderUuid: order.txHash });
+    return this.baseShop.cancel({ providers, orderUuid: order.txHash });
   }
 }

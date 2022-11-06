@@ -1,40 +1,14 @@
-import { BaseShop } from '../base/BaseShop';
-import { CandyShopVersion, ExplorerLinkBase, ShopSettings } from '../base/BaseShopModel';
-import { EthereumSDK } from '../../factory/conveyor/eth/conveyor';
-import { ethers } from 'ethers';
-import { configBaseUrl, safeAwait, SingleTokenInfo } from '../../vendor';
-import { ApiCaller } from '../../factory/conveyor/eth/api';
-import {
-  Blockchain,
-  CandyShop,
-  ListBase,
-  Nft,
-  Order,
-  OrdersEditionFilterQuery,
-  OrdersFilterQuery,
-  ShopStats,
-  SingleBase,
-  Trade,
-  TradeQuery,
-  WhitelistNft
-} from '@liqnft/candy-shop-types';
-import { SeaportHelper } from '../../factory/conveyor/eth/seaport';
-import { fetchShopsByIdentifier } from '../../CandyShopInfoAPI';
-import Decimal from 'decimal.js';
-import { Program, Idl } from '@project-serum/anchor';
-import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { PublicKey, Keypair } from '@solana/web3.js';
 import { ItemType } from '@opensea/seaport-js/lib/constants';
 import { CreateInputItem } from '@opensea/seaport-js/lib/types';
-import { SeaportOrderData } from '../../factory/conveyor/eth/types/order.type';
+import { ethers } from 'ethers';
 
-interface CandyShopConstructorParams {
-  candyShopCreatorAddress: string;
-  treasuryMint: string;
-  programId: string;
-  env: Blockchain;
-  settings?: Partial<ShopSettings>;
-}
+import { Blockchain } from '@liqnft/candy-shop-types';
+import { BaseShop, BaseShopConstructorParams } from '../base/BaseShop';
+import { CandyShopVersion, ExplorerLinkBase, ShopSettings } from '../base/BaseShopModel';
+import { EthereumSDK, SeaportHelper } from '../../factory/conveyor/eth';
+import { safeAwait, SingleTokenInfo } from '../../vendor';
+import { fetchShopsByIdentifier } from '../../CandyShopInfoAPI';
+import Decimal from 'decimal.js';
 
 const DEFAULT_CURRENCY_SYMBOL = 'ETH';
 const DEFAULT_CURRENCY_DECIMALS = 18;
@@ -43,25 +17,38 @@ const DEFAULT_PRICE_DECIMALS_MIN = 0;
 const DEFAULT_VOLUME_DECIMALS = 1;
 const DEFAULT_VOLUME_DECIMALS_MIN = 0;
 const DEFAULT_MAINNET_CONNECTION_URL = ''; // TODO
-const ETH_BACKEND_STAGING_URL = 'https://ckaho.liqnft.com/api/eth';
-const ETH_BACKEND_PROD_URL = 'https://candy-shop.liqnft.com/api/eth';
 
 const Logger = 'EthCandyShop';
 
+export interface EthShopConstructorParams extends BaseShopConstructorParams {}
+
 /**
- * @class EthCandyShop
+ * @class EthCandyShop with private constructor, use public static method to instantiate the object.
  */
-
 export class EthCandyShop extends BaseShop {
-  private _candyShopAddress: string = '';
-  private _candyShopCreatorAddress: string;
-  private _treasuryMint: string;
-  private _env: Blockchain;
-  private _settings: ShopSettings;
-  private _baseUnitsPerCurrency: number;
+  private _candyShopAddress: string;
+  private ethereumSDK: EthereumSDK;
 
-  set candyShopAddress(shopUuid: string) {
-    this._candyShopAddress = shopUuid;
+  /**
+   * Involve the asynchronous fetch for required shop details to create EthCandyShop.
+   * @returns EthCandyShop
+   */
+  static async initEthCandyShop(params: EthShopConstructorParams): Promise<EthCandyShop> {
+    // Fetch required details for EVM setup
+    const shopDetail = await safeAwait(
+      fetchShopsByIdentifier(params.shopCreatorAddress, params.treasuryMint, params.programId)
+    );
+
+    if (shopDetail.error || !shopDetail.result || !shopDetail.result.success) {
+      console.log(`${Logger} initEthCandyShop, fetchShopsByIdentifier failed=`, shopDetail);
+      throw new Error(`${Logger} init error`);
+    }
+
+    const shopResponse = shopDetail.result.result;
+    params.settings.currencySymbol = shopResponse.symbol;
+    params.settings.currencyDecimals = shopResponse.decimals;
+    const ethCandyShop = new EthCandyShop(shopResponse.candyShopAddress, params);
+    return ethCandyShop;
   }
 
   get candyShopAddress(): string {
@@ -76,65 +63,10 @@ export class EthCandyShop extends BaseShop {
     return CandyShopVersion.V1;
   }
 
-  get candyShopCreatorAddress(): string {
-    return this._candyShopCreatorAddress;
-  }
+  private constructor(shopAddress: string, params: EthShopConstructorParams) {
+    const { programId, shopCreatorAddress, treasuryMint, env, settings } = params;
 
-  get treasuryMint(): string {
-    return this._treasuryMint;
-  }
-
-  get settings(): Partial<ShopSettings> {
-    return this._settings;
-  }
-
-  get env(): Blockchain {
-    return this._env;
-  }
-
-  get baseUnitsPerCurrency(): number {
-    return this._baseUnitsPerCurrency;
-  }
-
-  get currencySymbol(): string {
-    return this._settings.currencySymbol;
-  }
-
-  get currencyDecimals(): number {
-    return this._settings.currencyDecimals;
-  }
-
-  get priceDecimals(): number {
-    return this._settings.priceDecimals;
-  }
-
-  get priceDecimalsMin(): number {
-    return this._settings.priceDecimalsMin;
-  }
-
-  get volumeDecimals(): number {
-    return this._settings.volumeDecimals;
-  }
-
-  get volumeDecimalsMin(): number {
-    return this._settings.volumeDecimalsMin;
-  }
-
-  /**
-   * Instantiate a EthCandyShop object
-   *
-   * @constructor
-   * @param {CandyShopConstructorParams} params
-   */
-
-  constructor(params: CandyShopConstructorParams, private ethereumSDK: EthereumSDK) {
-    super(params);
-    const { candyShopCreatorAddress, treasuryMint, env, settings } = params;
-
-    this._candyShopCreatorAddress = candyShopCreatorAddress;
-    this._treasuryMint = treasuryMint;
-    this._env = env ?? Blockchain.Eth;
-    this._settings = {
+    const candyShopSettings: ShopSettings = {
       currencySymbol: settings?.currencySymbol ?? DEFAULT_CURRENCY_SYMBOL,
       currencyDecimals: settings?.currencyDecimals ?? DEFAULT_CURRENCY_DECIMALS,
       priceDecimals: settings?.priceDecimals ?? DEFAULT_PRICE_DECIMALS,
@@ -145,8 +77,21 @@ export class EthCandyShop extends BaseShop {
       connectionConfig: settings?.connectionConfig,
       explorerLink: settings?.explorerLink ?? ExplorerLinkBase.Polygon
     };
-    this._baseUnitsPerCurrency = Math.pow(10, this._settings.currencyDecimals);
-    console.log('EthCandyShop constructor: init CandyShop=', this);
+
+    const baseShopParams: BaseShopConstructorParams = {
+      programId,
+      shopCreatorAddress,
+      treasuryMint,
+      env: env ?? Blockchain.Eth,
+      settings: candyShopSettings
+    };
+
+    // Apply common params to BaseShop
+    super(baseShopParams);
+    this._candyShopAddress = shopAddress;
+    this.ethereumSDK = new EthereumSDK(this.baseUrl);
+
+    console.log(`${Logger} constructor: init EthCandyShop=`, this);
   }
 
   /**
@@ -231,95 +176,4 @@ export class EthCandyShop extends BaseShop {
     const txHash = await this.ethereumSDK.cancelOrder(wallet, orderUuid);
     return txHash;
   }
-
-  createAuction(params: any): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  cancelAuction(params: any): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  bidAuction(params: any): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  withdrawAuctionBid(params: any): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  buyNowAuction(params: any): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  settleAndDistributeAuctionProceeds(params: any): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  commitMasterNft(params: any): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  mintNewPrint(params: any): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  redeemDrop(params: any): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  verifyProgramId(programId: PublicKey): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  getStaticProgram(wallet: AnchorWallet | Keypair): Program<Idl> {
-    throw new Error('Method not implemented.');
-  }
-  updateCandyShop(params: any): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  stats(): Promise<ShopStats> {
-    throw new Error('Method not implemented.');
-  }
-  transactions(queryDto: TradeQuery): Promise<ListBase<Trade>> {
-    throw new Error('Method not implemented.');
-  }
-  nftInfo(mint: string): Promise<Nft> {
-    throw new Error('Method not implemented.');
-  }
-  orders(ordersFilterQuery: OrdersFilterQuery): Promise<ListBase<Order>> {
-    throw new Error('Method not implemented.');
-  }
-  childEditionOrders(masterMint: string, ordersEditionFilterQuery: OrdersEditionFilterQuery): Promise<ListBase<Order>> {
-    throw new Error('Method not implemented.');
-  }
-  activeOrdersByWalletAddress(walletAddress: string): Promise<Order[]> {
-    throw new Error('Method not implemented.');
-  }
-  shopWlNfts(): Promise<ListBase<WhitelistNft>> {
-    throw new Error('Method not implemented.');
-  }
-  activeOrderByMintAddress(mintAddress: string): Promise<SingleBase<Order>> {
-    throw new Error('Method not implemented.');
-  }
-  fetchShopByShopId(): Promise<SingleBase<CandyShop>> {
-    throw new Error('Method not implemented.');
-  }
-}
-
-export async function getEthCandyShop(params: CandyShopConstructorParams): Promise<EthCandyShop | undefined> {
-  const isProduction =
-    params.env === Blockchain.SolMainnetBeta || params.env === Blockchain.Eth || params.env === Blockchain.Polygon;
-  const url = isProduction ? ETH_BACKEND_PROD_URL : ETH_BACKEND_STAGING_URL;
-  const apiCaller = new ApiCaller(url);
-  const ethereumSDK = new EthereumSDK(apiCaller);
-  configBaseUrl(url.slice(0, -4));
-
-  const shopDetailRes = await safeAwait(
-    fetchShopsByIdentifier(params.candyShopCreatorAddress, params.treasuryMint, params.programId)
-  );
-  if (shopDetailRes.error || !shopDetailRes.result.success) {
-    console.log(`${Logger} fetchShopsByIdentifier failed, error=`, { shopDetailRes });
-  }
-
-  const shopDetails = shopDetailRes.result?.result!;
-  if (!params.settings) {
-    params.settings = {};
-  }
-
-  params.settings.currencySymbol = shopDetails.symbol;
-  params.settings.currencyDecimals = shopDetails.decimals;
-  const ethCandyShop = new EthCandyShop(params, ethereumSDK);
-  ethCandyShop.candyShopAddress = shopDetails.candyShopAddress;
-  return ethCandyShop;
 }
