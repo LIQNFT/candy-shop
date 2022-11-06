@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { SplitReceiver } from './types/shop.type';
+import { SplitReceiver } from './types';
 
 export enum RequestMethod {
   Post,

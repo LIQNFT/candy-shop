@@ -1,7 +1,6 @@
 /**
  * Explorer link source on checking on-chain information
  */
-
 export enum ExplorerLinkBase {
   SolScan = 'SolScan',
   SolanaFM = 'SolanaFM',

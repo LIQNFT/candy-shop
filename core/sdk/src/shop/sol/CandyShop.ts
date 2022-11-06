@@ -1,4 +1,3 @@
-import { BaseShop } from '../base/BaseShop';
 import {
   CandyShop as CandyShopResponse,
   ListBase,
@@ -34,7 +33,6 @@ import {
   CandyShopBuyParams,
   CandyShopCancelAuctionParams,
   CandyShopCancelParams,
-  CandyShopConstructorParams,
   CandyShopCreateAuctionParams,
   CandyShopRedeemParams,
   CandyShopSellParams,
@@ -72,8 +70,8 @@ import {
   getMetadataAccount,
   getProgram
 } from '../../vendor';
-import { configBaseUrl } from '../../vendor/config';
 import { supply } from '../../vendor/shipping';
+import { BaseShop, BaseShopConstructorParams, CandyShopAuctioneer, CandyShopEditionDropper } from '../base/BaseShop';
 import { CandyShopVersion, ExplorerLinkBase, ShopSettings } from '../base/BaseShopModel';
 
 const Logger = 'CandyShop';
@@ -85,54 +83,39 @@ const DEFAULT_PRICE_DECIMALS_MIN = 0;
 const DEFAULT_VOLUME_DECIMALS = 1;
 const DEFAULT_VOLUME_DECIMALS_MIN = 0;
 const DEFAULT_MAINNET_CONNECTION_URL = 'https://api.mainnet-beta.solana.com';
-const SOL_BACKEND_STAGING_URL = 'https://ckaho.liqnft.com/api';
-const SOL_BACKEND_PROD_URL = 'https://candy-shop.liqnft.com/api';
 
 /**
- * @class CandyShop
+ * Parameters to CandyShop constructor
+ *
+ * @property {PublicKey} candyShopCreatorAddressCreator shop creator's wallet address
+ * @property {PublicKey} treasuryMintTreasury currency to buy and sell with
+ * @property {PublicKey} candyShopProgramId Candy Shop program id
+ * @property {Blockchain} env the network setup for the shop to get the data for
+ * @property {Partial<CandyShopSettings>} settings Optional, additional shop settings
+ * @property {boolean} isEnterprise Indicates if this shop uses enterprise program functionality. Defaults to false
  */
-export class CandyShop extends BaseShop {
+// TODO: make those web3.PublicKey to use string type for common constructor/getters
+export interface CandyShopConstructorParams {
+  candyShopCreatorAddress: web3.PublicKey;
+  treasuryMint: web3.PublicKey;
+  candyShopProgramId: web3.PublicKey;
+  env: Blockchain;
+  settings?: Partial<ShopSettings>;
+  isEnterprise?: boolean;
+}
+
+export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandyShopEditionDropper {
   private _candyShopAddress: web3.PublicKey;
-  private _candyShopCreatorAddress: web3.PublicKey;
-  private _treasuryMint: web3.PublicKey;
-  private _programId: web3.PublicKey;
-  private _env: Blockchain;
-  private _settings: ShopSettings;
-  private _baseUnitsPerCurrency: number;
   private _isEnterprise: boolean;
   private _version: CandyShopVersion;
   private _program: Program | undefined;
-
-  get currencyDecimals(): number {
-    return this._settings.currencyDecimals;
-  }
-
-  get settings(): Partial<ShopSettings> {
-    return this._settings;
-  }
-
-  get env(): Blockchain {
-    return this._env;
-  }
-
-  get treasuryMint(): string {
-    return this._treasuryMint.toString();
-  }
-
-  get connectedPublicKey(): web3.PublicKey | undefined {
-    return this._program?.provider.wallet.publicKey;
-  }
-
-  get candyShopCreatorAddress(): string {
-    return this._candyShopCreatorAddress.toString();
-  }
 
   get candyShopAddress(): string {
     return this._candyShopAddress.toString();
   }
 
-  get programId(): string {
-    return this._programId.toString();
+  get connectedPublicKey(): web3.PublicKey | undefined {
+    return this._program?.provider.wallet.publicKey;
   }
 
   get isEnterprise(): boolean {
@@ -143,41 +126,13 @@ export class CandyShop extends BaseShop {
     return this._version;
   }
 
-  get baseUnitsPerCurrency(): number {
-    return this._baseUnitsPerCurrency;
-  }
-
-  get currencySymbol(): string {
-    return this._settings.currencySymbol;
-  }
-
-  get priceDecimals(): number {
-    return this._settings.priceDecimals;
-  }
-
-  get priceDecimalsMin(): number {
-    return this._settings.priceDecimalsMin;
-  }
-
-  get volumeDecimals(): number {
-    return this._settings.volumeDecimals;
-  }
-
-  get volumeDecimalsMin(): number {
-    return this._settings.volumeDecimalsMin;
-  }
-
-  get explorerLink(): ExplorerLinkBase {
-    return this._settings.explorerLink;
-  }
-
   /**
    * Get JSON rpc connection
    */
   get connection(): web3.Connection {
     const options = Provider.defaultOptions();
-    if (this._env === 'devnet') {
-      return new web3.Connection(web3.clusterApiUrl('devnet'));
+    if (this._env === Blockchain.SolDevnet) {
+      return new web3.Connection(web3.clusterApiUrl(Blockchain.SolDevnet));
     }
 
     return new web3.Connection(
@@ -194,23 +149,11 @@ export class CandyShop extends BaseShop {
    */
 
   constructor(params: CandyShopConstructorParams) {
-    super(params);
     const { candyShopCreatorAddress, candyShopProgramId, treasuryMint, env, settings, isEnterprise } = params;
+    const candyShopAddress = getCandyShopSync(candyShopCreatorAddress, treasuryMint, candyShopProgramId)[0];
 
-    this.verifyProgramId(candyShopProgramId);
-
-    if (isEnterprise && !candyShopProgramId.equals(CANDY_SHOP_V2_PROGRAM_ID)) {
-      throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
-    }
-
-    this._candyShopAddress = getCandyShopSync(candyShopCreatorAddress, treasuryMint, candyShopProgramId)[0];
-    this._candyShopCreatorAddress = candyShopCreatorAddress;
-    this._treasuryMint = treasuryMint;
-    this._programId = candyShopProgramId;
-    this._env = env ?? 'devnet';
-    this._isEnterprise = isEnterprise ? true : false;
-    this._version = getCandyShopVersion(candyShopProgramId);
-    this._settings = {
+    // Assign settings if any or fallback to default
+    const candyShopSettings: ShopSettings = {
       currencySymbol: settings?.currencySymbol ?? DEFAULT_CURRENCY_SYMBOL,
       currencyDecimals: settings?.currencyDecimals ?? DEFAULT_CURRENCY_DECIMALS,
       priceDecimals: settings?.priceDecimals ?? DEFAULT_PRICE_DECIMALS,
@@ -221,19 +164,34 @@ export class CandyShop extends BaseShop {
       connectionConfig: settings?.connectionConfig,
       explorerLink: settings?.explorerLink ?? ExplorerLinkBase.SolanaFM
     };
-    this._baseUnitsPerCurrency = Math.pow(10, this._settings.currencyDecimals);
-    console.log('CandyShop constructor: init CandyShop=', this);
-    const url = this._env === Blockchain.SolMainnetBeta ? SOL_BACKEND_PROD_URL : SOL_BACKEND_STAGING_URL;
 
-    configBaseUrl(url);
+    const baseShopParams: BaseShopConstructorParams = {
+      shopCreatorAddress: candyShopCreatorAddress.toString(),
+      treasuryMint: treasuryMint.toString(),
+      programId: candyShopProgramId.toString(),
+      env: env ?? Blockchain.SolDevnet,
+      settings: candyShopSettings
+    };
+
+    // Apply common params to BaseShop
+    super(baseShopParams);
+    this.verifyProgramId(candyShopProgramId);
+    if (isEnterprise && !candyShopProgramId.equals(CANDY_SHOP_V2_PROGRAM_ID)) {
+      throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
+    }
+
+    this._candyShopAddress = candyShopAddress;
+    this._isEnterprise = isEnterprise ? true : false;
+    this._version = getCandyShopVersion(candyShopProgramId);
+
+    console.log(`${Logger} constructor: init CandyShop=`, this);
   }
 
-  verifyProgramId(programId: web3.PublicKey) {
+  public verifyProgramId(programId: web3.PublicKey): void {
     switch (programId.toString()) {
       case CANDY_SHOP_PROGRAM_ID.toString():
-        break;
       case CANDY_SHOP_V2_PROGRAM_ID.toString():
-        break;
+        return;
       default:
         throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
     }
@@ -244,9 +202,10 @@ export class CandyShop extends BaseShop {
    *
    * @param {AnchorWallet | web3.Keypair} wallet Wallet or keypair of connected user
    */
-  getStaticProgram(wallet: AnchorWallet | web3.Keypair): Program<Idl> {
+  public getStaticProgram(wallet: AnchorWallet | web3.Keypair): Program<Idl> {
     if (this._program) return this._program;
-    return getProgram(this.connection, this._programId, wallet);
+    const programId = new web3.PublicKey(this.programId);
+    return getProgram(this.connection, programId, wallet);
   }
 
   /**
@@ -257,13 +216,17 @@ export class CandyShop extends BaseShop {
   public async updateCandyShop(params: CandyShopUpdateParams): Promise<string> {
     const { wallet, sellerFeeBasisPoint, requiresSignOff, canChangeSalePrice, split } = params;
 
+    const shopCreatorAddress = new web3.PublicKey(this._shopCreatorAddress);
+    const treasuryMint = new web3.PublicKey(this._treasuryMint);
+    const programId = new web3.PublicKey(this._programId);
+
     const [auctionHouseAuthority, authorityBump] = await getAuctionHouseAuthority(
-      this._candyShopCreatorAddress,
-      this._treasuryMint,
-      this._programId
+      shopCreatorAddress,
+      treasuryMint,
+      programId
     );
 
-    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
+    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, treasuryMint);
 
     console.log(`${Logger}: performing update, `, {
       auctionHouse: auctionHouse.toString(),
@@ -272,7 +235,7 @@ export class CandyShop extends BaseShop {
 
     const updateCandyShopParams: UpdateCandyShopParams = {
       wallet,
-      treasuryMint: this._treasuryMint,
+      treasuryMint,
       sellerFeeBasisPoint,
       requiresSignOff,
       canChangeSalePrice,
@@ -302,12 +265,17 @@ export class CandyShop extends BaseShop {
       tokenMint: tokenMint.toString(),
       price
     });
+
+    const shopCreatorAddress = new web3.PublicKey(this._shopCreatorAddress);
+    const shopTreasuryMint = new web3.PublicKey(this._treasuryMint);
+    const candyShopProgramId = new web3.PublicKey(this._programId);
+
     const txHash = await CandyShopTrade.buy({
       connection: this.connection,
       shopAddress: this._candyShopAddress,
-      candyShopProgramId: this._programId,
-      shopCreatorAddress: this._candyShopCreatorAddress,
-      shopTreasuryMint: this._treasuryMint,
+      candyShopProgramId,
+      shopCreatorAddress,
+      shopTreasuryMint,
       isEnterprise: this._isEnterprise,
       wallet: wallet,
       tokenAccount: tokenAccount,
@@ -330,6 +298,11 @@ export class CandyShop extends BaseShop {
       tokenAccount: tokenAccount.toString(),
       price
     });
+
+    const shopCreatorAddress = new web3.PublicKey(this._shopCreatorAddress);
+    const shopTreasuryMint = new web3.PublicKey(this._treasuryMint);
+    const candyShopProgramId = new web3.PublicKey(this._programId);
+
     const txHash = await CandyShopTrade.sell({
       connection: this.connection,
       tokenAccount: tokenAccount,
@@ -337,9 +310,9 @@ export class CandyShop extends BaseShop {
       price: price,
       wallet: wallet,
       shopAddress: this._candyShopAddress,
-      candyShopProgramId: this._programId,
-      shopTreasuryMint: this._treasuryMint,
-      shopCreatorAddress: this._candyShopCreatorAddress
+      candyShopProgramId,
+      shopTreasuryMint,
+      shopCreatorAddress
     });
     return txHash;
   }
@@ -356,6 +329,11 @@ export class CandyShop extends BaseShop {
       tokenMint: tokenMint.toString(),
       price
     });
+
+    const shopCreatorAddress = new web3.PublicKey(this._shopCreatorAddress);
+    const shopTreasuryMint = new web3.PublicKey(this._treasuryMint);
+    const candyShopProgramId = new web3.PublicKey(this._programId);
+
     const txHash = await CandyShopTrade.cancel({
       connection: this.connection,
       tokenAccount: tokenAccount,
@@ -363,9 +341,9 @@ export class CandyShop extends BaseShop {
       price: price,
       wallet: wallet,
       shopAddress: this._candyShopAddress,
-      candyShopProgramId: this._programId,
-      shopTreasuryMint: this._treasuryMint,
-      shopCreatorAddress: this._candyShopCreatorAddress
+      candyShopProgramId,
+      shopTreasuryMint,
+      shopCreatorAddress
     });
     return txHash;
   }
@@ -403,20 +381,24 @@ export class CandyShop extends BaseShop {
       biddingPeriod: biddingPeriod.toString(),
       buyNowPrice
     });
+
+    const shopCreatorAddress = new web3.PublicKey(this._shopCreatorAddress);
+    const treasuryMint = new web3.PublicKey(this._treasuryMint);
+    const candyShopProgramId = new web3.PublicKey(this._programId);
+
     const program = await this.getStaticProgram(wallet);
 
-    const [auction, auctionBump] = await getAuction(this._candyShopAddress, tokenMint, this._programId);
+    const [auction, auctionBump] = await getAuction(this._candyShopAddress, tokenMint, candyShopProgramId);
 
     const auctionAccount = await program.provider.connection.getAccountInfo(auction);
 
     if (auctionAccount?.data) {
       throw new Error(CandyShopErrorType.AuctionExists);
     }
-
     const [auctionHouseAuthority] = await getAuctionHouseAuthority(
-      this._candyShopCreatorAddress,
-      this._treasuryMint,
-      this._programId
+      shopCreatorAddress,
+      treasuryMint,
+      candyShopProgramId
     );
 
     const createAuctionParams: CreateAuctionParams = {
@@ -425,7 +407,7 @@ export class CandyShop extends BaseShop {
       authority: auctionHouseAuthority,
       auctionBump,
       candyShop: this._candyShopAddress,
-      treasuryMint: this._treasuryMint,
+      treasuryMint,
       nftMint: tokenMint,
       startingBid,
       startTime,
@@ -459,20 +441,23 @@ export class CandyShop extends BaseShop {
       tokenAccount: tokenAccount.toString()
     });
 
+    const shopCreatorAddress = new web3.PublicKey(this._shopCreatorAddress);
+    const treasuryMint = new web3.PublicKey(this._treasuryMint);
+    const candyShopProgramId = new web3.PublicKey(this._programId);
+
     const program = await this.getStaticProgram(wallet);
 
-    const [auction, auctionBump] = await getAuction(this._candyShopAddress, tokenMint, this._programId);
+    const [auction, auctionBump] = await getAuction(this._candyShopAddress, tokenMint, candyShopProgramId);
 
     const auctionAccount = await program.provider.connection.getAccountInfo(auction);
 
     if (!auctionAccount) {
       throw new Error(CandyShopErrorType.AuctionDoesNotExist);
     }
-
     const [auctionHouseAuthority] = await getAuctionHouseAuthority(
-      this._candyShopCreatorAddress,
-      this._treasuryMint,
-      this._programId
+      shopCreatorAddress,
+      treasuryMint,
+      candyShopProgramId
     );
 
     const cancelAuctionParams: CancelAuctionParams = {
@@ -481,7 +466,7 @@ export class CandyShop extends BaseShop {
       authority: auctionHouseAuthority,
       auctionBump,
       candyShop: this._candyShopAddress,
-      treasuryMint: this._treasuryMint,
+      treasuryMint,
       nftMint: tokenMint,
       program
     };
@@ -504,12 +489,16 @@ export class CandyShop extends BaseShop {
       tokenAccount: tokenAccount.toString()
     });
 
+    const shopCreatorAddress = new web3.PublicKey(this._shopCreatorAddress);
+    const shopTreasuryMint = new web3.PublicKey(this._treasuryMint);
+    const candyShopProgramId = new web3.PublicKey(this._programId);
+
     const txHash = await CandyShopAuction.bid({
       shopAddress: this._candyShopAddress,
-      candyShopProgramId: this._programId,
+      candyShopProgramId,
       connection: this.connection,
-      shopCreatorAddress: this._candyShopCreatorAddress,
-      shopTreasuryMint: this._treasuryMint,
+      shopCreatorAddress,
+      shopTreasuryMint,
       version: this._version,
       tokenAccount,
       tokenMint,
@@ -532,12 +521,16 @@ export class CandyShop extends BaseShop {
       tokenAccount: tokenAccount.toString()
     });
 
+    const shopCreatorAddress = new web3.PublicKey(this._shopCreatorAddress);
+    const shopTreasuryMint = new web3.PublicKey(this._treasuryMint);
+    const candyShopProgramId = new web3.PublicKey(this._programId);
+
     const txHash = await CandyShopAuction.withdrawBid({
       shopAddress: this._candyShopAddress,
-      candyShopProgramId: this._programId,
+      candyShopProgramId,
       connection: this.connection,
-      shopCreatorAddress: this._candyShopCreatorAddress,
-      shopTreasuryMint: this._treasuryMint,
+      shopCreatorAddress,
+      shopTreasuryMint,
       version: this._version,
       tokenAccount,
       tokenMint,
@@ -559,12 +552,16 @@ export class CandyShop extends BaseShop {
       tokenAccount: tokenAccount.toString()
     });
 
+    const shopCreatorAddress = new web3.PublicKey(this._shopCreatorAddress);
+    const shopTreasuryMint = new web3.PublicKey(this._treasuryMint);
+    const candyShopProgramId = new web3.PublicKey(this._programId);
+
     const txHash = await CandyShopAuction.buyNow({
       shopAddress: this._candyShopAddress,
-      candyShopProgramId: this._programId,
+      candyShopProgramId,
       connection: this.connection,
-      shopCreatorAddress: this._candyShopCreatorAddress,
-      shopTreasuryMint: this._treasuryMint,
+      shopCreatorAddress,
+      shopTreasuryMint,
       version: this._version,
       env: this._env,
       tokenAccount,
@@ -587,17 +584,21 @@ export class CandyShop extends BaseShop {
       tokenAccount: tokenAccount.toString()
     });
 
+    const shopCreatorAddress = new web3.PublicKey(this._shopCreatorAddress);
+    const treasuryMint = new web3.PublicKey(this._treasuryMint);
+    const candyShopProgramId = new web3.PublicKey(this._programId);
+
     const program = await this.getStaticProgram(wallet);
 
-    const [auction, auctionBump] = await getAuction(this._candyShopAddress, tokenMint, this._programId);
+    const [auction, auctionBump] = await getAuction(this._candyShopAddress, tokenMint, candyShopProgramId);
 
     const [auctionHouseAuthority] = await getAuctionHouseAuthority(
-      this._candyShopCreatorAddress,
-      this._treasuryMint,
-      this._programId
+      shopCreatorAddress,
+      treasuryMint,
+      candyShopProgramId
     );
 
-    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
+    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, treasuryMint);
 
     const [feeAccount] = await getAuctionHouseFeeAcct(auctionHouse);
 
@@ -611,7 +612,7 @@ export class CandyShop extends BaseShop {
       authority: auctionHouseAuthority,
       candyShop: this._candyShopAddress,
       settler: wallet,
-      treasuryMint: this._treasuryMint,
+      treasuryMint,
       nftMint: tokenMint,
       metadata,
       auctionHouse,
@@ -686,12 +687,16 @@ export class CandyShop extends BaseShop {
       whitelistMint: whitelistMint ? whitelistMint.toString() : undefined
     });
 
+    const shopCreatorAddress = new web3.PublicKey(this._shopCreatorAddress);
+    const treasuryMint = new web3.PublicKey(this._treasuryMint);
+    const candyShopProgramId = new web3.PublicKey(this._programId);
+
     const [auctionHouseAuthority] = await getAuctionHouseAuthority(
-      this._candyShopCreatorAddress,
-      this._treasuryMint,
-      this._programId
+      shopCreatorAddress,
+      treasuryMint,
+      candyShopProgramId
     );
-    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, this._treasuryMint);
+    const [auctionHouse] = await getAuctionHouse(auctionHouseAuthority, treasuryMint);
 
     const { instructions, newEditionMint, newEditionTokenAccount } = await createNewMintInstructions(
       editionBuyer.publicKey,
@@ -708,7 +713,7 @@ export class CandyShop extends BaseShop {
       isEnterprise: this._isEnterprise,
       connection: this.connection,
       candyShopProgram: this.getStaticProgram(editionBuyer),
-      treasuryMint: this._treasuryMint,
+      treasuryMint,
       mintEditionNumber,
       instructions,
       newEditionMint,
@@ -746,6 +751,9 @@ export class CandyShop extends BaseShop {
 
     return txHash;
   }
+
+  // TODO: Deprecate following info methods
+  // The data can be fetched by using exposed APIs with very few params from CandyShop
 
   /**
    * Fetch stats associated with this Candy Shop

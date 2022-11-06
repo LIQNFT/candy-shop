@@ -1,53 +1,125 @@
 import { Blockchain, ListBase, Nft, OrdersEditionFilterQuery, Trade, TradeQuery } from '@liqnft/candy-shop-types';
+import { configBaseUrl } from '../../vendor';
 import { CandyShopVersion, ExplorerLinkBase, ShopSettings } from './BaseShopModel';
 
+/**
+ * Optional implementation that will coupled with shop instance
+ */
+export interface CandyShopAuctioneer {
+  createAuction(params: any): Promise<string>;
+  cancelAuction(params: any): Promise<string>;
+  bidAuction(params: any): Promise<string>;
+  withdrawAuctionBid(params: any): Promise<string>;
+  buyNowAuction(params: any): Promise<string>;
+  settleAndDistributeAuctionProceeds(params: any): Promise<string>;
+}
+
+export interface CandyShopEditionDropper {
+  commitMasterNft(params: any): Promise<string>;
+  mintNewPrint(params: any): Promise<string>;
+  redeemDrop(params: any): Promise<string>;
+}
+
+export interface BaseShopConstructorParams {
+  shopCreatorAddress: string;
+  treasuryMint: string;
+  programId: string;
+  env: Blockchain;
+  settings: ShopSettings;
+}
+
 export abstract class BaseShop {
-  constructor(params: any) {}
+  // Aggregate common params as common getters in BaseShop
+  private readonly BACKEND_STAGING_URL = 'https://ckaho.liqnft.com/api';
+  private readonly BACKEND_PROD_URL = 'https://candy-shop.liqnft.com/api';
+  protected baseUrl: string;
+  protected _shopCreatorAddress: string;
+  protected _treasuryMint: string;
+  protected _programId: string;
+  protected _env: Blockchain;
+  protected _settings: ShopSettings;
+  protected _baseUnitsPerCurrency: number;
+
+  get candyShopCreatorAddress(): string {
+    return this._shopCreatorAddress;
+  }
+
+  get treasuryMint(): string {
+    return this._treasuryMint;
+  }
+
+  get programId(): string {
+    return this._programId;
+  }
+
+  get settings(): Partial<ShopSettings> {
+    return this._settings;
+  }
+
+  get env(): Blockchain {
+    return this._env;
+  }
+
+  get baseUnitsPerCurrency(): number {
+    return this._baseUnitsPerCurrency;
+  }
+
+  get currencyDecimals(): number {
+    return this._settings.currencyDecimals;
+  }
+
+  get currencySymbol(): string {
+    return this._settings.currencySymbol;
+  }
+
+  get priceDecimals(): number {
+    return this._settings.priceDecimals;
+  }
+
+  get priceDecimalsMin(): number {
+    return this._settings.priceDecimalsMin;
+  }
+
+  get volumeDecimals(): number {
+    return this._settings.volumeDecimals;
+  }
+
+  get volumeDecimalsMin(): number {
+    return this._settings.volumeDecimalsMin;
+  }
+
+  get explorerLink(): ExplorerLinkBase {
+    return this._settings.explorerLink;
+  }
+
+  constructor(params: BaseShopConstructorParams) {
+    this._shopCreatorAddress = params.shopCreatorAddress;
+    this._treasuryMint = params.treasuryMint;
+    this._env = params.env;
+    this._programId = params.programId;
+    this._settings = params.settings;
+    this._baseUnitsPerCurrency = Math.pow(10, this._settings.currencyDecimals);
+    this.baseUrl = this.getBaseUrl(this.env);
+    configBaseUrl(this.baseUrl);
+  }
+
+  private getBaseUrl(env: Blockchain): string {
+    switch (env) {
+      case Blockchain.SolMainnetBeta:
+      case Blockchain.Eth:
+      case Blockchain.Polygon:
+        return this.BACKEND_PROD_URL;
+      default:
+        return this.BACKEND_STAGING_URL;
+    }
+  }
 
   // Properties
   abstract get candyShopAddress(): string;
-  abstract get candyShopCreatorAddress(): string;
-  abstract get treasuryMint(): string;
-  abstract get settings(): Partial<ShopSettings>;
-  abstract get baseUnitsPerCurrency(): number;
-  abstract get currencySymbol(): string;
-  abstract get currencyDecimals(): number;
-  abstract get priceDecimalsMin(): number;
-  abstract get priceDecimals(): number;
-  abstract get volumeDecimals(): number;
-  abstract get volumeDecimalsMin(): number;
-  abstract get env(): Blockchain;
   abstract get version(): CandyShopVersion;
-  abstract get explorerLink(): ExplorerLinkBase;
 
   // Marketplace
   abstract buy(params: any): Promise<string>;
   abstract sell(params: any): Promise<string>;
   abstract cancel(params: any): Promise<string>;
-
-  // Auction
-  abstract createAuction(params: any): Promise<string>;
-  abstract cancelAuction(params: any): Promise<string>;
-  abstract bidAuction(params: any): Promise<string>;
-  abstract withdrawAuctionBid(params: any): Promise<string>;
-  abstract buyNowAuction(params: any): Promise<string>;
-  abstract settleAndDistributeAuctionProceeds(params: any): Promise<string>;
-
-  // Edition Drop
-  abstract commitMasterNft(params: any): Promise<string>;
-  abstract mintNewPrint(params: any): Promise<string>;
-  abstract redeemDrop(params: any): Promise<string>;
-
-  abstract verifyProgramId(programId: any): void;
-  abstract getStaticProgram(wallet: any): any;
-  abstract updateCandyShop(params: any): Promise<string>;
-  abstract stats(): any;
-  abstract transactions(queryDto: TradeQuery): Promise<ListBase<Trade>>;
-  abstract nftInfo(mint: string): Promise<Nft>;
-  abstract orders(ordersFilterQuery: any): any;
-  abstract childEditionOrders(masterMint: string, ordersEditionFilterQuery: OrdersEditionFilterQuery): any;
-  abstract activeOrdersByWalletAddress(walletAddress: string): any;
-  abstract shopWlNfts(): any;
-  abstract activeOrderByMintAddress(mintAddress: string): any;
-  abstract fetchShopByShopId(): any;
 }

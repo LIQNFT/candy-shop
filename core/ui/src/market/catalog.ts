@@ -10,21 +10,18 @@ export interface SolSellerOptions {
 }
 
 export abstract class Store {
-  private _baseShop: BaseShop;
+  protected baseShop: BaseShop;
 
   constructor(shop: BaseShop) {
-    this._baseShop = shop;
+    this.baseShop = shop;
   }
 
-  protected get shop(): BaseShop {
-    return this._baseShop;
+  /* Shared methods with same implementation */
+  public getOrderNfts(walletAddress: string): Promise<Order[]> {
+    return fetchOrdersByShopAndWalletAddress(this.baseShop.candyShopAddress, walletAddress);
   }
 
-  public getOrderNfts(publicKey: string): Promise<Order[]> {
-    return fetchOrdersByShopAndWalletAddress(this.shop.candyShopAddress, publicKey);
-  }
-
-  /* Common shop data methods */
+  /* Required common shop data methods */
   abstract getShop(): Promise<CandyShopResponse>;
   abstract getNFTs(
     walletPublicKey: string,
@@ -33,7 +30,7 @@ export abstract class Store {
   abstract getOrderNft(tokenMint: string): Promise<SingleBase<Order>>;
   abstract getNftInfo(tokenMint: string): Promise<Nft>;
 
-  /* Common trading methods */
+  /* Required common trading methods */
   abstract buy(order: Order): Promise<string>;
   abstract sell(nft: SingleTokenInfo, price: number, options?: SolSellerOptions): Promise<string>;
   abstract cancel(order: Order): Promise<any>;
