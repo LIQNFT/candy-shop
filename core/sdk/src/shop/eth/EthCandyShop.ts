@@ -6,7 +6,7 @@ import { Blockchain } from '@liqnft/candy-shop-types';
 import { BaseShop, BaseShopConstructorParams } from '../base/BaseShop';
 import { CandyShopVersion, ExplorerLinkBase, ShopSettings } from '../base/BaseShopModel';
 import { EthereumSDK, SeaportHelper } from '../../factory/conveyor/eth';
-import { safeAwait, SingleTokenInfo } from '../../vendor';
+import { configBaseUrl, getBaseUrl, safeAwait, SingleTokenInfo } from '../../vendor';
 import { fetchShopsByIdentifier } from '../../CandyShopInfoAPI';
 import Decimal from 'decimal.js';
 
@@ -34,6 +34,9 @@ export class EthCandyShop extends BaseShop {
    * @returns EthCandyShop
    */
   static async initEthCandyShop(params: EthShopConstructorParams): Promise<EthCandyShop> {
+    const baseUrl = getBaseUrl(params.env);
+    configBaseUrl(baseUrl);
+
     // Fetch required details for EVM setup
     const shopDetail = await safeAwait(
       fetchShopsByIdentifier(params.shopCreatorAddress, params.treasuryMint, params.programId)

@@ -1,5 +1,5 @@
 import { Blockchain, ListBase, Nft, OrdersEditionFilterQuery, Trade, TradeQuery } from '@liqnft/candy-shop-types';
-import { configBaseUrl } from '../../vendor';
+import { configBaseUrl, getBaseUrl } from '../../vendor';
 import { CandyShopVersion, ExplorerLinkBase, ShopSettings } from './BaseShopModel';
 
 /**
@@ -30,8 +30,7 @@ export interface BaseShopConstructorParams {
 
 export abstract class BaseShop {
   // Aggregate common params as common getters in BaseShop
-  private readonly BACKEND_STAGING_URL = 'https://ckaho.liqnft.com/api';
-  private readonly BACKEND_PROD_URL = 'https://candy-shop.liqnft.com/api';
+
   protected baseUrl: string;
   protected _shopCreatorAddress: string;
   protected _treasuryMint: string;
@@ -99,19 +98,8 @@ export abstract class BaseShop {
     this._programId = params.programId;
     this._settings = params.settings;
     this._baseUnitsPerCurrency = Math.pow(10, this._settings.currencyDecimals);
-    this.baseUrl = this.getBaseUrl(this.env);
+    this.baseUrl = getBaseUrl(this.env);
     configBaseUrl(this.baseUrl);
-  }
-
-  private getBaseUrl(env: Blockchain): string {
-    switch (env) {
-      case Blockchain.SolMainnetBeta:
-      case Blockchain.Eth:
-      case Blockchain.Polygon:
-        return this.BACKEND_PROD_URL;
-      default:
-        return this.BACKEND_STAGING_URL;
-    }
   }
 
   // Properties

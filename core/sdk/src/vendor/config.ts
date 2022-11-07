@@ -1,4 +1,8 @@
+import { Blockchain } from '@liqnft/candy-shop-types';
 import axios, { AxiosRequestConfig } from 'axios';
+
+const BACKEND_STAGING_URL = 'https://ckaho.liqnft.com/api';
+const BACKEND_PROD_URL = 'https://candy-shop.liqnft.com/api';
 
 const axiosInstance = axios.create({
   headers: {
@@ -8,6 +12,17 @@ const axiosInstance = axios.create({
 
 export default axiosInstance;
 let interceptorEvents: number[] = [];
+
+export const getBaseUrl = (env: Blockchain): string => {
+  switch (env) {
+    case Blockchain.SolMainnetBeta:
+    case Blockchain.Eth:
+    case Blockchain.Polygon:
+      return BACKEND_PROD_URL;
+    default:
+      return BACKEND_STAGING_URL;
+  }
+};
 
 export const configBaseUrl = (baseUrl: string): void => {
   if (interceptorEvents.length) {
