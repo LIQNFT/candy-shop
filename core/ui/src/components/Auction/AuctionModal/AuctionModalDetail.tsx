@@ -126,7 +126,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
               <div className="candy-label">BUY NOW PRICE</div>
               <div className="candy-price">
                 <Price
-                  value={auction.highestBidPrice}
+                  value={auction.buyNowPrice}
                   currencySymbol={currencySymbol}
                   baseUnitsPerCurrency={baseUnitsPerCurrency}
                   priceDecimalsMin={priceDecimalsMin}
@@ -141,7 +141,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
           <div className="candy-label">STARTING BID</div>
           <div className="candy-price">
             <Price
-              value={auction.highestBidPrice}
+              value={auction.startingBid}
               currencySymbol={currencySymbol}
               baseUnitsPerCurrency={baseUnitsPerCurrency}
               priceDecimalsMin={priceDecimalsMin}
@@ -160,7 +160,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
               <div className="candy-label">BUY NOW PRICE</div>
               <div className="candy-price">
                 <Price
-                  value={auction.highestBidPrice}
+                  value={auction.buyNowPrice}
                   currencySymbol={currencySymbol}
                   baseUnitsPerCurrency={baseUnitsPerCurrency}
                   priceDecimalsMin={priceDecimalsMin}
@@ -197,7 +197,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
               <div className="candy-label">STARTING BID</div>
               <div className="candy-price">
                 <Price
-                  value={auction.highestBidPrice}
+                  value={auction.startingBid}
                   currencySymbol={currencySymbol}
                   baseUnitsPerCurrency={baseUnitsPerCurrency}
                   priceDecimalsMin={priceDecimalsMin}
@@ -229,7 +229,7 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
             <div className="candy-auction-modal-prompt">
               Place bid of
               <Price
-                value={auction.highestBidPrice}
+                value={minNextBid}
                 currencySymbol={currencySymbol}
                 baseUnitsPerCurrency={baseUnitsPerCurrency}
                 priceDecimalsMin={priceDecimalsMin}
