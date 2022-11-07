@@ -7,7 +7,7 @@ import { Card } from 'components/Card';
 interface AuctionCardProps {
   auction: Auction;
   walletConnectComponent: React.ReactElement;
-  walletPublicKey: string;
+  walletPublicKey: string | undefined;
   currencySymbol: string;
   baseUnitsPerCurrency: number;
   priceDecimalsMin: number;
