@@ -34,7 +34,7 @@ export enum BlockchainType {
  * @property {number} currencyDecimals
  * @property {number} priceDecimals
  * @property {number} volumeDecimals
- * @property {string} mainnetConnectionUrl
+ * @property {string} connectionUrl
  * @property {object | undefined} connectionConfig
  */
 export interface ShopSettings {
@@ -51,7 +51,7 @@ export interface ShopSettings {
   /** Number of max decimals to display for volume numbers (default is 1) */
   volumeDecimals: number;
   /** Rpc connection endpoint */
-  mainnetConnectionUrl: string;
+  connectionUrl: string | undefined;
   /** Connection config options */
   connectionConfig: object | undefined;
   /** Explorer link options */

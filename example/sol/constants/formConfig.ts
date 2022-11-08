@@ -8,6 +8,6 @@ export const DEFAULT_FORM_CONFIG = {
   treasuryMint: TREASURY_MINT,
   programId: CANDY_SHOP_V2_PROGRAM_ID,
   network: WalletAdapterNetwork.Devnet,
-  settings: JSON.stringify({ mainnetConnectionUrl: 'https://api.mainnet-beta.solana.com' }, null, 2),
+  settings: JSON.stringify({ connectionUrl: '' }, null, 2),
   paymentProvider: JSON.stringify({ stripePublicKey: '' }, null, 2)
 };

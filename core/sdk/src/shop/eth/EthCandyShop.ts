@@ -14,7 +14,6 @@ const DEFAULT_PRICE_DECIMALS = 3;
 const DEFAULT_PRICE_DECIMALS_MIN = 0;
 const DEFAULT_VOLUME_DECIMALS = 1;
 const DEFAULT_VOLUME_DECIMALS_MIN = 0;
-const DEFAULT_MAINNET_CONNECTION_URL = ''; // TODO
 
 const Logger = 'EthCandyShop';
 
@@ -57,7 +56,7 @@ export class EthCandyShop extends BaseShop {
       priceDecimalsMin: params.settings?.priceDecimalsMin ?? DEFAULT_PRICE_DECIMALS_MIN,
       volumeDecimals: params.settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
       volumeDecimalsMin: params.settings?.volumeDecimalsMin ?? DEFAULT_VOLUME_DECIMALS_MIN,
-      mainnetConnectionUrl: params.settings?.mainnetConnectionUrl ?? DEFAULT_MAINNET_CONNECTION_URL,
+      connectionUrl: params.settings?.connectionUrl,
       connectionConfig: params.settings?.connectionConfig,
       explorerLink: params.settings?.explorerLink ?? ExplorerLinkBase.Polygon
     };

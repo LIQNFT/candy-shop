@@ -53,7 +53,7 @@ programCommand('sellMany')
       candyShopProgramId,
       env,
       settings: {
-        mainnetConnectionUrl: rpcUrl
+        connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
@@ -97,7 +97,7 @@ programCommand('cancelMany')
       candyShopProgramId,
       env,
       settings: {
-        mainnetConnectionUrl: rpcUrl
+        connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
@@ -141,7 +141,7 @@ programCommand('sell')
       candyShopProgramId,
       env,
       settings: {
-        mainnetConnectionUrl: rpcUrl
+        connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
@@ -181,7 +181,7 @@ programCommand('cancel')
       candyShopProgramId,
       env,
       settings: {
-        mainnetConnectionUrl: rpcUrl
+        connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
@@ -234,7 +234,7 @@ programCommand('buy')
       candyShopProgramId,
       env,
       settings: {
-        mainnetConnectionUrl: rpcUrl
+        connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
@@ -291,7 +291,7 @@ programCommand('createAuction')
       candyShopProgramId,
       env,
       settings: {
-        mainnetConnectionUrl: rpcUrl
+        connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
@@ -335,7 +335,7 @@ programCommand('cancelAuction')
       candyShopProgramId,
       env,
       settings: {
-        mainnetConnectionUrl: rpcUrl
+        connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
@@ -374,7 +374,7 @@ programCommand('makeBid')
       candyShopProgramId,
       env,
       settings: {
-        mainnetConnectionUrl: rpcUrl
+        connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
@@ -411,7 +411,7 @@ programCommand('withdrawBid')
       candyShopProgramId,
       env,
       settings: {
-        mainnetConnectionUrl: rpcUrl
+        connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
@@ -448,7 +448,7 @@ programCommand('buyNow')
       candyShopProgramId,
       env,
       settings: {
-        mainnetConnectionUrl: rpcUrl
+        connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
@@ -485,7 +485,7 @@ programCommand('settleAndDistribute')
       candyShopProgramId,
       env,
       settings: {
-        mainnetConnectionUrl: rpcUrl
+        connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
@@ -547,7 +547,7 @@ programCommand('commitEditionDropNft')
       candyShopProgramId,
       env,
       settings: {
-        mainnetConnectionUrl: rpcUrl
+        connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
@@ -602,7 +602,7 @@ programCommand('mintPrint')
       candyShopProgramId,
       env,
       settings: {
-        mainnetConnectionUrl: rpcUrl
+        connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
@@ -654,7 +654,7 @@ programCommand('mintAllPrint')
       candyShopProgramId,
       env,
       settings: {
-        mainnetConnectionUrl: rpcUrl
+        connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
     });
@@ -765,7 +765,7 @@ programCommand('redeemDrop')
       candyShopProgramId,
       env,
       settings: {
-        mainnetConnectionUrl: rpcUrl
+        connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
     });

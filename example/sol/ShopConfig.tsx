@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Input, Modal, Select } from 'antd';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { LS_CANDY_FORM, DEFAULT_FORM_CONFIG } from './constants/formConfiguration';
+import { LS_CANDY_FORM, DEFAULT_FORM_CONFIG } from './constants/formConfig';
 
 interface ShopConfigProps {
   setCandyForm: (candyForm: any) => any;

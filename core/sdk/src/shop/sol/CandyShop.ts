@@ -130,7 +130,7 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
       priceDecimalsMin: params.settings?.priceDecimalsMin ?? DEFAULT_PRICE_DECIMALS_MIN,
       volumeDecimals: params.settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
       volumeDecimalsMin: params.settings?.volumeDecimalsMin ?? DEFAULT_VOLUME_DECIMALS_MIN,
-      mainnetConnectionUrl: params.settings?.mainnetConnectionUrl ?? DEFAULT_MAINNET_CONNECTION_URL,
+      connectionUrl: params.settings?.connectionUrl,
       connectionConfig: params.settings?.connectionConfig,
       explorerLink: params.settings?.explorerLink ?? ExplorerLinkBase.SolanaFM
     };
@@ -165,14 +165,16 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
    */
   get connection(): web3.Connection {
     const options = Provider.defaultOptions();
+
+    if (this._settings.connectionUrl) {
+      return new web3.Connection(this._settings.connectionUrl, this._settings.connectionConfig || options.commitment);
+    }
+
     if (this._env === Blockchain.SolDevnet) {
       return new web3.Connection(web3.clusterApiUrl(Blockchain.SolDevnet));
     }
 
-    return new web3.Connection(
-      this._settings.mainnetConnectionUrl,
-      this._settings.connectionConfig || options.commitment
-    );
+    return new web3.Connection(DEFAULT_MAINNET_CONNECTION_URL, this._settings.connectionConfig || options.commitment);
   }
 
   /**
