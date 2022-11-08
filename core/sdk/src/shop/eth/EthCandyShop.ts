@@ -53,11 +53,6 @@ export class EthCandyShop extends BaseShop {
       explorerLink: params.settings?.explorerLink ?? ExplorerLinkBase.Polygon
     };
 
-    const ethParams: EthShopConstructorParams = {
-      ...params,
-      settings: candyShopSettings
-    };
-
     // Fetch required details for EVM setup
     const shopDetail = await safeAwait(
       fetchShopsByIdentifier(params.shopCreatorAddress, params.treasuryMint, params.programId)
@@ -68,9 +63,14 @@ export class EthCandyShop extends BaseShop {
       throw new Error(`${Logger} init error`);
     }
 
+    const ethParams: EthShopConstructorParams = {
+      ...params,
+      settings: candyShopSettings
+    };
+
     const shopResponse = shopDetail.result.result;
-    params.settings.currencySymbol = shopResponse.symbol;
-    params.settings.currencyDecimals = shopResponse.decimals;
+    ethParams.settings.currencySymbol = shopResponse.symbol;
+    ethParams.settings.currencyDecimals = shopResponse.decimals;
     const ethCandyShop = new EthCandyShop(shopResponse.candyShopAddress, ethParams);
     return ethCandyShop;
   }
