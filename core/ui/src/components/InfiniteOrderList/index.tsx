@@ -11,6 +11,7 @@ import { LoadingSkeleton } from 'components/LoadingSkeleton';
 import { Order as OrderComponent } from 'components/Order';
 import { ShopProps } from 'model';
 import { StoreProvider } from 'market';
+import { Empty } from 'components/Empty';
 
 interface InfiniteOrderListProps extends ShopProps {
   orders: Order[];
@@ -68,23 +69,33 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
 
   return (
     <>
-      <InfiniteScroll dataLength={orders.length} next={loadNextPage} hasMore={hasNextPage} loader={<LoadingSkeleton />}>
-        <div className="candy-container-list">
-          {orders.map((order) => (
-            <div key={order.tokenMint}>
-              <OrderComponent
-                order={order}
-                walletConnectComponent={walletConnectComponent}
-                url={url}
-                sellerUrl={sellerUrl}
-                onOrderSelection={onSelectOrder}
-                candyShop={candyShop}
-                wallet={wallet}
-              />
-            </div>
-          ))}
-        </div>
-      </InfiniteScroll>
+      {hasNextPage === false && orders.length > 0 ? (
+        <InfiniteScroll
+          dataLength={orders.length}
+          next={loadNextPage}
+          hasMore={hasNextPage}
+          loader={<LoadingSkeleton />}
+        >
+          <div className="candy-container-list">
+            {orders.map((order) => (
+              <div key={order.tokenMint}>
+                <OrderComponent
+                  order={order}
+                  walletConnectComponent={walletConnectComponent}
+                  url={url}
+                  sellerUrl={sellerUrl}
+                  onOrderSelection={onSelectOrder}
+                  candyShop={candyShop}
+                  wallet={wallet}
+                />
+              </div>
+            ))}
+          </div>
+        </InfiniteScroll>
+      ) : (
+        <Empty description="No orders found" />
+      )}
+
       {selectedOrder && !isUserListing ? (
         <BuyModal
           shopAddress={shopAddress}

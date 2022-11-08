@@ -15,7 +15,6 @@ import { ORDER_FETCH_LIMIT, SORT_OPTIONS } from 'constant/Orders';
 import { useSocket } from 'public/Context/Socket';
 import { EventName } from 'constant/SocketEvent';
 import './index.less';
-import { Empty } from 'components/Empty';
 
 interface OrdersProps extends ShopProps {
   walletConnectComponent: React.ReactElement;
@@ -290,11 +289,7 @@ export const Orders: React.FC<OrdersProps> = ({
               )}
             </div>
             <div className="candy-orders-content">
-              {hasNextPage === false && orders.length === 0 ? (
-                <Empty description="No orders found" />
-              ) : (
-                InfiniteOrderListView
-              )}
+              {InfiniteOrderListView}
               <PoweredBy />
             </div>
           </div>
@@ -316,11 +311,7 @@ export const Orders: React.FC<OrdersProps> = ({
             />
             {search && <Search onSearch={onSearchNft} placeholder="Search NFTs" />}
           </div>
-          {hasNextPage === false && orders.length === 0 ? (
-            <Empty description="No orders found" />
-          ) : (
-            InfiniteOrderListView
-          )}
+          {InfiniteOrderListView}
           <PoweredBy />
         </div>
       </div>
