@@ -17,6 +17,7 @@ export const Price: React.FC<PriceProps> = ({
   priceDecimals,
   priceDecimalsMin
 }) => {
+  const NO_PRICE = 'N/A';
   const getPrice = (price?: string | number | null) => {
     if (!price || isNaN(Number(price))) return null;
 
@@ -26,14 +27,15 @@ export const Price: React.FC<PriceProps> = ({
     });
   };
 
-  const formattedValue = getPrice(value) || 'WIP';
-  emptyValue = emptyValue || 'N/A';
+  const formattedValue = getPrice(value);
 
-  return formattedValue ? (
+  return emptyValue ? (
+    <>{emptyValue}</>
+  ) : formattedValue ? (
     <>
       {formattedValue} {currencySymbol}
     </>
   ) : (
-    <>{emptyValue}</>
+    <>{NO_PRICE}</>
   );
 };
