@@ -10,8 +10,6 @@ import { configBaseUrl, getBaseUrl, safeAwait, SingleTokenInfo } from '../../ven
 import { fetchShopsByIdentifier } from '../../CandyShopInfoAPI';
 import Decimal from 'decimal.js';
 
-const DEFAULT_CURRENCY_SYMBOL = 'ETH';
-const DEFAULT_CURRENCY_DECIMALS = 18;
 const DEFAULT_PRICE_DECIMALS = 3;
 const DEFAULT_PRICE_DECIMALS_MIN = 0;
 const DEFAULT_VOLUME_DECIMALS = 1;
@@ -21,7 +19,7 @@ const DEFAULT_MAINNET_CONNECTION_URL = ''; // TODO
 const Logger = 'EthCandyShop';
 
 export interface EthShopConstructorParams extends BaseShopConstructorParams {}
-export interface EthShopInitParams extends Omit<BaseShopConstructorParams, 'settings'> {
+export interface EthShopInitParams extends Omit<EthShopConstructorParams, 'settings'> {
   settings: Partial<ShopSettings>;
 }
 
@@ -40,10 +38,21 @@ export class EthCandyShop extends BaseShop {
     const baseUrl = getBaseUrl(params.env);
     configBaseUrl(baseUrl);
 
+    // Fetch required details for EVM setup
+    const shopDetail = await safeAwait(
+      fetchShopsByIdentifier(params.shopCreatorAddress, params.treasuryMint, params.programId)
+    );
+
+    if (shopDetail.error || !shopDetail.result || !shopDetail.result.success) {
+      throw new Error(`${Logger} initEthCandyShop, fetchShopsByIdentifier failed=${shopDetail.result?.msg}`);
+    }
+
+    const shopResponse = shopDetail.result.result;
+
     // Assign settings if any or fallback to default
     const candyShopSettings: ShopSettings = {
-      currencySymbol: params.settings?.currencySymbol ?? DEFAULT_CURRENCY_SYMBOL,
-      currencyDecimals: params.settings?.currencyDecimals ?? DEFAULT_CURRENCY_DECIMALS,
+      currencySymbol: shopResponse.symbol,
+      currencyDecimals: shopResponse.decimals,
       priceDecimals: params.settings?.priceDecimals ?? DEFAULT_PRICE_DECIMALS,
       priceDecimalsMin: params.settings?.priceDecimalsMin ?? DEFAULT_PRICE_DECIMALS_MIN,
       volumeDecimals: params.settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
@@ -53,24 +62,11 @@ export class EthCandyShop extends BaseShop {
       explorerLink: params.settings?.explorerLink ?? ExplorerLinkBase.Polygon
     };
 
-    // Fetch required details for EVM setup
-    const shopDetail = await safeAwait(
-      fetchShopsByIdentifier(params.shopCreatorAddress, params.treasuryMint, params.programId)
-    );
-
-    if (shopDetail.error || !shopDetail.result || !shopDetail.result.success) {
-      console.log(`${Logger} initEthCandyShop, fetchShopsByIdentifier failed=`, shopDetail);
-      throw new Error(`${Logger} init error`);
-    }
-
     const ethParams: EthShopConstructorParams = {
       ...params,
       settings: candyShopSettings
     };
 
-    const shopResponse = shopDetail.result.result;
-    ethParams.settings.currencySymbol = shopResponse.symbol;
-    ethParams.settings.currencyDecimals = shopResponse.decimals;
     const ethCandyShop = new EthCandyShop(shopResponse.candyShopAddress, ethParams);
     return ethCandyShop;
   }
