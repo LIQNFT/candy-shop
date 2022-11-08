@@ -1,4 +1,4 @@
-import { Blockchain, ListBase, Nft, OrdersEditionFilterQuery, Trade, TradeQuery } from '@liqnft/candy-shop-types';
+import { Blockchain } from '@liqnft/candy-shop-types';
 import { configBaseUrl, getBaseUrl } from '../../vendor';
 import { CandyShopVersion, ExplorerLinkBase, ShopSettings } from './BaseShopModel';
 

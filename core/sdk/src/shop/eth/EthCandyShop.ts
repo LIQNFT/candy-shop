@@ -21,6 +21,9 @@ const DEFAULT_MAINNET_CONNECTION_URL = ''; // TODO
 const Logger = 'EthCandyShop';
 
 export interface EthShopConstructorParams extends BaseShopConstructorParams {}
+export interface EthShopInitParams extends Omit<BaseShopConstructorParams, 'settings'> {
+  settings: Partial<ShopSettings>;
+}
 
 /**
  * @class EthCandyShop with private constructor, use public static method to instantiate the object.
@@ -33,9 +36,27 @@ export class EthCandyShop extends BaseShop {
    * Involve the asynchronous fetch for required shop details to create EthCandyShop.
    * @returns EthCandyShop
    */
-  static async initEthCandyShop(params: EthShopConstructorParams): Promise<EthCandyShop> {
+  static async initEthCandyShop(params: EthShopInitParams): Promise<EthCandyShop> {
     const baseUrl = getBaseUrl(params.env);
     configBaseUrl(baseUrl);
+
+    // Assign settings if any or fallback to default
+    const candyShopSettings: ShopSettings = {
+      currencySymbol: params.settings?.currencySymbol ?? DEFAULT_CURRENCY_SYMBOL,
+      currencyDecimals: params.settings?.currencyDecimals ?? DEFAULT_CURRENCY_DECIMALS,
+      priceDecimals: params.settings?.priceDecimals ?? DEFAULT_PRICE_DECIMALS,
+      priceDecimalsMin: params.settings?.priceDecimalsMin ?? DEFAULT_PRICE_DECIMALS_MIN,
+      volumeDecimals: params.settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
+      volumeDecimalsMin: params.settings?.volumeDecimalsMin ?? DEFAULT_VOLUME_DECIMALS_MIN,
+      mainnetConnectionUrl: params.settings?.mainnetConnectionUrl ?? DEFAULT_MAINNET_CONNECTION_URL,
+      connectionConfig: params.settings?.connectionConfig,
+      explorerLink: params.settings?.explorerLink ?? ExplorerLinkBase.Polygon
+    };
+
+    const ethParams: EthShopConstructorParams = {
+      ...params,
+      settings: candyShopSettings
+    };
 
     // Fetch required details for EVM setup
     const shopDetail = await safeAwait(
@@ -50,7 +71,7 @@ export class EthCandyShop extends BaseShop {
     const shopResponse = shopDetail.result.result;
     params.settings.currencySymbol = shopResponse.symbol;
     params.settings.currencyDecimals = shopResponse.decimals;
-    const ethCandyShop = new EthCandyShop(shopResponse.candyShopAddress, params);
+    const ethCandyShop = new EthCandyShop(shopResponse.candyShopAddress, ethParams);
     return ethCandyShop;
   }
 
@@ -69,24 +90,12 @@ export class EthCandyShop extends BaseShop {
   private constructor(shopAddress: string, params: EthShopConstructorParams) {
     const { programId, shopCreatorAddress, treasuryMint, env, settings } = params;
 
-    const candyShopSettings: ShopSettings = {
-      currencySymbol: settings?.currencySymbol ?? DEFAULT_CURRENCY_SYMBOL,
-      currencyDecimals: settings?.currencyDecimals ?? DEFAULT_CURRENCY_DECIMALS,
-      priceDecimals: settings?.priceDecimals ?? DEFAULT_PRICE_DECIMALS,
-      priceDecimalsMin: settings?.priceDecimalsMin ?? DEFAULT_PRICE_DECIMALS_MIN,
-      volumeDecimals: settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
-      volumeDecimalsMin: settings?.volumeDecimalsMin ?? DEFAULT_VOLUME_DECIMALS_MIN,
-      mainnetConnectionUrl: settings?.mainnetConnectionUrl ?? DEFAULT_MAINNET_CONNECTION_URL,
-      connectionConfig: settings?.connectionConfig,
-      explorerLink: settings?.explorerLink ?? ExplorerLinkBase.Polygon
-    };
-
     const baseShopParams: BaseShopConstructorParams = {
       programId,
       shopCreatorAddress,
       treasuryMint,
       env: env ?? Blockchain.Eth,
-      settings: candyShopSettings
+      settings
     };
 
     // Apply common params to BaseShop
