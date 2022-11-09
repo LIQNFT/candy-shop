@@ -130,12 +130,12 @@ const useUserNfts = ({ candyShop, wallet }: ShopProps, { enableCacheNFT }: UseSe
     if (!publicKey) return;
     const controller = onSocketEvent(EventName.traded, async (data: Trade) => {
       if (data.buyerAddress === publicKey) {
-        let newNfts = await getNfts(publicKey);
+        const newNfts = await getNfts(publicKey);
         setNfts(newNfts.nfts);
       }
     });
     return () => controller.abort();
-  }, [onSocketEvent, publicKey, store, enableCacheNFT]);
+  }, [onSocketEvent, publicKey, store, enableCacheNFT, getNfts]);
 
   return {
     shopResponse: shop,

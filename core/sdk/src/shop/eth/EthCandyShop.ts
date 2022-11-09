@@ -97,7 +97,7 @@ export class EthCandyShop extends BaseShop {
     // Apply common params to BaseShop
     super(baseShopParams);
     this._candyShopAddress = shopAddress;
-    this.ethereumSDK = new EthereumSDK(this.baseUrl);
+    this.ethereumSDK = new EthereumSDK();
 
     console.log(`${Logger} constructor: init EthCandyShop=`, this);
   }
