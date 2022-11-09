@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
 import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
@@ -17,7 +17,7 @@ import { SolAuctionExample } from './SolAuctionExample';
 import { TORUS_WALLET_CLIENT_ID } from './constants/clientId';
 import { DEFAULT_FORM_CONFIG, LS_CANDY_FORM } from './constants/formConfig';
 import { CandyShopDataValidator } from '../../core/ui/.';
-import { CandyShop } from '../../core/sdk/.';
+import { CandyShop, SolanaShopConstructorParams } from '../../core/sdk/.';
 import { ShopConfig } from './ShopConfig';
 import { SolDropExample } from './SolDropExample';
 
@@ -48,6 +48,7 @@ export const SolExample: React.FC = () => {
     return DEFAULT_FORM_CONFIG;
   });
   const [pageRoute, setPageRoute] = useState<PageRoute>(initiateRoutePage());
+  const [candyShop, setCandyShop] = useState<CandyShop>();
 
   const endpoint = useMemo(() => web3.clusterApiUrl(candyForm.network), [candyForm.network]);
   const wallets = useMemo(
@@ -67,22 +68,25 @@ export const SolExample: React.FC = () => {
     []
   );
 
-  const candyShop = useMemo(() => {
-    let candyShop: any = null;
-    try {
-      candyShop = new CandyShop({
-        candyShopCreatorAddress: new web3.PublicKey(candyForm.creatorAddress),
-        treasuryMint: new web3.PublicKey(candyForm.treasuryMint),
-        candyShopProgramId: new web3.PublicKey(candyForm.programId),
-        env: candyForm.network,
-        settings: JSON.parse(candyForm.settings),
-        isEnterprise: false
-      });
-    } catch (err) {
-      console.log(`CandyShop: create instance failed, error=`, err);
-    }
+  useEffect(() => {
+    if (!candyForm.creatorAddress) return;
 
-    return candyShop;
+    const params: SolanaShopConstructorParams = {
+      shopCreatorAddress: candyForm.creatorAddress,
+      treasuryMint: candyForm.treasuryMint,
+      programId: candyForm.programId,
+      env: candyForm.network,
+      settings: JSON.parse(candyForm.settings)
+    };
+
+    CandyShop.initSolCandyShop(params)
+      .then((candyShop) => {
+        setCandyShop(candyShop);
+      })
+      .catch((error: Error) => {
+        setCandyShop(undefined);
+        console.log('CandyShop.initSolCandyShop failed, error=', error);
+      });
   }, [candyForm]);
 
   return (
