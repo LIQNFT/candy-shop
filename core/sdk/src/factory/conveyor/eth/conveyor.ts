@@ -2,7 +2,7 @@ import { Seaport } from '@opensea/seaport-js';
 import { EIP_712_ORDER_TYPE } from '@opensea/seaport-js/lib/constants';
 import { ConsiderationInputItem, OrderComponents, OrderParameters } from '@opensea/seaport-js/lib/types';
 import { ethers, TypedDataDomain } from 'ethers';
-import { ApiCaller, RequestMethod } from './api';
+import axiosInstance from '../../../vendor/config';
 import { SeaportHelper } from './seaport';
 import {
   AssetType,
@@ -14,16 +14,9 @@ import {
   SplitReceiver
 } from './types';
 
-const Logger = 'EthereumSDK';
-
 export class EthereumSDK {
-  private readonly apiPath = '/eth';
-  private apiCaller: ApiCaller;
   private percentageBase = 100;
-
-  constructor(baseUrl: string) {
-    this.apiCaller = new ApiCaller(`${baseUrl}${this.apiPath}`);
-  }
+  private readonly apiPath = 'eth';
 
   /**
    * Seller uses this function to cancel a listing.
@@ -129,14 +122,14 @@ export class EthereumSDK {
   }
 
   async getShopByUuid(uuid: string): Promise<{ result: ShopResponse }> {
-    return this.apiCaller.request(`/shop/${uuid}`, RequestMethod.Get, {});
+    return axiosInstance.get(`${this.apiPath}/shop/${uuid}`).then((res) => res.data);
   }
 
   async createOrder(createOrder: CreateOrderInterface): Promise<OrderResponse> {
-    return this.apiCaller.request(`/order`, RequestMethod.Post, createOrder);
+    return axiosInstance.post(`${this.apiPath}/order`, createOrder).then((res) => res.data);
   }
 
   async getOrderByUuid(uuid: string): Promise<OrderResponse> {
-    return this.apiCaller.request(`/order/${uuid}`, RequestMethod.Get, {}).then((res) => res.result);
+    return axiosInstance.get(`${this.apiPath}/order/${uuid}`, {}).then((res) => res.data.result);
   }
 }
