@@ -23,6 +23,7 @@ import {
   fetchOrdersByShopAndMasterEditionMint,
   fetchOrdersByShopAndWalletAddress,
   fetchShopByShopAddress,
+  fetchShopsByIdentifier,
   fetchShopWhitelistNftByShopAddress,
   fetchStatsByShopAddress,
   fetchTradeByShopAddress
@@ -60,29 +61,33 @@ import {
 import {
   CandyShopError,
   CandyShopErrorType,
+  configBaseUrl,
   getAuction,
   getAuctionHouse,
   getAuctionHouseAuthority,
   getAuctionHouseFeeAcct,
   getAuctionHouseTreasuryAcct,
-  getCandyShopSync,
+  getBaseUrl,
   getCandyShopVersion,
   getMetadataAccount,
-  getProgram
+  getProgram,
+  safeAwait
 } from '../../vendor';
 import { supply } from '../../vendor/shipping';
 import { BaseShop, BaseShopConstructorParams, CandyShopAuctioneer, CandyShopEditionDropper } from '../base/BaseShop';
 import { CandyShopVersion, ExplorerLinkBase, ShopSettings } from '../base/BaseShopModel';
+import { PublicKey } from '@solana/web3.js';
 
 const Logger = 'CandyShop';
 
-const DEFAULT_CURRENCY_SYMBOL = 'SOL';
-const DEFAULT_CURRENCY_DECIMALS = 9;
 const DEFAULT_PRICE_DECIMALS = 3;
 const DEFAULT_PRICE_DECIMALS_MIN = 0;
 const DEFAULT_VOLUME_DECIMALS = 1;
 const DEFAULT_VOLUME_DECIMALS_MIN = 0;
 const DEFAULT_MAINNET_CONNECTION_URL = 'https://api.mainnet-beta.solana.com';
+export interface SolShopConstructorParams extends BaseShopConstructorParams {
+  isEnterprise?: boolean;
+}
 
 /**
  * Parameters to CandyShop constructor
@@ -95,20 +100,49 @@ const DEFAULT_MAINNET_CONNECTION_URL = 'https://api.mainnet-beta.solana.com';
  * @property {boolean} isEnterprise Indicates if this shop uses enterprise program functionality. Defaults to false
  */
 // TODO: make those web3.PublicKey to use string type for common constructor/getters
-export interface CandyShopConstructorParams {
-  candyShopCreatorAddress: web3.PublicKey;
-  treasuryMint: web3.PublicKey;
-  candyShopProgramId: web3.PublicKey;
-  env: Blockchain;
-  settings?: Partial<ShopSettings>;
-  isEnterprise?: boolean;
-}
 
 export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandyShopEditionDropper {
   private _candyShopAddress: web3.PublicKey;
   private _isEnterprise: boolean;
   private _version: CandyShopVersion;
   private _program: Program | undefined;
+
+  static async initSolCandyShop(params: SolShopConstructorParams): Promise<CandyShop> {
+    const baseUrl = getBaseUrl(params.env);
+    configBaseUrl(baseUrl);
+
+    // Fetch required details for EVM setup
+    const shopDetail = await safeAwait(
+      fetchShopsByIdentifier(params.shopCreatorAddress, params.treasuryMint, params.programId)
+    );
+
+    if (shopDetail.error || !shopDetail.result || !shopDetail.result.success) {
+      throw new Error(`${Logger} initEthCandyShop, fetchShopsByIdentifier failed=${shopDetail.result?.msg}`);
+    }
+
+    const shopResponse = shopDetail.result.result;
+
+    // Assign settings if any or fallback to default
+    const candyShopSettings: ShopSettings = {
+      currencySymbol: shopResponse.symbol,
+      currencyDecimals: shopResponse.decimals,
+      priceDecimals: params.settings?.priceDecimals ?? DEFAULT_PRICE_DECIMALS,
+      priceDecimalsMin: params.settings?.priceDecimalsMin ?? DEFAULT_PRICE_DECIMALS_MIN,
+      volumeDecimals: params.settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
+      volumeDecimalsMin: params.settings?.volumeDecimalsMin ?? DEFAULT_VOLUME_DECIMALS_MIN,
+      mainnetConnectionUrl: params.settings?.mainnetConnectionUrl ?? DEFAULT_MAINNET_CONNECTION_URL,
+      connectionConfig: params.settings?.connectionConfig,
+      explorerLink: params.settings?.explorerLink ?? ExplorerLinkBase.SolanaFM
+    };
+
+    const solanaParams: SolShopConstructorParams = {
+      ...params,
+      settings: candyShopSettings
+    };
+
+    const candyShop = new CandyShop(new PublicKey(shopResponse.candyShopAddress), solanaParams);
+    return candyShop;
+  }
 
   get candyShopAddress(): string {
     return this._candyShopAddress.toString();
@@ -147,23 +181,16 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
    * @constructor
    * @param {CandyShopConstructorParams} params
    */
-
-  constructor(params: CandyShopConstructorParams) {
-    const { candyShopCreatorAddress, candyShopProgramId, treasuryMint, env, settings, isEnterprise } = params;
-    const candyShopAddress = getCandyShopSync(candyShopCreatorAddress, treasuryMint, candyShopProgramId)[0];
-
-    // Assign settings if any or fallback to default
-    const candyShopSettings: ShopSettings = {
-      currencySymbol: settings?.currencySymbol ?? DEFAULT_CURRENCY_SYMBOL,
-      currencyDecimals: settings?.currencyDecimals ?? DEFAULT_CURRENCY_DECIMALS,
-      priceDecimals: settings?.priceDecimals ?? DEFAULT_PRICE_DECIMALS,
-      priceDecimalsMin: settings?.priceDecimalsMin ?? DEFAULT_PRICE_DECIMALS_MIN,
-      volumeDecimals: settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
-      volumeDecimalsMin: settings?.volumeDecimalsMin ?? DEFAULT_VOLUME_DECIMALS_MIN,
-      mainnetConnectionUrl: settings?.mainnetConnectionUrl ?? DEFAULT_MAINNET_CONNECTION_URL,
-      connectionConfig: settings?.connectionConfig,
-      explorerLink: settings?.explorerLink ?? ExplorerLinkBase.SolanaFM
-    };
+  private constructor(candyShopAddress: web3.PublicKey, params: SolShopConstructorParams) {
+    const {
+      programId,
+      shopCreatorAddress: candyShopCreatorAddress,
+      treasuryMint,
+      env,
+      settings: candyShopSettings,
+      isEnterprise
+    } = params;
+    const candyShopProgramId = new PublicKey(programId);
 
     const baseShopParams: BaseShopConstructorParams = {
       shopCreatorAddress: candyShopCreatorAddress.toString(),

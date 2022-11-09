@@ -9,7 +9,5 @@ export const ETH_DEFAULT_FORM_CONFIG = {
   programId: PROGRAM_ID,
   network: chains.polygonMumbai.network,
   settings: JSON.stringify({}),
-  paymentProvider: JSON.stringify({
-    stripePublicKey: ''
-  })
+  paymentProvider: JSON.stringify({ stripePublicKey: '' })
 };
