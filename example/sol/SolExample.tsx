@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
+import { Route, Switch, Link } from 'react-router-dom';
 import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import {
@@ -17,7 +17,7 @@ import { SolAuctionExample } from './SolAuctionExample';
 import { TORUS_WALLET_CLIENT_ID } from './constants/clientId';
 import { DEFAULT_FORM_CONFIG, LS_CANDY_FORM } from './constants/formConfig';
 import { CandyShopDataValidator } from '../../core/ui/.';
-import { CandyShop, SolanaShopConstructorParams } from '../../core/sdk/.';
+import { CandyShop, SolShopInitParams } from '../../core/sdk/.';
 import { ShopConfig } from './ShopConfig';
 import { SolDropExample } from './SolDropExample';
 
@@ -71,7 +71,7 @@ export const SolExample: React.FC = () => {
   useEffect(() => {
     if (!candyForm.creatorAddress) return;
 
-    const params: SolanaShopConstructorParams = {
+    const params: SolShopInitParams = {
       shopCreatorAddress: candyForm.creatorAddress,
       treasuryMint: candyForm.treasuryMint,
       programId: candyForm.programId,

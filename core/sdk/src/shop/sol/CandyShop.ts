@@ -89,6 +89,10 @@ export interface SolShopConstructorParams extends BaseShopConstructorParams {
   isEnterprise?: boolean;
 }
 
+export interface SolShopInitParams extends Omit<SolShopConstructorParams, 'settings'> {
+  settings: Partial<ShopSettings>;
+}
+
 /**
  * Parameters to CandyShop constructor
  *
@@ -107,7 +111,7 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
   private _version: CandyShopVersion;
   private _program: Program | undefined;
 
-  static async initSolCandyShop(params: SolShopConstructorParams): Promise<CandyShop> {
+  static async initSolCandyShop(params: SolShopInitParams): Promise<CandyShop> {
     const baseUrl = getBaseUrl(params.env);
     configBaseUrl(baseUrl);
 
