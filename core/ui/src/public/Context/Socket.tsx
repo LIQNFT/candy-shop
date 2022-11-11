@@ -6,7 +6,7 @@ import { Blockchain } from '@liqnft/candy-shop-types';
 const getSocketUrl = (network: Blockchain) => {
   switch (network) {
     case Blockchain.SolMainnetBeta:
-    case Blockchain.ETH:
+    case Blockchain.Eth:
     case Blockchain.Polygon:
       return 'wss://candy-shop.liqnft.com/websocket';
     default:
