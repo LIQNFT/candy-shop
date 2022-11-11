@@ -138,8 +138,8 @@ export const ShopConfig: React.FC<ShopConfigProps> = ({ setCandyForm, candyForm 
           style={{ width: '100%', marginBottom: 15 }}
           value={networkInput}
         >
-          <Select.Option value={chains.mainnet.network}>{chains.mainnet.name}</Select.Option>
-          <Select.Option value={chains.goerli.network}>{chains.goerli.name}</Select.Option>
+          {/* <Select.Option value={chains.mainnet.network}>{chains.mainnet.name}</Select.Option> */}
+          {/* <Select.Option value={chains.goerli.network}>{chains.goerli.name}</Select.Option> */}
           <Select.Option value={chains.polygon.network}>{chains.polygon.name}</Select.Option>
           <Select.Option value={chains.polygonMumbai.network}>{chains.polygonMumbai.name}</Select.Option>
         </Select>
