@@ -1,12 +1,10 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "target": "es5",
-    "module": "commonjs",
+    "target": "es2019",
+    "module": "ESNext",
     "jsx": "react",
     "moduleResolution": "node",
-    "noImplicitAny": false,
-    "noUnusedLocals": false,
     "noUnusedParameters": false,
     "removeComments": true,
     "esModuleInterop": true,
@@ -15,5 +13,6 @@
     "sourceMap": true,
     "lib": ["es2015", "es2016", "dom"],
     "types": ["node"]
-  }
+  },
+  "include": ["sol/*", "eth/*"]
 }

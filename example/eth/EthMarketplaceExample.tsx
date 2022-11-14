@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { EthCandyShop } from '../../core/sdk/.';
 import { Orders, Stat, Sell, Activity, EthWallet } from '../../core/ui/.';
 import { EthConnectButton } from './components/EthConnectButton';

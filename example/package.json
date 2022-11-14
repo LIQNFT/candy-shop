@@ -19,7 +19,13 @@
     "react-app-polyfill": "^1.0.0",
     "react-hook-form": "^7.34.2",
     "react-router-dom": "^5.2.0",
-    "web3modal": "^1.9.9"
+    "web3modal": "^1.9.9",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react-hooks": "^4.4.0",
+    "@typescript-eslint/eslint-plugin": "^4.14.0",
+    "@typescript-eslint/parser": "^4.14.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.8",
@@ -27,11 +33,14 @@
     "crypto-browserify": "^3.12.0",
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
-    "typescript": "^3.4.5"
+    "typescript": "^4.1.3"
   },
   "alias": {
     "react": "../core/ui/node_modules/react",
     "react-dom": "../core/ui/node_modules/react-dom/profiling",
     "scheduler/tracing": "../core/ui/node_modules/scheduler/tracing-profiling"
+  },
+  "scripts": {
+    "lint": "eslint --fix './**/*.tsx'"
   }
 }
