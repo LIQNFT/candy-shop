@@ -122,6 +122,7 @@ export const Sell: React.FC<SellProps> = ({ walletConnectComponent, style, enabl
           wallet={wallet}
           candyShopEnv={candyShop.env}
           currencySymbol={candyShop.currencySymbol}
+          currencyDecimals={candyShop.currencyDecimals}
           explorerLink={candyShop.explorerLink}
           getTokenMetadataByMintAddress={getTokenMetadataByMintAddress}
           sell={sellNft}

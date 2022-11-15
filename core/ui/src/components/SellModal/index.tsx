@@ -20,6 +20,7 @@ export type SellModalProps = {
   wallet: Wallet;
   shopResponse: CandyShopResponse;
   currencySymbol: string;
+  currencyDecimals: number;
   candyShopEnv: Blockchain;
   explorerLink: ExplorerLinkBase;
   onCancel: () => void;
@@ -33,6 +34,7 @@ export const SellModal: React.FC<SellModalProps> = ({
   wallet,
   shopResponse,
   currencySymbol,
+  currencyDecimals,
   candyShopEnv,
   explorerLink,
   getTokenMetadataByMintAddress,
@@ -52,9 +54,15 @@ export const SellModal: React.FC<SellModalProps> = ({
       notification(ErrorMsgMap[ErrorType.InvalidWallet], NotificationType.Error);
       return;
     }
-
     if (!formState.price) {
       notification('Please input sell price', NotificationType.Error);
+      setState(TransactionState.DISPLAY);
+      return;
+    } else if (formState.price < Math.pow(10, -currencyDecimals + 2)) {
+      notification(
+        'The input sell price must greater than or equal to ' + Math.pow(10, -currencyDecimals + 2),
+        NotificationType.Error
+      );
       setState(TransactionState.DISPLAY);
       return;
     }
