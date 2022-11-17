@@ -47,17 +47,22 @@ jobs:
       # Building
       - name: Install dependencies
         run: npm install --global yarn && yarn
+      - name: Linter
+        run: yarn lint
+      # core/types
       - name: Install & Build & Create Link to core/types
         working-directory: ./core/types
         run: |
           yarn && yarn build
           yarn link
+      # core/sdk
       - name: Install & Build & Create Link to core/sdk
         working-directory: ./core/sdk
         run: |
           yarn && yarn link @liqnft/candy-shop-types
           yarn build
           yarn link
+      # core/ui
       - name: Install core/ui & Link to core/sdk & core/types
         working-directory: ./core/ui
         run: | 
@@ -67,5 +72,6 @@ jobs:
       - name: Build core/ui
         working-directory: ./core/ui
         run: yarn build
+      # example
       - name: Build example
         run: yarn build
