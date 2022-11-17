@@ -14,6 +14,8 @@ interface NFTMetadataInfo {
 }
 
 export interface SingleTokenInfo {
+  // used for EVM assets, can also be used for Solana in the future
+  itemType?: 'ERC721' | 'ERC1155';
   tokenAccountAddress: string;
   metadata: Metadata | undefined;
   edition: string | undefined;

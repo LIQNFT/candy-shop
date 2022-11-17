@@ -139,11 +139,17 @@ export class EthCandyShop extends BaseShop {
       shop
     );
 
+    let itemType = ItemType.ERC721;
+    if (nft.itemType === 'ERC1155') {
+      itemType = ItemType.ERC1155;
+    }
+
     const offer: CreateInputItem[] = [
       {
         identifier: nft.tokenAccountAddress,
-        itemType: ItemType.ERC721,
-        token: nft.tokenMintAddress.split(':')[0]
+        itemType,
+        token: nft.tokenMintAddress.split(':')[0],
+        amount: '1'
       }
     ];
 
