@@ -121,7 +121,7 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
     );
 
     if (shopDetail.error || !shopDetail.result || !shopDetail.result.success) {
-      throw new Error(`${Logger} initEthCandyShop, fetchShopsByIdentifier failed=${shopDetail.result?.msg}`);
+      throw new Error(`${Logger} initSolCandyShop, fetchShopsByIdentifier failed=${shopDetail.result?.msg}`);
     }
 
     const shopResponse = shopDetail.result.result;
