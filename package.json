@@ -20,7 +20,7 @@
     "clean:types": "rm -rf core/types/node_modules && rm -rf core/types/dist",
     "clean:ui": "rm -rf core/ui/node_modules && rm -rf core/ui/dist",
     "clean:all": "yarn clean:root && yarn clean:sdk && yarn clean:ui && yarn clean:types",
-    "lint": "eslint . --ext .tsx,.ts"
+    "lint": "eslint . --ext .tsx,.ts --max-warnings=0"
   },
   "devDependencies": {
     "@parcel/packager-raw-url": "2.4.1",
