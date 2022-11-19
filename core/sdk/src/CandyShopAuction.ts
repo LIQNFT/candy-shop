@@ -26,7 +26,7 @@ import {
   WithdrawBidParams,
   withdrawBidV1,
   withdrawBid
-} from './factory/program';
+} from './factory/conveyor/sol';
 import { supply } from './vendor/shipping';
 
 export function fetchAuctionsByShopAddress(shopId: string, queryDto?: AuctionQuery): Promise<ListBase<Auction>> {

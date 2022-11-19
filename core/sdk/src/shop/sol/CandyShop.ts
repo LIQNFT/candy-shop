@@ -57,7 +57,7 @@ import {
   updateCandyShop,
   UpdateCandyShopParams,
   updateCandyShopV1
-} from '../../factory/program';
+} from '../../factory/conveyor/sol';
 import {
   CandyShopError,
   CandyShopErrorType,

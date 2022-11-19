@@ -1,5 +1,7 @@
+import { CreateOrderInput } from '@opensea/seaport-js/lib/types';
+import { ethers } from 'ethers';
 import { AssetType } from './asset.type';
-export interface AssetInstanceInterface {
+export interface AssetInstance {
   address: string;
   type: AssetType;
   tokenId?: string;
@@ -33,14 +35,15 @@ export interface SeaportOrderData {
   conduitKey: string;
 }
 
-export interface CreateOrderInterface {
-  shopUuid: string;
-  orderData: SeaportOrderData;
-  signature: string;
-}
-
 export interface OrderResponse {
   uuid: string;
   rawOrderParams: string;
   signature: string;
+}
+
+export interface ExecuteOrderParams {
+  shopUuid: string;
+  signer: ethers.providers.JsonRpcSigner;
+  createOrderInput: CreateOrderInput;
+  accountAddress: string;
 }

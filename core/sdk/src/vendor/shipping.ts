@@ -1,7 +1,7 @@
 /*  This file should not be exposed in src/index.ts */
 import { CandyShopVersion } from '../shop/base/BaseShopModel';
-import { BuyAndExecuteSaleTransactionParams } from '../factory/program/model';
-import { insBuyAndExecuteSale } from '../factory/program/v2/marketplace';
+import { BuyAndExecuteSaleTransactionParams } from '../factory/conveyor/sol/types/shop.type';
+import { insBuyAndExecuteSale } from '../factory/conveyor/sol/v2/marketplace';
 
 /**
  * Get txHash from different executions for proceeding to buy
