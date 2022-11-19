@@ -30,8 +30,6 @@ export interface BaseShopConstructorParams {
 
 export abstract class BaseShop {
   // Aggregate common params as common getters in BaseShop
-
-  protected baseUrl: string;
   protected _shopCreatorAddress: string;
   protected _treasuryMint: string;
   protected _programId: string;
@@ -98,8 +96,11 @@ export abstract class BaseShop {
     this._programId = params.programId;
     this._settings = params.settings;
     this._baseUnitsPerCurrency = Math.pow(10, this._settings.currencyDecimals);
-    this.baseUrl = getBaseUrl(this.env);
-    configBaseUrl(this.baseUrl);
+  }
+
+  // Only inheritors can call this configuration
+  protected static configEndpoint(env: Blockchain) {
+    configBaseUrl(getBaseUrl(env));
   }
 
   // Properties

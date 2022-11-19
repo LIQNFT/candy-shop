@@ -6,7 +6,7 @@ import { Blockchain } from '@liqnft/candy-shop-types';
 import { BaseShop, BaseShopConstructorParams } from '../base/BaseShop';
 import { CandyShopVersion, ExplorerLinkBase, ShopSettings } from '../base/BaseShopModel';
 import { EthereumSDK, SeaportHelper } from '../../factory/conveyor/eth';
-import { configBaseUrl, getBaseUrl, safeAwait, SingleTokenInfo } from '../../vendor';
+import { safeAwait, SingleTokenInfo } from '../../vendor';
 import { fetchShopsByIdentifier } from '../../CandyShopInfoAPI';
 import Decimal from 'decimal.js';
 
@@ -34,8 +34,8 @@ export class EthCandyShop extends BaseShop {
    * @returns EthCandyShop
    */
   static async initEthCandyShop(params: EthShopInitParams): Promise<EthCandyShop> {
-    const baseUrl = getBaseUrl(params.env);
-    configBaseUrl(baseUrl);
+    // Must config the endpoint before calling any CandyShop API
+    BaseShop.configEndpoint(params.env);
 
     // Fetch required details for EVM setup
     const shopDetail = await safeAwait(
@@ -43,7 +43,7 @@ export class EthCandyShop extends BaseShop {
     );
 
     if (shopDetail.error || !shopDetail.result || !shopDetail.result.success) {
-      throw new Error(`${Logger} initEthCandyShop, fetchShopsByIdentifier failed=${shopDetail.result?.msg}`);
+      throw new Error(`${Logger} init, fetchShopsByIdentifier failed=${shopDetail.result?.msg}`);
     }
 
     const shopResponse = shopDetail.result.result;
@@ -98,7 +98,7 @@ export class EthCandyShop extends BaseShop {
     this._candyShopAddress = shopAddress;
     this.ethereumSDK = new EthereumSDK();
 
-    console.log(`${Logger} constructor: init EthCandyShop=`, this);
+    console.log(`${Logger} constructor: instantiated EthCandyShop=`, this);
   }
 
   /**

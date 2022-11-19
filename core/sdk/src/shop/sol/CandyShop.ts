@@ -61,13 +61,11 @@ import {
 import {
   CandyShopError,
   CandyShopErrorType,
-  configBaseUrl,
   getAuction,
   getAuctionHouse,
   getAuctionHouseAuthority,
   getAuctionHouseFeeAcct,
   getAuctionHouseTreasuryAcct,
-  getBaseUrl,
   getCandyShopVersion,
   getMetadataAccount,
   getProgram,
@@ -112,16 +110,16 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
   private _program: Program | undefined;
 
   static async initSolCandyShop(params: SolShopInitParams): Promise<CandyShop> {
-    const baseUrl = getBaseUrl(params.env);
-    configBaseUrl(baseUrl);
+    // Must config the endpoint before calling any CandyShop API
+    BaseShop.configEndpoint(params.env);
 
-    // Fetch required details for EVM setup
+    // Fetch required details for SOL setup
     const shopDetail = await safeAwait(
       fetchShopsByIdentifier(params.shopCreatorAddress, params.treasuryMint, params.programId)
     );
 
     if (shopDetail.error || !shopDetail.result || !shopDetail.result.success) {
-      throw new Error(`${Logger} initSolCandyShop, fetchShopsByIdentifier failed=${shopDetail.result?.msg}`);
+      throw new Error(`${Logger} init, fetchShopsByIdentifier failed=${shopDetail.result?.msg}`);
     }
 
     const shopResponse = shopDetail.result.result;
@@ -217,7 +215,7 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
     this._isEnterprise = isEnterprise ? true : false;
     this._version = getCandyShopVersion(candyShopProgramId);
 
-    console.log(`${Logger} constructor: init CandyShop=`, this);
+    console.log(`${Logger} constructor: instantiated CandyShop=`, this);
   }
 
   public verifyProgramId(programId: web3.PublicKey): void {
