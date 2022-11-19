@@ -23,7 +23,7 @@ import {
   MintPrintParams,
   redeemNft,
   RedeemNftParams
-} from './factory/program';
+} from './factory/conveyor/sol';
 import editionDropIdl from './idl/edition_drop.json';
 import {
   CandyShopError,

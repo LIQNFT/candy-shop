@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import { Blockchain } from '@liqnft/candy-shop-types';
 import { BaseShop, BaseShopConstructorParams } from '../base/BaseShop';
 import { CandyShopVersion, ExplorerLinkBase, ShopSettings } from '../base/BaseShopModel';
-import { EthereumSDK, SeaportHelper } from '../../factory/conveyor/eth';
+import { EthereumPort, ExecuteOrderParams } from '../../factory/conveyor/eth';
 import { safeAwait, SingleTokenInfo } from '../../vendor';
 import { fetchShopsByIdentifier } from '../../CandyShopInfoAPI';
 import Decimal from 'decimal.js';
@@ -27,7 +27,7 @@ export interface EthShopInitParams extends Omit<EthShopConstructorParams, 'setti
  */
 export class EthCandyShop extends BaseShop {
   private _candyShopAddress: string;
-  private ethereumSDK: EthereumSDK;
+  private ethereumPort: EthereumPort;
 
   /**
    * Involve the asynchronous fetch for required shop details to create EthCandyShop.
@@ -96,7 +96,7 @@ export class EthCandyShop extends BaseShop {
     // Apply common params to BaseShop
     super(baseShopParams);
     this._candyShopAddress = shopAddress;
-    this.ethereumSDK = new EthereumSDK();
+    this.ethereumPort = new EthereumPort();
 
     console.log(`${Logger} constructor: instantiated EthCandyShop=`, this);
   }
@@ -112,13 +112,13 @@ export class EthCandyShop extends BaseShop {
     const { providers, orderUuid } = params;
     const provider = new ethers.providers.Web3Provider(providers);
     const wallet = provider.getSigner();
-    const txHash = await this.ethereumSDK.fulfillOrder(wallet, orderUuid);
+    const txHash = await this.ethereumPort.fulfillOrder(wallet, orderUuid);
     return txHash;
   }
 
   /**
    * 1. Get user to approve the NFT token allowance.
-   * 2. Make the create Order request for order registration.
+   * 2. Execute Order request for order registration.
    * @param params
    * @returns
    */
@@ -127,22 +127,18 @@ export class EthCandyShop extends BaseShop {
 
     const provider = new ethers.providers.Web3Provider(providers);
     const wallet = provider.getSigner();
-    const seaport = SeaportHelper.getSeaport(wallet);
-    const shopResult = await this.ethereumSDK.getShopByUuid(this.candyShopAddress);
+    const shopResult = await this.ethereumPort.getShopByUuid(this.candyShopAddress);
     const shop = shopResult.result;
 
     const offerer = await wallet.getAddress();
     const priceValue = new Decimal(`${price}e${this.currencyDecimals}`).toString();
-    const consideration = this.ethereumSDK.getConsiderationFromOrder(
+    const consideration = this.ethereumPort.getConsiderationFromOrder(
       offerer,
       { address: shop.paymentAssets[0].address, type: shop.paymentAssets[0].type, value: priceValue },
       shop
     );
 
-    let itemType = ItemType.ERC721;
-    if (nft.itemType === 'ERC1155') {
-      itemType = ItemType.ERC1155;
-    }
+    const itemType = nft.itemType === 'ERC1155' ? ItemType.ERC1155 : ItemType.ERC721;
 
     const offer: CreateInputItem[] = [
       {
@@ -153,40 +149,25 @@ export class EthCandyShop extends BaseShop {
       }
     ];
 
-    const { executeAllActions } = await seaport
-      .createOrder(
-        {
-          offer,
-          consideration
-        },
-        offerer
-      )
-      .catch((err: Error) => {
-        console.log(`${Logger}, failed to createOrder, err=${err.message}`);
-        throw err;
-      });
-
-    const orderRes = await executeAllActions().catch((err: Error) => {
-      console.log(`${Logger}, failed to executeAllActions, err=${err.message}`);
-      console.log(err);
-      throw err;
-    });
-
-    const { signature, parameters } = orderRes;
-    const data = {
-      signature,
-      orderData: this.ethereumSDK.convertToSeaportOrderData(parameters),
-      shopUuid: shop.uuid
+    const executeOrderParams: ExecuteOrderParams = {
+      shopUuid: shop.uuid,
+      signer: wallet,
+      createOrderInput: {
+        offer,
+        consideration
+      },
+      accountAddress: offerer
     };
-    const orderResult = await this.ethereumSDK.createOrder(data);
-    return orderResult.uuid;
+
+    const OrderUuid = await this.ethereumPort.executeOrder(executeOrderParams);
+    return OrderUuid;
   }
 
   async cancel(params: { providers: any; orderUuid: string }): Promise<string> {
     const { providers, orderUuid } = params;
     const provider = new ethers.providers.Web3Provider(providers);
     const wallet = provider.getSigner();
-    const txHash = await this.ethereumSDK.cancelOrder(wallet, orderUuid);
+    const txHash = await this.ethereumPort.cancelOrder(wallet, orderUuid);
     return txHash;
   }
 }
