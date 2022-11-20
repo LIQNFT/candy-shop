@@ -12,6 +12,7 @@ import { EventName, useSocket } from 'public/Context/Socket';
 import { removeDuplicate, removeListeners } from 'utils/helperFunc';
 import { ShopProps } from '../../model';
 import { SolStore, StoreProvider } from 'market';
+import { handleError } from 'utils/ErrorHandler';
 
 const Logger = 'CandyShopUI/Auctions';
 
@@ -56,7 +57,7 @@ export const Auctions: React.FC<AuctionsProps> = ({
         walletAddress: walletKeyString
       })
         .then((data: ListBase<Auction>) => {
-          if (!data.success || !data.result?.length) {
+          if (!data.result?.length) {
             setHasNextPage(false);
             return;
           }
@@ -72,8 +73,9 @@ export const Auctions: React.FC<AuctionsProps> = ({
             setAuctions((prevNfts) => [...prevNfts, ...data.result]);
           }
         })
-        .catch((error: any) => {
+        .catch((error: Error) => {
           setHasNextPage(false);
+          handleError(error);
           console.info(`${Logger}: fetchAuctionsByShopAddress failed, startIndex=${startIndex}, error= `, error);
         })
         .finally(() => {

@@ -15,6 +15,7 @@ import { ORDER_FETCH_LIMIT, SORT_OPTIONS } from 'constant/Orders';
 import { useSocket } from 'public/Context/Socket';
 import { EventName } from 'constant/SocketEvent';
 import './index.less';
+import { handleError } from 'utils/ErrorHandler';
 
 interface OrdersProps extends ShopProps {
   walletConnectComponent: React.ReactElement;
@@ -101,10 +102,6 @@ export const Orders: React.FC<OrdersProps> = ({
         blockchain: candyShop.env
       })
         .then((res: ListBase<Order>) => {
-          if (!res.success) {
-            setHasNextPage(false);
-            return;
-          }
           const { result, count, offset, totalCount } = res;
 
           setHasNextPage(offset + count < totalCount);
@@ -117,6 +114,7 @@ export const Orders: React.FC<OrdersProps> = ({
         .catch((err: Error) => {
           console.info('fetchOrdersByStoreId failed: ', err);
           setHasNextPage(false);
+          handleError(err, 'Get orders failed.');
         });
     },
     [

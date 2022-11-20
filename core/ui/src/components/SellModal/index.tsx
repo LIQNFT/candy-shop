@@ -74,8 +74,7 @@ export const SellModal: React.FC<SellModalProps> = ({
       })
       .catch((err: Error) => {
         console.log('SellModal: error= ', err);
-        err.message = (err as any).code || err.message;
-        handleError({ error: err });
+        handleError(err, 'Sell nft failed');
         setState(TransactionState.DISPLAY);
       });
   };

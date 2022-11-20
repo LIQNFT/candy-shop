@@ -7,6 +7,7 @@ import { Search } from 'components/Search';
 import { removeDuplicate } from 'utils/helperFunc';
 import { LoadStatus } from 'constant';
 import '../../style/order-filter.less';
+import { handleError } from 'utils/ErrorHandler';
 
 interface CollectionFilterProps {
   onChange: (item: NftCollection | CollectionFilterModel | undefined, type: 'auto' | 'manual') => any;
@@ -69,11 +70,6 @@ export const CollectionFilter: React.FC<CollectionFilterProps> = ({
       setLoading(LoadStatus.Loading);
       getFetchCollectionAPI(startIndex)
         .then((res: ListBase<NftCollection>) => {
-          if (!res.success) {
-            setHaveNext(false);
-            setOptions([]);
-            return;
-          }
           const { result, offset, totalCount, count } = res;
           setHaveNext(offset + count < totalCount);
           setOffset((startIndex) => startIndex + LIMIT);
@@ -82,7 +78,12 @@ export const CollectionFilter: React.FC<CollectionFilterProps> = ({
             return removeDuplicate<NftCollection>(list, result, 'id');
           });
         })
-        .catch((err: Error) => console.log(`${Logger} fetchAllCollection error=`, err))
+        .catch((err: Error) => {
+          setHaveNext(false);
+          setOptions([]);
+          handleError(err);
+          console.log(`${Logger} fetchAllCollection error=`, err);
+        })
         .finally(() => setLoading(LoadStatus.Loaded));
     },
     [candyShopAddress, getFetchCollectionAPI]

@@ -8,6 +8,7 @@ import { ShopFilter as ShopFilterInfo } from 'model';
 import { removeDuplicate } from 'utils/helperFunc';
 
 import '../../style/order-filter.less';
+import { handleError } from 'utils/ErrorHandler';
 
 interface ShopFilterProps {
   onChange: (item: CandyShopResponse | ShopFilterInfo | undefined, type: 'auto' | 'manual') => any;
@@ -54,11 +55,6 @@ export const ShopFilter: React.FC<ShopFilterProps> = ({
       };
       fetchAllShop(queryDto)
         .then((res: ListBase<CandyShopResponse>) => {
-          if (!res.success) {
-            setHaveNext(false);
-            setOptions([]);
-            return;
-          }
           const { result, offset, totalCount, count } = res;
 
           setHaveNext(offset + count < totalCount);
@@ -68,7 +64,12 @@ export const ShopFilter: React.FC<ShopFilterProps> = ({
             return removeDuplicate<CandyShopResponse>(list, result, 'candyShopAddress');
           });
         })
-        .catch((err: Error) => console.log(`${Logger} fetchAllCollection error=`, err))
+        .catch((err: Error) => {
+          setHaveNext(false);
+          setOptions([]);
+          handleError(err);
+          console.log(`${Logger} fetchAllCollection error=`, err);
+        })
         .finally(() => setLoading(LoadStatus.Loaded));
     },
     [candyShopAddress, keyword]

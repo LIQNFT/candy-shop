@@ -11,22 +11,14 @@ export const ErrorMsgMap = {
   [ErrorType.GetAccountInfoFailed]: 'Get Account Information failed. Please try again later.'
 };
 
-export interface ErrorData {
-  error?: Error;
-  errorType?: ErrorType;
-}
+export const handleError = (err: Error, messageUI?: string): void => {
+  if (err instanceof CandyShopError) {
+    console.error(`CandyShopError: type= ${err.type}`);
 
-export const handleError = (errorData: ErrorData): void => {
-  const errorType = errorData.errorType;
-  const error = errorData.error;
-  if (errorType) {
-    notification(ErrorMsgMap[errorType], NotificationType.Error);
-  } else if (error) {
-    if (error instanceof CandyShopError) {
-      console.error(`CandyShopError: type= ${error.type}`);
-    }
-    notification(error.message, NotificationType.Error);
-  } else {
-    notification('Unknown Error', NotificationType.Error);
+    notification(err.type, NotificationType.Error);
+
+    return;
   }
+  const message = messageUI || (err as any).error?.data?.message || (err as any).code || err.message || 'Unknown Error';
+  notification(message, NotificationType.Error);
 };
