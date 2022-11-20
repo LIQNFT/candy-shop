@@ -23,6 +23,7 @@ import './style.less';
 import { Search } from 'components/Search';
 import { EventName, useSocket } from 'public/Context/Socket';
 import { useUpdateCandyShopContext } from 'public/Context/CandyShopDataValidator';
+import { handleError } from 'utils/ErrorHandler';
 
 interface DropsProps {
   wallet: AnchorWallet | undefined;
@@ -86,12 +87,6 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
       .then((res: ListBase<Drop>) => {
         const { offset, result, totalCount } = res;
 
-        if (!res.success) {
-          console.log(`${Logger} fetchDropsByShopAddress error=`, res.msg);
-          setHasMore(false);
-          setDropNfts(undefined);
-          return;
-        }
         setHasMore(offset + result.length < totalCount);
         dropQueries.current = { ...dropQueries.current, offset: offset + dropQueries.current.limit };
         setDropNfts((list = []) => removeDuplicate<Drop>(list, result, 'txHashAtCreation'));
@@ -99,10 +94,11 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
           fetchDrops();
         }
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         console.log(`${Logger} fetchDropsByShopAddress error=`, err);
         setHasMore(false);
         setDropNfts(undefined);
+        handleError(err, 'Get Drop failed.');
       })
       .finally(() => {
         setLoading(LoadStatus.Loaded);

@@ -8,7 +8,7 @@ import { LoadingSkeleton } from 'components/LoadingSkeleton';
 import { IconTick } from 'assets/IconTick';
 
 import { LoadStatus } from 'constant';
-import { notification, NotificationType } from 'utils/rc-notification';
+import { handleError } from 'utils/ErrorHandler';
 
 interface DropSelectionProps {
   candyShop: CandyShop;
@@ -40,13 +40,11 @@ export const DropSelection: React.FC<DropSelectionProps> = ({
     fetchUserMasterNFTs(wallet.publicKey, connection)
       .then((result: EditionDrop[]) => {
         console.log('Master NFT:', result);
-        if (result) return setDropNfts(result);
-        console.log(`${Logger} fetchUserMasterNFTs failed`);
-        notification('Get wallet master NFT failed', NotificationType.Error);
+        setDropNfts(result);
       })
       .catch((error: Error) => {
         console.log(`${Logger} fetchUserMasterNFTs failed, error=`, error);
-        notification('Get wallet master NFT failed', NotificationType.Error);
+        handleError(error, 'Get user NFT failed.');
       })
       .finally(() => setLoading(LoadStatus.Loaded));
   }, [candyShop, wallet?.publicKey]);

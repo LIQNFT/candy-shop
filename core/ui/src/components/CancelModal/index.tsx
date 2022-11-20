@@ -52,8 +52,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
       })
       .catch((err: Error) => {
         console.log(`${Logger}: Cancel order failed, error=${err}`);
-        err.message = (err as any).code || err.message;
-        handleError({ error: err });
+        handleError(err, 'Cancel order failed');
         setState(TransactionState.DISPLAY);
       });
   };

@@ -24,6 +24,7 @@ import { ShopProps } from '../../model';
 
 import { getBlockChain } from 'utils/getBlockchain';
 import { IconEth } from 'assets/IconEth';
+import { handleError } from 'utils/ErrorHandler';
 
 interface ActivityProps extends ShopProps {
   identifiers?: number[];
@@ -49,10 +50,8 @@ export const Activity: React.FC<ActivityProps> = ({ identifiers, orderBy, candyS
     (offset: number, limit: number, firstLoad?: boolean) => () => {
       fetchTradeByShopAddress(candyShop.candyShopAddress, { identifiers, offset, limit, sortBy: orderBy })
         .then((res: ListBase<Trade>) => {
-          const { result, offset, totalCount, count, success } = res;
-          if (!success) {
-            return setHasMore(false);
-          }
+          const { result, offset, totalCount, count } = res;
+
           const hasMore = offset + count < Number(totalCount);
           if (hasMore) {
             setOffset(offset + count + 1);
@@ -64,7 +63,9 @@ export const Activity: React.FC<ActivityProps> = ({ identifiers, orderBy, candyS
             return removeDuplicate<Trade>(list, result, 'txHashAtCreation');
           });
         })
-        .catch((error: any) => {
+        .catch((error: Error) => {
+          setHasMore(false);
+          handleError(error, 'Get trades failed');
           console.log(`${Logger}: candyShop.transactions failed, error=`, error);
         });
     },

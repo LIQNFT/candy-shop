@@ -7,6 +7,7 @@ import { ExplorerLinkBase, fetchAuctionBidByWalletAddress } from '@liqnft/candy-
 import { Price } from 'components/Price';
 import { NftStat } from 'components/NftStat';
 import { ExplorerLink } from 'components/ExplorerLink';
+import { handleError } from 'utils/ErrorHandler';
 
 const Logger = 'CandyShopUI/AuctionModalDetail';
 interface AuctionModalDetailProps {
@@ -46,15 +47,12 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
 
     fetchAuctionBidByWalletAddress(auction.auctionAddress, walletPublicKey)
       .then((res: SingleBase<AuctionBid>) => {
-        if (res.success) {
-          setBidInfo(res.result);
-          console.log(`${Logger}: fetchAuctionBidByWalletAddress success=`, res.result);
-          console.log(`${Logger}: fetchAuctionBidAPI BidStatus=`, mappedBidStatusString(res.result.status));
-        } else {
-          console.log(`${Logger}: fetchAuctionBidAPI failed, ${walletPublicKey} has not placed any bid yet`);
-        }
+        setBidInfo(res.result);
+        console.log(`${Logger}: fetchAuctionBidByWalletAddress success=`, res.result);
+        console.log(`${Logger}: fetchAuctionBidAPI BidStatus=`, mappedBidStatusString(res.result.status));
       })
-      .catch((error: any) => {
+      .catch((error: Error) => {
+        handleError(error, `${walletPublicKey} has not placed any bid yet`);
         console.log(`${Logger}: fetchAuctionBidAPI failed, error=`, error);
       });
   }, [auction, walletPublicKey]);

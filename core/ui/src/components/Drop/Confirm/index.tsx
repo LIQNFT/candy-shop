@@ -12,6 +12,7 @@ import './style.less';
 
 import { BN, web3 } from '@project-serum/anchor';
 import { notification, NotificationType } from 'utils/rc-notification';
+import { handleError } from 'utils/ErrorHandler';
 
 interface CreateEditionDropProps {
   wallet: AnchorWallet | undefined;
@@ -73,6 +74,7 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
         onCreateDropSuccess && onCreateDropSuccess(dropNft);
       })
       .catch((error: Error) => {
+        handleError(error, 'Create edition drop failed');
         console.log(`${Logger}: Create Drop failed=`, error);
       });
   };
