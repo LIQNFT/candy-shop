@@ -19,6 +19,7 @@ import { ShopExchangeInfo, BuyModalState, PaymentErrorDetails } from 'model';
 import { notification, NotificationType } from 'utils/rc-notification';
 import { getPrice } from 'utils/getPrice';
 import stripeLogo from '../../assets/stripe.png';
+import { handleError } from 'utils/ErrorHandler';
 
 const Logger = 'CandyShopUI/StripePayment';
 
@@ -62,28 +63,20 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
     // init payment with Stripe
     CandyShopPay.createPayment(params)
       .then((res: SingleBase<PaymentInfo>) => {
-        if (res.success && res.result) {
-          console.log(`${Logger}: createPayment success, res=`, res.result);
-          setPaymentEntityId(res.result.paymentEntityId);
-        } else {
-          console.log(`${Logger}: createPayment failed, reason=`, res.msg);
-          if (res.msg) {
-            notification(res.msg, NotificationType.Error, 5);
-          }
-        }
+        console.log(`${Logger}: createPayment success, res=`, res.result);
+        setPaymentEntityId(res.result.paymentEntityId);
       })
       .catch((err: Error) => {
+        handleError(err);
         console.error(`${Logger}: createPayment failed, error=`, err);
-        notification(err.message, NotificationType.Error, 5);
       });
   }, [order, paymentPrice, shopAddress, walletAddress]);
 
   const handleConfirmPayment = async (params: ConfirmStripePaymentParams, stripe?: Stripe): Promise<void> => {
     onProcessingPay(BuyModalState.PROCESSING);
     const confirmRes = await CandyShopPay.confirmPayment(params);
-    const isConfirmResolved = confirmRes.success && confirmRes.result;
 
-    if (!isConfirmResolved) {
+    if (!confirmRes.result) {
       handlePaymentFailed(confirmRes);
       return;
     }
@@ -138,7 +131,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
           content: err.message
         };
         onProcessingPay(BuyModalState.PAYMENT_ERROR, errorDetails);
-        notification(err.message, NotificationType.Error, 5);
+        handleError(err);
       });
   };
 

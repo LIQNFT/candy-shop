@@ -32,10 +32,8 @@ export const AuctionActivity: React.FC<AuctionActivityProps> = ({ candyShop, auc
     (offset: number, limit: number, firstLoad?: boolean) => () => {
       fetchAuctionHistory(auctionAddress, { offset, limit, orderByArr: orderBy })
         .then((res: ListBase<AuctionBid>) => {
-          const { result, offset, totalCount, count, success } = res;
-          if (!success) {
-            return setHasMore(false);
-          }
+          const { result, offset, totalCount, count } = res;
+
           const hasMore = offset + count < Number(totalCount);
           if (hasMore) {
             setOffset(offset + count + 1);

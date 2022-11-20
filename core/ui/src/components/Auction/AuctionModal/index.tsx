@@ -13,6 +13,7 @@ import { Auction, Blockchain } from '@liqnft/candy-shop-types';
 import { notification, NotificationType } from 'utils/rc-notification';
 import './style.less';
 import { PoweredByInBuyModal } from 'components/PoweredBy/PowerByInBuyModal';
+import { handleError } from 'utils/ErrorHandler';
 
 const Logger = 'CandyShopUI/AuctionModal';
 
@@ -72,7 +73,7 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
         setState(TransactionState.CONFIRMED);
       })
       .catch((err: Error) => {
-        notification(err.message, NotificationType.Error);
+        handleError(err);
         console.log(`${Logger} buyNowAuction failed, error=`, err);
         setState(TransactionState.DISPLAY);
       });
@@ -107,7 +108,7 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
         setBidPrice(price);
       })
       .catch((err: Error) => {
-        notification(err.message, NotificationType.Error);
+        handleError(err);
         console.log(`${Logger} bidAuction failed, error=`, err);
         setState(TransactionState.DISPLAY);
       });
@@ -125,7 +126,7 @@ export const AuctionModal: React.FC<AuctionModalProps> = ({
         setState(TransactionState.CONFIRMED);
       })
       .catch((err: Error) => {
-        notification(err.message, NotificationType.Error);
+        handleError(err);
         console.log(`${Logger} withdrawAuctionBid failed, error=`, err);
         setState(TransactionState.DISPLAY);
       });

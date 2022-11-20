@@ -77,8 +77,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       })
       .catch((err: Error) => {
         console.log(`${Logger} buyNft failed, error=`, err);
-        err.message = (err as any).error?.data?.message || (err as any).code || err.message;
-        handleError({ error: err });
+        handleError(err, 'Buy nft failed');
         setState(BuyModalState.DISPLAY);
       });
   };
@@ -114,21 +113,18 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       const paymentAvailableRes = await CandyShopPay.checkPaymentAvailability({
         shopId: shopAddress,
         tokenAccount: order.tokenAccount
-      });
-      // Throw Error to caller if failed
-      if (!paymentAvailableRes.success) {
-        const error = new Error(paymentAvailableRes.msg);
+      }).catch((error: Error) => {
         error.name = paymentAvailableRes.result;
         throw error;
-      }
+      });
     }
     const fiatPriceRes = await CandyShopPay.getTokenFiatMoneyPrice(
       { shopId: shopAddress, tokenAccount: order.tokenAccount },
       { quoteCurrencyType: PaymentCurrencyType.USD }
-    );
-    if (!fiatPriceRes.success) {
-      throw Error(fiatPriceRes.msg);
-    }
+    ).catch((error: Error) => {
+      throw error;
+    });
+
     return Number(fiatPriceRes.result);
   }, [shopAddress, order.tokenAccount, creditCardPayAvailable, stripePublicKey]);
 
@@ -141,20 +137,20 @@ export const BuyModal: React.FC<BuyModalProps> = ({
           setCreditCardPayAvailable(CreditCardPayAvailability.Supported);
         })
         .catch((error: Error) => {
+          handleError(error);
           console.log(
             `${Logger}: getPaymentDetail failed, token= ${order.name} ${order.tokenAccount}, reason=`,
             error.message
           );
-          if (error.name === PaymentErrorName.InsufficientPurchaseBalance) {
+
+          if (
+            PaymentErrorName.InsufficientPurchaseBalance === error.name ||
+            PaymentErrorName.BelowMinPurchasePrice === error.name
+          ) {
             setCreditCardPayAvailable(CreditCardPayAvailability.Disabled);
-            notification(error.message, NotificationType.Error);
             return;
           }
-          if (error.name === PaymentErrorName.BelowMinPurchasePrice) {
-            setCreditCardPayAvailable(CreditCardPayAvailability.Disabled);
-            notification(error.message, NotificationType.Error);
-            return;
-          }
+
           setCreditCardPayAvailable(CreditCardPayAvailability.Unsupported);
         });
     }

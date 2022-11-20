@@ -19,6 +19,7 @@ import { notification, NotificationType } from 'utils/rc-notification';
 import { convertTime12to24 } from 'utils/timer';
 import useUserNfts from 'hooks/useUserNfts';
 import { SolStore, StoreProvider } from 'market';
+import { handleError } from 'utils/ErrorHandler';
 
 interface CreateAuctionProps extends ShopProps {
   walletConnectComponent: React.ReactElement;
@@ -137,7 +138,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
       })
       .catch((err: Error) => {
         console.log(`${Logger}: Create Auction failed=`, err);
-        notification(err.message, NotificationType.Error);
+        handleError(err);
       });
   };
 

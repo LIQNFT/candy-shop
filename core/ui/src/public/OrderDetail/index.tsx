@@ -53,10 +53,10 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
       store
         .getOrderNft(tokenMint)
         .then((res: SingleBase<OrderSchema>) => {
-          if (!res.success) throw new Error('Order not found');
           setOrder(res.result);
         })
         .catch((err: Error) => {
+          handleError(err, 'Order not found');
           console.log('OrderDetail: activeOrderByMintAddress failed=', err);
         })
         .finally(() => {
@@ -93,7 +93,7 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
         })
         .catch((err: Error) => {
           console.log({ err });
-          handleError({ error: err });
+          handleError(err, 'Buy nft failed');
           setState(TransactionState.DISPLAY);
         });
     }

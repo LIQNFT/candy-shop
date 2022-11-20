@@ -11,6 +11,7 @@ import { ErrorMsgMap, ErrorType } from 'utils/ErrorHandler';
 import { notification, NotificationType } from 'utils/rc-notification';
 import { EditionModalDetail } from './EditionModalDetail';
 import './style.less';
+import { handleError } from 'utils/ErrorHandler';
 
 export interface EditionModalProps {
   wallet?: AnchorWallet;
@@ -55,7 +56,7 @@ export const EditionModal: React.FC<EditionModalProps> = ({
       })
       .catch((error: Error) => {
         console.log(`${Logger}: candyShop.mintNewPrint fail, error=`, error);
-        notification('Mint Edition Failed.', NotificationType.Error);
+        handleError(error, 'Mint edition failed');
         setState(TransactionState.DISPLAY);
       });
   };

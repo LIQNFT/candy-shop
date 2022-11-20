@@ -56,9 +56,7 @@ export class SolStore extends Store implements Auctionner {
 
   getShop(): Promise<CandyShopResponse> {
     const candyShopAddress = this.baseShop.candyShopAddress.toString();
-    return fetchShopByShopAddress(candyShopAddress).then((data: SingleBase<CandyShopResponse>) =>
-      data.success ? data.result : ({} as CandyShopResponse)
-    );
+    return fetchShopByShopAddress(candyShopAddress).then((data: SingleBase<CandyShopResponse>) => data.result);
   }
 
   async getNFTs(

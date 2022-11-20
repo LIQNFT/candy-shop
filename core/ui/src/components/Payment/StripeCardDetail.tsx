@@ -61,9 +61,6 @@ export const StripeCardDetail: React.FC<StripeCardDetailProps> = ({
     stripe
       .createPaymentMethod(paymentMethodData)
       .then((result: PaymentMethodResult) => {
-        if (result.error) {
-          throw result.error;
-        }
         if (!result.paymentMethod) {
           throw Error('Undefined PaymentMethod');
         }
@@ -81,6 +78,7 @@ export const StripeCardDetail: React.FC<StripeCardDetailProps> = ({
       .catch((error: StripeError) => {
         console.log(`${Logger}: getConfirmPaymentParams failed, err=`, error);
         setError(error);
+        throw error;
       });
   };
 
