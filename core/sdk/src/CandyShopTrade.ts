@@ -74,7 +74,7 @@ export abstract class CandyShopTrade {
       feeAccount,
       candyShop: shopAddress,
       price,
-      amount,
+      amount: amount ?? new BN(1),
       partialOrderAmount: partialOrderAmount ?? null,
       program: getProgram(connection, candyShopProgramId, wallet)
     };
@@ -125,7 +125,7 @@ export abstract class CandyShopTrade {
       feeAccount,
       candyShop: shopAddress,
       price,
-      amount,
+      amount: amount ?? new BN(1),
       program: getProgram(connection, candyShopProgramId, wallet)
     };
 
@@ -164,7 +164,7 @@ export abstract class CandyShopTrade {
       tokenAccount,
       shopTreasuryMint,
       tokenMint,
-      amount,
+      amount ?? new BN(1),
       price
     );
 
@@ -180,7 +180,7 @@ export abstract class CandyShopTrade {
       tradeState,
       candyShop: shopAddress,
       price,
-      amount,
+      amount: amount ?? new BN(1),
       program: getProgram(connection, candyShopProgramId, wallet)
     };
 

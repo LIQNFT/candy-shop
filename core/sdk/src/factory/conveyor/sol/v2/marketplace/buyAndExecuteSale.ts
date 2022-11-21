@@ -7,6 +7,7 @@ import {
   getAuctionHouseEscrow,
   getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
+  checkBuyAmountBalance,
   sendTx,
   treasuryMintIsNative,
   CandyShopError,

@@ -329,7 +329,7 @@ export const checkSellAmount = async (
   }
 
   if (metadataDecoded.tokenStandard) {
-    if (metadataDecoded.tokenStandard === TokenStandard.FungibleAsset && amount.len(0)) {
+    if (metadataDecoded.tokenStandard === TokenStandard.FungibleAsset && amount.lten(0)) {
       throw new CandyShopError(CandyShopErrorType.InvalidTokenAmount);
     }
     // @ts-ignore

@@ -129,8 +129,18 @@ programCommand('sell')
   .requiredOption('-p, --price <string>', 'price in token decimals')
   .option('-a, --amount <string>', 'amount of tokens in order')
   .action(async (name, cmd) => {
-    const { keypair, env, tokenAccountMint, treasuryMint, price, amount, shopCreator, rpcUrl, version, isEnterpriseArg } =
-      cmd.opts();
+    const {
+      keypair,
+      env,
+      tokenAccountMint,
+      treasuryMint,
+      price,
+      amount,
+      shopCreator,
+      rpcUrl,
+      version,
+      isEnterpriseArg
+    } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -171,8 +181,18 @@ programCommand('cancel')
   .requiredOption('-p, --price <string>', 'price in token decimals')
   .option('-a, --amount <string>', 'amount of tokens in order')
   .action(async (name, cmd) => {
-    const { keypair, env, tokenAccountMint, treasuryMint, price, amount, shopCreator, rpcUrl, version, isEnterpriseArg } =
-      cmd.opts();
+    const {
+      keypair,
+      env,
+      tokenAccountMint,
+      treasuryMint,
+      price,
+      amount,
+      shopCreator,
+      rpcUrl,
+      version,
+      isEnterpriseArg
+    } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
