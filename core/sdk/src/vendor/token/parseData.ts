@@ -80,6 +80,41 @@ export class Data {
   }
 }
 
+export enum TokenStandard {
+  NonFungible,
+  FungibleAsset,
+  Fungible,
+  NonFungibleEdition
+}
+
+export class Collection {
+  verified: boolean;
+  key: web3.PublicKey;
+
+  constructor(args: { verified: boolean; key: web3.PublicKey }) {
+    this.verified = args.verified;
+    this.key = args.key;
+  }
+}
+
+enum UseMethod {
+  Burn,
+  Multiple,
+  Single
+}
+
+export class Uses {
+  useMethod: UseMethod;
+  remaining: BN;
+  total: BN;
+
+  constructor(args: { useMethod: UseMethod; remaining: BN; total: BN }) {
+    this.useMethod = args.useMethod;
+    this.remaining = args.remaining;
+    this.total = args.total;
+  }
+}
+
 export class Metadata {
   key: MetadataKey;
   updateAuthority: web3.PublicKey;
@@ -89,6 +124,10 @@ export class Metadata {
   isMutable: boolean;
   masterEdition?: web3.PublicKey;
   edition?: web3.PublicKey;
+  tokenStandard?: TokenStandard;
+  collection?: Collection;
+  uses?: Uses;
+  // collectionDetails?: CollectionDetails;
   constructor(args: {
     updateAuthority: web3.PublicKey;
     mint: web3.PublicKey;
@@ -96,6 +135,9 @@ export class Metadata {
     primarySaleHappened: boolean;
     isMutable: boolean;
     masterEdition?: web3.PublicKey;
+    tokenStandard?: TokenStandard;
+    collection?: Collection;
+    uses?: Uses;
   }) {
     this.key = MetadataKey.MetadataV1;
     this.updateAuthority = args.updateAuthority;
@@ -103,6 +145,9 @@ export class Metadata {
     this.data = args.data;
     this.primarySaleHappened = args.primarySaleHappened;
     this.isMutable = args.isMutable;
+    this.tokenStandard = args.tokenStandard;
+    this.collection = args.collection;
+    this.uses = args.uses;
   }
 }
 
@@ -163,7 +208,11 @@ export const METADATA_SCHEMA = new Map<any, any>([
         ['mint', [32]],
         ['data', Data],
         ['primarySaleHappened', 'u8'],
-        ['isMutable', 'u8']
+        ['isMutable', 'u8'],
+        ['editionNonce', { kind: 'option', type: 'u8' }],
+        ['tokenStandard', { kind: 'option', type: 'u8' }],
+        ['collection', { kind: 'option', type: Collection }],
+        ['uses', { kind: 'option', type: Uses }]
       ]
     }
   ],
@@ -174,6 +223,27 @@ export const METADATA_SCHEMA = new Map<any, any>([
       fields: [
         ['key', 'u8'],
         ['ledger', [31]]
+      ]
+    }
+  ],
+  [
+    Collection,
+    {
+      kind: 'struct',
+      fields: [
+        ['verified', 'u8'],
+        ['key', [32]]
+      ]
+    }
+  ],
+  [
+    Uses,
+    {
+      kind: 'struct',
+      fields: [
+        ['useMethod', 'u8'],
+        ['remaining', 'u64'],
+        ['total', 'u64']
       ]
     }
   ]

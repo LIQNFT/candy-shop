@@ -666,6 +666,18 @@
           "type": "u64"
         },
         {
+          "name": "partialOrderPrice",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
+          "name": "partialOrderAmount",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
           "name": "escrowPaymentBump",
           "type": "u8"
         },
@@ -815,6 +827,18 @@
         {
           "name": "amount",
           "type": "u64"
+        },
+        {
+          "name": "partialOrderPrice",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
+          "name": "partialOrderAmount",
+          "type": {
+            "option": "u64"
+          }
         },
         {
           "name": "escrowPaymentBump",

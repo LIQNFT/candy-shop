@@ -7,6 +7,7 @@ import {
   getAuctionHouseEscrow,
   getAuctionHouseProgramAsSigner,
   getAuctionHouseTradeState,
+  checkBuyAmountBalance,
   sendTx,
   treasuryMintIsNative,
   CandyShopError,
@@ -36,8 +37,11 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     candyShop,
     price,
     amount,
+    partialOrderAmount,
     program
   } = params;
+
+  const partialOrderPrice = partialOrderAmount ? price.div(amount).mul(partialOrderAmount) : null;
 
   if (counterParty.toString() === wallet.publicKey.toString()) {
     throw new CandyShopError(CandyShopErrorType.BuyerOwnsListing);
@@ -51,8 +55,8 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     tokenAccount,
     treasuryMint,
     tokenAccountMint,
-    amount,
-    price
+    partialOrderAmount ?? amount,
+    partialOrderPrice ?? price
   );
 
   const isNative = treasuryMintIsNative(treasuryMint);
@@ -92,8 +96,10 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     amount.toNumber()
   );
 
+  await checkBuyAmountBalance(program.provider.connection, tokenAccount, partialOrderAmount ?? amount);
+
   const ix = await program.methods
-    .buyWithProxy(price, amount, buyTradeStateBump, buyerEscrowBump)
+    .buyWithProxy(partialOrderPrice ?? price, partialOrderAmount ?? amount, buyTradeStateBump, buyerEscrowBump)
     .accounts({
       wallet: wallet.publicKey,
       paymentAccount,
@@ -191,7 +197,16 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
   }
 
   const ix2 = await program.methods
-    .executeSaleWithProxy(price, amount, buyerEscrowBump, freeTradeStateBump, programAsSignerBump, true)
+    .executeSaleWithProxy(
+      price,
+      amount,
+      partialOrderPrice,
+      partialOrderAmount,
+      buyerEscrowBump,
+      freeTradeStateBump,
+      programAsSignerBump,
+      true
+    )
     .accounts({
       buyer: wallet.publicKey,
       seller: counterParty,

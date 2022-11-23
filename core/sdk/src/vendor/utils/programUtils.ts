@@ -381,20 +381,26 @@ export const treasuryMintIsNative = (treasuryMint: web3.PublicKey) => {
   return treasuryMint.equals(WRAPPED_SOL_MINT);
 };
 
-export const getNftCreators = async (metadata: web3.PublicKey, connection: web3.Connection) => {
+export const getMetadataDecoded = async (connection: web3.Connection, metadata: web3.PublicKey) => {
   const metadataObj = await connection.getAccountInfo(metadata);
 
   if (!metadataObj?.data) {
     throw new Error(CandyShopErrorType.InvalidNFTMetadata);
   }
 
-  const metadataDecoded: Metadata = parseMetadata(Buffer.from(metadataObj.data));
+  const metadataDecoded = parseMetadata(Buffer.from(metadataObj.data));
 
-  if (!metadataDecoded || !metadataDecoded.data || !metadataDecoded.data.creators) {
+  if (!metadataDecoded || !metadataDecoded.data) {
     throw new Error(CandyShopErrorType.InvalidNFTMetadata);
   }
 
-  return metadataDecoded.data.creators;
+  return metadataDecoded;
+};
+
+export const getNftCreators = async (metadata: web3.PublicKey, connection: web3.Connection): Promise<Creator[]> => {
+  const metadataDecoded: Metadata = await getMetadataDecoded(connection, metadata);
+
+  return metadataDecoded.data.creators ?? [];
 };
 
 export const getRemainingAccountsForExecuteSaleIx = async (

@@ -127,9 +127,20 @@ programCommand('sell')
   .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .requiredOption('-p, --price <string>', 'price in token decimals')
+  .option('-a, --amount <string>', 'amount of tokens in order')
   .action(async (name, cmd) => {
-    const { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl, version, isEnterpriseArg } =
-      cmd.opts();
+    const {
+      keypair,
+      env,
+      tokenAccountMint,
+      treasuryMint,
+      price,
+      amount,
+      shopCreator,
+      rpcUrl,
+      version,
+      isEnterpriseArg
+    } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -155,6 +166,7 @@ programCommand('sell')
       tokenAccount: tokenAccount,
       tokenMint: new anchor.web3.PublicKey(tokenAccountMint),
       price: new anchor.BN(price),
+      amount: amount ? new anchor.BN(amount) : undefined,
       wallet
     });
 
@@ -167,9 +179,20 @@ programCommand('cancel')
   .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .requiredOption('-p, --price <string>', 'price in token decimals')
+  .option('-a, --amount <string>', 'amount of tokens in order')
   .action(async (name, cmd) => {
-    const { keypair, env, tokenAccountMint, treasuryMint, price, shopCreator, rpcUrl, version, isEnterpriseArg } =
-      cmd.opts();
+    const {
+      keypair,
+      env,
+      tokenAccountMint,
+      treasuryMint,
+      price,
+      amount,
+      shopCreator,
+      rpcUrl,
+      version,
+      isEnterpriseArg
+    } = cmd.opts();
 
     const wallet = loadKey(keypair);
 
@@ -195,6 +218,7 @@ programCommand('cancel')
       tokenAccount: tokenAccount,
       tokenMint: new anchor.web3.PublicKey(tokenAccountMint),
       price: new anchor.BN(price),
+      amount: amount ? new anchor.BN(amount) : undefined,
       wallet
     });
 
@@ -209,6 +233,8 @@ programCommand('buy')
   .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
   .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
   .requiredOption('-p, --price <string>', 'price in token decimals')
+  .option('-a, --amount <string>', 'amount of tokens in order')
+  .option('-pa, --partial-amount <string>', 'partial amount of tokens to buy')
   .action(async (name, cmd) => {
     const {
       keypair,
@@ -219,6 +245,8 @@ programCommand('buy')
       treasuryMint,
       shopCreator,
       price,
+      amount,
+      partialAmount,
       rpcUrl,
       version,
       isEnterpriseArg
@@ -244,6 +272,8 @@ programCommand('buy')
       tokenAccount: new anchor.web3.PublicKey(tokenAccount),
       tokenMint: new anchor.web3.PublicKey(tokenAccountMint),
       price: new anchor.BN(price),
+      amount: amount ? new anchor.BN(amount) : undefined,
+      partialOrderAmount: partialAmount ? new anchor.BN(partialAmount) : undefined,
       wallet
     });
 

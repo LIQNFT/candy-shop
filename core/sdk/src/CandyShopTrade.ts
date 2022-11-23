@@ -38,6 +38,8 @@ export abstract class CandyShopTrade {
       tokenAccount,
       tokenMint,
       price,
+      amount,
+      partialOrderAmount,
       wallet,
       shopAddress,
       candyShopProgramId,
@@ -72,7 +74,8 @@ export abstract class CandyShopTrade {
       feeAccount,
       candyShop: shopAddress,
       price,
-      amount: new BN(1),
+      amount: amount ?? new BN(1),
+      partialOrderAmount: partialOrderAmount ?? null,
       program: getProgram(connection, candyShopProgramId, wallet)
     };
     const txHash = await proceedToBuy(isEnterprise, {
@@ -91,6 +94,7 @@ export abstract class CandyShopTrade {
       tokenAccount,
       tokenMint,
       price,
+      amount,
       wallet,
       shopAddress,
       candyShopProgramId,
@@ -121,7 +125,7 @@ export abstract class CandyShopTrade {
       feeAccount,
       candyShop: shopAddress,
       price,
-      amount: new BN(1),
+      amount: amount ?? new BN(1),
       program: getProgram(connection, candyShopProgramId, wallet)
     };
 
@@ -137,6 +141,7 @@ export abstract class CandyShopTrade {
       tokenAccount,
       tokenMint,
       price,
+      amount,
       wallet,
       shopAddress,
       candyShopProgramId,
@@ -159,7 +164,7 @@ export abstract class CandyShopTrade {
       tokenAccount,
       shopTreasuryMint,
       tokenMint,
-      new BN(1),
+      amount ?? new BN(1),
       price
     );
 
@@ -175,7 +180,7 @@ export abstract class CandyShopTrade {
       tradeState,
       candyShop: shopAddress,
       price,
-      amount: new BN(1),
+      amount: amount ?? new BN(1),
       program: getProgram(connection, candyShopProgramId, wallet)
     };
 
