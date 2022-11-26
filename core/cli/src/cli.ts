@@ -1,6 +1,8 @@
 import { CandyShop, CandyShopError, CandyShopErrorType } from '../../sdk/src';
 import { getAvailableEditionNumbers, createNewMintInstructions, CandyShopDrop } from '../../sdk/src/CandyShopDrop';
 import { getEditionVaultAccount, getAuctionHouse, getAuctionHouseAuthority } from '../../sdk/src/vendor';
+import { SolShopInitParams } from '../../sdk/src/shop/sol/CandyShop';
+import { Blockchain } from '@liqnft/candy-shop-types';
 import * as anchor from '@project-serum/anchor';
 import { BN } from '@project-serum/anchor';
 import { getAccount } from '@solana/spl-token';
@@ -19,6 +21,17 @@ import fs from 'fs';
 const CMD = new Command();
 
 CMD.description('CLI for interacting with Candy Shop');
+
+function getEnv(env: string): Blockchain {
+  switch (env) {
+    case 'devnet':
+      return Blockchain.SolDevnet;
+    case 'mainnet-beta':
+      return Blockchain.SolMainnetBeta;
+    default:
+      return Blockchain.Sol;
+  }
+}
 
 function programCommand(name: string) {
   return CMD.command(name)
@@ -47,16 +60,18 @@ programCommand('sellMany')
 
     const wallet = loadKey(keypair);
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
-      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId,
-      env,
+    const params: SolShopInitParams = {
+      shopCreatorAddress: shopCreator,
+      treasuryMint: treasuryMint,
+      programId: candyShopProgramId.toString(),
+      env: getEnv(env),
       settings: {
         connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const tokenMints = loadTokenAccountMints(tokenAccountMintList);
 
@@ -91,16 +106,18 @@ programCommand('cancelMany')
 
     const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
-      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId,
-      env,
+    const params: SolShopInitParams = {
+      shopCreatorAddress: shopCreator,
+      treasuryMint: treasuryMint,
+      programId: candyShopProgramId.toString(),
+      env: getEnv(env),
       settings: {
         connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const tokenMints = loadTokenAccountMints(tokenAccountMintList);
 
@@ -146,16 +163,18 @@ programCommand('sell')
 
     const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
-      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId,
-      env,
+    const params: SolShopInitParams = {
+      shopCreatorAddress: shopCreator,
+      treasuryMint: treasuryMint,
+      programId: candyShopProgramId.toString(),
+      env: getEnv(env),
       settings: {
         connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
@@ -198,16 +217,18 @@ programCommand('cancel')
 
     const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
-      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId,
-      env,
+    const params: SolShopInitParams = {
+      shopCreatorAddress: shopCreator,
+      treasuryMint: treasuryMint,
+      programId: candyShopProgramId.toString(),
+      env: getEnv(env),
       settings: {
         connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
@@ -256,16 +277,18 @@ programCommand('buy')
 
     const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
-      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId,
-      env,
+    const params: SolShopInitParams = {
+      shopCreatorAddress: shopCreator,
+      treasuryMint: treasuryMint,
+      programId: candyShopProgramId.toString(),
+      env: getEnv(env),
       settings: {
         connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const txHash = await candyShop.buy({
       seller: new anchor.web3.PublicKey(seller),
@@ -315,16 +338,18 @@ programCommand('createAuction')
 
     const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
-      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId,
-      env,
+    const params: SolShopInitParams = {
+      shopCreatorAddress: shopCreator,
+      treasuryMint: treasuryMint,
+      programId: candyShopProgramId.toString(),
+      env: getEnv(env),
       settings: {
         connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
@@ -359,16 +384,18 @@ programCommand('cancelAuction')
 
     const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
-      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId,
-      env,
+    const params: SolShopInitParams = {
+      shopCreatorAddress: shopCreator,
+      treasuryMint: treasuryMint,
+      programId: candyShopProgramId.toString(),
+      env: getEnv(env),
       settings: {
         connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
@@ -398,16 +425,18 @@ programCommand('makeBid')
 
     const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
-      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId,
-      env,
+    const params: SolShopInitParams = {
+      shopCreatorAddress: shopCreator,
+      treasuryMint: treasuryMint,
+      programId: candyShopProgramId.toString(),
+      env: getEnv(env),
       settings: {
         connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
@@ -435,16 +464,18 @@ programCommand('withdrawBid')
     const wallet = loadKey(keypair);
     const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
-      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId,
-      env,
+    const params: SolShopInitParams = {
+      shopCreatorAddress: shopCreator,
+      treasuryMint: treasuryMint,
+      programId: candyShopProgramId.toString(),
+      env: getEnv(env),
       settings: {
         connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
@@ -472,16 +503,18 @@ programCommand('buyNow')
 
     const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
-      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId,
-      env,
+    const params: SolShopInitParams = {
+      shopCreatorAddress: shopCreator,
+      treasuryMint: treasuryMint,
+      programId: candyShopProgramId.toString(),
+      env: getEnv(env),
       settings: {
         connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
@@ -509,16 +542,18 @@ programCommand('settleAndDistribute')
 
     const candyShopProgramId = version === 'v1' ? CANDY_SHOP_PROGRAM_ID : CANDY_SHOP_V2_PROGRAM_ID;
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
-      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId,
-      env,
+    const params: SolShopInitParams = {
+      shopCreatorAddress: shopCreator,
+      treasuryMint: treasuryMint,
+      programId: candyShopProgramId.toString(),
+      env: getEnv(env),
       settings: {
         connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const tokenAccount = await findAssociatedTokenAddress(
       new anchor.web3.PublicKey(wallet.publicKey),
@@ -571,16 +606,18 @@ programCommand('commitEditionDropNft')
     // default to v2
     const candyShopProgramId = CANDY_SHOP_V2_PROGRAM_ID;
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
-      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId,
-      env,
+    const params: SolShopInitParams = {
+      shopCreatorAddress: shopCreator,
+      treasuryMint: treasuryMint,
+      programId: candyShopProgramId.toString(),
+      env: getEnv(env),
       settings: {
         connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const tokenAccountInfo = await getAccount(candyShop.connection, new PublicKey(nftOwnerTokenAccount), 'finalized');
 
@@ -626,16 +663,18 @@ programCommand('mintPrint')
     // default to v2
     const candyShopProgramId = CANDY_SHOP_V2_PROGRAM_ID;
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
-      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId,
-      env,
+    const params: SolShopInitParams = {
+      shopCreatorAddress: shopCreator,
+      treasuryMint: treasuryMint,
+      programId: candyShopProgramId.toString(),
+      env: getEnv(env),
       settings: {
         connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const tokenAccountInfo = await getAccount(candyShop.connection, new PublicKey(nftOwnerTokenAccount), 'finalized');
 
@@ -678,16 +717,18 @@ programCommand('mintAllPrint')
     // default to v2
     const candyShopProgramId = CANDY_SHOP_V2_PROGRAM_ID;
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
-      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId,
-      env,
+    const params: SolShopInitParams = {
+      shopCreatorAddress: shopCreator,
+      treasuryMint: treasuryMint,
+      programId: candyShopProgramId.toString(),
+      env: getEnv(env),
       settings: {
         connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const tokenAccountInfo = await getAccount(candyShop.connection, new PublicKey(nftOwnerTokenAccount), 'finalized');
 
@@ -789,16 +830,18 @@ programCommand('redeemDrop')
     // default to v2
     const candyShopProgramId = CANDY_SHOP_V2_PROGRAM_ID;
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: new anchor.web3.PublicKey(shopCreator),
-      treasuryMint: new anchor.web3.PublicKey(treasuryMint),
-      candyShopProgramId,
-      env,
+    const params: SolShopInitParams = {
+      shopCreatorAddress: shopCreator,
+      treasuryMint: treasuryMint,
+      programId: candyShopProgramId.toString(),
+      env: getEnv(env),
       settings: {
         connectionUrl: rpcUrl
       },
       isEnterprise: isEnterprise(isEnterpriseArg)
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const txHash = await candyShop.redeemDrop({
       nftOwner: wallet,
