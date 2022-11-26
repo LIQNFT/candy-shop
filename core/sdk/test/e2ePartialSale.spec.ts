@@ -1,7 +1,7 @@
 import { Blockchain } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
 import { CandyShop, SolShopInitParams } from '../src/shop/sol/CandyShop';
-import { initEnvWithNftHolder, initEnvWithSftHolder } from './utils';
+import { initEnvWithSftHolder } from './utils';
 // 4HnGEPFYhYmfes7zug3J1bcYvtDD3MzPqdjhjbjJQk8g
 const USER_1 = new Uint8Array([
   216, 182, 60, 250, 155, 92, 144, 67, 192, 235, 161, 201, 146, 102, 19, 103, 124, 11, 159, 2, 146, 23, 165, 154, 227,

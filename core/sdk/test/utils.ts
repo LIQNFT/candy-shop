@@ -3,7 +3,6 @@ import { Connection, Keypair, PublicKey, sendAndConfirmTransaction, Transaction 
 // import { createAssociatedTokenAccount, createMint, mintTo } from "@solana/spl-token";
 import { keypairIdentity, Metaplex, toBigNumber } from '@metaplex-foundation/js';
 import * as metaplexJS from '@metaplex/js';
-import { TOKEN_METADATA_PROGRAM_ID } from '../src/factory/constants';
 import { getMetadataAccount } from '../src/vendor';
 
 export interface Env {
@@ -48,30 +47,6 @@ export const initEnvWithSftHolder = async (
   mintAmount: number,
   connection: Connection
 ) => {
-  // const sftMint = await createMint(
-  //   connection,
-  //   wallet,
-  //   wallet.publicKey,
-  //   wallet.publicKey,
-  //   0
-  // );
-
-  // const sftOwnerTokenAccount = await createAssociatedTokenAccount(
-  //   connection,
-  //   wallet,
-  //   sftMint,
-  //   sftOwner.publicKey
-  // );
-
-  // await mintTo(
-  //   connection,
-  //   wallet,
-  //   sftMint,
-  //   sftOwnerTokenAccount,
-  //   wallet,
-  //   mintAmount
-  // );
-
   const mintKeypair = Keypair.generate();
 
   const metaplexInstance = Metaplex.make(connection).use(keypairIdentity(wallet));
@@ -110,19 +85,6 @@ export const initEnvWithSftHolder = async (
       }
     })
     .run();
-
-  // const { metadataAddress, masterEditionAddress } = await metaplexInstance
-  //   .nfts()
-  //   .create({
-  //     uri: '',
-  //     name: '',
-  //     mint: mintKeypair,
-  //     sellerFeeBasisPoints: 200,
-  //     payer: wallet,
-  //     owner: sftOwner.publicKey,
-  //     mintAuthority: wallet
-  //   })
-  //   .run();
 
   const [metadataAddress] = await getMetadataAccount(mint.address);
 
