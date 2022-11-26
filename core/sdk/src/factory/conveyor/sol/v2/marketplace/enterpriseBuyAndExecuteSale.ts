@@ -17,7 +17,8 @@ import {
 import {
   checkDelegateOnReceiptAccounts,
   checkNftAvailability,
-  checkPaymentAccountBalance
+  checkPaymentAccountBalance,
+  checkBuyAmountBalance
 } from '../../../../../vendor/utils/validationUtils';
 import { BuyAndExecuteSaleTransactionParams } from '../../types/shop.type';
 
@@ -96,6 +97,8 @@ export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionPara
     sellTradeStateBump,
     amount.toNumber()
   );
+
+  await checkBuyAmountBalance(program.provider.connection, tokenAccount, partialOrderAmount ?? amount);
 
   const ix = await program.methods
     .buyWithProxy(partialOrderPrice ?? price, partialOrderAmount ?? amount, buyTradeStateBump, buyerEscrowBump)

@@ -2,7 +2,8 @@ import { BN, web3 } from '@project-serum/anchor';
 import { approve, createTransferInstruction, getAccount, getAssociatedTokenAddress } from '@solana/spl-token';
 import assert from 'assert';
 import { safeAwait } from '../src/vendor';
-import { CandyShop } from '../src/CandyShop';
+import { CandyShop, SolShopInitParams } from '../src/shop/sol/CandyShop';
+import { Blockchain } from '@liqnft/candy-shop-types';
 // 3NjzSLrnFDwzxJtEzxHUTV5nGYQPHm49EfUFD9fhaDwp
 const USER_1 = new Uint8Array([
   244, 102, 110, 130, 157, 96, 75, 224, 32, 248, 104, 240, 164, 91, 228, 165, 32, 19, 15, 202, 76, 68, 120, 129, 49,
@@ -39,14 +40,16 @@ describe('e2e token flow', function () {
   it('sell -> cancel -> sell -> buy', async function () {
     this.timeout(60000);
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: CREATOR_ADDRESS,
-      treasuryMint: TREASURY_MINT,
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
-      env: 'devnet',
+    const params: SolShopInitParams = {
+      shopCreatorAddress: CREATOR_ADDRESS.toString(),
+      treasuryMint: TREASURY_MINT.toString(),
+      programId: CANDY_SHOP_PROGRAM_ID.toString(),
+      env: Blockchain.SolDevnet,
       settings: undefined,
       isEnterprise: false
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const sellTxHash = await candyShop.sell({
       tokenAccount: TOKEN_ACCOUNT,
@@ -110,14 +113,16 @@ describe('e2e token flow', function () {
       'Seller treasury mint ata should have delegate.'
     );
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: CREATOR_ADDRESS,
-      treasuryMint: TREASURY_MINT,
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
-      env: 'devnet',
+    const params: SolShopInitParams = {
+      shopCreatorAddress: CREATOR_ADDRESS.toString(),
+      treasuryMint: TREASURY_MINT.toString(),
+      programId: CANDY_SHOP_PROGRAM_ID.toString(),
+      env: Blockchain.SolDevnet,
       settings: undefined,
       isEnterprise: false
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const sellTxHash = await candyShop.sell({
       tokenAccount: TOKEN_ACCOUNT,

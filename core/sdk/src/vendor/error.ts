@@ -48,7 +48,7 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.IncorrectProgramId]: 'Must use v2 program address to make use of this functionality.',
   [CandyShopErrorType.TransactionFailed]: 'Transaction failed. Please try again later.',
   [CandyShopErrorType.InsufficientBalance]: 'Insufficient balance.',
-  [CandyShopErrorType.NFTUnavailable]: 'The NFT is no longer for sale.',
+  [CandyShopErrorType.NFTUnavailable]: 'Unable to cancel this listing.',
   [CandyShopErrorType.BuyerOwnsListing]: 'Cannot buy your own listing. Please cancel instead.',
   [CandyShopErrorType.InvalidNFTMetadata]: 'Failed to get metadata account data.',
   [CandyShopErrorType.SellerATACannotHaveDelegate]: 'Seller payment receipt account cannot have a delegate set.',

@@ -1,6 +1,7 @@
+import { Blockchain } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
 import { createTransferInstruction, getAssociatedTokenAddress } from '@solana/spl-token';
-import { CandyShop } from '../src/CandyShop';
+import { CandyShop, SolShopInitParams } from '../src/shop/sol/CandyShop';
 // 81nKpQT3rWpWw3NzdThR6zKN5gfF6mQ2J2BQYxoSDmoq
 const USER_1 = new Uint8Array([
   204, 63, 56, 180, 214, 13, 187, 253, 122, 98, 229, 241, 24, 137, 217, 242, 66, 44, 51, 77, 243, 55, 16, 113, 253, 53,
@@ -37,14 +38,16 @@ describe('e2e sol flow', function () {
   it('sell -> cancel -> sell -> buy', async function () {
     this.timeout(60000);
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: CREATOR_ADDRESS,
-      treasuryMint: TREASURY_MINT,
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
-      env: 'devnet',
+    const params: SolShopInitParams = {
+      shopCreatorAddress: CREATOR_ADDRESS.toString(),
+      treasuryMint: TREASURY_MINT.toString(),
+      programId: CANDY_SHOP_PROGRAM_ID.toString(),
+      env: Blockchain.SolDevnet,
       settings: undefined,
       isEnterprise: false
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const sellTxHash = await candyShop.sell({
       tokenAccount: TOKEN_ACCOUNT,

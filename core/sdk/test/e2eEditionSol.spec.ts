@@ -1,5 +1,6 @@
+import { Blockchain } from '@liqnft/candy-shop-types';
 import { BN, web3 } from '@project-serum/anchor';
-import { CandyShop } from '../src/CandyShop';
+import { CandyShop, SolShopInitParams } from '../src/shop/sol/CandyShop';
 import { initEnvWithNftHolder, initWhitelistToken, mintWhitelistToken } from './utils';
 // 4HnGEPFYhYmfes7zug3J1bcYvtDD3MzPqdjhjbjJQk8g
 const USER_1 = new Uint8Array([
@@ -39,14 +40,16 @@ describe('e2e drop flow', function () {
   it('commit shop -> mint print', async function () {
     this.timeout(60000);
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: REGULAR_CREATOR_ADDRESS,
-      treasuryMint: TREASURY_MINT,
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
-      env: 'devnet',
+    const params: SolShopInitParams = {
+      shopCreatorAddress: REGULAR_CREATOR_ADDRESS.toString(),
+      treasuryMint: TREASURY_MINT.toString(),
+      programId: CANDY_SHOP_PROGRAM_ID.toString(),
+      env: Blockchain.SolDevnet,
       settings: undefined,
       isEnterprise: false
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const { nftMint, nftOwnerTokenAccount } = await initEnvWithNftHolder(
       user1,
@@ -77,14 +80,16 @@ describe('e2e drop flow', function () {
   it('commit enterprise -> mint print', async function () {
     this.timeout(60000);
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: ENTERPRISE_CREATOR_ADDRESS,
-      treasuryMint: TREASURY_MINT,
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
-      env: 'devnet',
+    const params: SolShopInitParams = {
+      shopCreatorAddress: ENTERPRISE_CREATOR_ADDRESS.toString(),
+      treasuryMint: TREASURY_MINT.toString(),
+      programId: CANDY_SHOP_PROGRAM_ID.toString(),
+      env: Blockchain.SolDevnet,
       settings: undefined,
       isEnterprise: true
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const { nftMint, nftOwnerTokenAccount } = await initEnvWithNftHolder(
       user1,
@@ -117,14 +122,16 @@ describe('e2e drop flow', function () {
 
     await mintWhitelistToken(user1, whitelistMint, user2.publicKey, connection);
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: REGULAR_CREATOR_ADDRESS,
-      treasuryMint: TREASURY_MINT,
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
-      env: 'devnet',
+    const params: SolShopInitParams = {
+      shopCreatorAddress: REGULAR_CREATOR_ADDRESS.toString(),
+      treasuryMint: TREASURY_MINT.toString(),
+      programId: CANDY_SHOP_PROGRAM_ID.toString(),
+      env: Blockchain.SolDevnet,
       settings: undefined,
       isEnterprise: false
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const { nftMint, nftOwnerTokenAccount } = await initEnvWithNftHolder(
       user1,
@@ -160,14 +167,16 @@ describe('e2e drop flow', function () {
 
     await mintWhitelistToken(user1, whitelistMint, user2.publicKey, connection);
 
-    const candyShop = new CandyShop({
-      candyShopCreatorAddress: ENTERPRISE_CREATOR_ADDRESS,
-      treasuryMint: TREASURY_MINT,
-      candyShopProgramId: CANDY_SHOP_PROGRAM_ID,
-      env: 'devnet',
+    const params: SolShopInitParams = {
+      shopCreatorAddress: ENTERPRISE_CREATOR_ADDRESS.toString(),
+      treasuryMint: TREASURY_MINT.toString(),
+      programId: CANDY_SHOP_PROGRAM_ID.toString(),
+      env: Blockchain.SolDevnet,
       settings: undefined,
       isEnterprise: true
-    });
+    };
+
+    const candyShop = await CandyShop.initSolCandyShop(params);
 
     const { nftMint, nftOwnerTokenAccount } = await initEnvWithNftHolder(
       user1,
