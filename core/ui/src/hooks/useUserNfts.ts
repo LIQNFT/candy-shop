@@ -24,10 +24,14 @@ interface UseSellResponse {
 }
 interface UseSellOptions {
   enableCacheNFT?: boolean;
+  allowSellAnyNFTs?: boolean;
 }
 const Logger = 'CandyShopUI/Sell-Service';
 
-const useUserNfts = ({ candyShop, wallet }: ShopProps, { enableCacheNFT }: UseSellOptions): UseSellResponse => {
+const useUserNfts = (
+  { candyShop, wallet }: ShopProps,
+  { enableCacheNFT, allowSellAnyNFTs }: UseSellOptions
+): UseSellResponse => {
   const store = useMemo(() => StoreProvider({ candyShop, wallet }), [candyShop, wallet]);
 
   const { onSocketEvent } = useSocket();
@@ -51,7 +55,7 @@ const useUserNfts = ({ candyShop, wallet }: ShopProps, { enableCacheNFT }: UseSe
       const nfts = await safeAwait(
         store.getNFTs(publicKey, {
           enableCacheNFT,
-          allowSellAnyNft: shop.result.allowSellAnyNft,
+          allowSellAnyNft: allowSellAnyNFTs ? 1 : shop.result.allowSellAnyNft,
           candyShopAddress: shop.result.candyShopAddress
         })
       );
@@ -65,7 +69,7 @@ const useUserNfts = ({ candyShop, wallet }: ShopProps, { enableCacheNFT }: UseSe
         nfts: nfts.result
       };
     },
-    [enableCacheNFT, store]
+    [allowSellAnyNFTs, enableCacheNFT, store]
   );
 
   const getOrderNfts = useCallback(

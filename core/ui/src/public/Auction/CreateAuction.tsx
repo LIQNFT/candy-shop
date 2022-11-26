@@ -52,7 +52,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
     nfts,
     sellOrders,
     shopResponse: shop
-  } = useUserNfts({ candyShop, wallet }, { enableCacheNFT: cacheUserNFT });
+  } = useUserNfts({ candyShop, wallet }, { enableCacheNFT: cacheUserNFT, allowSellAnyNFTs: true });
   const store = useMemo(() => StoreProvider({ candyShop, wallet }), [candyShop, wallet]);
 
   const [selected, setSelected] = useState<SingleTokenInfo>();
