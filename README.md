@@ -2,7 +2,7 @@
 
 Candy Shop is an open source JavaScript library that allows anyone to launch an NFT marketplace on Solana in minutes.
 
-- [Website](https://candy.liqnft.com)
+- [Website](https://candyshop.space)
 - [Documentation](https://liqnft.gitbook.io/docs/candy-shop/)
 - [Starter Repo](https://github.com/LIQNFT/candy-shop-storefront) (React app with various shop configurations out of the box)
 - [Demo](https://master.d22tqykss69onq.amplifyapp.com/) (corresponds to code in `/example` folder)
@@ -27,8 +27,8 @@ Candy Shop is an open source JavaScript library that allows anyone to launch an 
 - **More Visibility.** Your NFT listings will be showcased on LIQNFT.com, giving your project better visibility while still retaining control and ownership of your own marketplace.
 
 ## Key Features
-- Basic SOL marketplace
-- Custom SPL token marketplace
+- Basic SOL/MATIC marketplace
+- Custom SPL/ERC20 token marketplace
 - Multi-currency marketplace (e.g. SOL + SPL token)
 - Multi-collection marketplace 
 - Fully customized marketplace
