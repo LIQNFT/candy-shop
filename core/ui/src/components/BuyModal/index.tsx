@@ -105,9 +105,6 @@ export const BuyModal: React.FC<BuyModalProps> = ({
 
   // Aggregate checkPaymentAvailability and getTokenFiatMoneyPrice
   const getPaymentDetail = useCallback(async () => {
-    if (!stripePublicKey) {
-      throw Error('Stripe public key is not provided');
-    }
     // Prevent to fetch again when updating fiat price
     if (creditCardPayAvailable === undefined) {
       const paymentAvailableRes = await CandyShopPay.checkPaymentAvailability({
@@ -126,9 +123,13 @@ export const BuyModal: React.FC<BuyModalProps> = ({
     });
 
     return Number(fiatPriceRes.result);
-  }, [shopAddress, order.tokenAccount, creditCardPayAvailable, stripePublicKey]);
+  }, [shopAddress, order.tokenAccount, creditCardPayAvailable]);
 
   useEffect(() => {
+    if (!stripePublicKey) {
+      setCreditCardPayAvailable(CreditCardPayAvailability.Unsupported);
+      return;
+    }
     // Only fetch when haven't retrieved the creditCardPayAvailability
     if (creditCardPayAvailable === undefined) {
       getPaymentDetail()
@@ -176,7 +177,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   );
   // handle interval get token price
   useEffect(() => {
-    if (!countdownElement) return;
+    if (!stripePublicKey || !countdownElement) return;
     getFiatPriceAndUpdateCountDownElement(countdownElement, 2);
 
     return () => {
@@ -187,7 +188,8 @@ export const BuyModal: React.FC<BuyModalProps> = ({
     shopAddress,
     order.tokenAccount,
     countdownElement,
-    getFiatPriceAndUpdateCountDownElement
+    getFiatPriceAndUpdateCountDownElement,
+    stripePublicKey
   ]);
 
   const modalWidth = state === BuyModalState.DISPLAY || state === BuyModalState.PAYMENT ? 1000 : 600;
