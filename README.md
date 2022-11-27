@@ -1,6 +1,6 @@
-# Candy Shop: Solana NFT Marketplace JS Library
+# Candy Shop: NFT Marketplace JS Library
 
-Candy Shop is an open source JavaScript library that allows anyone to launch an NFT marketplace on Solana in minutes.
+Candy Shop is an open source JavaScript library that allows anyone to launch an NFT marketplace on Ethereum, Polygon and/or Solana in minutes.
 
 - [Website](https://candyshop.space)
 - [Documentation](https://liqnft.gitbook.io/docs/candy-shop/)
