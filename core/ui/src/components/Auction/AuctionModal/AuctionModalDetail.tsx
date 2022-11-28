@@ -25,6 +25,21 @@ interface AuctionModalDetailProps {
   explorerLink: ExplorerLinkBase;
 }
 
+const mappedBidStatusString = (bidStatus: BidStatus) => {
+  switch (bidStatus) {
+    case BidStatus.LOST:
+      return 'LOST';
+    case BidStatus.OPEN:
+      return 'OPEN';
+    case BidStatus.WITHDRAWN:
+      return 'WITHDRAWN';
+    case BidStatus.WON:
+      return 'WON';
+    default:
+      console.log(`${Logger}: Invalid BidStatus ${bidStatus}`);
+  }
+};
+
 export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
   auction,
   placeBid,
@@ -49,7 +64,8 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
       .then((res: SingleBase<AuctionBid>) => {
         setBidInfo(res.result);
         console.log(`${Logger}: fetchAuctionBidByWalletAddress success=`, res.result);
-        console.log(`${Logger}: fetchAuctionBidAPI BidStatus=`, mappedBidStatusString(res.result.status));
+        res.result?.status &&
+          console.log(`${Logger}: fetchAuctionBidAPI BidStatus=`, mappedBidStatusString(res.result.status));
       })
       .catch((error: Error) => {
         handleError(error, `${walletPublicKey} has not placed any bid yet`);
@@ -97,21 +113,6 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
     }
 
     return null;
-  };
-
-  const mappedBidStatusString = (bidStatus: BidStatus) => {
-    switch (bidStatus) {
-      case BidStatus.LOST:
-        return 'LOST';
-      case BidStatus.OPEN:
-        return 'OPEN';
-      case BidStatus.WITHDRAWN:
-        return 'WITHDRAWN';
-      case BidStatus.WON:
-        return 'WON';
-      default:
-        console.log(`${Logger}: Invalid BitStatus ${bidStatus}`);
-    }
   };
 
   let auctionContent: React.ReactElement | null = null;
