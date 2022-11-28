@@ -21,7 +21,8 @@ export const EthExample: React.FC = () => {
     if (formLocalStorage) return JSON.parse(formLocalStorage);
     return ETH_DEFAULT_FORM_CONFIG;
   });
-  const [candyShop, setCandyShop] = useState<EthCandyShop>();
+  const [candyShop, setCandyShop] = useState<EthCandyShop | null>();
+
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -40,7 +41,7 @@ export const EthExample: React.FC = () => {
         setCandyShop(candyShop);
       })
       .catch((error: Error) => {
-        setCandyShop(undefined);
+        setCandyShop(null);
         console.log('getEthCandyShop failed, error=', error);
       });
   }, [candyForm]);
