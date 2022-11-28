@@ -48,7 +48,7 @@ export const SolExample: React.FC = () => {
     return DEFAULT_FORM_CONFIG;
   });
   const [pageRoute, setPageRoute] = useState<PageRoute>(initiateRoutePage());
-  const [candyShop, setCandyShop] = useState<CandyShop>();
+  const [candyShop, setCandyShop] = useState<CandyShop | null>();
 
   const endpoint = useMemo(() => web3.clusterApiUrl(candyForm.network), [candyForm.network]);
   const wallets = useMemo(
@@ -84,7 +84,7 @@ export const SolExample: React.FC = () => {
         setCandyShop(candyShop);
       })
       .catch((error: Error) => {
-        setCandyShop(undefined);
+        setCandyShop(null);
         console.log('CandyShop.initSolCandyShop failed, error=', error);
       });
   }, [candyForm]);
@@ -138,14 +138,16 @@ export const SolExample: React.FC = () => {
                   <WalletMultiButton />
                 </div>
               </div>
-              {candyShop ? (
+              {candyShop === undefined ? (
+                <div style={{ textAlign: 'center' }}>Loading...</div>
+              ) : candyShop === null ? (
+                <div style={{ paddingTop: '30px', textAlign: 'center' }}>Error: Invalid shop configuration</div>
+              ) : (
                 <Switch>
                   <Route path="/edition-drop" component={() => <SolDropExample candyShop={candyShop} />} />
                   <Route path="/auction" component={() => <SolAuctionExample candyShop={candyShop} />} />
                   <Route path="/" component={() => <SolMarketplaceExample candyShop={candyShop} />} />
                 </Switch>
-              ) : (
-                <div style={{ paddingTop: '30px', textAlign: 'center' }}>Error: Invalid shop configuration</div>
               )}
             </>
           </CandyShopDataValidator>
