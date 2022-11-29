@@ -36,9 +36,10 @@
 }
 
 .candy-button {
-  background: @primary-color;
+  background: @candy-shop-color-primary;
   border-radius: 20px;
-  font-size: 16px;
+  font-size: @candy-shop-font-size-base;
+  line-height: @candy-shop-font-line-height-base;
   padding: 6px 16px;
   color: #fff;
   border: 2px solid transparent;
@@ -47,18 +48,18 @@
   transition: 0.2s all ease-in-out;
 
   &.candy-button-default {
-    background-color: @gray-medium;
+    background-color: @candy-shop-color-secondary;
 
     &:hover {
       opacity: 0.7;
-      background: @gray-medium;
+      background: @candy-shop-color-secondary;
     }
   }
 
   &.candy-button-outlined {
     background-color: #fff;
-    color: @primary-color;
-    border: 1px solid @primary-color;
+    color: @candy-shop-color-primary;
+    border: 1px solid @candy-shop-color-primary;
 
     &:hover {
       opacity: 0.7;
@@ -73,42 +74,43 @@
   }
 
   &:hover {
-    background: #9a4dff;
+    background: @candy-shop-color-primary-light;
   }
 
   &:disabled {
-    background: @gray-medium-alt;
+    background: @candy-shop-color-secondary-light;
   }
 }
 
 .candy-label {
   font-weight: 600;
-  font-size: 12px;
-  line-height: 20px;
-  color: @gray-medium;
+  font-size: @candy-shop-font-size-xs;
+  line-height: @candy-shop-font-line-height-xs;
+  color: @candy-shop-color-secondary;
   margin: 0;
   margin-bottom: 4px;
   text-align: left;
 }
 
 .candy-value {
-  font-size: 16px;
+  font-size: @candy-shop-font-size-base;
   font-weight: 400;
   text-align: left;
   word-break: break-word;
 
   a {
-    color: @primary-color;
+    color: @candy-shop-color-primary;
   }
 }
 
 .candy-value-lg {
   text-align: center;
-  font-size: 20px;
+  font-size: @candy-shop-font-size-lg;
+  line-height: @candy-shop-font-line-height-lg;
   font-weight: bold;
 
   @media @tabletM {
-    font-size: 16px;
+    font-size: @candy-shop-font-size-base;
   }
 }
 
@@ -121,21 +123,21 @@
 }
 
 .candy-title {
-  font-size: 24px;
-  line-height: 34px;
+  font-size: @candy-shop-font-size-xl;
+  line-height: @candy-shop-font-line-height-xl;
   font-weight: bold;
   text-align: left;
 }
 .candy-subTitle {
-  font-size: 18px;
-  line-height: 24px;
+  font-size: @candy-shop-font-size-lg;
+  line-height: @candy-shop-font-line-height-lg;
   font-weight: bold;
 }
 
 .candy-price {
-  font-size: 20px;
+  font-size: @candy-shop-font-size-lg;
+  line-height: @candy-shop-font-line-height-lg;
   font-weight: bold;
-  line-height: 30px;
   text-align: left;
 }
 
@@ -154,12 +156,12 @@
 
   .candy-stat-horizontal-line {
     width: 1px;
-    background-color: @gray-light;
+    background-color: @candy-shop-color-secondary-lightest;
     align-self: stretch;
   }
 
   .candy-stat-horizontal-value {
-    font-size: 16px;
+    font-size: @candy-shop-font-size-base;
     line-height: 24px;
   }
 }
@@ -170,11 +172,12 @@
   margin-top: 6px;
 
   .candy-nft-attribute {
-    color: black;
+    color: @candy-shop-text-color-primary;
     padding: 4px 12px;
-    background-color: @gray-light;
+    background-color: @candy-shop-color-secondary-lightest;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: @candy-shop-font-size-sm;
+    line-height: @candy-shop-font-line-height-sm;
     margin-right: 6px;
     margin-bottom: 6px;
   }
@@ -212,7 +215,7 @@
 
 .candy-status-tag {
   z-index: 1;
-  background-color: @primary-color;
+  background-color: @candy-shop-color-primary;
   position: absolute;
   left: -12px;
   top: 18px;
@@ -221,7 +224,8 @@
   text-transform: uppercase;
   color: #fff;
   font-weight: bold;
-  font-size: 12px;
+  font-size: @candy-shop-font-size-xs;
+  line-height: @candy-shop-font-line-height-xs;
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
   z-index: 1;
@@ -233,7 +237,7 @@
     left: 0;
     width: 0;
     height: 0;
-    border-top: 10px solid @primary-color-dark;
+    border-top: 10px solid @candy-shop-color-primary-dark;
     border-left: 10px solid transparent;
   }
 
@@ -247,11 +251,11 @@
   }
 
   &-gray {
-    background-color: @gray-medium-alt;
+    background-color: @candy-shop-color-secondary-light;
 
     &::after {
       content: '';
-      border-top: 10px solid @gray-medium;
+      border-top: 10px solid @candy-shop-color-secondary;
     }
   }
 
@@ -275,8 +279,9 @@
 }
 
 .candy-status-tag-inline {
-  font-size: 12px;
-  background-color: @primary-color;
+  font-size: @candy-shop-font-size-xs;
+  line-height: @candy-shop-font-line-height-xs;
+  background-color: @candy-shop-color-primary;
   border-radius: 4px;
   padding: 7px 12px;
   color: white;
@@ -291,7 +296,7 @@
   justify-items: center;
   align-items: center;
   font-weight: 500;
-  font-size: 16px;
+  font-size: @candy-shop-font-size-base;
   line-height: 24px;
   width: max-content;
   margin: 120px auto;
@@ -336,7 +341,7 @@
       from 90deg at 50% 50%,
       rgba(39, 174, 96, 0) 0deg,
       rgba(117, 34, 245, 0) 0.04deg,
-      #7522f5 360deg
+      @candy-shop-color-primary 360deg
     );
     animation: spin 2s linear infinite;
   }
@@ -364,7 +369,7 @@
   &-notice {
     padding: 7px 20px 7px 10px;
     border-radius: 3px 3px;
-    border: 1px solid #999;
+    border: 1px solid @candy-shop-color-secondary;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     border: 0px solid rgba(0, 0, 0, 0);
     background: #fff;
@@ -382,10 +387,10 @@
       position: absolute;
       right: 5px;
       top: 3px;
-      color: #000;
+      color: @candy-shop-text-color-primary;
       cursor: pointer;
       outline: none;
-      font-size: 16px;
+      font-size: @candy-shop-font-size-base;
       font-weight: 700;
       line-height: 1;
       text-shadow: 0 1px 0 #fff;
@@ -460,17 +465,18 @@
 
   border-radius: 8px;
   background-color: #fff;
-  color: black;
+  color: @candy-shop-text-color-primary;
   border: 1px solid #000;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 
   .candy-right {
     .title {
-      font-size: 18px;
-      line-height: 24px;
+      font-size: @candy-shop-font-size-lg;
+      line-height: @candy-shop-font-line-height-lg;
     }
     .desc {
-      font-size: 14px;
+      font-size: @candy-shop-font-size-sm;
+      line-height: @candy-shop-font-line-height-sm;
     }
   }
 
@@ -494,7 +500,7 @@
   align-items: center;
 
   border-radius: 4px;
-  border: 2px solid #bdbdbd;
+  border: 2px solid @candy-shop-color-secondary-light;
 
   input {
     border: none;
@@ -520,7 +526,8 @@
   height: 16px;
   width: 16px;
   position: relative;
-  font-size: 14px;
+  font-size: @candy-shop-font-size-sm;
+  line-height: @candy-shop-font-line-height-sm;
   cursor: pointer;
 
   &::after {

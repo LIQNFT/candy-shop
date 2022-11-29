@@ -1,6 +1,8 @@
+@import '../../variable.less';
+
 .candy-cancel-modal {
   display: flex;
-  font-size: 16px;
+  font-size: @candy-shop-font-size-base;
   line-height: 24px;
 
   .candy-cancel-title {
@@ -52,7 +54,8 @@
 
   &-title {
     text-align: left;
-    font-size: 24px;
+    font-size: @candy-shop-font-size-xl;
+    line-height: @candy-shop-font-line-height-xl;
     font-weight: 600;
   }
 
@@ -71,7 +74,7 @@
     padding: 8px 50px;
     border-radius: 32px;
     height: unset;
-    font-size: 16px;
+    font-size: @candy-shop-font-size-base;
 
     @media only screen and (max-width: 600px) {
       padding: 4px 50px;
@@ -106,7 +109,7 @@
       display: flex;
       align-items: center;
       padding-bottom: 40px;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid @candy-shop-color-secondary-lightest;
       margin-bottom: 40px;
 
       &-img {
@@ -125,8 +128,8 @@
       &-text {
         align-self: flex-start;
         flex: 1;
-        font-size: 24px;
-        line-height: 34px;
+        font-size: @candy-shop-font-size-xl;
+        line-height: @candy-shop-font-line-height-xl;
       }
     }
 

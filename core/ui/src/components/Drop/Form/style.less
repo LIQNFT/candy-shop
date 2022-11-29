@@ -32,7 +32,7 @@
   }
 
   input:focus-visible {
-    outline-color: #7522f5;
+    outline-color: @candy-shop-color-primary;
   }
 
   /* Firefox */
@@ -68,17 +68,17 @@
   }
 
   .candy-edition-radio {
-    border: 2px solid @primary-color;
+    border: 2px solid @candy-shop-color-primary;
     border-radius: 4px;
     padding: 8px 12px;
     cursor: pointer;
-    background-color: @primary-color-light;
-    color: @primary-color;
+    background-color: @candy-shop-color-primary-light;
+    color: @candy-shop-color-primary;
   }
 
   .candy-edition-radio-disable {
-    border-color: @gray-medium-alt;
-    color: #000;
+    border-color: @candy-shop-color-secondary-light;
+    color: @candy-shop-text-color-primary;
     background-color: #fff;
   }
 
@@ -104,7 +104,7 @@
 
     input {
       width: 100%;
-      border: 2px solid @gray-medium-alt;
+      border: 2px solid @candy-shop-color-secondary-light;
       padding: 8px 12px;
       border-radius: 4px;
     }
@@ -128,7 +128,7 @@
 
     > input {
       width: 100%;
-      border: 2px solid @gray-medium-alt;
+      border: 2px solid @candy-shop-color-secondary-light;
       padding: 8px 12px;
       border-radius: 4px;
     }

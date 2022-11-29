@@ -2,7 +2,7 @@
 
 .candy-activity {
   padding: 20px 50px;
-  font-size: 16px;
+  font-size: @candy-shop-font-size-base;
 
   @media @desktopS {
     padding: 20px 15px;
@@ -24,7 +24,7 @@
     grid-template-columns: minmax(250px, 1fr) 150px 350px 350px 200px;
     > * {
       padding: 8px 12px;
-      border-bottom: 1px solid @gray-light;
+      border-bottom: 1px solid @candy-shop-color-secondary-lightest;
       min-height: 67px;
       display: flex;
       align-items: center;
@@ -37,7 +37,7 @@
     img {
       width: 50px;
       height: 50px;
-      background-color: @gray-light;
+      background-color: @candy-shop-color-secondary-lightest;
       object-fit: cover;
       margin-right: 20px;
     }
@@ -45,9 +45,10 @@
 
   .candy-activity-header {
     span {
-      border-bottom: 2px solid @gray-medium;
-      font-size: 14px;
-      color: #757575;
+      border-bottom: 2px solid @candy-shop-color-secondary;
+      font-size: @candy-shop-font-size-sm;
+      line-height: @candy-shop-font-line-height-sm;
+      color: @candy-shop-text-color-secondary;
       font-weight: 700;
       text-align: left;
       min-height: unset;

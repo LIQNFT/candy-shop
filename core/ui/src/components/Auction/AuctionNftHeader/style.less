@@ -1,3 +1,5 @@
+@import '../../../variable.less';
+
 .candy-auction-nft-header {
   display: flex;
   margin-bottom: 20px;
@@ -18,15 +20,17 @@
 
     .candy-auction-nft-header-name {
       font-weight: 600;
-      font-size: 18px;
+      font-size: @candy-shop-font-size-lg;
+      line-height: @candy-shop-font-line-height-lg;
       text-align: left;
     }
 
     .candy-auction-nft-header-ticker {
-      font-size: 14px;
+      font-size: @candy-shop-font-size-sm;
+      line-height: @candy-shop-font-line-height-sm;
       text-align: left;
       font-weight: 600;
-      color: #757575;
+      color: @candy-shop-color-secondary;
       text-transform: uppercase;
     }
   }

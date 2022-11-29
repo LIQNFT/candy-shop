@@ -1,3 +1,5 @@
+@import '../../variable.less';
+
 .candy-order {
   height: 100%;
   background-color: white;
@@ -19,7 +21,7 @@
 
     width: 40px;
     height: 40px;
-    color: #e5e5e5;
+    color: @candy-shop-color-secondary-lightest;
   }
 
   .candy-order-name-container {
@@ -33,23 +35,24 @@
   }
 
   .candy-order-name {
-    color: #000;
+    color: @candy-shop-text-color-primary;
     font-size: 15px;
     line-height: 24px;
     font-weight: bold;
   }
 
   .candy-order-ticker {
-    color: #757575;
-    font-size: 12px;
+    color: @candy-shop-text-color-secondary;
+    font-size: @candy-shop-font-size-xs;
+    line-height: @candy-shop-font-line-height-xs;
     font-weight: bold;
-    line-height: 20px;
     min-height: 20px;
   }
 
   .candy-order-price {
-    color: #000;
-    font-size: 14px;
+    color: @candy-shop-text-color-primary;
+    font-size: @candy-shop-font-size-sm;
+    line-height: @candy-shop-font-line-height-sm;
     font-weight: bold;
     line-height: 20px;
     margin-top: 6px;

@@ -36,7 +36,7 @@
     z-index: 2;
     padding: 5px;
     background-color: #fff;
-    border: 2px solid #e1cdff;
+    border: 2px solid @candy-shop-color-primary-lightest;
     border-radius: 4px;
     width: 30px;
     height: 30px;
@@ -46,7 +46,7 @@
 
     &:hover {
       svg path {
-        fill: @primary-color;
+        fill: @candy-shop-color-primary;
       }
     }
 
@@ -73,7 +73,7 @@
   .candy-edition-slide {
     width: 100%;
     height: 8px;
-    background: #e0e0e0;
+    background: @candy-shop-color-secondary-lightest;
     border-radius: 50px;
     margin-top: 20px;
 
@@ -85,16 +85,16 @@
   }
 
   .candy-price {
-    font-size: 16px;
+    font-size: @candy-shop-font-size-base;
   }
 
   .available {
     text-align: left;
     margin-block: 20px;
-    color: @gray-medium;
+    color: @candy-shop-color-secondary;
 
     span {
-      color: #000;
+      color: @candy-shop-text-color-primary;
       font-weight: bold;
     }
   }
@@ -105,7 +105,7 @@
     align-items: center;
 
     svg {
-      color: @primary-color;
+      color: @candy-shop-color-primary;
       margin-right: 10px;
     }
   }
@@ -120,14 +120,14 @@
     padding: 6px;
     border-radius: 8px;
     min-width: 48px;
-    border: 2px solid @gray-light;
+    border: 2px solid @candy-shop-color-secondary-lightest;
     transition: 0.2s all ease;
     margin-right: 12px;
     cursor: pointer;
 
     &.active,
     &:hover {
-      border-color: @primary-color;
+      border-color: @candy-shop-color-primary;
       text-shadow: 1px 0 0 currentColor;
     }
   }

@@ -1,3 +1,5 @@
+@import '../../variable.less';
+
 .candy-checkbox-container {
   display: flex;
 
@@ -7,7 +9,7 @@
 }
 
 .candy-checkbox {
-  border: 2px solid #7522f5;
+  border: 2px solid @candy-shop-color-primary;
   width: 20px;
   height: 20px;
   display: flex;
@@ -21,7 +23,7 @@
   }
 
   &.candy-checkbox-disable {
-    border: 2px solid #bdbdbd;
+    border: 2px solid @candy-shop-color-secondary-light;
 
     svg {
       opacity: 0;

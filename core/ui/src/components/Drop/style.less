@@ -13,7 +13,7 @@
 
   .candy-edition-description {
     font-weight: 600;
-    font-size: 16px;
+    font-size: @candy-shop-font-size-base;
     padding-bottom: 20px;
     text-align: center;
   }
@@ -36,11 +36,11 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        color: @gray-medium-alt;
+        color: @candy-shop-color-secondary-light;
         z-index: 1;
 
         span {
-          background-color: @gray-medium-alt;
+          background-color: @candy-shop-color-secondary-light;
           border-radius: 50%;
           color: #fff;
           width: 30px;
@@ -52,15 +52,15 @@
         }
 
         &-active {
-          color: #000;
+          color: @candy-shop-text-color-primary;
           span {
-            background-color: #000;
+            background-color: @candy-shop-text-color-primary;
           }
         }
       }
 
       .candy-edition-step-connector {
-        background-color: @gray-medium;
+        background-color: @candy-shop-color-secondary;
         height: 2px;
         width: calc(100% - 80px);
         position: absolute;
@@ -113,8 +113,8 @@
         padding: 6px 120px;
 
         &.disabled {
-          background-color: @gray-medium-alt;
-          border-color: @gray-medium-alt;
+          background-color: @candy-shop-color-secondary-light;
+          border-color: @candy-shop-color-secondary-light;
         }
       }
     }

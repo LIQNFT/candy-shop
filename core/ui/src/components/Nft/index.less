@@ -1,3 +1,5 @@
+@import '../../variable.less';
+
 .candy-nft {
   &-card {
     position: relative;
@@ -6,7 +8,7 @@
   }
 
   &-info {
-    color: black;
+    color: @candy-shop-text-color-primary;
     vertical-align: middle;
     padding: 12px;
     background-color: #fff;
@@ -15,7 +17,7 @@
 
     .name {
       font-weight: bold;
-      font-size: 16px;
+      font-size: @candy-shop-font-size-base;
       text-align: left;
       overflow: hidden;
       white-space: nowrap;
@@ -23,7 +25,8 @@
     }
 
     .ticker {
-      font-size: 14px;
+      font-size: @candy-shop-font-size-sm;
+      line-height: @candy-shop-font-line-height-sm;
       text-align: left;
       font-weight: 400;
       height: 22px;

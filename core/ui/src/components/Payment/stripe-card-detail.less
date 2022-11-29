@@ -6,7 +6,8 @@
   label {
     text-align: left;
     margin-bottom: 2px;
-    font-size: 14px;
+    font-size: @candy-shop-font-size-sm;
+    line-height: @candy-shop-font-line-height-sm;
     display: block;
   }
 
@@ -24,13 +25,14 @@
     color: @lnft-red;
     display: block;
     text-align: left;
-    font-size: 12px;
+    font-size: @candy-shop-font-size-xs;
+    line-height: @candy-shop-font-line-height-xs;
     width: max-content;
   }
 
   .stripe-input {
     padding: 8px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid @candy-shop-color-secondary-lightest;
     border-radius: 4px;
     margin-bottom: 8px;
     height: 40px;
@@ -45,20 +47,20 @@
 
     input {
       height: 40px;
-      border: 2px solid #e0e0e0;
+      border: 2px solid @candy-shop-color-secondary-lightest;
       padding-left: 8px;
       border-radius: 4px;
-      font-size: 16px;
+      font-size: @candy-shop-font-size-base;
       display: block;
       width: 100%;
     }
 
     input::-webkit-input-placeholder {
-      color: @gray-medium;
+      color: @candy-shop-color-secondary;
     }
 
     input::placeholder {
-      color: @gray-medium;
+      color: @candy-shop-color-secondary;
     }
 
     &.error {

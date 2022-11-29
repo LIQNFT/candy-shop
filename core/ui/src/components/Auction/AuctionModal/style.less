@@ -22,39 +22,42 @@
     width: fit-content;
     padding: 8px 14px;
     border-radius: 12px;
-    font-size: 12px;
+    font-size: @candy-shop-font-size-xs;
+    line-height: @candy-shop-font-line-height-xs;
     text-transform: uppercase;
     font-weight: bold;
 
     &.candy-countdown-ended,
     &.candy-countdown-not-started {
-      background: @gray-medium-alt;
+      background: @candy-shop-color-secondary-light;
     }
   }
 }
 
 .candy-auction-modal-prompt {
   margin-bottom: 15px;
-  color: @gray-medium;
+  color: @candy-shop-color-secondary;
   text-align: left;
-  font-size: 14px;
+  font-size: @candy-shop-font-size-sm;
+  line-height: @candy-shop-font-line-height-sm;
   display: block;
 }
 
 .candy-auction-modal-notice {
-  color: @primary-color;
+  color: @candy-shop-color-primary;
   font-weight: 600;
   border-radius: 20px;
   padding: 6px 12px;
   border: 2px solid;
   margin: 0 50px;
   background-color: rgba(244, 237, 254, 0.2);
-  background-color: @primary-color-light;
+  background-color: @candy-shop-color-primary-light;
   margin-bottom: 20px;
-  font-size: 14px;
+  font-size: @candy-shop-font-size-sm;
+  line-height: @candy-shop-font-line-height-sm;
 
   .candy-button {
-    font-size: 14px;
+    font-size: @candy-shop-font-size-sm;
     padding: 4px 12px;
   }
 }
@@ -65,7 +68,7 @@
   align-items: center;
   padding-bottom: 20px;
   margin-bottom: 20px;
-  border-bottom: 2px solid @gray-medium-alt;
+  border-bottom: 2px solid @candy-shop-color-secondary-light;
 
   .candy-button {
     padding: 6px 50px;
@@ -77,7 +80,7 @@
 .candy-auction-modal {
   display: flex;
   gap: 24px;
-  font-size: 16px;
+  font-size: @candy-shop-font-size-base;
   line-height: 24px;
   align-items: flex-start;
 
@@ -103,7 +106,8 @@
     .candy-auction-modal-title {
       text-align: left;
       font-weight: bold;
-      font-size: 24px;
+      font-size: @candy-shop-font-size-xl;
+      line-height: @candy-shop-font-line-height-xl;
     }
 
     .candy-auction-modal-control {
@@ -115,7 +119,8 @@
       column-gap: 10px;
 
       .candy-input-label {
-        font-size: 14px;
+        font-size: @candy-shop-font-size-sm;
+        line-height: @candy-shop-font-line-height-sm;
         margin-bottom: 5px;
       }
 
@@ -123,10 +128,10 @@
         height: 42px;
 
         input::-webkit-input-placeholder {
-          color: @gray-medium-alt;
+          color: @candy-shop-color-secondary-light;
         }
         input::placeholder {
-          color: @gray-medium-alt;
+          color: @candy-shop-color-secondary-light;
         }
       }
 
@@ -148,7 +153,7 @@
 
   .candy-auction-modal-price {
     font-weight: bold;
-    font-size: 16px;
+    font-size: @candy-shop-font-size-base;
     line-height: 24px;
   }
 
@@ -176,13 +181,14 @@
       gap: 8px;
       padding-top: 20px;
       font-weight: bold;
-      font-size: 24px;
-      line-height: 36px;
+      font-size: @candy-shop-font-size-xl;
+      line-height: @candy-shop-font-line-height-xl;
     }
 
     .candy-auction-modal-confirmed-description {
       font-weight: 600;
-      font-size: 14px;
+      font-size: @candy-shop-font-size-sm;
+      line-height: @candy-shop-font-line-height-sm;
     }
 
     .candy-auction-modal-confirmed-container {
@@ -205,13 +211,14 @@
 
       .candy-auction-modal-name {
         text-align: left;
-        font-size: 16px;
+        font-size: @candy-shop-font-size-base;
         font-weight: bold;
       }
 
       .candy-auction-modal-ticker {
         text-align: left;
-        font-size: 14px;
+        font-size: @candy-shop-font-size-sm;
+        line-height: @candy-shop-font-line-height-sm;
       }
     }
 
@@ -222,7 +229,7 @@
     }
 
     hr {
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid @candy-shop-color-secondary-lightest;
       margin-bottom: 24px;
     }
 
