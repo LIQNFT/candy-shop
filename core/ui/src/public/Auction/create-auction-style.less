@@ -13,7 +13,7 @@
 
   .candy-auction-description {
     font-weight: 600;
-    font-size: @candy-font-size-base;
+    font-size: @candy-shop-font-size-base;
     padding-bottom: 20px;
     text-align: center;
   }
@@ -36,11 +36,11 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        color: @candy-color-secondary-light;
+        color: @candy-shop-color-secondary-light;
         z-index: 1;
 
         span {
-          background-color: @candy-color-secondary-light;
+          background-color: @candy-shop-color-secondary-light;
           border-radius: 50%;
           color: #fff;
           width: 30px;
@@ -52,15 +52,15 @@
         }
 
         &-active {
-          color: @candy-text-color-primary;
+          color: @candy-shop-text-color-primary;
           span {
-            background-color: @candy-text-color-primary;
+            background-color: @candy-shop-text-color-primary;
           }
         }
       }
 
       .candy-auction-step-connector {
-        background-color: @candy-color-secondary;
+        background-color: @candy-shop-color-secondary;
         height: 2px;
         width: calc(100% - 80px);
         position: absolute;
