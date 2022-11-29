@@ -28,14 +28,13 @@ export const Price: React.FC<PriceProps> = ({
   };
 
   const formattedValue = getPrice(value);
+  emptyValue = emptyValue || NO_PRICE;
 
-  return emptyValue ? (
-    <>{emptyValue}</>
-  ) : formattedValue ? (
+  return formattedValue ? (
     <>
       {formattedValue} {currencySymbol}
     </>
   ) : (
-    <>{NO_PRICE}</>
+    <>{emptyValue}</>
   );
 };
