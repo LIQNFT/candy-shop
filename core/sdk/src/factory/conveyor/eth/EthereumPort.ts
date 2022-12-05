@@ -18,6 +18,7 @@ interface CreateOrderParams {
   signature: string;
 }
 
+const Logger = 'CandyShopSDK/EthereumPort';
 /**
  * Handling the Ethereum transactions by Seaport
  */
@@ -93,7 +94,11 @@ export class EthereumPort {
     for (const split of shopSplit) {
       const percentage = split.percentage;
       const splitReceiver = this.getSplitReceiver(split.receiver, offerer, shop);
-      const startAmount = this.calculatePaymentSplitAmount(consideration.value!, percentage).toString();
+      if (!consideration?.value) {
+        console.log(`${Logger}: consideration.value is invalid of paymentSplit=`, split);
+        continue;
+      }
+      const startAmount = this.calculatePaymentSplitAmount(consideration.value, percentage).toString();
       considerations.push({
         token: consideration.type === AssetType.ERC20 ? consideration.address : ethers.constants.AddressZero,
         amount: startAmount,

@@ -211,7 +211,7 @@ export const parseNftUpdateAuthority = async (
     throw new CandyShopError(CandyShopErrorType.NodeRequestFailed);
   }
 
-  const metadata = parseMetadata(metadataAccount.result!.data);
+  const metadata = parseMetadata(metadataAccount.result.data);
   return new PublicKey(metadata.updateAuthority);
 };
 
