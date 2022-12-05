@@ -73,6 +73,9 @@ export const Activity: React.FC<ActivityProps> = ({ identifiers, orderBy, candyS
   );
 
   useEffect(() => {
+    setOffset(0);
+    setHasMore(true);
+    setTrades([]);
     getTrades(0, LIMIT)();
   }, [getTrades]);
 

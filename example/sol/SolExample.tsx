@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Route, Switch, Link } from 'react-router-dom';
 import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-ant-design';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
@@ -15,11 +15,11 @@ import { web3 } from '@project-serum/anchor';
 import { SolMarketplaceExample } from './SolMarketplaceExample';
 import { SolAuctionExample } from './SolAuctionExample';
 import { TORUS_WALLET_CLIENT_ID } from './constants/clientId';
-import { DEFAULT_FORM_CONFIG, LS_CANDY_FORM } from './constants/formConfig';
 import { CandyShopDataValidator } from '../../core/ui/.';
-import { CandyShop, SolShopInitParams } from '../../core/sdk/.';
+import { CandyShop } from '../../core/sdk/.';
 import { ShopConfig } from './ShopConfig';
 import { SolDropExample } from './SolDropExample';
+import { Cluster } from '@solana/web3.js';
 
 const activeStyle = { pointerEvent: 'none', paddingRight: 20, color: 'black', fontWeight: 'bold' };
 const normalStyle = { paddingRight: 20 };
@@ -42,15 +42,10 @@ const initiateRoutePage = () => {
 };
 
 export const SolExample: React.FC = () => {
-  const [candyForm, setCandyForm] = useState(() => {
-    const formLocalStorage = localStorage.getItem(LS_CANDY_FORM);
-    if (formLocalStorage) return JSON.parse(formLocalStorage);
-    return DEFAULT_FORM_CONFIG;
-  });
   const [pageRoute, setPageRoute] = useState<PageRoute>(initiateRoutePage());
   const [candyShop, setCandyShop] = useState<CandyShop | null>();
 
-  const endpoint = useMemo(() => web3.clusterApiUrl(candyForm.network), [candyForm.network]);
+  const endpoint = useMemo(() => web3.clusterApiUrl((candyShop?.env || 'devnet') as Cluster), [candyShop?.env]);
   const wallets = useMemo(
     () => [
       getPhantomWallet(),
@@ -68,26 +63,7 @@ export const SolExample: React.FC = () => {
     []
   );
 
-  useEffect(() => {
-    if (!candyForm.creatorAddress) return;
-
-    const params: SolShopInitParams = {
-      shopCreatorAddress: candyForm.creatorAddress,
-      treasuryMint: candyForm.treasuryMint,
-      programId: candyForm.programId,
-      env: candyForm.network,
-      settings: JSON.parse(candyForm.settings)
-    };
-
-    CandyShop.initSolCandyShop(params)
-      .then((candyShop) => {
-        setCandyShop(candyShop);
-      })
-      .catch((error: Error) => {
-        setCandyShop(null);
-        console.log('CandyShop.initSolCandyShop failed, error=', error);
-      });
-  }, [candyForm]);
+  const onSetCandyShop = useCallback((candyShop: CandyShop) => setCandyShop(candyShop), []);
 
   return (
     <ConnectionProvider endpoint={endpoint}>
@@ -134,7 +110,7 @@ export const SolExample: React.FC = () => {
                   <Link style={normalStyle} to="/eth">
                     ETH / MATIC
                   </Link>
-                  <ShopConfig setCandyForm={setCandyForm} candyForm={candyForm} />
+                  <ShopConfig onSetCandyShop={onSetCandyShop} />
                   <WalletMultiButton />
                 </div>
               </div>
@@ -144,9 +120,9 @@ export const SolExample: React.FC = () => {
                 <div style={{ paddingTop: '30px', textAlign: 'center' }}>Error: Invalid shop configuration</div>
               ) : (
                 <Switch>
-                  <Route path="/edition-drop" component={() => <SolDropExample candyShop={candyShop} />} />
-                  <Route path="/auction" component={() => <SolAuctionExample candyShop={candyShop} />} />
-                  <Route path="/" component={() => <SolMarketplaceExample candyShop={candyShop} />} />
+                  <Route path="/edition-drop" render={() => <SolDropExample candyShop={candyShop} />} />
+                  <Route path="/auction" render={() => <SolAuctionExample candyShop={candyShop} />} />
+                  <Route path="/" render={() => <SolMarketplaceExample candyShop={candyShop} />} />
                 </Switch>
               )}
             </>

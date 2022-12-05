@@ -2,10 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Input, Modal, Select } from 'antd';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { LS_CANDY_FORM, DEFAULT_FORM_CONFIG } from './constants/formConfig';
-
+import { SolShopInitParams, CandyShop } from '../../core/sdk/.';
 interface ShopConfigProps {
-  setCandyForm: (candyForm: any) => any;
-  candyForm: any;
+  onSetCandyShop: (cs: CandyShop | null) => void;
 }
 
 enum InputType {
@@ -16,7 +15,7 @@ enum InputType {
   PAYMENT_PROVIDER = 'PAYMENT_PROVIDER'
 }
 
-export const ShopConfig: React.FC<ShopConfigProps> = ({ setCandyForm, candyForm }) => {
+export const ShopConfig: React.FC<ShopConfigProps> = ({ onSetCandyShop }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [creatorAddressInput, setCreatorAddressInput] = useState<string>(DEFAULT_FORM_CONFIG.creatorAddress);
   const [treasuryMintInput, setTreasuryMintInput] = useState<string>(DEFAULT_FORM_CONFIG.treasuryMint);
@@ -24,6 +23,33 @@ export const ShopConfig: React.FC<ShopConfigProps> = ({ setCandyForm, candyForm 
   const [networkInput, setNetworkInput] = useState<string>(DEFAULT_FORM_CONFIG.network);
   const [settingsInput, setSettingsInput] = useState<string>(DEFAULT_FORM_CONFIG.settings);
   const [paymentProviderObject, setPaymentProviderObject] = useState<string>(DEFAULT_FORM_CONFIG.paymentProvider);
+
+  const [candyForm, setCandyForm] = useState(() => {
+    const formLocalStorage = localStorage.getItem(LS_CANDY_FORM);
+    if (formLocalStorage) return JSON.parse(formLocalStorage);
+    return DEFAULT_FORM_CONFIG;
+  });
+
+  useEffect(() => {
+    if (!candyForm.creatorAddress) return;
+
+    const params: SolShopInitParams = {
+      shopCreatorAddress: candyForm.creatorAddress,
+      treasuryMint: candyForm.treasuryMint,
+      programId: candyForm.programId,
+      env: candyForm.network,
+      settings: JSON.parse(candyForm.settings)
+    };
+
+    CandyShop.initSolCandyShop(params)
+      .then((candyShop) => {
+        onSetCandyShop(candyShop);
+      })
+      .catch((error: Error) => {
+        onSetCandyShop(null);
+        console.log('CandyShop.initSolCandyShop failed, error=', error);
+      });
+  }, [candyForm, onSetCandyShop]);
 
   const onCreateNewCandyShop = () => {
     const data = {
