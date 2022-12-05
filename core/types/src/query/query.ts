@@ -106,3 +106,10 @@ export interface FetchEvmWalletNftQuery {
   chain?: Blockchain;
   cursor?: string;
 }
+
+export interface OrderDropQuery extends CommonQuery {
+  attributes?: NftAttributeQuery[];
+  masterEdition?: boolean;
+  collectionKey?: string;
+  sortBy?: SortBy[] | SortBy;
+}

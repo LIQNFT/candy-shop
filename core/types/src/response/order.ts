@@ -1,4 +1,5 @@
 import { NftAttribute, NftCreator, NftProperties } from '../nft';
+import { Drop } from './drop';
 
 export enum Side {
   BUY,
@@ -57,3 +58,7 @@ export interface Order {
   symbol?: string;
   decimals: number;
 }
+
+export type OrderOrDrop = (Order | Drop) & {
+  entity: 0 | 1;
+};

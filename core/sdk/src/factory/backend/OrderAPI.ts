@@ -6,7 +6,9 @@ import {
   Side,
   SingleBase,
   Status,
-  Blockchain
+  Blockchain,
+  OrderDropQuery,
+  OrderOrDrop
 } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
@@ -156,4 +158,29 @@ export async function fetchOrdersByStoreIdAndMasterEditionMint(
       }
     })
     .then((response) => response.data);
+}
+
+export async function fetchOrderAndDropByStoreId(
+  axiosInstance: AxiosInstance,
+  storeId: string,
+  queryDto: OrderDropQuery
+) {
+  let queryString = '';
+  const { offset = 0, limit = 10, attributes, masterEdition, collectionKey, sortBy } = queryDto || {};
+  const queryObj: any = { offset, limit, collectionKey };
+  if (masterEdition !== undefined) {
+    queryObj.masterEdition = masterEdition;
+  }
+  if (attributes?.length) {
+    queryObj.attribute = attributes.map((item) => JSON.stringify(item));
+  }
+  if (sortBy) {
+    const sortByArr = Array.isArray(sortBy) ? sortBy : [sortBy];
+    queryObj.orderByArr = sortByArr.map((item) => JSON.stringify(item));
+  }
+
+  queryString = qs.stringify(queryObj, { indices: false });
+  const url = `/order/drop/${storeId}`.concat(getParametrizeQuery(queryString));
+
+  return axiosInstance.get<ListBase<OrderOrDrop>>(url).then((response) => response.data);
 }

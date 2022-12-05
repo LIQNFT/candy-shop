@@ -19,7 +19,9 @@ import {
   ShopQuery,
   CollectionQuery,
   NftCollection,
-  OrdersEditionFilterQuery
+  OrdersEditionFilterQuery,
+  OrderDropQuery,
+  OrderOrDrop
 } from '@liqnft/candy-shop-types';
 import {
   fetchNftByMint,
@@ -36,7 +38,8 @@ import {
   fetchCollectionByShopId,
   fetchOrdersByStoreIdAndMasterEditionMint,
   fetchShopByOwnerAddress,
-  fetchShopByIdentifier
+  fetchShopByIdentifier,
+  fetchOrderAndDropByStoreId
 } from './factory/backend';
 import axiosInstance from './vendor/config';
 
@@ -100,6 +103,10 @@ export function fetchOrderByShopAndMintAddress(
   mintAddressStr: string
 ): Promise<SingleBase<Order>> {
   return fetchOrderByTokenMintAndShopId(axiosInstance, mintAddressStr, candyShopAddress);
+}
+
+export function fetchOrderAndDrop(candyShopAddress: string, query: OrderDropQuery): Promise<ListBase<OrderOrDrop>> {
+  return fetchOrderAndDropByStoreId(axiosInstance, candyShopAddress, query);
 }
 
 export function fetchShopByShopAddress(candyShopAddress: string): Promise<SingleBase<CandyShopResponse>> {
