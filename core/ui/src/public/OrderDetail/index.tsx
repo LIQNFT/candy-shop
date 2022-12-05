@@ -45,40 +45,42 @@ export const OrderDetail: React.FC<OrderDetailProps> = ({
     order && candyShop instanceof CandyShop ? getExchangeInfo(order, candyShop) : getDefaultExchange(candyShop);
   const publicKey = wallet?.publicKey?.toString();
   const isUserListing = publicKey && order && order.walletAddress === publicKey;
+  const candyShopAddress = candyShop.candyShopAddress;
 
   useEffect(() => {
-    if (!order) {
-      setLoadingOrder(true);
+    if (!tokenMint || !candyShopAddress) return;
+    setLoadingOrder(true);
+    store
+      .getOrderNft(tokenMint)
+      .then((res: SingleBase<OrderSchema>) => {
+        setOrder(res.result);
+      })
+      .catch((err: Error) => {
+        handleError(err, 'Order not found');
+        console.log('OrderDetail: activeOrderByMintAddress failed=', err);
+        setNftInfo(undefined);
+        setOrder(undefined);
+      })
+      .finally(() => {
+        setLoadingOrder(false);
+      });
+    return;
+  }, [candyShopAddress, store, tokenMint]);
 
-      store
-        .getOrderNft(tokenMint)
-        .then((res: SingleBase<OrderSchema>) => {
-          setOrder(res.result);
-        })
-        .catch((err: Error) => {
-          handleError(err, 'Order not found');
-          console.log('OrderDetail: activeOrderByMintAddress failed=', err);
-        })
-        .finally(() => {
-          setLoadingOrder(false);
-        });
-      return;
-    }
+  useEffect(() => {
+    if (!tokenMint) return;
+    setLoadingNftInfo(true);
 
-    if (order && !nftInfo) {
-      setLoadingNftInfo(true);
-
-      store
-        .getNftInfo(order.tokenMint)
-        .then((nft: Nft) => setNftInfo(nft))
-        .catch((err: Error) => {
-          console.info('fetchNftByMint failed:', err);
-        })
-        .finally(() => {
-          setLoadingNftInfo(false);
-        });
-    }
-  }, [order, nftInfo, tokenMint, candyShop, store]);
+    store
+      .getNftInfo(tokenMint)
+      .then((nft: Nft) => setNftInfo(nft))
+      .catch((err: Error) => {
+        console.log('fetchNftByMint failed:', err);
+      })
+      .finally(() => {
+        setLoadingNftInfo(false);
+      });
+  }, [store, tokenMint]);
 
   const buy = async () => {
     if (order && publicKey && candyShop) {
