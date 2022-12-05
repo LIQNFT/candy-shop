@@ -74,6 +74,6 @@ export async function awaitTransactionSignatureConfirmation(
   }
 
   done = true;
-  console.debug(`status ${status!.confirmationStatus}`);
+  console.debug(`status ${status?.confirmationStatus}`);
   return txid;
 }
