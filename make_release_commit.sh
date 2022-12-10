@@ -84,7 +84,7 @@ make_commit_mgs() {
     if [[ "$ui_update" = true ]]
     then
         commit_tag="v$ui_pkg_version"
-        git tag -a commit_tag
+        git tag "$commit_tag"
     fi
 }
 
