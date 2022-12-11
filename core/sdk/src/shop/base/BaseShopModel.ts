@@ -51,7 +51,7 @@ export interface ShopSettings {
   /** Number of max decimals to display for volume numbers (default is 1) */
   volumeDecimals: number;
   /** Rpc connection endpoint */
-  connectionUrl: string | undefined;
+  connectionUrl: string;
   /** Connection config options */
   connectionConfig: object | undefined;
   /** Explorer link options */
