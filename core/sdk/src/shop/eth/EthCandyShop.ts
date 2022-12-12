@@ -56,7 +56,8 @@ export class EthCandyShop extends BaseShop {
       priceDecimalsMin: params.settings?.priceDecimalsMin ?? DEFAULT_PRICE_DECIMALS_MIN,
       volumeDecimals: params.settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
       volumeDecimalsMin: params.settings?.volumeDecimalsMin ?? DEFAULT_VOLUME_DECIMALS_MIN,
-      connectionUrl: params.settings?.connectionUrl,
+      // TBD: If EthCandyShop doesn't need connectionUrl, should not provide it in common ShopSettings
+      connectionUrl: params.settings?.connectionUrl ?? '',
       connectionConfig: params.settings?.connectionConfig,
       explorerLink: params.settings?.explorerLink ?? ExplorerLinkBase.Polygon
     };

@@ -74,7 +74,7 @@ import {
 import { supply } from '../../vendor/shipping';
 import { BaseShop, BaseShopConstructorParams, CandyShopAuctioneer, CandyShopEditionDropper } from '../base/BaseShop';
 import { CandyShopVersion, ExplorerLinkBase, ShopSettings } from '../base/BaseShopModel';
-import { PublicKey } from '@solana/web3.js';
+import { Cluster, PublicKey } from '@solana/web3.js';
 
 const Logger = 'CandyShop';
 
@@ -82,7 +82,7 @@ const DEFAULT_PRICE_DECIMALS = 3;
 const DEFAULT_PRICE_DECIMALS_MIN = 0;
 const DEFAULT_VOLUME_DECIMALS = 1;
 const DEFAULT_VOLUME_DECIMALS_MIN = 0;
-const DEFAULT_MAINNET_CONNECTION_URL = 'https://api.mainnet-beta.solana.com';
+
 export interface SolShopConstructorParams extends BaseShopConstructorParams {
   isEnterprise?: boolean;
 }
@@ -124,6 +124,8 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
 
     const shopResponse = shopDetail.result.result;
 
+    const cluster: Cluster = params.env === Blockchain.SolDevnet ? 'devnet' : 'mainnet-beta';
+
     // Assign settings if any or fallback to default
     const candyShopSettings: ShopSettings = {
       currencySymbol: shopResponse.symbol,
@@ -132,7 +134,8 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
       priceDecimalsMin: params.settings?.priceDecimalsMin ?? DEFAULT_PRICE_DECIMALS_MIN,
       volumeDecimals: params.settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
       volumeDecimalsMin: params.settings?.volumeDecimalsMin ?? DEFAULT_VOLUME_DECIMALS_MIN,
-      connectionUrl: params.settings?.connectionUrl,
+      // connectionUrl could be empty string, use Logical instead of Nullish coalescing operators
+      connectionUrl: params.settings?.connectionUrl || web3.clusterApiUrl(cluster),
       connectionConfig: params.settings?.connectionConfig,
       explorerLink: params.settings?.explorerLink ?? ExplorerLinkBase.SolanaFM
     };
@@ -167,16 +170,7 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
    */
   get connection(): web3.Connection {
     const options = Provider.defaultOptions();
-
-    if (this._settings.connectionUrl) {
-      return new web3.Connection(this._settings.connectionUrl, this._settings.connectionConfig || options.commitment);
-    }
-
-    if (this._env === Blockchain.SolDevnet) {
-      return new web3.Connection(web3.clusterApiUrl(Blockchain.SolDevnet));
-    }
-
-    return new web3.Connection(DEFAULT_MAINNET_CONNECTION_URL, this._settings.connectionConfig || options.commitment);
+    return new web3.Connection(this._settings.connectionUrl, this._settings.connectionConfig || options.commitment);
   }
 
   /**
@@ -212,7 +206,7 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
     }
 
     this._candyShopAddress = candyShopAddress;
-    this._isEnterprise = isEnterprise ? true : false;
+    this._isEnterprise = Boolean(isEnterprise);
     this._version = getCandyShopVersion(candyShopProgramId);
 
     console.log(`${Logger} constructor: instantiated CandyShop=`, this);
