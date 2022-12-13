@@ -33,7 +33,7 @@ export const fetchAllEvmNftsFromWallet = async (
     chain: chain
   };
   let singleTokenInfos: SingleTokenInfo[] = [];
-  let evmNfts = null;
+  let evmNfts: ListBaseWithCursor<SingleTokenInfo>;
   while (totalCount > singleTokenInfos.length) {
     evmNfts = await fetchEvmNftsFromWalletByLimit(walletAddress, fetchNFTCollectionParams.shopId, fetchQuery);
     if (evmNfts.success) {
