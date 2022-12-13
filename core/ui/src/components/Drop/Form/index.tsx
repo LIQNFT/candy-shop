@@ -27,6 +27,7 @@ enum CheckEnum {
   release = 'whitelistRelease',
   whitelistTimeFormat = 'whitelistTimeFormat',
   launchTimeFormat = 'launchTimeFormat',
+  hasRedemption = 'hasRedemption',
   salesPeriodZero = 'salesPeriodZero'
 }
 
@@ -46,6 +47,7 @@ export type FormType = {
   whitelistRelease: boolean;
   salesPeriod: string;
   salesPeriodZero: boolean;
+  hasRedemption: boolean;
 };
 
 const validateInput = (nodeId: keyof FormType, message: string) => {
@@ -84,7 +86,8 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
       mintPrice: '',
       whitelistRelease: false,
       salesPeriod: '',
-      salesPeriodZero: false
+      salesPeriodZero: false,
+      hasRedemption: false
     };
   });
 
@@ -453,6 +456,13 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
           />
         </div>
       </div>
+
+      <Checkbox
+        onClick={onCheckbox(CheckEnum.hasRedemption)}
+        checked={Boolean(form[CheckEnum.hasRedemption])}
+        id="hasRedemption"
+        label={<span className="candy-edition-checkbox-label">Redemption enabled</span>}
+      />
 
       <div className="candy-edition-buttons">
         <button className="candy-button candy-button-default" onClick={onBack}>
