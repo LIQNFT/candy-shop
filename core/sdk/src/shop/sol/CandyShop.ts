@@ -664,8 +664,17 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
    * @param {CandyShopCommitNftParams} params required parameters for commit nft action
    */
   public async commitMasterNft(params: CandyShopCommitNftParams) {
-    const { nftOwnerTokenAccount, masterMint, whitelistMint, nftOwner, price, startTime, salesPeriod, whitelistTime } =
-      params;
+    const {
+      nftOwnerTokenAccount,
+      masterMint,
+      whitelistMint,
+      nftOwner,
+      price,
+      startTime,
+      salesPeriod,
+      hasRedemption,
+      whitelistTime
+    } = params;
 
     if (this._version !== CandyShopVersion.V2) {
       throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
@@ -684,6 +693,7 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
       price,
       startTime,
       salesPeriod,
+      hasRedemption,
       whitelistTime,
       isEnterprise: this._isEnterprise,
       connection: this.connection,
@@ -699,7 +709,7 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
    * @param {CandyShopMintPrintParams} params required parameters for mint print action
    */
   public async mintNewPrint(params: CandyShopMintPrintParams) {
-    const { nftOwnerTokenAccount, masterMint, whitelistMint, editionBuyer, mintEditionNumber } = params;
+    const { nftOwnerTokenAccount, masterMint, whitelistMint, editionBuyer, mintEditionNumber, info } = params;
 
     if (this._version !== CandyShopVersion.V2) {
       throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
@@ -740,6 +750,7 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
       candyShopProgram: this.getStaticProgram(editionBuyer),
       treasuryMint,
       mintEditionNumber,
+      info,
       instructions,
       newEditionMint,
       newEditionTokenAccount

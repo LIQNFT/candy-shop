@@ -32,6 +32,7 @@ export const ORDER = 'order';
 export type Side = 'sell' | 'buy';
 
 export const EDITION_DROP = 'drop';
+export const RECEIPT = 'receipt';
 
 export const EDITION_MARKER_BIT_SIZE = 248;
 
