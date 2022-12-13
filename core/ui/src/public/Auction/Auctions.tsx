@@ -104,7 +104,7 @@ export const Auctions: React.FC<AuctionsProps> = ({
         // status out of current Fe filter => remove it if exist
         if (!statusFilters.includes(auction.status)) {
           return setAuctions((list) => {
-            const newList = list.filter((item) => item.auctionAddress === auction.auctionAddress);
+            const newList = list.filter((item) => item.auctionAddress !== auction.auctionAddress);
             if (newList.length === list.length) return list;
             return newList;
           });
@@ -195,7 +195,7 @@ export const Auctions: React.FC<AuctionsProps> = ({
             <div className="candy-container-list">
               {auctionedNfts.map((auction: Auction) => (
                 <AuctionCard
-                  key={auction.tokenAccount}
+                  key={auction.auctionAddress}
                   auction={auction}
                   walletConnectComponent={walletConnectComponent}
                   walletPublicKey={wallet?.publicKey?.toString()}

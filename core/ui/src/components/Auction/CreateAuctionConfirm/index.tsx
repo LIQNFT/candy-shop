@@ -2,7 +2,7 @@ import React from 'react';
 import { SingleTokenInfo } from '@liqnft/candy-shop-sdk';
 import { FormType } from '../AuctionForm';
 import { AuctionNftHeader } from '../AuctionNftHeader';
-import { getStartTime } from 'utils/timer';
+import { getFormTime } from 'utils/timer';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
@@ -41,7 +41,7 @@ export const CreateAuctionConfirm: React.FC<CreateAuctionConfirmProps> = ({
     },
     {
       name: 'Auction Start Date',
-      value: getStartTime({
+      value: getFormTime({
         isNow: auctionForm.startNow,
         hour: auctionForm.auctionHour,
         minute: auctionForm.auctionMinute,
@@ -51,7 +51,7 @@ export const CreateAuctionConfirm: React.FC<CreateAuctionConfirmProps> = ({
     },
     {
       name: 'Auction End Date',
-      value: getStartTime({
+      value: getFormTime({
         hour: auctionForm.auctionHourEnd,
         minute: auctionForm.auctionMinuteEnd,
         clockFormat: auctionForm.clockFormatEnd,

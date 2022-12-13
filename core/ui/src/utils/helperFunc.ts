@@ -13,7 +13,7 @@ export function removeDuplicate<T>(firstList: T[], secondList: T[], key: keyof T
   const newList: T[] = [];
   const memo: any = {};
   for (const item of duplicateList) {
-    if (memo[item[key]]) break;
+    if (memo[item[key]]) continue;
     newList.push(item);
     memo[item[key]] = true;
   }
