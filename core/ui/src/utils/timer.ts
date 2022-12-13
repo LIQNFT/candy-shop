@@ -1,6 +1,4 @@
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-dayjs.extend(utc);
 
 interface TimeInfo {
   hour: string;
@@ -14,23 +12,16 @@ export function formatDate(date: string | Date): string {
   return dayjs(date).format('DD/MM/YYYY HH:mm');
 }
 
-export const getStartTime = (timeData: TimeInfo): string => {
+export const getFormTime = (timeData: TimeInfo): string => {
   if (!timeData.hour || !timeData.minute || !timeData.clockFormat) {
-    return dayjs.utc().format('MMMM DD, YYYY HH:mm') + ' UTC';
+    return dayjs().format('YYYY-MM-DD HH:mm');
   }
 
   if (timeData.isNow) {
-    return dayjs.utc().format('MMMM DD, YYYY HH:mm') + ' UTC';
+    return dayjs().format('YYYY-MM-DD HH:mm');
   }
 
-  return (
-    dayjs
-      .utc(
-        `${timeData.date} ${convertTime12to24(timeData.hour, timeData.minute, timeData.clockFormat)}`,
-        'YYYY-MM-DD HH:mm'
-      )
-      .format('MMMM DD, YYYY HH:mm') + ' UTC'
-  );
+  return `${timeData.date} ${convertTime12to24(timeData.hour, timeData.minute, timeData.clockFormat)}`;
 };
 
 export const convertTime12to24 = (hour: string, min: string, clockFormat: string): string => {

@@ -10,10 +10,8 @@ import { DropUserInputSchema, DROP_USER_INPUT_SCHEMA } from 'constant/drop';
 
 import { EMPTY_FUNCTION } from 'utils/helperFunc';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import IsSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import IsSameOrAfter from 'dayjs/plugin/isSameOrAfter';
-dayjs.extend(utc);
 dayjs.extend(IsSameOrBefore);
 dayjs.extend(IsSameOrAfter);
 import './style.less';
@@ -147,7 +145,7 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
 }) => {
   const [form, setForm] = useState<FormType>((): Record<FormKey, any> => {
     const getHour = () => {
-      const hour = dayjs.utc().hour();
+      const hour = dayjs().hour();
       if (hour === 0) return '12';
       if (hour > 12) return (hour - 12).toString();
       return hour.toString();
@@ -156,19 +154,19 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
     return {
       name: nft.name,
       whitelistAddress: '',
-      whitelistTimeFormat: dayjs.utc().hour() >= 12 ? TimeFormat.PM : TimeFormat.AM,
+      whitelistTimeFormat: dayjs().hour() >= 12 ? TimeFormat.PM : TimeFormat.AM,
       whitelistHour: getHour(),
-      whitelistMinute: dayjs.utc().minute().toString(),
-      whitelistDate: dayjs.utc().format('YYYY-MM-DD'),
+      whitelistMinute: dayjs().minute().toString(),
+      whitelistDate: dayjs().format('YYYY-MM-DD'),
       totalSupply: nft.maxSupply,
       mintPrice: '',
       whitelistRelease: false,
       salesPeriodZero: false,
-      saleStartDate: dayjs.utc().add(1, 'd').format('YYYY-MM-DD'),
+      saleStartDate: dayjs().add(1, 'd').format('YYYY-MM-DD'),
       saleStartHour: '12',
       saleStartMinute: '00',
       saleStartTimeFormat: TimeFormat.AM,
-      saleEndDate: dayjs.utc().add(2, 'd').format('YYYY-MM-DD'),
+      saleEndDate: dayjs().add(2, 'd').format('YYYY-MM-DD'),
       saleEndHour: '12',
       saleEndMinute: '00',
       saleEndTimeFormat: TimeFormat.AM,
@@ -199,7 +197,6 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
   };
 
   const onCheckInputSchema = (schema: DropUserInputSchema) => () => {
-    console.log({ schema });
     const prevInputSchema = form.inputSchema;
     const inputSchema = prevInputSchema.includes(schema)
       ? prevInputSchema.filter((n) => n !== schema)
@@ -220,24 +217,16 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
     const NOW = dayjs();
 
     const startTime = dayjs(
-      `${form.saleStartDate} ${convertTime12to24(
-        form.saleStartHour,
-        form.saleStartMinute,
-        form.saleStartTimeFormat
-      )} UTC`
+      `${form.saleStartDate} ${convertTime12to24(form.saleStartHour, form.saleStartMinute, form.saleStartTimeFormat)}`
     );
 
     const endTime = dayjs(
-      `${form.saleEndDate} ${convertTime12to24(form.saleEndHour, form.saleEndMinute, form.saleEndTimeFormat)} UTC`
+      `${form.saleEndDate} ${convertTime12to24(form.saleEndHour, form.saleEndMinute, form.saleEndTimeFormat)}`
     );
 
     if (form.whitelistRelease) {
       const whitelistDate = dayjs(
-        `${form.whitelistDate} ${convertTime12to24(
-          form.whitelistHour,
-          form.whitelistMinute,
-          form.whitelistTimeFormat
-        )} UTC`
+        `${form.whitelistDate} ${convertTime12to24(form.whitelistHour, form.whitelistMinute, form.whitelistTimeFormat)}`
       );
 
       if (whitelistDate.isSameOrBefore(NOW)) {
@@ -476,7 +465,7 @@ const SaleTimeRow: React.FC<SaleTImeRowProps> = ({ type, hidden, onChangeInput, 
           type="date"
           onChange={onChangeInput}
           value={form[rowInfo.dateKey] as string}
-          min={dayjs.utc().format('YYYY-MM-DD')}
+          min={dayjs().format('YYYY-MM-DD')}
         />
       </div>
 

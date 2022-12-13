@@ -5,8 +5,6 @@ import { AuctionNftHeader } from '../AuctionNftHeader';
 
 import { SingleTokenInfo } from '@liqnft/candy-shop-sdk';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-dayjs.extend(utc);
 
 import './style.less';
 import { EMPTY_FUNCTION } from 'utils/helperFunc';
@@ -115,6 +113,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     onResetValidation();
     const { value, name } = e.target as { value: any; name: keyof FormType };
+
     if (name !== 'startDate' && name !== 'endDate') {
       validateInput(name, Number(value) > 0 ? '' : VALIDATE_MESSAGE[name]);
     }
@@ -154,12 +153,10 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
 
     const startDate = form.startNow
       ? NOW
-      : dayjs(
-          `${form.startDate} ${convertTime12to24(form.auctionHour, form.auctionMinute, form.clockFormat)} UTC`
-        ).unix();
+      : dayjs(`${form.startDate} ${convertTime12to24(form.auctionHour, form.auctionMinute, form.clockFormat)}`).unix();
 
     const endDate = dayjs(
-      `${form.endDate} ${convertTime12to24(form.auctionHourEnd, form.auctionMinuteEnd, form.clockFormatEnd)} UTC`
+      `${form.endDate} ${convertTime12to24(form.auctionHourEnd, form.auctionMinuteEnd, form.clockFormatEnd)}`
     ).unix();
 
     const biddingPeriod = (endDate - startDate) / (60 * 60);
@@ -319,12 +316,12 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
               required={!form[CheckEnum.START_NOW]}
               onChange={onChangeInput}
               value={form['startDate']}
-              min={dayjs.utc().format('YYYY-MM-DD')}
+              min={dayjs().format('YYYY-MM-DD')}
             />
           </div>
 
           <label htmlFor="auctionHour" className="candy-auction-time-label">
-            Auction start time (UTC)
+            Auction start time
           </label>
           <div className="candy-auction-form-time">
             <input
@@ -398,12 +395,12 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
             type="date"
             onChange={onChangeInput}
             value={form['endDate']}
-            min={dayjs.utc().format('YYYY-MM-DD')}
+            min={dayjs().format('YYYY-MM-DD')}
           />
         </div>
 
         <label htmlFor="auctionHourEnd" className="candy-auction-time-label">
-          Auction end time (UTC)
+          Auction end time
         </label>
         <div className="candy-auction-form-time">
           <input

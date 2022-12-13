@@ -10,8 +10,6 @@ import { IconTick } from 'assets/IconTick';
 import { LoadStatus } from 'constant';
 import { ShopProps } from '../../model';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-dayjs.extend(utc);
 
 import './create-auction-style.less';
 
@@ -102,7 +100,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
     const startingBid = new BN(Number(auctionForm.startingBid) * 10 ** candyShop.currencyDecimals);
     const startTime = new BN(
       //prettier-ignore
-      dayjs(auctionForm.startNow ? undefined : `${auctionForm.startDate} ${convertTime12to24(auctionForm.auctionHour, auctionForm.auctionMinute, auctionForm.clockFormat)} UTC`).unix()
+      dayjs(auctionForm.startNow ? undefined : `${auctionForm.startDate} ${convertTime12to24(auctionForm.auctionHour, auctionForm.auctionMinute, auctionForm.clockFormat)}`).unix()
     );
     // measured in hours
     const biddingPeriod = new BN(Number(auctionForm.biddingPeriod) * 3600);

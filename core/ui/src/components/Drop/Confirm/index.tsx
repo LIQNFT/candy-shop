@@ -2,18 +2,15 @@ import React from 'react';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CandyShop, MasterEditionNft } from '@liqnft/candy-shop-sdk';
 import { FormType } from '../Form';
-import { convertTime12to24, getStartTime } from 'utils/timer';
+import { convertTime12to24, getFormTime } from 'utils/timer';
 
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-dayjs.extend(utc);
-
-import './style.less';
 
 import { BN, web3 } from '@project-serum/anchor';
 import { notification, NotificationType } from 'utils/rc-notification';
 import { handleError } from 'utils/ErrorHandler';
 
+import './style.less';
 interface CreateEditionDropProps {
   wallet: AnchorWallet | undefined;
   candyShop: CandyShop;
@@ -43,7 +40,7 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
           formData.saleStartHour,
           formData.saleStartMinute,
           formData.saleStartTimeFormat
-        )} UTC`
+        )}`
       ).unix()
     );
 
@@ -55,7 +52,7 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
               formData.saleEndHour,
               formData.saleEndMinute,
               formData.saleEndTimeFormat
-            )} UTC`
+            )}`
           ).unix()
         );
 
@@ -66,7 +63,7 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
               formData.whitelistHour,
               formData.whitelistMinute,
               formData.whitelistTimeFormat
-            )} UTC`
+            )}`
           ).unix()
         )
       : undefined;
@@ -105,7 +102,7 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
     { name: 'Drop Description', value: formData.description },
     {
       name: 'Sale Start Date',
-      value: getStartTime({
+      value: getFormTime({
         hour: formData.saleStartHour,
         minute: formData.saleStartMinute,
         date: formData.saleStartDate,
@@ -116,7 +113,7 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
       name: 'Sale End Date',
       value: formData.salesPeriodZero
         ? 'Until Sold Out'
-        : getStartTime({
+        : getFormTime({
             hour: formData.saleEndHour,
             minute: formData.saleEndMinute,
             date: formData.saleEndDate,
@@ -140,7 +137,7 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
       },
       {
         name: 'Whitelist Launch Date',
-        value: getStartTime({
+        value: getFormTime({
           hour: formData.whitelistHour,
           minute: formData.whitelistMinute,
           date: formData.whitelistDate,
