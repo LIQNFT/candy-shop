@@ -19,6 +19,7 @@ import {
   EDITION_DROP_PROGRAM_ID,
   EDITION_MARKER_BIT_SIZE,
   FEE_PAYER,
+  RECEIPT,
   TOKEN_METADATA_PROGRAM_ID,
   TREASURY,
   WALLET,
@@ -436,4 +437,11 @@ export const getRemainingAccountsForExecuteSaleIx = async (
       ).flat();
 
   return remainingAccounts;
+};
+
+export const getMintReceipt = (vaultAccount: web3.PublicKey, editionMint: web3.PublicKey) => {
+  return web3.PublicKey.findProgramAddress(
+    [vaultAccount.toBuffer(), Buffer.from(RECEIPT), editionMint.toBuffer()],
+    EDITION_DROP_PROGRAM_ID
+  );
 };
