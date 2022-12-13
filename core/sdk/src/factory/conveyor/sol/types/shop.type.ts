@@ -119,6 +119,7 @@ export interface CommitNftParams extends EditionDropParams {
   price: BN;
   startTime: BN;
   salesPeriod: BN;
+  hasRedemption: boolean;
   whitelistTime?: BN;
   candyShopProgram: Program<Idl>;
 }
@@ -130,6 +131,11 @@ export interface MintPrintParams extends EditionDropParams {
   auctionHouse: web3.PublicKey;
   editionNumber: BN;
   treasuryMint: web3.PublicKey;
+}
+
+export interface MintPrintWithInfoParams extends MintPrintParams {
+  mintReceipt: web3.PublicKey;
+  info: string;
 }
 
 export interface RedeemNftParams extends EditionDropParams {

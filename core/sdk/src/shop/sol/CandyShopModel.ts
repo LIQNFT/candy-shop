@@ -191,12 +191,14 @@ export interface CandyShopCommitNftParams extends CandyShopEditionDropParams {
   price: BN;
   startTime: BN;
   salesPeriod: BN;
+  hasRedemption: boolean;
   whitelistTime?: BN;
 }
 
 export interface CandyShopMintPrintParams extends CandyShopEditionDropParams {
   editionBuyer: AnchorWallet | web3.Keypair;
   mintEditionNumber?: string;
+  info?: string;
 }
 
 export interface CandyShopRedeemParams extends CandyShopEditionDropParams {

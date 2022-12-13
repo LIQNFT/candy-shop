@@ -21,6 +21,7 @@ import {
   enterpriseMintPrint,
   mintPrint,
   MintPrintParams,
+  MintPrintWithInfoParams,
   redeemNft,
   RedeemNftParams
 } from './factory/conveyor/sol';
@@ -30,9 +31,11 @@ import {
   CandyShopErrorType,
   getAtaForMint,
   getEditionVaultAccount,
+  getMintReceipt,
   getNodeWallet,
   safeAwait
 } from './vendor';
+import { mintPrintWithInfo } from './factory/conveyor/sol/v2/editionDrop/mintPrintWithInfo';
 const EDITION_ARRAY_SIZE = 1250;
 
 // ignore the reserved size here
@@ -68,6 +71,7 @@ export abstract class CandyShopDrop {
       price,
       startTime,
       salesPeriod,
+      hasRedemption,
       whitelistTime,
       candyShopProgram
     } = params;
@@ -83,6 +87,7 @@ export abstract class CandyShopDrop {
       nftOwnerTokenAccount,
       masterMint,
       whitelistMint,
+      hasRedemption,
       whitelistTime,
       price,
       startTime,
@@ -113,7 +118,8 @@ export abstract class CandyShopDrop {
       mintEditionNumber,
       instructions,
       newEditionMint,
-      newEditionTokenAccount
+      newEditionTokenAccount,
+      info
     } = params;
 
     const [vaultAccount] = await getEditionVaultAccount(candyShop, nftOwnerTokenAccount);
@@ -122,6 +128,29 @@ export abstract class CandyShopDrop {
     console.log('editionNumber ', editionNumber.toString());
 
     const program = this.getProgram(connection, editionBuyer);
+
+    if (info) {
+      if (isEnterprise) throw new CandyShopError(CandyShopErrorType.NotReachable);
+      const [mintReceipt] = await getMintReceipt(vaultAccount, newEditionMint.publicKey);
+
+      const mintPrintWithInfoParams: MintPrintWithInfoParams = {
+        candyShop,
+        vaultAccount,
+        nftOwnerTokenAccount,
+        masterMint,
+        whitelistMint,
+        editionBuyer,
+        auctionHouse,
+        editionNumber: new BN(editionNumber),
+        newEditionMint,
+        newEditionTokenAccount,
+        mintReceipt,
+        program,
+        treasuryMint,
+        info
+      };
+      return mintPrintWithInfo(instructions, mintPrintWithInfoParams);
+    }
 
     const mintPrintParams: MintPrintParams = {
       candyShop,

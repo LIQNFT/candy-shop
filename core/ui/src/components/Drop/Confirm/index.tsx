@@ -67,7 +67,8 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
         startTime,
         whitelistTime,
         salesPeriod: new BN(Number(formData.salesPeriod) * 60),
-        whitelistMint: formData.whitelistRelease ? new web3.PublicKey(formData.whitelistAddress) : undefined
+        whitelistMint: formData.whitelistRelease ? new web3.PublicKey(formData.whitelistAddress) : undefined,
+        hasRedemption: formData.hasRedemption
       })
       .then(() => {
         notification('Edition Drop created.\nRemember to edit and update the description.', NotificationType.Success);
