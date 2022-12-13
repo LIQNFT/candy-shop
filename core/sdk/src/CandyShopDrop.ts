@@ -12,7 +12,9 @@ import {
   EditionDropCommitNftParams,
   EditionDropMintPrintParams,
   EditionDropRedeemParams,
-  EditionDropUpdateParams
+  EditionDropUpdateParams,
+  RegisterDropParams,
+  RegisterRedemptionParams
 } from './shop/sol/CandyShopModel';
 import { EDITION_DROP_PROGRAM_ID } from './factory/constants';
 import {
@@ -22,6 +24,7 @@ import {
   enterpriseMintPrint,
   mintPrint,
   MintPrintParams,
+  MintPrintWithInfoParams,
   redeemNft,
   RedeemNftParams,
   updateEditionVault,
@@ -33,9 +36,14 @@ import {
   CandyShopErrorType,
   getAtaForMint,
   getEditionVaultAccount,
+  getMintReceipt,
   getNodeWallet,
   safeAwait
 } from './vendor';
+import { mintPrintWithInfo } from './factory/conveyor/sol/v2/editionDrop/mintPrintWithInfo';
+import { RedemptionType } from '@liqnft/candy-shop-types';
+import { registerDropRedemption, registerDropWithRedemption } from './CandyShopDropAPI';
+
 const EDITION_ARRAY_SIZE = 1250;
 
 // ignore the reserved size here
@@ -71,13 +79,26 @@ export abstract class CandyShopDrop {
       price,
       startTime,
       salesPeriod,
+      hasRedemption,
       whitelistTime,
-      candyShopProgram
+      candyShopProgram,
+      shopId,
+      inputSchema
     } = params;
 
     checkTimeValidity(startTime, whitelistTime);
 
     const [vaultAccount] = await getEditionVaultAccount(candyShop, nftOwnerTokenAccount);
+
+    if (hasRedemption && inputSchema) {
+      const payload: RegisterDropParams = {
+        shopId,
+        vaultAddress: vaultAccount.toString(),
+        redemptionType: RedemptionType.Ticket,
+        userInputsSchema: inputSchema
+      };
+      await registerDropWithRedemption(payload);
+    }
 
     const commitNftParams: CommitNftParams = {
       candyShop,
@@ -86,6 +107,7 @@ export abstract class CandyShopDrop {
       nftOwnerTokenAccount,
       masterMint,
       whitelistMint,
+      hasRedemption,
       whitelistTime,
       price,
       startTime,
@@ -116,7 +138,8 @@ export abstract class CandyShopDrop {
       mintEditionNumber,
       instructions,
       newEditionMint,
-      newEditionTokenAccount
+      newEditionTokenAccount,
+      info
     } = params;
 
     const [vaultAccount] = await getEditionVaultAccount(candyShop, nftOwnerTokenAccount);
@@ -125,6 +148,39 @@ export abstract class CandyShopDrop {
     console.log('editionNumber ', editionNumber.toString());
 
     const program = this.getProgram(connection, editionBuyer);
+
+    if (info) {
+      if (isEnterprise) throw new CandyShopError(CandyShopErrorType.NotReachable);
+      const [mintReceipt] = await getMintReceipt(vaultAccount, newEditionMint.publicKey);
+
+      const payload: RegisterRedemptionParams = {
+        vaultAddress: vaultAccount.toString(),
+        editionMint: newEditionMint.publicKey.toString(),
+        walletAddress: editionBuyer.publicKey.toString(),
+        userInputs: info,
+        redemptionType: RedemptionType.Ticket
+      };
+
+      await registerDropRedemption(payload);
+
+      const mintPrintWithInfoParams: MintPrintWithInfoParams = {
+        candyShop,
+        vaultAccount,
+        nftOwnerTokenAccount,
+        masterMint,
+        whitelistMint,
+        editionBuyer,
+        auctionHouse,
+        editionNumber: new BN(editionNumber),
+        newEditionMint,
+        newEditionTokenAccount,
+        mintReceipt,
+        program,
+        treasuryMint,
+        info
+      };
+      return mintPrintWithInfo(instructions, mintPrintWithInfoParams);
+    }
 
     const mintPrintParams: MintPrintParams = {
       candyShop,

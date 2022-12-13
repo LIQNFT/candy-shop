@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe, Stripe } from '@stripe/stripe-js';
+import {
+  // loadStripe,
+  Stripe
+} from '@stripe/stripe-js';
 import {
   ConfirmStripePaymentParams,
   CreateStripePaymentParams,
@@ -39,7 +42,7 @@ interface StripePaymentProps {
  * Legacy element, no use and don't expose it for now.
  */
 export const StripePayment: React.FC<StripePaymentProps> = ({
-  stripePublicKey,
+  // stripePublicKey,
   shopAddress,
   walletAddress,
   order,
@@ -49,7 +52,8 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
   onProcessingPay,
   paymentPrice
 }) => {
-  const stripePromise = loadStripe(stripePublicKey);
+  // prevent load stripe script
+  // const stripePromise = loadStripe(stripePublicKey);
   const [paymentEntityId, setPaymentEntityId] = useState<string>();
 
   useEffect(() => {
@@ -173,7 +177,7 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
         </div>
 
         {paymentEntityId ? (
-          <Elements stripe={stripePromise}>
+          <Elements stripe={null}>
             <StripeCardDetail
               paymentEntityId={paymentEntityId}
               shopAddress={shopAddress}

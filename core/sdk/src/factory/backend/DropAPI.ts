@@ -1,6 +1,7 @@
-import { ListBase, Drop, DropQuery, DropActivityQuery, DropActivity } from '@liqnft/candy-shop-types';
+import { ListBase, Drop, DropQuery, DropActivityQuery, DropActivity, SingleBase } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
+import { RegisterDropParams, RegisterRedemptionParams } from '../../shop';
 import { getParametrizeQuery } from './utils';
 
 const Logger = 'CandyShopSDK/DropAPI';
@@ -46,4 +47,14 @@ export async function fetchDropActivities(axiosInstance: AxiosInstance, dropActi
   const queryString = qs.stringify({ walletAddress, offset, limit });
   const url = `/drop/activity`.concat(getParametrizeQuery(queryString));
   return axiosInstance.get<ListBase<DropActivity>>(url).then((response) => response.data);
+}
+
+export async function registerRedemption(axiosInstance: AxiosInstance, data: RegisterRedemptionParams) {
+  const url = `/v2/drop/redemption/register`;
+  return axiosInstance.post<SingleBase<boolean>>(url, data).then((response) => response.data);
+}
+
+export async function registerDrop(axiosInstance: AxiosInstance, data: RegisterDropParams) {
+  const url = `/v2/drop/redemptionDrop/register`;
+  return axiosInstance.post<SingleBase<boolean>>(url, data).then((response) => response.data);
 }

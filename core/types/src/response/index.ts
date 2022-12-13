@@ -12,4 +12,3 @@ export * from './auctionBid';
 export * from './nftCollection';
 export * from './candyShopProfile';
 export * from './drop';
-export * from './dropActivity';

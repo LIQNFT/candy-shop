@@ -23,12 +23,12 @@ export const IconExplorer: React.FC = () => {
           y2="-3.01622"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.08" stop-color="#9945FF" />
-          <stop offset="0.3" stop-color="#8752F3" />
-          <stop offset="0.5" stop-color="#5497D5" />
-          <stop offset="0.6" stop-color="#43B4CA" />
-          <stop offset="0.72" stop-color="#28E0B9" />
-          <stop offset="0.97" stop-color="#19FB9B" />
+          <stop offset="0.08" stopColor="#9945FF" />
+          <stop offset="0.3" stopColor="#8752F3" />
+          <stop offset="0.5" stopColor="#5497D5" />
+          <stop offset="0.6" stopColor="#43B4CA" />
+          <stop offset="0.72" stopColor="#28E0B9" />
+          <stop offset="0.97" stopColor="#19FB9B" />
         </linearGradient>
       </defs>
     </svg>

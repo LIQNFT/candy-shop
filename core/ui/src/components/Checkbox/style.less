@@ -6,6 +6,18 @@
   .candy-checkbox-label {
     cursor: pointer;
   }
+
+  &.candy-checkbox-container-disabled {
+    opacity: 0.6;
+    pointer-events: none;
+
+    .candy-checkbox {
+      border-color: @candy-shop-color-secondary;
+      svg path {
+        fill: @candy-shop-color-secondary;
+      }
+    }
+  }
 }
 
 .candy-checkbox {

@@ -13,7 +13,7 @@ export interface OrderSortBy extends SortBy {}
 
 type attributeType = { [key: string]: string };
 
-interface CommonQuery {
+export interface CommonQuery {
   offset?: number;
   limit?: number;
 }
