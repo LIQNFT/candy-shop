@@ -54,3 +54,34 @@ export interface Drop {
   nftAnimationUrl?: string;
   nftProperties?: NftProperties;
 }
+
+// activity
+export interface DropActivity {
+  walletAddress: string;
+  edition: number;
+  editionMint: string;
+  txHashAtCreation: string;
+}
+
+// redemption
+export interface DropRedemption {
+  vaultAddress: string;
+  editionMint: string;
+  walletAddress: string;
+  redemptionType: number;
+  userInputs: string;
+  qrStatus: boolean;
+  status: RedemptionStatus;
+  id: string;
+}
+
+export enum RedemptionType {
+  Ticket
+  // other types coming
+}
+
+export enum RedemptionStatus {
+  Redeemable,
+  Redeemed,
+  UnRedeemable
+}

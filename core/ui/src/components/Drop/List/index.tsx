@@ -160,6 +160,10 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
         const NOW = dayjs().unix();
         let hasNewUpdate = false;
         const newList = drops?.map((drop) => {
+          if (NOW >= Number(drop.startTime) && Number(drop.salesPeriod) === 0) {
+            if (drop.status !== DropStatus.SALE_STARTED) hasNewUpdate = true;
+            return { ...drop, status: DropStatus.SALE_STARTED };
+          }
           if (NOW >= Number(drop.startTime) + Number(drop.salesPeriod)) {
             if (drop.status !== DropStatus.SALE_COMPLETED) hasNewUpdate = true;
             return { ...drop, status: DropStatus.SALE_COMPLETED };
@@ -176,7 +180,7 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
         });
         return hasNewUpdate ? newList : drops;
       });
-    }, 1_000);
+    }, 2_000);
 
     return () => clearTimeout(interval);
   }, [dropNfts]);

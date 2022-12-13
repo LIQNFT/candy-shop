@@ -19,6 +19,7 @@ export const commitNft = async (params: CommitNftParams) => {
     price,
     startTime,
     salesPeriod,
+    hasRedemption,
     whitelistTime,
     program,
     candyShopProgram,
@@ -53,7 +54,7 @@ export const commitNft = async (params: CommitNftParams) => {
   const transaction = new Transaction();
 
   const ix = await program.methods
-    .shopCommitNft(price, startTime, salesPeriod, whitelistTime ? whitelistTime : null)
+    .shopCommitNft(price, startTime, salesPeriod, whitelistTime ? whitelistTime : null, hasRedemption)
     .accounts({
       commitNftCtx: {
         masterEditionTokenAccountAuthority: nftOwner.publicKey,

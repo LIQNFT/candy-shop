@@ -2,7 +2,6 @@ import React, { createContext, ReactElement, useCallback, useContext, useEffect,
 import { parseSocketMessage, EventName, stringifyMessage } from 'constant/SocketEvent';
 import { Blockchain } from '@liqnft/candy-shop-types';
 
-// TODO: update websocket url for each ENV
 const getSocketUrl = (network: Blockchain) => {
   switch (network) {
     case Blockchain.SolMainnetBeta:

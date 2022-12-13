@@ -191,12 +191,15 @@ export interface CandyShopCommitNftParams extends CandyShopEditionDropParams {
   price: BN;
   startTime: BN;
   salesPeriod: BN;
+  hasRedemption: boolean;
   whitelistTime?: BN;
+  inputSchema: string | undefined;
 }
 
 export interface CandyShopMintPrintParams extends CandyShopEditionDropParams {
   editionBuyer: AnchorWallet | web3.Keypair;
   mintEditionNumber?: string;
+  info: string | undefined;
 }
 
 export interface CandyShopRedeemParams extends CandyShopEditionDropParams {
@@ -215,7 +218,9 @@ interface EditionDropParams extends CandyShopEditionDropParams {
   candyShopProgram: Program<Idl>;
 }
 
-export interface EditionDropCommitNftParams extends EditionDropParams, CandyShopCommitNftParams {}
+export interface EditionDropCommitNftParams extends EditionDropParams, CandyShopCommitNftParams {
+  shopId: string;
+}
 
 export interface EditionDropMintPrintParams extends EditionDropParams, CandyShopMintPrintParams {
   auctionHouse: web3.PublicKey;
@@ -228,3 +233,18 @@ export interface EditionDropMintPrintParams extends EditionDropParams, CandyShop
 export interface EditionDropRedeemParams extends EditionDropParams, CandyShopRedeemParams {}
 
 export interface EditionDropUpdateParams extends EditionDropParams, CandyShopUpdateEditionVaultParams {}
+
+export interface RegisterRedemptionParams {
+  vaultAddress: string;
+  editionMint: string;
+  walletAddress: string;
+  redemptionType: number;
+  userInputs: string;
+}
+
+export interface RegisterDropParams {
+  vaultAddress: string;
+  shopId: string;
+  redemptionType: number;
+  userInputsSchema: string;
+}

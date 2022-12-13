@@ -10,7 +10,7 @@ export interface EditionModalDetailProps extends ConfigPrice {
   dropNft: Drop;
   walletPublicKey: web3.PublicKey | undefined;
   walletConnectComponent: React.ReactElement;
-  onMint: () => void;
+  onMint: (userInfo?: string) => void;
 }
 
 export const EditionModalDetail: React.FC<EditionModalDetailProps> = ({
@@ -67,7 +67,11 @@ export const EditionModalDetail: React.FC<EditionModalDetailProps> = ({
                 <input disabled placeholder="Enter number of quantity" min={0} value="1" type="number" step="any" />
               </div>
 
-              <button disabled={disabledMint} onClick={onMint} className="candy-button candy-edition-modal-button">
+              <button
+                disabled={disabledMint}
+                onClick={() => onMint()}
+                className="candy-button candy-edition-modal-button"
+              >
                 Mint NFT
               </button>
             </div>

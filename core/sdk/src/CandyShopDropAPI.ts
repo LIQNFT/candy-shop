@@ -1,5 +1,6 @@
 import { ListBase, Drop, DropQuery, DropActivityQuery, DropActivity } from '@liqnft/candy-shop-types';
-import { fetchDropActivities, fetchDropsByStoreId } from './factory/backend';
+import { fetchDropActivities, fetchDropsByStoreId, registerDrop, registerRedemption } from './factory/backend';
+import { RegisterDropParams, RegisterRedemptionParams } from './shop';
 import axiosInstance from './vendor/config';
 
 export function fetchDropsByShopAddress(shopId: string, dropQuery?: DropQuery): Promise<ListBase<Drop>> {
@@ -9,4 +10,10 @@ export function fetchDropActivitiesByWalletAddress(
   dropActivityQuery: DropActivityQuery
 ): Promise<ListBase<DropActivity>> {
   return fetchDropActivities(axiosInstance, dropActivityQuery);
+}
+export function registerDropRedemption(registerDropRedemptionData: RegisterRedemptionParams) {
+  return registerRedemption(axiosInstance, registerDropRedemptionData);
+}
+export function registerDropWithRedemption(registerDropData: RegisterDropParams) {
+  return registerDrop(axiosInstance, registerDropData);
 }

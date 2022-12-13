@@ -5,23 +5,23 @@ import { IconCheck } from 'assets/IconCheck';
 import './style.less';
 
 interface CheckboxProps {
-  fill?: string;
   checked: boolean;
   label?: string | React.ReactNode;
   id: string;
   onClick?: any;
   className?: string;
+  disabled?: boolean;
 }
 
-export const Checkbox: React.FC<CheckboxProps> = ({ fill = '#7522f5', checked, id, label, onClick, className }) => {
+export const Checkbox: React.FC<CheckboxProps> = ({ checked, id, label, onClick, className = '', disabled }) => {
   return (
-    <div className={`candy-checkbox-container ${className}`}>
+    <div className={`candy-checkbox-container ${className}${disabled ? ' candy-checkbox-container-disabled' : ''}`}>
       <div className={`candy-checkbox ${checked ? '' : 'candy-checkbox-disable'}`} onClick={onClick}>
-        <IconCheck fill={fill} />
+        <IconCheck />
         <input type="checkbox" id={id} className="candy-checkbox-input" />
       </div>
       {label && (
-        <label className="candy-checkbox-label" htmlFor={id} onClick={onClick}>
+        <label className="candy-checkbox-label" onClick={onClick}>
           {label}
         </label>
       )}

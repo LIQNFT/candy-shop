@@ -39,13 +39,26 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
 
     const startTime = new BN(
       dayjs(
-        `${formData.launchDate} ${convertTime12to24(
-          formData.launchHour,
-          formData.launchMinute,
-          formData.launchTimeFormat
+        `${formData.saleStartDate} ${convertTime12to24(
+          formData.saleStartHour,
+          formData.saleStartMinute,
+          formData.saleStartTimeFormat
         )} UTC`
       ).unix()
     );
+
+    const endTime = formData.salesPeriodZero
+      ? undefined
+      : new BN(
+          dayjs(
+            `${formData.saleEndDate} ${convertTime12to24(
+              formData.saleEndHour,
+              formData.saleEndMinute,
+              formData.saleEndTimeFormat
+            )} UTC`
+          ).unix()
+        );
+
     const whitelistTime = formData.whitelistRelease
       ? new BN(
           dayjs(
@@ -66,8 +79,10 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
         price: new BN(Number(formData.mintPrice) * 10 ** candyShop.currencyDecimals),
         startTime,
         whitelistTime,
-        salesPeriod: new BN(Number(formData.salesPeriod) * 60),
-        whitelistMint: formData.whitelistRelease ? new web3.PublicKey(formData.whitelistAddress) : undefined
+        salesPeriod: endTime ? endTime.sub(startTime) : new BN(0),
+        whitelistMint: formData.whitelistRelease ? new web3.PublicKey(formData.whitelistAddress) : undefined,
+        hasRedemption: formData.hasRedemption,
+        inputSchema: formData.inputSchema ? JSON.stringify(formData.inputSchema) : undefined
       })
       .then(() => {
         notification('Edition Drop created.\nRemember to edit and update the description.', NotificationType.Success);
@@ -87,23 +102,42 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
       name: 'Mint Price',
       value: `${Number(formData.mintPrice)} ${candyShop.currencySymbol}`
     },
+    { name: 'Drop Description', value: formData.description },
     {
-      name: 'Launch Date',
+      name: 'Sale Start Date',
       value: getStartTime({
-        hour: formData.launchHour,
-        minute: formData.launchMinute,
-        date: formData.launchDate,
-        clockFormat: formData.launchTimeFormat
+        hour: formData.saleStartHour,
+        minute: formData.saleStartMinute,
+        date: formData.saleStartDate,
+        clockFormat: formData.saleStartTimeFormat
       })
     },
     {
-      name: 'Sales Period (mins)',
-      value: formData.salesPeriodZero ? 'Until sold out' : formData.salesPeriod
+      name: 'Sale End Date',
+      value: formData.salesPeriodZero
+        ? 'Until Sold Out'
+        : getStartTime({
+            hour: formData.saleEndHour,
+            minute: formData.saleEndMinute,
+            date: formData.saleEndDate,
+            clockFormat: formData.saleEndTimeFormat
+          })
     }
   ];
 
+  if (formData.hasRedemption) {
+    confirmDetails.push({
+      name: 'Item Redemption',
+      value: formData.inputSchema.map((item) => item.label).join(', ')
+    });
+  }
+
   if (formData.whitelistRelease) {
     confirmDetails.push(
+      {
+        name: 'Whitelist Token Address',
+        value: formData.whitelistAddress
+      },
       {
         name: 'Whitelist Launch Date',
         value: getStartTime({
@@ -112,10 +146,6 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
           date: formData.whitelistDate,
           clockFormat: formData.whitelistTimeFormat
         })
-      },
-      {
-        name: 'Whitelist Token Address',
-        value: formData.whitelistAddress
       }
     );
   }

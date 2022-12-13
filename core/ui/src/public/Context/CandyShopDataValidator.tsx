@@ -1,4 +1,4 @@
-import React, { createContext, ReactElement, useState, Dispatch, SetStateAction, useContext, useMemo } from 'react';
+import React, { createContext, ReactElement, useState, Dispatch, SetStateAction, useContext, useEffect } from 'react';
 import { SocketProvider } from './Socket';
 
 import { Blockchain } from '@liqnft/candy-shop-types';
@@ -43,12 +43,12 @@ export const useUpdateCandyShopContext: ({
 
   const { setCandyShopAddress, setNetwork } = context;
 
-  useMemo(() => {
+  useEffect(() => {
     if (!candyShopAddress) return;
     setCandyShopAddress(candyShopAddress);
   }, [candyShopAddress, setCandyShopAddress]);
 
-  useMemo(() => {
+  useEffect(() => {
     if (network) setNetwork(network);
   }, [network, setNetwork]);
 
