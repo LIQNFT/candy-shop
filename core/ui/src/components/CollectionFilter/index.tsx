@@ -159,13 +159,14 @@ export const CollectionFilter: React.FC<CollectionFilterProps> = ({
           </li>
         ))}
         {loading === LoadStatus.Loading && <Processing />}
-        <button
-          disabled={disableLoadMore}
-          className={`candy-filter-load ${disableLoadMore ? 'candy-filter-load-disable' : ''}`}
-          onClick={() => fetchOption(offset)}
-        >
-          + Load more
-        </button>
+        {!disableLoadMore && (
+          <button
+            className={`candy-filter-load ${disableLoadMore ? 'candy-filter-load-disable' : ''}`}
+            onClick={() => fetchOption(offset)}
+          >
+            + Load more
+          </button>
+        )}
       </ul>
     </div>
   );
