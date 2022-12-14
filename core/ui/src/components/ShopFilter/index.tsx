@@ -146,13 +146,15 @@ export const ShopFilter: React.FC<ShopFilterProps> = ({
           </li>
         ))}
         {loading === LoadStatus.Loading && <Processing />}
-        <button
-          disabled={disableLoadMore}
-          className={`candy-filter-load ${disableLoadMore ? 'candy-filter-load-disable' : ''}`}
-          onClick={() => fetchOption(offset)}
-        >
-          + Load more
-        </button>
+        {!disableLoadMore && (
+          <button
+            disabled={disableLoadMore}
+            className={`candy-filter-load ${disableLoadMore ? 'candy-filter-load-disable' : ''}`}
+            onClick={() => fetchOption(offset)}
+          >
+            + Load more
+          </button>
+        )}
       </ul>
     </div>
   );

@@ -16,7 +16,7 @@ import { removeDuplicate, removeListeners } from 'utils/helperFunc';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 
-import { getDropLabel } from 'utils/getDropLabel';
+import { getDropLabel, getDropLabelTag } from 'utils/getDropLabel';
 import { DropFooter } from './DropFooter';
 dayjs.extend(duration);
 import './style.less';
@@ -205,7 +205,7 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
               onClick={onClickCard(nft)}
               label={
                 <div>
-                  <span className="candy-status-tag" id={`drop-tag-${nft.txHashAtCreation}`}>
+                  <span className={getDropLabelTag(nft)} id={`drop-tag-${nft.txHashAtCreation}`}>
                     {getDropLabel(nft)}
                   </span>
                   <div className="candy-edition-vault-icon">
