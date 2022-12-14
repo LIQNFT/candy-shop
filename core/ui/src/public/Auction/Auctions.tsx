@@ -86,6 +86,10 @@ export const Auctions: React.FC<AuctionsProps> = ({
   );
 
   useEffect(() => {
+    setAuctions([]);
+  }, [statusFilters]);
+
+  useEffect(() => {
     fetchAuctions(0);
   }, [fetchAuctions]);
 
