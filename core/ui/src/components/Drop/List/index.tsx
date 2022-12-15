@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CandyShop, fetchDropsByShopAddress } from '@liqnft/candy-shop-sdk';
 import { Drop, DropStatus, ListBase } from '@liqnft/candy-shop-types';
@@ -65,14 +65,23 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
     );
   };
 
-  useMemo(() => {
-    if (prevFilterRef.current !== filterOption || keyword !== undefined) {
-      prevFilterRef.current = filterOption;
-      dropQueries.current.offset = 0;
-      setHasMore(true);
-      setDropNfts(undefined);
-    }
-  }, [filterOption, keyword]);
+  const onClickCard = (item: Drop) => () => setDropNft(item);
+  const onReset = () => {
+    dropQueries.current.offset = 0;
+    setHasMore(true);
+    setDropNfts(undefined);
+  };
+  const onSearchDrop = (name: string) => {
+    setKeyword(name);
+    onReset();
+    fetchDrops();
+  };
+  const onFilter = (item: DropFilter) => () => {
+    setFilterOption(item);
+    prevFilterRef.current = item;
+    onReset();
+    fetchDrops();
+  };
 
   const fetchDrops = () => {
     if (hasMore === false) return;
@@ -149,15 +158,23 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
     const interval = setInterval(() => {
       setDropNfts((drops) => {
         const NOW = dayjs().unix();
-        return drops?.map((drop) => {
+        let hasNewUpdate = false;
+        const newList = drops?.map((drop) => {
           if (NOW >= Number(drop.startTime) + Number(drop.salesPeriod)) {
+            if (drop.status !== DropStatus.SALE_COMPLETED) hasNewUpdate = true;
             return { ...drop, status: DropStatus.SALE_COMPLETED };
           }
-          if (NOW >= Number(drop.startTime)) return { ...drop, status: DropStatus.SALE_STARTED };
-          if (drop.whitelistTime && NOW >= Number(drop.whitelistTime))
+          if (NOW >= Number(drop.startTime)) {
+            if (drop.status !== DropStatus.SALE_STARTED) hasNewUpdate = true;
+            return { ...drop, status: DropStatus.SALE_STARTED };
+          }
+          if (drop.whitelistTime && NOW >= Number(drop.whitelistTime)) {
+            if (drop.status !== DropStatus.WHITELIST_STARTED) hasNewUpdate = true;
             return { ...drop, status: DropStatus.WHITELIST_STARTED };
+          }
           return drop;
         });
+        return hasNewUpdate ? newList : drops;
       });
     }, 1_000);
 
@@ -172,21 +189,13 @@ export const Drops: React.FC<DropsProps> = ({ candyShop, wallet, walletConnectCo
 
   useObserver({ callbackFn: fetchDrops, triggerTargetId: 'DROP_TARGET', enable: Boolean(target && hasMore) });
 
-  const onClickCard = (item: any) => () => setDropNft(item);
-
-  const onSearchDrop = (name: string) => setKeyword(name);
-
   return (
     <div className="candy-container">
       <div className="candy-drop-header">
         {filter && (
           <div className="candy-edition-filter">
             {FILTERS.map((item) => (
-              <div
-                key={item.label}
-                onClick={() => setFilterOption(item)}
-                className={filterOption === item ? 'active' : ''}
-              >
+              <div key={item.label} onClick={onFilter(item)} className={filterOption === item ? 'active' : ''}>
                 {item.label}
               </div>
             ))}
