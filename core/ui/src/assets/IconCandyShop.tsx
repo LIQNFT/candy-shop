@@ -3,7 +3,7 @@ import React from 'react';
 export const IconCandyShop: React.FC = () => {
   return (
     <svg width="123" height="36" viewBox="0 0 370 109" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="369.699" height="108.36" rx="16" fill="#7522F5" />
+      <rect width="369.699" height="108.36" rx="16" fill="var(--candy-shop-activate-icon-color)" />
       <path
         d="M32.455 20.24C34.455 20.24 36.035 20.73 37.195 21.71C38.355 22.67 38.935 24.03 38.935 25.79C38.935 27.51 38.355 28.86 37.195 29.84C36.035 30.8 34.455 31.28 32.455 31.28H28.705V37.04H24.625V20.24H32.455ZM31.915 28.34C32.895 28.34 33.635 28.13 34.135 27.71C34.635 27.29 34.885 26.66 34.885 25.82C34.885 24.96 34.635 24.32 34.135 23.9C33.635 23.46 32.895 23.24 31.915 23.24H28.705V28.34H31.915Z"
         fill="white"
