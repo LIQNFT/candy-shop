@@ -12,6 +12,7 @@
   a {
     display: flex;
     align-items: center;
+    color: @candy-shop-link-color;
   }
 }
 
@@ -99,7 +100,7 @@
   word-break: break-word;
 
   a {
-    color: @candy-shop-color-primary;
+    color: @candy-shop-link-color;
   }
 }
 
@@ -209,7 +210,7 @@
 }
 
 .candy-card-border {
-  border: 2px solid black;
+  border: 2px solid @candy-shop-border-primary;
   border-radius: 16px;
 }
 
@@ -321,7 +322,7 @@
     top: 0;
     left: 0;
     border-radius: 50%;
-    background-color: #fff;
+    background-color: @candy-shop-color-primary;
     width: 100%;
     height: 100%;
   }
@@ -372,7 +373,7 @@
     border: 1px solid @candy-shop-color-secondary;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     border: 0px solid rgba(0, 0, 0, 0);
-    background: #fff;
+    background: @candy-shop-popover-background;
     display: block;
     width: auto;
     line-height: 1.5;
