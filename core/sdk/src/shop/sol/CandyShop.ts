@@ -85,6 +85,7 @@ const DEFAULT_VOLUME_DECIMALS_MIN = 0;
 
 export interface SolShopConstructorParams extends BaseShopConstructorParams {
   isEnterprise?: boolean;
+  accessToken?: string;
 }
 
 export interface SolShopInitParams extends Omit<SolShopConstructorParams, 'settings'> {
@@ -108,6 +109,7 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
   private _isEnterprise: boolean;
   private _version: CandyShopVersion;
   private _program: Program | undefined;
+  private _accessToken: string | undefined;
 
   static async initSolCandyShop(params: SolShopInitParams): Promise<CandyShop> {
     // Must config the endpoint before calling any CandyShop API
@@ -122,9 +124,12 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
       throw new Error(`${Logger} init, fetchShopsByIdentifier failed=${shopDetail.result?.msg}`);
     }
 
-    const shopResponse = shopDetail.result.result;
+    const shopResponse: CandyShopResponse = shopDetail.result.result;
 
     const cluster: Cluster = params.env === Blockchain.SolDevnet ? 'devnet' : 'mainnet-beta';
+    // First priority is to use connectionUrl from the response then the configured one, final is to fallback to default
+    // connectionUrl could be empty string, use Logical instead of Nullish coalescing operators
+    const connectionUrl = shopResponse.connectionUrl || params.settings?.connectionUrl || web3.clusterApiUrl(cluster);
 
     // Assign settings if any or fallback to default
     const candyShopSettings: ShopSettings = {
@@ -134,15 +139,15 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
       priceDecimalsMin: params.settings?.priceDecimalsMin ?? DEFAULT_PRICE_DECIMALS_MIN,
       volumeDecimals: params.settings?.volumeDecimals ?? DEFAULT_VOLUME_DECIMALS,
       volumeDecimalsMin: params.settings?.volumeDecimalsMin ?? DEFAULT_VOLUME_DECIMALS_MIN,
-      // connectionUrl could be empty string, use Logical instead of Nullish coalescing operators
-      connectionUrl: params.settings?.connectionUrl || web3.clusterApiUrl(cluster),
+      connectionUrl,
       connectionConfig: params.settings?.connectionConfig,
       explorerLink: params.settings?.explorerLink ?? ExplorerLinkBase.SolanaFM
     };
 
     const solanaParams: SolShopConstructorParams = {
       ...params,
-      settings: candyShopSettings
+      settings: candyShopSettings,
+      accessToken: shopResponse.accessToken
     };
 
     const candyShop = new CandyShop(new PublicKey(shopResponse.candyShopAddress), solanaParams);
@@ -170,7 +175,19 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
    */
   get connection(): web3.Connection {
     const options = Provider.defaultOptions();
-    return new web3.Connection(this._settings.connectionUrl, this._settings.connectionConfig || options.commitment);
+    let candyShopConnectionConfig = this._settings.connectionConfig;
+
+    if (this._accessToken) {
+      candyShopConnectionConfig = {
+        ...candyShopConnectionConfig,
+        httpHeaders: {
+          Authorization: `Bearer ${this._accessToken}`,
+          'CANDY-SHOP-ID': this._candyShopAddress.toString()
+        }
+      };
+    }
+
+    return new web3.Connection(this._settings.connectionUrl, candyShopConnectionConfig || options.commitment);
   }
 
   /**
@@ -208,6 +225,7 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
     this._candyShopAddress = candyShopAddress;
     this._isEnterprise = Boolean(isEnterprise);
     this._version = getCandyShopVersion(candyShopProgramId);
+    this._accessToken = params.accessToken;
 
     console.log(`${Logger} constructor: instantiated CandyShop=`, this);
   }
