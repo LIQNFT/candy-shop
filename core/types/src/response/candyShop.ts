@@ -19,4 +19,6 @@ export interface CandyShop {
   discordUrl: string;
   twitterUrl: string;
   blockchain: Omit<Blockchain, 'devnet' | 'mainnet-beta'>;
+  connectionUrl: string;
+  accessToken: string;
 }
