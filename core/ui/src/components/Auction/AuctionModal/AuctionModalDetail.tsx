@@ -226,14 +226,14 @@ export const AuctionModalDetail: React.FC<AuctionModalDetailProps> = ({
               {PlaceBidButton}
             </div>
             <div className="candy-auction-modal-prompt">
-              Place bid of
+              Place bid of{' '}
               <Price
                 value={minNextBid}
                 currencySymbol={currencySymbol}
                 baseUnitsPerCurrency={baseUnitsPerCurrency}
                 priceDecimalsMin={priceDecimalsMin}
                 priceDecimals={priceDecimals}
-              />
+              />{' '}
               or more
             </div>
           </>
