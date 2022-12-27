@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useClickOutside } from 'hooks/useClickOutside';
 
 import IconChevronDown from 'assets/IconChevronDown';
@@ -19,12 +19,10 @@ interface DropdownProps {
 }
 
 export const Dropdown: React.FC<DropdownProps> = ({ selectedItem, items, onSelectItem, defaultValue, placeholder }) => {
-  const dropdownRef = useRef(null);
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentlySelectedItem, setCurrentlySelectedItem] = useState(defaultValue || selectedItem);
 
-  useClickOutside(dropdownRef, () => {
+  const dropdownRef = useClickOutside(() => {
     setIsMenuOpen(false);
   });
 
