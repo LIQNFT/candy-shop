@@ -1,3 +1,5 @@
+import { Blockchain } from '../query';
+
 export interface CandyShop {
   candyShopAddress: string;
   candyShopName: string;
@@ -16,4 +18,5 @@ export interface CandyShop {
   websiteUrl: string;
   discordUrl: string;
   twitterUrl: string;
+  blockchain: Omit<Blockchain, 'devnet' | 'mainnet-beta'>;
 }
