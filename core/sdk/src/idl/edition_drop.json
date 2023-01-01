@@ -454,6 +454,43 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "updateSalesPeriod",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "vaultAccount",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "updateVault",
+      "accounts": [
+        {
+          "name": "nftOwner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "vaultAccount",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "newPrice",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -713,6 +750,11 @@
       "code": 6032,
       "name": "InvalidUpdateAuthority",
       "msg": "invalid update authority"
+    },
+    {
+      "code": 6033,
+      "name": "InvalidFreezeAuthority",
+      "msg": "invalid freeze authority"
     }
   ],
   "metadata": {

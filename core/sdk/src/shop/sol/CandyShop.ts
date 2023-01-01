@@ -14,7 +14,11 @@ import {
 } from '@liqnft/candy-shop-types';
 import { Idl, Program, Provider, web3 } from '@project-serum/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyShopCommitNftParams, CandyShopMintPrintParams } from './CandyShopModel';
+import {
+  CandyShopCommitNftParams,
+  CandyShopMintPrintParams,
+  CandyShopUpdateEditionVaultParams
+} from './CandyShopModel';
 import { CandyShopDrop, createNewMintInstructions } from '../../CandyShopDrop';
 import {
   fetchNFTByMintAddress,
@@ -795,6 +799,36 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
     return txHash;
   }
 
+  /**
+   * Executes Edition Drop __UpdateVault__ action
+   *
+   * @param {CandyShopUpdateEditionVaultParams} params required parameters for update vault action
+   */
+  public async updateEditionVault(params: CandyShopUpdateEditionVaultParams) {
+    const { nftOwner, nftOwnerTokenAccount, newPrice, masterMint } = params;
+
+    if (this._version !== CandyShopVersion.V2) {
+      throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
+    }
+
+    console.log(`${Logger}: performing update vault `, {
+      masterNft: masterMint.toString(),
+      newPrice: newPrice.toString()
+    });
+
+    const txHash = await CandyShopDrop.updateEditionVault({
+      nftOwner,
+      nftOwnerTokenAccount,
+      masterMint,
+      newPrice,
+      candyShopProgram: this.getStaticProgram(nftOwner),
+      isEnterprise: this.isEnterprise,
+      connection: this.connection,
+      candyShop: this._candyShopAddress
+    });
+
+    return txHash;
+  }
   // TODO: Deprecate following info methods
   // The data can be fetched by using exposed APIs with very few params from CandyShop
 

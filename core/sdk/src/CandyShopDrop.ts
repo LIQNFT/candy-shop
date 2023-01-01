@@ -11,7 +11,8 @@ import { Connection, Keypair, PublicKey, TransactionInstruction } from '@solana/
 import {
   EditionDropCommitNftParams,
   EditionDropMintPrintParams,
-  EditionDropRedeemParams
+  EditionDropRedeemParams,
+  EditionDropUpdateParams
 } from './shop/sol/CandyShopModel';
 import { EDITION_DROP_PROGRAM_ID } from './factory/constants';
 import {
@@ -22,7 +23,9 @@ import {
   mintPrint,
   MintPrintParams,
   redeemNft,
-  RedeemNftParams
+  RedeemNftParams,
+  updateEditionVault,
+  UpdateEditionVaultParams
 } from './factory/conveyor/sol';
 import editionDropIdl from './idl/edition_drop.json';
 import {
@@ -160,6 +163,24 @@ export abstract class CandyShopDrop {
     };
 
     return redeemNft(redeemParams);
+  }
+
+  static async updateEditionVault(params: EditionDropUpdateParams): Promise<string> {
+    const { nftOwner, newPrice, candyShop, nftOwnerTokenAccount, masterMint, connection } = params;
+    const [vaultAccount] = await getEditionVaultAccount(candyShop, nftOwnerTokenAccount);
+    const program = this.getProgram(connection, nftOwner);
+
+    const updateParams: UpdateEditionVaultParams = {
+      nftOwner,
+      candyShop,
+      vaultAccount,
+      nftOwnerTokenAccount,
+      newPrice,
+      masterMint,
+      program
+    };
+
+    return updateEditionVault(updateParams);
   }
 }
 

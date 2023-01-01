@@ -1,6 +1,6 @@
 import { BN } from '@project-serum/anchor';
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
-import { keypairIdentity, Metaplex } from '@metaplex-foundation/js';
+import { keypairIdentity, Metaplex, toBigNumber } from '@metaplex-foundation/js';
 
 export interface Env {
   nftMint: PublicKey;
@@ -23,7 +23,7 @@ export const initEnvWithNftHolder = async (
       uri: '',
       name: '',
       sellerFeeBasisPoints: 200,
-      maxSupply: maxSupply,
+      maxSupply: toBigNumber(maxSupply),
       payer: wallet,
       owner: nftOwner.publicKey,
       mintAuthority: wallet
@@ -69,7 +69,7 @@ export const mintWhitelistToken = async (
       destination: receiver,
       mintAuthority: authority,
       amount: {
-        basisPoints: new BN(1),
+        basisPoints: toBigNumber(new BN(1)),
         currency: {
           symbol: '',
           decimals: 0

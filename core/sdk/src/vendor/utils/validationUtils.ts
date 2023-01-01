@@ -317,3 +317,14 @@ export const checkExtensionParams = (extensionPeriod: BN | undefined, extensionI
     }
   }
 };
+
+export const checkSaleOngoing = async (vaultAccount: PublicKey, program: Program) => {
+  const vaultData = await getEditionVaultData(vaultAccount, program);
+
+  const currentTime: BN = new BN(Date.now() / 1000);
+  const saleEndTime: BN = vaultData.startingTime.add(vaultData.salesPeriod);
+
+  if (currentTime.gte(saleEndTime) || vaultData.currentSupply.eq(vaultData.maxSupply)) {
+    throw new CandyShopError(CandyShopErrorType.EditionSaleCompleted);
+  }
+};
