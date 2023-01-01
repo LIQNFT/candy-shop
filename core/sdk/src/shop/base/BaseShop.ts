@@ -18,6 +18,7 @@ export interface CandyShopEditionDropper {
   commitMasterNft(params: any): Promise<string>;
   mintNewPrint(params: any): Promise<string>;
   redeemDrop(params: any): Promise<string>;
+  updateEditionVault(params: any): Promise<string>;
 }
 
 export interface BaseShopConstructorParams {

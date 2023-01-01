@@ -135,3 +135,8 @@ export interface MintPrintParams extends EditionDropParams {
 export interface RedeemNftParams extends EditionDropParams {
   nftOwner: AnchorWallet | web3.Keypair;
 }
+
+export interface UpdateEditionVaultParams extends EditionDropParams {
+  nftOwner: AnchorWallet | web3.Keypair;
+  newPrice: BN;
+}

@@ -38,7 +38,8 @@ export enum CandyShopErrorType {
   MissingExtensionSetting = 'MissingExtensionSetting',
   InvalidExtensionSettings = 'InvalidExtensionSettings',
   InvalidAuctionBiddingPeriod = 'InvalidAuctionBiddingPeriod',
-  NodeRequestFailed = 'NodeRequestFailed'
+  NodeRequestFailed = 'NodeRequestFailed',
+  EditionSaleCompleted = 'EdtionSaleCompleted'
 }
 
 export const CandyShopErrorMsgMap = {
@@ -85,7 +86,8 @@ export const CandyShopErrorMsgMap = {
   [CandyShopErrorType.InvalidExtensionSettings]: 'Extension period must not be greater than the extension increment.',
   [CandyShopErrorType.MissingExtensionSetting]: 'Both extension settings must be provided to use this functionality.',
   [CandyShopErrorType.InvalidAuctionBiddingPeriod]: 'Invalid auction bidding period.',
-  [CandyShopErrorType.NodeRequestFailed]: 'Node request failed.'
+  [CandyShopErrorType.NodeRequestFailed]: 'Node request failed.',
+  [CandyShopErrorType.EditionSaleCompleted]: 'Cannot update edition vault when sale has completed.'
 };
 
 export class CandyShopError extends Error {

@@ -733,7 +733,7 @@ programCommand('mintAllPrint')
   });
 
 programCommand('redeemDrop')
-  .description('mint an edition-ed NFT from the master edition')
+  .description('reclaim nft from edition vault before sale start')
   .requiredOption('-ota, --nft-owner-token-account <string>', 'NFT token account address')
   .requiredOption('-mem, --master-edition-mint <string>', 'NFT master edition mint address')
   .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
@@ -774,6 +774,56 @@ programCommand('redeemDrop')
       nftOwner: wallet,
       nftOwnerTokenAccount: new PublicKey(nftOwnerTokenAccount),
       masterMint: new PublicKey(masterEditionMint)
+    });
+
+    console.log('txHash', txHash);
+  });
+
+programCommand('updateEditionVault')
+  .description('update parameters of edition vault sale')
+  .requiredOption('-ota, --nft-owner-token-account <string>', 'NFT token account address')
+  .requiredOption('-mem, --master-edition-mint <string>', 'NFT master edition mint address')
+  .requiredOption('-tm, --treasury-mint <string>', 'Candy Shop treasury mint')
+  .requiredOption('-sc, --shop-creator <string>', 'Candy Shop creator address')
+  .requiredOption('-np, --new-price <string>', 'Updated edition sale price')
+  .action(async (name, cmd) => {
+    const {
+      keypair,
+      env,
+      nftOwnerTokenAccount,
+      masterEditionMint,
+      treasuryMint,
+      newPrice,
+      rpcUrl,
+      shopCreator,
+      version,
+      isEnterpriseArg
+    } = cmd.opts();
+    const wallet = loadKey(keypair);
+
+    if (version !== 'v2') {
+      throw new CandyShopError(CandyShopErrorType.IncorrectProgramId);
+    }
+
+    // default to v2
+    const candyShopProgramId = CANDY_SHOP_V2_PROGRAM_ID;
+
+    const candyShop = await CandyShop.initSolCandyShop({
+      shopCreatorAddress: shopCreator,
+      treasuryMint,
+      programId: candyShopProgramId.toString(),
+      env,
+      settings: {
+        connectionUrl: rpcUrl
+      },
+      isEnterprise: isEnterprise(isEnterpriseArg)
+    });
+
+    const txHash = await candyShop.updateEditionVault({
+      nftOwner: wallet,
+      nftOwnerTokenAccount: new PublicKey(nftOwnerTokenAccount),
+      masterMint: new PublicKey(masterEditionMint),
+      newPrice: new anchor.BN(newPrice)
     });
 
     console.log('txHash', txHash);
