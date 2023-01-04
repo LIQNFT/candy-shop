@@ -25,6 +25,7 @@ interface AuctionFormProps {
 enum CheckEnum {
   PERIOD = 'biddingPeriod',
   CLOCK_FORMAT = 'clockFormat',
+  CLOCK_FORMAT_END = 'clockFormatEnd',
   BUY_NOW = 'buyNow',
   START_NOW = 'startNow',
   DISABLE_BIDDING_EXTENSION = 'disableBiddingExtension',
@@ -38,9 +39,13 @@ export type FormType = {
   clockFormat: 'PM' | 'AM';
   auctionHour: string;
   auctionMinute: string;
+  clockFormatEnd: 'PM' | 'AM';
+  auctionHourEnd: string;
+  auctionMinuteEnd: string;
   buyNow?: boolean;
   startNow?: boolean;
   startDate: string;
+  endDate: string;
   tickSize: string;
   disableBiddingExtension: boolean;
   extensionPeriod: string;
@@ -66,6 +71,7 @@ const onResetValidation = () => {
     (document.getElementById(nodeId) as HTMLInputElement)?.setCustomValidity('')
   );
   (document.getElementById('startDate') as HTMLInputElement)?.setCustomValidity('');
+  (document.getElementById('endDate') as HTMLInputElement)?.setCustomValidity('');
 };
 
 export const AuctionForm: React.FC<AuctionFormProps> = ({
@@ -85,9 +91,13 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
     clockFormat: 'AM',
     auctionHour: '12',
     auctionMinute: '00',
+    clockFormatEnd: 'AM',
+    auctionHourEnd: '12',
+    auctionMinuteEnd: '00',
     startNow: false,
     buyNow: false,
     startDate: dayjs().add(1, 'd').format('YYYY-MM-DD'),
+    endDate: dayjs().add(3, 'd').format('YYYY-MM-DD'),
     disableBiddingExtension: false,
     extensionPeriod: ''
   });
@@ -107,7 +117,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     onResetValidation();
     const { value, name } = e.target as { value: any; name: keyof FormType };
-    if (name !== 'startDate') {
+    if (name !== 'startDate' && name !== 'endDate') {
       validateInput(name, Number(value) > 0 ? '' : VALIDATE_MESSAGE[name]);
     }
     if (name === 'buyNowPrice' && form.buyNow) {
@@ -148,12 +158,23 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
       `${form.startDate} ${convertTime12to24(form.auctionHour, form.auctionMinute, form.clockFormat)} UTC`
     ).unix();
 
+    const endDate = dayjs(
+      `${form.endDate} ${convertTime12to24(form.auctionHourEnd, form.auctionMinuteEnd, form.clockFormatEnd)} UTC`
+    ).unix();
+
+    const biddingPeriod = (endDate - startDate) / (60 * 60);
+
+    if (biddingPeriod <= 0) {
+      validateInput('endDate', `End time must be > Start time`);
+      return reportValidity();
+    }
+
     if (startDate <= NOW) {
       validateInput('startDate', `Start time must be > current time.`);
       return reportValidity();
     }
 
-    onSubmit(form);
+    onSubmit({ ...form, biddingPeriod });
   };
 
   const preventUpdateNumberOnWheel = (e: any) => {
@@ -237,32 +258,6 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
         <span className="candy-auction-form-sol">{currencySymbol}</span>
       </div>
 
-      <div className="candy-auction-period">
-        <label>Bidding period</label>
-        <div>
-          {PERIODS.map((item: any) => (
-            <button
-              key={item.value}
-              className={`candy-auction-radio ${
-                form[CheckEnum.PERIOD] === item.value ? '' : 'candy-auction-radio-disable'
-              }`}
-              onClick={onCheck(CheckEnum.PERIOD, item.value)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-        <input
-          required
-          value={form[CheckEnum.PERIOD]}
-          className="candy-auction-input-hidden"
-          id="auction_period"
-          name="auction_period"
-          onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Period is required.')}
-          onChange={EMPTY_FUNCTION}
-        />
-      </div>
-
       {showExtensionBidding && (
         <>
           <Checkbox
@@ -340,7 +335,6 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
               placeholder={'1'}
               min={1}
               max={12}
-              required={!form[CheckEnum.START_NOW]}
               value={form['auctionHour']}
               onChange={onChangeInput}
               onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Auction hour time is required.')}
@@ -395,6 +389,83 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
         </div>
       ) : null}
 
+      <div>
+        <div className="candy-auction-form-item">
+          <label htmlFor="endDate">Auction end date</label>
+          <input
+            id="endDate"
+            name="endDate"
+            type="date"
+            onChange={onChangeInput}
+            value={form['endDate']}
+            min={dayjs.utc().format('YYYY-MM-DD')}
+          />
+        </div>
+
+        <label htmlFor="auctionHourEnd" className="candy-auction-time-label">
+          Auction end time (UTC)
+        </label>
+        <div className="candy-auction-form-time">
+          <input
+            id="auctionHourEnd"
+            name="auctionHourEnd"
+            type="number"
+            onWheel={preventUpdateNumberOnWheel}
+            placeholder={'1'}
+            min={1}
+            max={12}
+            value={form['auctionHourEnd']}
+            onChange={onChangeInput}
+            onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Auction hour time is required.')}
+            maxLength={2}
+            step="any"
+          />
+          <span>:</span>
+          <input
+            id="auctionMinuteEnd"
+            name="auctionMinuteEnd"
+            type="number"
+            onWheel={preventUpdateNumberOnWheel}
+            placeholder={'00'}
+            max={59}
+            value={form['auctionMinuteEnd']}
+            onChange={onChangeInput}
+            step="any"
+            onBlur={(e) => {
+              const num = Number(form['auctionMinuteEnd']);
+              (e.target as HTMLInputElement).setCustomValidity('');
+              setForm((form) => ({ ...form, ['auctionMinuteEnd']: num >= 10 ? `${num}` : `0${num}` }));
+            }}
+          />
+          <div className="candy-auction-time-checkbox">
+            <button
+              className={`candy-auction-radio ${
+                form[CheckEnum.CLOCK_FORMAT_END] === 'AM' ? '' : 'candy-auction-radio-disable'
+              }`}
+              onClick={onCheck(CheckEnum.CLOCK_FORMAT_END, 'AM')}
+            >
+              AM
+            </button>
+            <button
+              className={`candy-auction-radio ${
+                form[CheckEnum.CLOCK_FORMAT_END] === 'PM' ? '' : 'candy-auction-radio-disable'
+              }`}
+              onClick={onCheck(CheckEnum.CLOCK_FORMAT_END, 'PM')}
+            >
+              PM
+            </button>
+          </div>
+          <input
+            value={form[CheckEnum.CLOCK_FORMAT_END]}
+            className="candy-auction-input-hidden"
+            id="auctionClockFormat"
+            name="auctionClockFormat"
+            onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('Clock format is required.')}
+            onChange={EMPTY_FUNCTION}
+          />
+        </div>
+      </div>
+
       <div className="candy-auction-confirm-button-container">
         <button className="candy-button candy-button-default" onClick={onBack}>
           Back
@@ -405,13 +476,6 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
   );
 };
 
-const PERIODS = [
-  { label: '1h', value: 1 },
-  { label: '6h', value: 6 },
-  { label: '12h', value: 12 },
-  { label: '24h', value: 24 },
-  { label: '48h', value: 48 }
-];
 const BIDDING_WINDOWS = [
   { label: '3m', value: '180' },
   { label: '5m', value: '300' },
