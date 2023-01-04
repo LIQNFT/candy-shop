@@ -26,7 +26,8 @@ interface CreateEditionFormProps {
 enum CheckEnum {
   release = 'whitelistRelease',
   whitelistTimeFormat = 'whitelistTimeFormat',
-  launchTimeFormat = 'launchTimeFormat'
+  launchTimeFormat = 'launchTimeFormat',
+  salesPeriodZero = 'salesPeriodZero'
 }
 
 export type FormType = {
@@ -44,6 +45,7 @@ export type FormType = {
   mintPrice: string;
   whitelistRelease: boolean;
   salesPeriod: string;
+  salesPeriodZero: boolean;
 };
 
 const validateInput = (nodeId: keyof FormType, message: string) => {
@@ -81,7 +83,8 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
       totalSupply: nft.maxSupply,
       mintPrice: '',
       whitelistRelease: false,
-      salesPeriod: ''
+      salesPeriod: '',
+      salesPeriodZero: false
     };
   });
 
@@ -99,7 +102,11 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
   const onCheckbox = (key: CheckEnum) => (e: any) => {
     e.preventDefault();
     onResetValidation();
-    setForm((prev: FormType) => ({ ...prev, [key]: !prev[key] }));
+    if (key === CheckEnum.salesPeriodZero) {
+      setForm((prev: FormType) => ({ ...prev, [key]: !prev[key], salesPeriod: '0' }));
+    } else {
+      setForm((prev: FormType) => ({ ...prev, [key]: !prev[key] }));
+    }
   };
 
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -269,13 +276,28 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
           type="number"
           onWheel={preventUpdateNumberOnWheel}
           placeholder="0"
-          min={1}
+          min={0}
           required
           value={form['salesPeriod']}
           onChange={onChangeInput}
           step="1"
+          disabled={form.salesPeriodZero}
         />
       </div>
+
+      <Checkbox
+        onClick={onCheckbox(CheckEnum.salesPeriodZero)}
+        checked={Boolean(form[CheckEnum.salesPeriodZero])}
+        id="salesPeriodZero"
+        label={
+          <span className="candy-edition-checkbox-label">
+            Until sold out
+            <Tooltip inner="Sales will run until sold out.">
+              <span className="candy-icon-question" />
+            </Tooltip>
+          </span>
+        }
+      />
 
       <div className="candy-edition-form-price">
         <div className="candy-edition-form-item">
