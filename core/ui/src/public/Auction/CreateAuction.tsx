@@ -104,6 +104,7 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
       //prettier-ignore
       dayjs(auctionForm.startNow ? undefined : `${auctionForm.startDate} ${convertTime12to24(auctionForm.auctionHour, auctionForm.auctionMinute, auctionForm.clockFormat)} UTC`).unix()
     );
+    // measured in hours
     const biddingPeriod = new BN(Number(auctionForm.biddingPeriod) * 3600);
     const buyNowPrice = auctionForm.buyNow
       ? new BN(Number(auctionForm.buyNowPrice) * 10 ** candyShop.currencyDecimals)
