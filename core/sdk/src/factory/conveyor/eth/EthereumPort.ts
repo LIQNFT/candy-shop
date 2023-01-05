@@ -50,14 +50,15 @@ export class EthereumPort {
    * @param uuid
    * @returns
    */
-  async fulfillOrder(signer: ethers.providers.JsonRpcSigner, uuid: string): Promise<string> {
+  async fulfillOrder(signer: ethers.providers.JsonRpcSigner, uuid: string, recipientAddress?: string): Promise<string> {
     const seaport = new Seaport(signer);
     const order = await this.getOrderByUuid(uuid);
     const accountAddress = await signer.getAddress();
     const orderComponents: OrderComponents = JSON.parse(order.rawOrderParams);
     const { executeAllActions } = await seaport.fulfillOrder({
       order: { parameters: orderComponents, signature: order.signature },
-      accountAddress
+      accountAddress,
+      recipientAddress
     });
     const execution = await executeAllActions();
     const receipt = await execution.wait();
