@@ -16,6 +16,7 @@ import {
   getEditionMarkAccount,
   getMasterEditionAccount,
   getMetadataAccount,
+  getNftCreators,
   parseNftUpdateAuthority,
   sendTx
 } from '../../../../../vendor';
@@ -53,6 +54,24 @@ export const mintPrint = async (
   const remainingAccounts: AccountMeta[] = [];
   const candyShopData = await getCandyShopData(candyShop, true, candyShopProgram);
 
+  const [
+    [vaultTokenAccount],
+    [shopTreasuryAddress],
+    [masterEditionMetadata],
+    [masterEdition],
+    [newEditionMetadata],
+    [newEdition],
+    [newEditionMark]
+  ] = await Promise.all([
+    getAtaForMint(masterMint, vaultAccount),
+    getAuctionHouseTreasuryAcct(auctionHouse),
+    getMetadataAccount(masterMint),
+    getMasterEditionAccount(masterMint),
+    getMetadataAccount(newEditionMint.publicKey),
+    getMasterEditionAccount(newEditionMint.publicKey),
+    getEditionMarkAccount(masterMint, editionNumber.toNumber())
+  ]);
+
   remainingAccounts.push({
     pubkey: vaultData.nftOwner,
     isSigner: false,
@@ -64,6 +83,18 @@ export const mintPrint = async (
     .forEach((owner: PublicKey) => {
       remainingAccounts.push({
         pubkey: owner,
+        isWritable: true,
+        isSigner: false
+      });
+    });
+
+  const nftCreators = await getNftCreators(masterEditionMetadata, program.provider.connection);
+
+  nftCreators
+    .filter((creator) => creator.share > 0)
+    .forEach((creator) => {
+      remainingAccounts.push({
+        pubkey: creator.address,
         isWritable: true,
         isSigner: false
       });
@@ -93,24 +124,6 @@ export const mintPrint = async (
       isSigner: false
     });
   }
-
-  const [
-    [vaultTokenAccount],
-    [shopTreasuryAddress],
-    [masterEditionMetadata],
-    [masterEdition],
-    [newEditionMetadata],
-    [newEdition],
-    [newEditionMark]
-  ] = await Promise.all([
-    getAtaForMint(masterMint, vaultAccount),
-    getAuctionHouseTreasuryAcct(auctionHouse),
-    getMetadataAccount(masterMint),
-    getMasterEditionAccount(masterMint),
-    getMetadataAccount(newEditionMint.publicKey),
-    getMasterEditionAccount(newEditionMint.publicKey),
-    getEditionMarkAccount(masterMint, editionNumber.toNumber())
-  ]);
 
   const updateAuthority = await parseNftUpdateAuthority(masterEditionMetadata, program.provider.connection);
 
