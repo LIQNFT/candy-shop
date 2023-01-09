@@ -28,6 +28,15 @@ export type SellModalProps = {
   sell: (nft: SingleTokenInfo, price: number) => Promise<string>;
 };
 
+const getLocalNumber = (price: string) => {
+  const arr = price.split('.');
+
+  if (price.includes('.') && arr[1] === '') {
+    return `${arr[0].replace(/\d(?=(?:\d{3})+$)/g, '$&,')}.`;
+  }
+  return arr[0].replace(/\d(?=(?:\d{3})+$)/g, '$&,') + (arr[1] ? `.${arr[1]}` : '');
+};
+
 export const SellModal: React.FC<SellModalProps> = ({
   onCancel: onUnSelectItem,
   nft,
@@ -40,7 +49,7 @@ export const SellModal: React.FC<SellModalProps> = ({
   getTokenMetadataByMintAddress,
   sell
 }) => {
-  const [formState, setFormState] = useState<{ price: number | undefined }>({
+  const [formState, setFormState] = useState<{ price: string | undefined }>({
     price: undefined
   });
   const [state, setState] = useState(TransactionState.DISPLAY);
@@ -58,7 +67,7 @@ export const SellModal: React.FC<SellModalProps> = ({
       notification('Please input sell price', NotificationType.Error);
       setState(TransactionState.DISPLAY);
       return;
-    } else if (formState.price < Math.pow(10, -currencyDecimals + 2)) {
+    } else if (+formState.price < Math.pow(10, -currencyDecimals + 2)) {
       notification(
         'The input sell price must greater than or equal to ' + Math.pow(10, -currencyDecimals + 2),
         NotificationType.Error
@@ -67,7 +76,7 @@ export const SellModal: React.FC<SellModalProps> = ({
       return;
     }
 
-    return sell(nft, formState.price)
+    return sell(nft, +formState.price)
       .then((txHash: string) => {
         console.log('SellModal: Place sell order with transaction hash= ', txHash);
         setState(TransactionState.CONFIRMED);
@@ -81,15 +90,20 @@ export const SellModal: React.FC<SellModalProps> = ({
 
   // Check active button submit
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value === '') {
+    let price = e.target.value.replace(/,/gi, '');
+    if (!Number(price)) return;
+    if (price === '') {
       setFormState((f) => ({ ...f, price: undefined }));
       return;
     }
 
-    const regex3Decimals = new RegExp('^[0-9]{1,11}(?:.[0-9]{1,3})?$');
-    if (regex3Decimals.test(e.target.value)) {
-      setFormState((f) => ({ ...f, price: +e.target.value }));
+    const arr = price.split('.');
+    if (arr[0].length > 11) return;
+    if ((arr[1] || '').length > 3) {
+      price = `${arr[0]}.${arr[1].slice(0, 3)}`;
     }
+
+    setFormState((f) => ({ ...f, price }));
   };
 
   const onCancel = useCallback(() => {
@@ -144,10 +158,9 @@ export const SellModal: React.FC<SellModalProps> = ({
               <div className="candy-sell-modal-input-number">
                 <input
                   placeholder="Price"
-                  min={0}
                   onChange={onChangeInput}
-                  type="number"
-                  value={formState.price === undefined ? '' : formState.price}
+                  value={formState.price === undefined ? '' : getLocalNumber(formState.price)}
+                  type="text"
                 />
                 <span>{currencySymbol}</span>
               </div>

@@ -39,7 +39,6 @@ export const CreateAuctionConfirm: React.FC<CreateAuctionConfirmProps> = ({
       name: 'Fees',
       value: fee ? `${fee.toFixed(1)}%` : 'N/A'
     },
-    { name: 'Bidding Period', value: `${auctionForm.biddingPeriod} hour(s)` },
     {
       name: 'Auction Start Date',
       value: getStartTime({
@@ -48,6 +47,15 @@ export const CreateAuctionConfirm: React.FC<CreateAuctionConfirmProps> = ({
         minute: auctionForm.auctionMinute,
         clockFormat: auctionForm.clockFormat,
         date: auctionForm.startDate
+      })
+    },
+    {
+      name: 'Auction End Date',
+      value: getStartTime({
+        hour: auctionForm.auctionHourEnd,
+        minute: auctionForm.auctionMinuteEnd,
+        clockFormat: auctionForm.clockFormatEnd,
+        date: auctionForm.endDate
       })
     }
   ];

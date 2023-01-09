@@ -29,7 +29,7 @@ export const getStartTime = (timeData: TimeInfo): string => {
         `${timeData.date} ${convertTime12to24(timeData.hour, timeData.minute, timeData.clockFormat)}`,
         'YYYY-MM-DD HH:mm'
       )
-      .format('MMMM DD, YYYY hh:mmA') + ' UTC'
+      .format('MMMM DD, YYYY HH:mm') + ' UTC'
   );
 };
 
