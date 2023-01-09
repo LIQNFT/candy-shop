@@ -67,11 +67,9 @@ const reportValidity = () => {
 };
 
 const onResetValidation = () => {
-  Object.keys(VALIDATE_MESSAGE).forEach((nodeId) =>
-    (document.getElementById(nodeId) as HTMLInputElement)?.setCustomValidity('')
-  );
-  (document.getElementById('startDate') as HTMLInputElement)?.setCustomValidity('');
-  (document.getElementById('endDate') as HTMLInputElement)?.setCustomValidity('');
+  Object.keys(VALIDATE_MESSAGE)
+    .concat('startDate', 'endDate')
+    .forEach((nodeId) => (document.getElementById(nodeId) as HTMLInputElement)?.setCustomValidity(''));
 };
 
 export const AuctionForm: React.FC<AuctionFormProps> = ({
@@ -154,9 +152,11 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
 
     const NOW = dayjs().unix();
 
-    const startDate = dayjs(
-      `${form.startDate} ${convertTime12to24(form.auctionHour, form.auctionMinute, form.clockFormat)} UTC`
-    ).unix();
+    const startDate = form.startNow
+      ? NOW
+      : dayjs(
+          `${form.startDate} ${convertTime12to24(form.auctionHour, form.auctionMinute, form.clockFormat)} UTC`
+        ).unix();
 
     const endDate = dayjs(
       `${form.endDate} ${convertTime12to24(form.auctionHourEnd, form.auctionMinuteEnd, form.clockFormatEnd)} UTC`
@@ -169,7 +169,7 @@ export const AuctionForm: React.FC<AuctionFormProps> = ({
       return reportValidity();
     }
 
-    if (startDate <= NOW) {
+    if (startDate < NOW) {
       validateInput('startDate', `Start time must be > current time.`);
       return reportValidity();
     }

@@ -98,7 +98,7 @@ export const CreateEditionDropConfirm: React.FC<CreateEditionDropProps> = ({
     },
     {
       name: 'Sales Period (mins)',
-      value: formData.salesPeriod
+      value: formData.salesPeriodZero ? 'Until sold out' : formData.salesPeriod
     }
   ];
 
