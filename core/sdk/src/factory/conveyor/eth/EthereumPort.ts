@@ -9,7 +9,8 @@ import {
   SeaportOrderData,
   ShopResponse,
   SplitReceiver,
-  ExecuteOrderParams
+  ExecuteOrderParams,
+  OrderPayloadResponse
 } from './types';
 
 interface CreateOrderParams {
@@ -130,7 +131,13 @@ export class EthereumPort {
   }
 
   async getOrderByUuid(uuid: string): Promise<OrderResponse> {
-    return axiosInstance.get(`${this.apiPath}/order/${uuid}`, {}).then((res) => res.data.result);
+    return axiosInstance.get(`${this.apiPath}/order/${uuid}`).then((res) => res.data.result);
+  }
+
+  async getFulfillOrderPayloadByUuid(uuid: string, buyerAddress: string): Promise<OrderPayloadResponse> {
+    return axiosInstance
+      .get(`${this.apiPath}/order/payload/${uuid}/buyer/${buyerAddress}`)
+      .then((res) => res.data.result);
   }
 
   /**
