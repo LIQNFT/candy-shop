@@ -37,8 +37,15 @@ export interface SeaportOrderData {
 
 export interface OrderResponse {
   uuid: string;
+  shopUuid: string;
   rawOrderParams: string;
   signature: string;
+  createdAt: string;
+}
+
+export interface OrderPayloadResponse {
+  payload: string;
+  targetContractAddress: string;
 }
 
 export interface ExecuteOrderParams {
