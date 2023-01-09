@@ -126,17 +126,17 @@ export class EthereumPort {
     };
   }
 
-  async getShopByUuid(uuid: string): Promise<{ result: ShopResponse }> {
-    return axiosInstance.get(`${this.apiPath}/shop/${uuid}`).then((res) => res.data);
+  getShopByUuid(shopUuid: string): Promise<{ result: ShopResponse }> {
+    return axiosInstance.get(`${this.apiPath}/shop/${shopUuid}`).then((res) => res.data);
   }
 
-  async getOrderByUuid(uuid: string): Promise<OrderResponse> {
-    return axiosInstance.get(`${this.apiPath}/order/${uuid}`).then((res) => res.data.result);
+  getOrderByUuid(orderUuid: string): Promise<OrderResponse> {
+    return axiosInstance.get(`${this.apiPath}/order/${orderUuid}`).then((res) => res.data.result);
   }
 
-  async getFulfillOrderPayloadByUuid(uuid: string, buyerAddress: string): Promise<OrderPayloadResponse> {
+  getFulfillOrderPayloadByUuidAndBuyerAddress(orderUuid: string, buyerAddress: string): Promise<OrderPayloadResponse> {
     return axiosInstance
-      .get(`${this.apiPath}/order/payload/${uuid}/buyer/${buyerAddress}`)
+      .get(`${this.apiPath}/order/payload/${orderUuid}/buyer/${buyerAddress}`)
       .then((res) => res.data.result);
   }
 
