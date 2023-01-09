@@ -171,4 +171,9 @@ export class EthCandyShop extends BaseShop {
     const txHash = await this.ethereumPort.cancelOrder(wallet, orderUuid);
     return txHash;
   }
+
+  getNftPurchasePayload(params: { buyerAddress: string; orderUuid: string }) {
+    const { buyerAddress, orderUuid } = params;
+    return this.ethereumPort.getFulfillOrderPayloadByUuidAndBuyerAddress(orderUuid, buyerAddress);
+  }
 }
