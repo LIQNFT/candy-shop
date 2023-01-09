@@ -69,7 +69,7 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
 
   return (
     <>
-      {hasNextPage === false && orders.length > 0 ? (
+      {orders.length > 0 ? (
         <InfiniteScroll
           dataLength={orders.length}
           next={loadNextPage}
