@@ -67,11 +67,11 @@ export const checkPaymentAccountBalance = async (
 ): Promise<void> => {
   // If isNative = true then payment account = calling user's pubkey
   // i.e. connection.getAccountInfo(paymentAccount) will not return null
-  let paymentAccountBalance: number | undefined | null;
+  let paymentAccountBalance: BN | undefined | null;
 
   if (isNative) {
     const info = await connection.getAccountInfo(paymentAccount);
-    paymentAccountBalance = info?.lamports;
+    paymentAccountBalance = info?.lamports ? new BN(info?.lamports) : undefined;
   } else {
     const accountBalance = await safeAwait(connection.getTokenAccountBalance(paymentAccount));
 
@@ -79,11 +79,11 @@ export const checkPaymentAccountBalance = async (
       console.log('checkPaymentAccountBalance: getTokenAccountBalance error= ', accountBalance.error);
       paymentAccountBalance = undefined;
     } else {
-      paymentAccountBalance = new BN(accountBalance.result.value.amount).toNumber();
+      paymentAccountBalance = new BN(accountBalance.result.value.amount);
     }
   }
 
-  if (!paymentAccountBalance || paymentAccountBalance < price) {
+  if (!paymentAccountBalance || paymentAccountBalance.ltn(price)) {
     throw new CandyShopError(CandyShopErrorType.InsufficientBalance);
   }
 };
