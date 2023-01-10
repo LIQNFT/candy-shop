@@ -1,4 +1,5 @@
 import { NftAttribute, NftCreator, NftProperties } from '../nft';
+import { Blockchain } from '../query';
 
 export enum Side {
   BUY,
@@ -16,6 +17,7 @@ export enum Status {
 
 export interface Order {
   side: Side;
+  blockchain: Blockchain;
   // NFT collection name, e.g. SMB
   ticker: string;
   verifiedNftCollection: number;
