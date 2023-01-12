@@ -14,6 +14,7 @@ import { notification, NotificationType } from 'utils/rc-notification';
 
 import IconTick from 'assets/IconTick';
 import './style.less';
+import { getNumberFromPriceStr, SellPriceValidationState, validateSellPrice } from 'utils/getPrice';
 
 export type SellModalProps = {
   nft: SingleTokenInfo;
@@ -26,15 +27,6 @@ export type SellModalProps = {
   onCancel: () => void;
   getTokenMetadataByMintAddress: (tokenMintAddress: string) => Promise<NftMetadata>;
   sell: (nft: SingleTokenInfo, price: number) => Promise<string>;
-};
-
-const getLocalNumber = (price: string) => {
-  const arr = price.split('.');
-
-  if (price.includes('.') && arr[1] === '') {
-    return `${arr[0].replace(/\d(?=(?:\d{3})+$)/g, '$&,')}.`;
-  }
-  return arr[0].replace(/\d(?=(?:\d{3})+$)/g, '$&,') + (arr[1] ? `.${arr[1]}` : '');
 };
 
 export const SellModal: React.FC<SellModalProps> = ({
@@ -56,27 +48,21 @@ export const SellModal: React.FC<SellModalProps> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [royalties, setRoyalties] = useState<number>();
 
-  const sellNft = async () => {
-    setState(TransactionState.PROCESSING);
+  const sellNft = (event: React.SyntheticEvent) => {
+    event.preventDefault();
 
     if (!wallet) {
       notification(ErrorMsgMap[ErrorType.InvalidWallet], NotificationType.Error);
       return;
     }
-    if (!formState.price) {
-      notification('Please input sell price', NotificationType.Error);
-      setState(TransactionState.DISPLAY);
-      return;
-    } else if (+formState.price < Math.pow(10, -currencyDecimals + 2)) {
-      notification(
-        'The input sell price must greater than or equal to ' + Math.pow(10, -currencyDecimals + 2),
-        NotificationType.Error
-      );
-      setState(TransactionState.DISPLAY);
-      return;
-    }
 
-    return sell(nft, +formState.price)
+    const price = Number(formState.price);
+
+    const validationState = validateSellPrice(price, currencyDecimals);
+    if (validationState !== SellPriceValidationState.Valid) return;
+
+    setState(TransactionState.PROCESSING);
+    return sell(nft, price)
       .then((txHash: string) => {
         console.log('SellModal: Place sell order with transaction hash= ', txHash);
         setState(TransactionState.CONFIRMED);
@@ -91,7 +77,7 @@ export const SellModal: React.FC<SellModalProps> = ({
   // Check active button submit
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     let price = e.target.value.replace(/,/gi, '');
-    if (!Number(price)) return;
+    if (isNaN(Number(price))) return;
     if (price === '') {
       setFormState((f) => ({ ...f, price: undefined }));
       return;
@@ -159,7 +145,7 @@ export const SellModal: React.FC<SellModalProps> = ({
                 <input
                   placeholder="Price"
                   onChange={onChangeInput}
-                  value={formState.price === undefined ? '' : getLocalNumber(formState.price)}
+                  value={formState.price === undefined ? '' : getNumberFromPriceStr(formState.price)}
                   type="text"
                 />
                 <span>{currencySymbol}</span>
