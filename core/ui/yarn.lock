@@ -1782,12 +1782,12 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-6.10.0.tgz#c012c1ecc1a0e53d50e6af381618dca5268461c1"
   integrity sha512-lLseUPEhSFUXYTKj6q7s2O3s2vW2ebgA11vMAlKodXGf5AFw4zUoEbTz9CoFOC9jS6xY4Qr8BmRnxP/odT4Uuw==
 
-"@liqnft/candy-shop-sdk@0.5.63":
-  version "0.5.63"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-sdk/-/candy-shop-sdk-0.5.63.tgz#3177514504148d444fde6b186d9d5004b6ee2e48"
-  integrity sha512-ysGK4KnfG4T7j3V2httV/ZjQ3L0qcfQvQ8n7UjrLpk8/xl7wnTI8YfmlUBnhd/1ZCkGKhkJ42ZINFnpW7HlHIg==
+"@liqnft/candy-shop-sdk@0.5.64":
+  version "0.5.64"
+  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-sdk/-/candy-shop-sdk-0.5.64.tgz#eab0106b7939ad4a1af3a08ee4db4f62f548245e"
+  integrity sha512-DvuHLnP6Lxw4EnCiF4OKVHLNTxz1sHsaKhuXrp63mmWtyX00Laa4rgRiVLCcD1SFdVvUP1gtq44fap6H/oSDQQ==
   dependencies:
-    "@liqnft/candy-shop-types" "0.2.63"
+    "@liqnft/candy-shop-types" "0.2.64"
     "@opensea/seaport-js" "^1.0.8"
     "@project-serum/anchor" "^0.23.0"
     "@solana/spl-token" "^0.2.0"
@@ -1800,15 +1800,10 @@
     idb "^7.0.1"
     qs "^6.10.3"
 
-"@liqnft/candy-shop-types@0.2.62":
-  version "0.2.62"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.2.62.tgz#520a6ae1e0aad1ed54803e9775718d8428f1f743"
-  integrity sha512-zWLKQwPYM66qSAmq2afSdbfqUyZpKYqOv8rhCBbVltMMo5ARG1ggpIqDB0YBZ3X/0VNr0aOYavEoEIa03ChU1g==
-
-"@liqnft/candy-shop-types@0.2.63":
-  version "0.2.63"
-  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.2.63.tgz#640769d01900855b6148671f087f3318160ace2c"
-  integrity sha512-jzCTiVjFA1Ybt9rD6MAZzxzV98n2jVkU3QxYbOqAS6TJbQu9Bd33ONzfPD25bslkD+zjdBK9j/m6P2xHOayMMA==
+"@liqnft/candy-shop-types@0.2.64":
+  version "0.2.64"
+  resolved "https://registry.yarnpkg.com/@liqnft/candy-shop-types/-/candy-shop-types-0.2.64.tgz#46f1f4f51845fabcc370c8df19aac8fa35d11312"
+  integrity sha512-P77C5wP4FFjm9ZVsha2Uie4OFh0OWghdwRBPCSCtIlNHnH1dsbIi7+fo1EeXMOeoo55SOC1oYyzikXsbA2iOVQ==
 
 "@opensea/seaport-js@^1.0.8":
   version "1.0.8"
