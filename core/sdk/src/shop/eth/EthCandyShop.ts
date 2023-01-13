@@ -8,7 +8,6 @@ import { CandyShopVersion, ExplorerLinkBase, ShopSettings } from '../base/BaseSh
 import { EthereumPort, ExecuteOrderParams } from '../../factory/conveyor/eth';
 import { safeAwait, SingleTokenInfo } from '../../vendor';
 import { fetchShopsByIdentifier } from '../../CandyShopInfoAPI';
-import Decimal from 'decimal.js';
 
 const DEFAULT_PRICE_DECIMALS = 3;
 const DEFAULT_PRICE_DECIMALS_MIN = 0;
@@ -121,6 +120,7 @@ export class EthCandyShop extends BaseShop {
    * 1. Get user to approve the NFT token allowance.
    * 2. Execute Order request for order registration.
    * @param params
+   * @property {number} price: user input value on the UI with minimum value with maximum number of fraction is 3
    * @returns
    */
   async sell(params: { providers: any; nft: SingleTokenInfo; price: number }): Promise<string> {
@@ -132,7 +132,11 @@ export class EthCandyShop extends BaseShop {
     const shop = shopResult.result;
 
     const offerer = await wallet.getAddress();
-    const priceValue = new Decimal(`${price}e${this.currencyDecimals}`).toString();
+    const priceValue = ethers.BigNumber.from(price * 1000)
+      .mul(ethers.BigNumber.from(10).pow(this.currencyDecimals))
+      .div(1000)
+      .toString();
+
     const consideration = this.ethereumPort.getConsiderationFromOrder(
       offerer,
       { address: shop.paymentAssets[0].address, type: shop.paymentAssets[0].type, value: priceValue },

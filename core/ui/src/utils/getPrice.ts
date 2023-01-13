@@ -37,13 +37,6 @@ export const enum SellPriceValidationState {
 }
 
 export const validateSellPrice = (price: number, currencyDecimals: number): SellPriceValidationState => {
-  if (price * Math.pow(10, currencyDecimals) >= Number.MAX_SAFE_INTEGER) {
-    notification(
-      `The input sell price must less than ${Math.ceil(Number.MAX_SAFE_INTEGER / Math.pow(10, currencyDecimals))}`,
-      NotificationType.Error
-    );
-    return SellPriceValidationState.Invalid;
-  }
   const minSellPrice = Math.pow(10, 2 - currencyDecimals);
   if (isNaN(price) || price === 0) {
     notification(`Please input valid sell price`, NotificationType.Error);
