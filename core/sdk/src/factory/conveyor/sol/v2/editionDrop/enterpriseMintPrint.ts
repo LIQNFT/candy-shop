@@ -17,11 +17,11 @@ import {
   getMasterEditionAccount,
   getMetadataAccount,
   getNftCreators,
-  parseNftUpdateAuthority,
   sendTx
 } from '../../../../../vendor';
 import { TOKEN_METADATA_PROGRAM_ID } from '../../../../constants';
 import { MintPrintParams } from '../../types/shop.type';
+import { parseNftUpdateAuthority } from '../../parseData';
 
 /**
  * mintPrint

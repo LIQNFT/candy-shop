@@ -10,9 +10,7 @@ import {
   sendTx,
   treasuryMintIsNative,
   CandyShopError,
-  CandyShopErrorType,
-  Metadata,
-  parseMetadata
+  CandyShopErrorType
 } from '../../../../../vendor';
 import {
   checkDelegateOnReceiptAccounts,
@@ -20,6 +18,7 @@ import {
   checkPaymentAccountBalance
 } from '../../../../../vendor/utils/validationUtils';
 import { BuyAndExecuteSaleTransactionParams } from '../../types/shop.type';
+import { parseMetadata, Metadata } from '../../parseData';
 
 export async function buyAndExecuteSale(params: BuyAndExecuteSaleTransactionParams) {
   const {

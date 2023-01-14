@@ -8,10 +8,10 @@ import {
   getMasterEditionAccount,
   getEditionMarkAccount,
   checkEditionMintPeriod,
-  sendTx,
-  parseNftUpdateAuthority
+  sendTx
 } from '../../../../../vendor';
 import { TOKEN_METADATA_PROGRAM_ID, WRAPPED_SOL_MINT } from '../../../../constants';
+import { parseNftUpdateAuthority } from '../../parseData';
 
 export const mintPrint = async (newTokenInstruction: TransactionInstruction[], params: MintPrintParams) => {
   const {

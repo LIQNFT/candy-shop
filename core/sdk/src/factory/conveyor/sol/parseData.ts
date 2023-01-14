@@ -1,8 +1,8 @@
 import { deserializeUnchecked } from 'borsh';
 import { BN, web3 } from '@project-serum/anchor';
 import { Connection, PublicKey } from '@solana/web3.js';
-import { safeAwait } from '../utils';
-import { CandyShopError, CandyShopErrorType } from '../error';
+import { safeAwait } from '../../../vendor/utils';
+import { CandyShopError, CandyShopErrorType } from '../../../vendor/error';
 
 // eslint-disable-next-line
 export const METADATA_REPLACE = new RegExp('\u0000', 'g');
@@ -214,25 +214,3 @@ export const parseNftUpdateAuthority = async (
   const metadata = parseMetadata(metadataAccount.result.data);
   return new PublicKey(metadata.updateAuthority);
 };
-
-export interface RawTokenInfo {
-  account: any;
-  uri?: any;
-  tokenMint: string;
-  tokenPubkey: string;
-  metadata?: Metadata;
-  edition?: string;
-  amount: string;
-}
-
-export interface EditionDrop {
-  amount: string;
-  edition: string;
-  maxSupply: number;
-  nftImage: string;
-  tokenAccountAddress: string;
-  tokenMintAddress: string;
-  nftDescription: string;
-  name: string;
-  symbol: string;
-}

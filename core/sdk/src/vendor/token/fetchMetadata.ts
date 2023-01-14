@@ -4,7 +4,7 @@ import axios from 'axios';
 import * as crc32 from 'crc-32';
 import { CandyShopError, CandyShopErrorType } from '../error';
 import { safeAwait } from '../utils/promiseUtils';
-import { Metadata, parseEdition, parseMetadata } from './parseData';
+import { Metadata, parseEdition, parseMetadata } from '../../factory/conveyor/sol/parseData';
 import { TOKEN_METADATA_PROGRAM_ID } from '../../factory/constants';
 
 interface NFTMetadataInfo {

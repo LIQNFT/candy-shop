@@ -9,9 +9,10 @@ import {
 } from './fetchMetadata';
 import { deleteCandyShopIDB, retrieveWalletNftFromIDB, storeWalletNftToIDB } from '../../idb';
 import { safeAwait, sleepPromise } from '../utils/promiseUtils';
-import { EditionDrop, parseEdition, parseMasterEditionV2, RawTokenInfo } from './parseData';
+import { parseEdition, parseMasterEditionV2 } from '../../factory/conveyor/sol/parseData';
 import { TOKEN_METADATA_PROGRAM_ID } from '../../factory/constants';
 import { CacheNFTParam, FetchNFTBatchParam } from './fetch.type';
+import { EditionDrop, RawTokenInfo } from './token.type';
 
 const Logger = 'CandyShopSDK/fetchSolNftsFromWallet';
 
