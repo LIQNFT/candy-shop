@@ -29,7 +29,7 @@ import { CandyShopVersion } from '../../shop/base/BaseShopModel';
 import candyShopIdl from '../../idl/candy_shop.json';
 import candyShopV2Idl from '../../idl/candy_shop_v2.json';
 import { CandyShopError, CandyShopErrorType } from '../error';
-import { Creator, Metadata, parseMetadata } from '../token/parseData';
+import { Creator, Metadata, parseMetadata } from '../../factory/conveyor/sol/parseData';
 import { safeAwait } from './promiseUtils';
 import { awaitTransactionSignatureConfirmation } from './transactionUtils';
 

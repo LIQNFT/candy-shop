@@ -12,7 +12,7 @@ import {
   WRAPPED_SOL_MINT
 } from '../../factory/constants';
 import { CandyShopError, CandyShopErrorType } from '../error';
-import { parseMasterEditionV2 } from '../token/parseData';
+import { parseMasterEditionV2 } from '../../factory/conveyor/sol/parseData';
 import {
   getAuctionData,
   getAuctionHouseProgramAsSigner,
