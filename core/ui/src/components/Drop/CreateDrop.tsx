@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyShop, CANDY_SHOP_V2_PROGRAM_ID, EditionDrop } from '@liqnft/candy-shop-sdk';
+import { CandyShop, CANDY_SHOP_V2_PROGRAM_ID, MasterEditionNft } from '@liqnft/candy-shop-sdk';
 
 import { CreateEditionDropConfirm } from 'components/Drop/Confirm';
 import { CreateEditionForm, FormType } from 'components/Drop/Form';
@@ -12,7 +12,7 @@ interface CreateDropProps {
   wallet: AnchorWallet | undefined;
   candyShop: CandyShop;
   walletConnectComponent: React.ReactElement;
-  onCreatedDropSuccess?: (auctionedToken: EditionDrop) => void;
+  onCreatedDropSuccess?: (auctionedToken: MasterEditionNft) => void;
   cacheUserNFT?: boolean;
 }
 
@@ -39,10 +39,10 @@ export const CreateDrop: React.FC<CreateDropProps> = ({
   onCreatedDropSuccess
 }) => {
   const [stage, setStage] = useState<DropStage>(DropStage.SELECT);
-  const [dropNft, setDropNft] = useState<EditionDrop>();
+  const [dropNft, setDropNft] = useState<MasterEditionNft>();
   const [editionForm, setEditionForm] = useState<FormType>();
 
-  const onClickCard = (item: EditionDrop) => () => setDropNft(item);
+  const onClickCard = (item: MasterEditionNft) => () => setDropNft(item);
 
   const onGoToNextAuctionDetail = () => {
     setStage(DropStage.DETAIL);
@@ -83,7 +83,9 @@ export const CreateDrop: React.FC<CreateDropProps> = ({
           dropNft={dropNft}
           onBack={() => setStage(DropStage.DETAIL)}
           formData={editionForm}
-          onCreateDropSuccess={(dropNft: EditionDrop) => onCreatedDropSuccess && onCreatedDropSuccess(dropNft)}
+          onCreateDropSuccess={(masterEditionNft: MasterEditionNft) =>
+            onCreatedDropSuccess && onCreatedDropSuccess(masterEditionNft)
+          }
         />
       )}
     </div>

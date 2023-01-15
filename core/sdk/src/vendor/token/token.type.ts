@@ -10,7 +10,7 @@ export interface RawTokenInfo {
   amount: string;
 }
 
-export interface EditionDrop {
+export interface MasterEditionNft {
   amount: string;
   edition: string;
   maxSupply: number;
