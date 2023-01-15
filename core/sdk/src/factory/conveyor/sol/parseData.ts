@@ -1,18 +1,18 @@
 import { deserializeUnchecked } from 'borsh';
-import { BN, web3 } from '@project-serum/anchor';
+import { BN } from '@project-serum/anchor';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { safeAwait } from '../../../vendor/utils';
 import { CandyShopError, CandyShopErrorType } from '../../../vendor/error';
 
 // eslint-disable-next-line
-export const METADATA_REPLACE = new RegExp('\u0000', 'g');
+const METADATA_REPLACE = new RegExp('\u0000', 'g');
 
 export class Creator {
-  address: web3.PublicKey;
-  verified: boolean;
+  address: PublicKey;
+  verified: number;
   share: number;
 
-  constructor(args: { address: web3.PublicKey; verified: boolean; share: number }) {
+  constructor(args: { address: PublicKey; verified: number; share: number }) {
     this.address = args.address;
     this.verified = args.verified;
     this.share = args.share;
@@ -50,9 +50,9 @@ export class EditionMarker {
 
 export class Edition {
   key: MetadataKey;
-  parent: web3.PublicKey;
+  parent: PublicKey;
   edition: BN;
-  constructor(args: { key: MetadataKey; parent: web3.PublicKey; edition: BN }) {
+  constructor(args: { key: MetadataKey; parent: PublicKey; edition: BN }) {
     this.key = MetadataKey.EditionV1;
     this.parent = args.parent;
     this.edition = args.edition;
@@ -82,20 +82,27 @@ export class Data {
 
 export class Metadata {
   key: MetadataKey;
-  updateAuthority: web3.PublicKey;
-  mint: web3.PublicKey;
+  updateAuthority: PublicKey;
+  mint: PublicKey;
   data: Data;
   primarySaleHappened: boolean;
   isMutable: boolean;
-  masterEdition?: web3.PublicKey;
-  edition?: web3.PublicKey;
+  masterEdition?: PublicKey;
+  edition?: PublicKey;
+  editionNonce: number;
+  tokenStandard: number;
+  collection: Collection;
   constructor(args: {
-    updateAuthority: web3.PublicKey;
-    mint: web3.PublicKey;
+    updateAuthority: PublicKey;
+    mint: PublicKey;
     data: Data;
     primarySaleHappened: boolean;
     isMutable: boolean;
-    masterEdition?: web3.PublicKey;
+    masterEdition?: PublicKey;
+    edition?: PublicKey;
+    editionNonce: number;
+    tokenStandard: number;
+    collection: Collection;
   }) {
     this.key = MetadataKey.MetadataV1;
     this.updateAuthority = args.updateAuthority;
@@ -103,10 +110,22 @@ export class Metadata {
     this.data = args.data;
     this.primarySaleHappened = args.primarySaleHappened;
     this.isMutable = args.isMutable;
+    this.editionNonce = args.editionNonce;
+    this.tokenStandard = args.tokenStandard;
+    this.collection = args.collection;
   }
 }
 
-export const METADATA_SCHEMA = new Map<any, any>([
+export class Collection {
+  verified: boolean;
+  key: PublicKey;
+  constructor(args: { verified: boolean; key: PublicKey }) {
+    this.verified = args.verified;
+    this.key = args.key;
+  }
+}
+
+const METADATA_SCHEMA = new Map<any, any>([
   [
     MasterEditionV2,
     {
@@ -163,7 +182,20 @@ export const METADATA_SCHEMA = new Map<any, any>([
         ['mint', [32]],
         ['data', Data],
         ['primarySaleHappened', 'u8'],
-        ['isMutable', 'u8']
+        ['isMutable', 'u8'],
+        ['editionNonce', { kind: 'option', type: 'u8' }],
+        ['tokenStandard', { kind: 'option', type: 'u8' }],
+        ['collection', { kind: 'option', type: Collection }]
+      ]
+    }
+  ],
+  [
+    Collection,
+    {
+      kind: 'struct',
+      fields: [
+        ['verified', 'u8'],
+        ['key', [32]]
       ]
     }
   ],
@@ -179,10 +211,8 @@ export const METADATA_SCHEMA = new Map<any, any>([
   ]
 ]);
 
-export type AssetKey = { mediaExt: string; index: string };
-
-export const parseMasterEditionV2 = (buffer: Buffer) => {
-  return deserializeUnchecked(METADATA_SCHEMA, MasterEditionV2, buffer);
+export const parseMasterEditionV2 = (buffer: Buffer): MasterEditionV2 => {
+  return deserializeUnchecked(METADATA_SCHEMA, MasterEditionV2, buffer) as MasterEditionV2;
 };
 
 export const parseMetadata = (buffer: Buffer): Metadata => {
@@ -198,10 +228,6 @@ export const parseEditionMarker = (buffer: Buffer): EditionMarker => {
   return editionMarker;
 };
 
-export const parseEdition = (buffer: Buffer) => {
-  return deserializeUnchecked(METADATA_SCHEMA, Edition, buffer) as Edition;
-};
-
 export const parseNftUpdateAuthority = async (
   metadataAddress: PublicKey,
   connection: Connection
@@ -213,4 +239,10 @@ export const parseNftUpdateAuthority = async (
 
   const metadata = parseMetadata(metadataAccount.result.data);
   return new PublicKey(metadata.updateAuthority);
+};
+
+export const parseEdition = (buffer: Buffer) => {
+  if (buffer.at(0) !== MetadataKey.EditionV1) return null;
+  const parsedData = deserializeUnchecked(METADATA_SCHEMA, Edition, buffer) as Edition;
+  return parsedData;
 };
