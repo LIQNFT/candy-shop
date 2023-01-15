@@ -94,7 +94,7 @@ export const mintPrint = async (
     .filter((creator) => creator.share > 0)
     .forEach((creator) => {
       remainingAccounts.push({
-        pubkey: creator.address,
+        pubkey: new PublicKey(creator.address),
         isWritable: true,
         isSigner: false
       });
