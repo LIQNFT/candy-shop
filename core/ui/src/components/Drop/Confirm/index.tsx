@@ -1,6 +1,6 @@
 import React from 'react';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { CandyShop, EditionDrop } from '@liqnft/candy-shop-sdk';
+import { CandyShop, MasterEditionNft } from '@liqnft/candy-shop-sdk';
 import { FormType } from '../Form';
 import { convertTime12to24, getStartTime } from 'utils/timer';
 
@@ -17,10 +17,10 @@ import { handleError } from 'utils/ErrorHandler';
 interface CreateEditionDropProps {
   wallet: AnchorWallet | undefined;
   candyShop: CandyShop;
-  dropNft: EditionDrop;
+  dropNft: MasterEditionNft;
   onBack: () => void;
   formData: FormType;
-  onCreateDropSuccess?: (auctionedToken: EditionDrop) => void;
+  onCreateDropSuccess?: (auctionedToken: MasterEditionNft) => void;
   fee?: number;
 }
 

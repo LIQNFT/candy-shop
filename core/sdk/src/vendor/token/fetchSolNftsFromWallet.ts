@@ -12,7 +12,7 @@ import { safeAwait, sleepPromise } from '../utils/promiseUtils';
 import { parseEdition, parseMasterEditionV2 } from '../../factory/conveyor/sol/parseData';
 import { TOKEN_METADATA_PROGRAM_ID } from '../../factory/constants';
 import { CacheNFTParam, FetchNFTBatchParam } from './fetch.type';
-import { EditionDrop, RawTokenInfo } from './token.type';
+import { MasterEditionNft, RawTokenInfo } from './token.type';
 
 const Logger = 'CandyShopSDK/fetchSolNftsFromWallet';
 
@@ -199,7 +199,7 @@ const getValidChunkSize = (chunkSize: number | undefined): number => {
 export const fetchUserMasterNFTs = async (
   userWalletPublicKey: web3.PublicKey,
   connection: web3.Connection
-): Promise<EditionDrop[]> => {
+): Promise<MasterEditionNft[]> => {
   const [rawTokens, nftsInfo] = await Promise.all([
     safeAwait(connection.getParsedTokenAccountsByOwner(userWalletPublicKey, { programId: TOKEN_PROGRAM_ID })),
     safeAwait(fetchNftsFromWallet(connection, userWalletPublicKey, undefined))

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CandyShop, EditionDrop, fetchUserMasterNFTs } from '@liqnft/candy-shop-sdk';
+import { CandyShop, MasterEditionNft, fetchUserMasterNFTs } from '@liqnft/candy-shop-sdk';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
 import { Empty } from 'components/Empty';
@@ -12,9 +12,9 @@ import { handleError } from 'utils/ErrorHandler';
 
 interface DropSelectionProps {
   candyShop: CandyShop;
-  onSelect: (item: EditionDrop) => () => void;
+  onSelect: (item: MasterEditionNft) => () => void;
   onNext: () => void;
-  dropNft?: EditionDrop;
+  dropNft?: MasterEditionNft;
   wallet: AnchorWallet | undefined;
   walletConnectComponent: React.ReactElement;
 }
@@ -29,7 +29,7 @@ export const DropSelection: React.FC<DropSelectionProps> = ({
   wallet,
   walletConnectComponent
 }) => {
-  const [dropNfts, setDropNfts] = useState<EditionDrop[]>([]);
+  const [dropNfts, setDropNfts] = useState<MasterEditionNft[]>([]);
   const [loading, setLoading] = useState<LoadStatus>(LoadStatus.ToLoad);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export const DropSelection: React.FC<DropSelectionProps> = ({
     const connection = candyShop.connection;
 
     fetchUserMasterNFTs(wallet.publicKey, connection)
-      .then((result: EditionDrop[]) => {
+      .then((result: MasterEditionNft[]) => {
         console.log('Master NFT:', result);
         setDropNfts(result);
       })

@@ -4,7 +4,7 @@ import { Checkbox } from 'components/Checkbox';
 import { EMPTY_FUNCTION } from 'utils/helperFunc';
 
 import { Tooltip } from 'components/Tooltip';
-import { EditionDrop } from '@liqnft/candy-shop-sdk';
+import { MasterEditionNft } from '@liqnft/candy-shop-sdk';
 import { convertTime12to24 } from 'utils/timer';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -17,7 +17,7 @@ import './style.less';
 
 interface CreateEditionFormProps {
   onSubmit: (...args: any) => void;
-  nft: EditionDrop;
+  nft: MasterEditionNft;
   formData?: FormType;
   onBack: () => void;
   currencySymbol: string;
