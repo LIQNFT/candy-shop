@@ -262,7 +262,7 @@ export const fetchUserMasterNFTs = async (
         ...e,
         maxSupply: masterEditionInfo.maxSupply?.toString(),
         supply: masterEditionInfo.supply.toString(),
-        edition: editionInfo.edition.toString()
+        edition: editionInfo?.edition.toString()
       };
     })
   );
