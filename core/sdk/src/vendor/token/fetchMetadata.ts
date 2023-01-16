@@ -139,7 +139,7 @@ const getNFTEditionInfo = async (connection: web3.Connection, tokenAccount: Acco
   }
 
   const editionInfo = nftEditionAccountInfo.result
-    ? parseEdition(nftEditionAccountInfo.result.data).edition.toString()
+    ? parseEdition(nftEditionAccountInfo.result.data)?.edition.toString()
     : undefined;
   return editionInfo;
 };
