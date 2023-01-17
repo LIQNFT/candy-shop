@@ -1,5 +1,10 @@
 import { NftAttribute, NftProperties } from '../nft';
 
+export enum RedeemState {
+  Unredeemed,
+  Redeemed
+}
+
 export enum DropType {
   Editioned = 0
 }
@@ -8,7 +13,8 @@ export enum DropStatus {
   CREATED = 0,
   WHITELIST_STARTED = 1,
   SALE_STARTED = 2,
-  SALE_COMPLETED = 3
+  SALE_COMPLETED = 3,
+  PENDING_ON_CHAIN = 4
 }
 
 export interface Drop {

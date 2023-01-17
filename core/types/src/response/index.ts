@@ -13,3 +13,4 @@ export * from './nftCollection';
 export * from './candyShopProfile';
 export * from './drop';
 export * from './dropActivity';
+export * from './dropRedemption';
