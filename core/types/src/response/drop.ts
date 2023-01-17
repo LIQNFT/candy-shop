@@ -32,6 +32,7 @@ export interface Drop {
   createdAt: string;
   updatedAt: string;
   status: DropStatus;
+  hasRedemption: boolean;
 
   // Nft Info
   nftUri?: string;
