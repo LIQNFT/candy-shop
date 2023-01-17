@@ -56,6 +56,6 @@ export interface Order {
   // Candy Shop information
   treasuryMint: string;
   candyShopCreatorAddress: string;
-  symbol?: string;
+  symbol: string;
   decimals: number;
 }
