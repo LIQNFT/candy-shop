@@ -19,7 +19,8 @@ import {
   ShopQuery,
   CollectionQuery,
   NftCollection,
-  OrdersEditionFilterQuery
+  OrdersEditionFilterQuery,
+  Blockchain
 } from '@liqnft/candy-shop-types';
 import {
   fetchNftByMint,
@@ -90,9 +91,10 @@ export function fetchShopsByOwnerAddress(ownerAddress: string): Promise<ListBase
 export function fetchShopsByIdentifier(
   ownerAddress: string,
   treasuryMint: string,
-  programId: string
+  programId: string,
+  blockchain: Blockchain
 ): Promise<SingleBase<CandyShopResponse>> {
-  return fetchShopByIdentifier(axiosInstance, ownerAddress, treasuryMint, programId);
+  return fetchShopByIdentifier(axiosInstance, ownerAddress, treasuryMint, programId, blockchain);
 }
 
 export function fetchOrderByShopAndMintAddress(

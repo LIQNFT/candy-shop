@@ -5,12 +5,11 @@ import {
   OrdersEditionFilterQuery,
   Side,
   SingleBase,
-  Status,
-  Blockchain
+  Status
 } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
-import { getParametrizeQuery } from './utils';
+import { getParametrizeQuery, mapToCompatibleBlockchain } from './utils';
 
 export async function fetchOrdersByStoreId(
   axiosInstance: AxiosInstance,
@@ -30,14 +29,7 @@ export async function fetchOrdersByStoreId(
     masterEdition,
     collectionKey
   } = ordersFilterQuery;
-
-  let blockchain = ordersFilterQuery.blockchain;
-  if (
-    ordersFilterQuery.blockchain === Blockchain.SolDevnet ||
-    ordersFilterQuery.blockchain === Blockchain.SolMainnetBeta
-  ) {
-    blockchain = Blockchain.Sol;
-  }
+  const blockchain = mapToCompatibleBlockchain(ordersFilterQuery.blockchain);
 
   const queryParams: any = { offset, limit, blockchain };
 

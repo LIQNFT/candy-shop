@@ -1,3 +1,5 @@
+import { Blockchain } from '@liqnft/candy-shop-types';
+
 /**
  * Get the parameterize string of single query / multiple queries
  * @param queryString string or array of string
@@ -18,4 +20,11 @@ export const getParametrizeQuery = (queryString: string | string[]): string => {
     followQueries = followQueries.concat(`&${queryString[i]}`);
   }
   return `?${firstQuery}${followQueries}`;
+};
+
+export const mapToCompatibleBlockchain = (blockchain?: Blockchain): string | undefined => {
+  if (blockchain === Blockchain.SolDevnet || blockchain === Blockchain.SolMainnetBeta) {
+    return Blockchain.Sol;
+  }
+  return blockchain;
 };

@@ -7,12 +7,13 @@ import {
   ShopStatusQuery,
   ShopQuery,
   NftCollection,
-  CollectionQuery
+  CollectionQuery,
+  Blockchain
 } from '@liqnft/candy-shop-types';
 import { AxiosInstance } from 'axios';
 import qs from 'qs';
 import { FETCH_LIST_LIMIT } from '../constants';
-import { getParametrizeQuery } from './utils';
+import { getParametrizeQuery, mapToCompatibleBlockchain } from './utils';
 
 const Logger = 'CandyShopSDK/ShopAPI';
 
@@ -42,9 +43,11 @@ export async function fetchShopByIdentifier(
   axiosInstance: AxiosInstance,
   ownerAddress: string,
   mint: string,
-  programId: string
+  programId: string,
+  blockchain: Blockchain
 ): Promise<SingleBase<CandyShop>> {
-  const url = `/shop/owner/${ownerAddress}/mint/${mint}/programId/${programId}`;
+  const mappedBlockchain = mapToCompatibleBlockchain(blockchain);
+  const url = `/shop/owner/${ownerAddress}/mint/${mint}/programId/${programId}/blockchain/${mappedBlockchain}`;
   return axiosInstance.get<SingleBase<CandyShop>>(url).then((response) => response.data);
 }
 
