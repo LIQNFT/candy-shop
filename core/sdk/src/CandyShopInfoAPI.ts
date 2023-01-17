@@ -90,9 +90,10 @@ export function fetchShopsByOwnerAddress(ownerAddress: string): Promise<ListBase
 export function fetchShopsByIdentifier(
   ownerAddress: string,
   treasuryMint: string,
-  programId: string
+  programId: string,
+  blockchain: string
 ): Promise<SingleBase<CandyShopResponse>> {
-  return fetchShopByIdentifier(axiosInstance, ownerAddress, treasuryMint, programId);
+  return fetchShopByIdentifier(axiosInstance, ownerAddress, treasuryMint, programId, blockchain);
 }
 
 export function fetchOrderByShopAndMintAddress(

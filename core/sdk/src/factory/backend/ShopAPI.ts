@@ -42,9 +42,10 @@ export async function fetchShopByIdentifier(
   axiosInstance: AxiosInstance,
   ownerAddress: string,
   mint: string,
-  programId: string
+  programId: string,
+  blockchain: string
 ): Promise<SingleBase<CandyShop>> {
-  const url = `/shop/owner/${ownerAddress}/mint/${mint}/programId/${programId}`;
+  const url = `/shop/owner/${ownerAddress}/mint/${mint}/programId/${programId}/blockchain/${blockchain}`;
   return axiosInstance.get<SingleBase<CandyShop>>(url).then((response) => response.data);
 }
 

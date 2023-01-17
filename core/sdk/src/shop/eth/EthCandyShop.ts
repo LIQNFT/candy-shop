@@ -19,6 +19,7 @@ const Logger = 'EthCandyShop';
 export interface EthShopConstructorParams extends BaseShopConstructorParams {}
 export interface EthShopInitParams extends Omit<EthShopConstructorParams, 'settings'> {
   settings: Partial<ShopSettings>;
+  blockchain: string
 }
 
 /**
@@ -38,7 +39,7 @@ export class EthCandyShop extends BaseShop {
 
     // Fetch required details for EVM setup
     const shopDetail = await safeAwait(
-      fetchShopsByIdentifier(params.shopCreatorAddress, params.treasuryMint, params.programId)
+      fetchShopsByIdentifier(params.shopCreatorAddress, params.treasuryMint, params.programId, params.blockchain)
     );
 
     if (shopDetail.error || !shopDetail.result || !shopDetail.result.success) {
