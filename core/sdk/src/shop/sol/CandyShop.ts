@@ -121,7 +121,7 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
 
     // Fetch required details for SOL setup
     const shopDetail = await safeAwait(
-      fetchShopsByIdentifier(params.shopCreatorAddress, params.treasuryMint, params.programId)
+      fetchShopsByIdentifier(params.shopCreatorAddress, params.treasuryMint, params.programId, params.env)
     );
 
     if (shopDetail.error || !shopDetail.result || !shopDetail.result.success) {

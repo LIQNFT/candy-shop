@@ -112,7 +112,7 @@ export const Orders: React.FC<OrdersProps> = ({
           });
         })
         .catch((err: Error) => {
-          console.info('fetchOrdersByStoreId failed: ', err);
+          console.info('fetchOrdersByShopAddress failed: ', err);
           setHasNextPage(false);
           handleError(err, 'Get orders failed.');
         });

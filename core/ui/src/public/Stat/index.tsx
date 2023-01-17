@@ -47,7 +47,7 @@ export const Stat: React.FC<StatProps> = ({ title, description, style, candyShop
         setStat(data);
       })
       .catch((err: Error) => {
-        console.log(`${Logger} fetchOrdersByStoreId failed, error=`, err);
+        console.log(`${Logger} fetchStatsByShopAddress failed, error=`, err);
       });
     // statUpdateStatus on polling
   }, [candyShopAddress, statUpdateStatus]);
