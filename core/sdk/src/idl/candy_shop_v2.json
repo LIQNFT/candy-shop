@@ -845,11 +845,16 @@
         {
           "name": "candyShopCreator",
           "isMut": false,
-          "isSigner": true
+          "isSigner": false
         },
         {
           "name": "candyShopCreatorTokenAccount",
           "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liqnftAdmin",
+          "isMut": false,
           "isSigner": false
         },
         {
@@ -2139,7 +2144,7 @@
     {
       "code": 6007,
       "name": "NotCSCreator",
-      "msg": "The caller of this instruction must be the Candy Shop creator"
+      "msg": "Invalid key passed for Candy Shop creator"
     },
     {
       "code": 6008,
