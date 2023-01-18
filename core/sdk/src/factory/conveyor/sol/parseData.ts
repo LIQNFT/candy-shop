@@ -211,7 +211,8 @@ const METADATA_SCHEMA = new Map<any, any>([
   ]
 ]);
 
-export const parseMasterEditionV2 = (buffer: Buffer): MasterEditionV2 => {
+export const parseMasterEditionV2 = (buffer: Buffer) => {
+  if (buffer.at(0) !== MetadataKey.MasterEditionV2) return null;
   return deserializeUnchecked(METADATA_SCHEMA, MasterEditionV2, buffer) as MasterEditionV2;
 };
 

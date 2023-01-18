@@ -9,7 +9,7 @@ import {
 } from './fetchMetadata';
 import { deleteCandyShopIDB, retrieveWalletNftFromIDB, storeWalletNftToIDB } from '../../idb';
 import { safeAwait, sleepPromise } from '../utils/promiseUtils';
-import { parseEdition, parseMasterEditionV2 } from '../../factory/conveyor/sol/parseData';
+import { parseMasterEditionV2 } from '../../factory/conveyor/sol/parseData';
 import { TOKEN_METADATA_PROGRAM_ID } from '../../factory/constants';
 import { CacheNFTParam, FetchNFTBatchParam } from './fetch.type';
 import { MasterEditionNft, RawTokenInfo } from './token.type';
@@ -257,18 +257,16 @@ export const fetchUserMasterNFTs = async (
       }
 
       const masterEditionInfo = parseMasterEditionV2((newEditionAccountInfoResult.result as any).data);
-      const editionInfo = parseEdition((newEditionAccountInfoResult.result as any).data);
       return {
         ...e,
-        maxSupply: masterEditionInfo.maxSupply?.toString(),
-        supply: masterEditionInfo.supply.toString(),
-        edition: editionInfo?.edition.toString()
+        maxSupply: masterEditionInfo?.maxSupply?.toString(),
+        supply: masterEditionInfo?.supply.toString()
       };
     })
   );
 
   return nfts.reduce((result: any[], nft) => {
-    if (nft && nft.tokenMint && Number(nft.maxSupply) > 1 && Number(nft.edition) === 0) {
+    if (nft && nft.tokenMint && Number(nft.maxSupply) > 1) {
       const info = nftsInfoMap.get(nft.tokenMint);
       result.push({
         ...nft,
