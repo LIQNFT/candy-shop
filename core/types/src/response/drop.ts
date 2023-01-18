@@ -11,6 +11,13 @@ export enum DropStatus {
   SALE_COMPLETED = 3
 }
 
+export interface UserInputSchema {
+  name: string;
+  required: boolean;
+  label: string;
+  type: 'text' | 'email';
+}
+
 export interface Drop {
   vaultAddress: string;
   description?: string;
@@ -33,6 +40,7 @@ export interface Drop {
   updatedAt: string;
   status: DropStatus;
   hasRedemption: boolean;
+  userInputSchema: UserInputSchema[];
 
   // Nft Info
   nftUri?: string;
