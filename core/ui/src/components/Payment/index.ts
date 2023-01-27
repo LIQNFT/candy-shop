@@ -1,1 +1,1 @@
-export * from './StripePayment';
+export * from './WertPayment';

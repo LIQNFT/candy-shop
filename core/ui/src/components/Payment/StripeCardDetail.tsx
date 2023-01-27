@@ -18,7 +18,6 @@ const Logger = 'CandyShopUI/CardPaymentModal';
 export interface StripeCardDetailProps {
   paymentEntityId: string;
   shopAddress: string;
-  tokenAccount: string;
   onClickedPayCallback: (param: ConfirmStripePaymentParams, stripe: Stripe) => void;
 }
 
@@ -32,7 +31,6 @@ enum StripeErrorField {
 export const StripeCardDetail: React.FC<StripeCardDetailProps> = ({
   paymentEntityId,
   shopAddress,
-  tokenAccount,
   onClickedPayCallback
 }) => {
   const [name, setName] = useState<string>();
@@ -70,8 +68,7 @@ export const StripeCardDetail: React.FC<StripeCardDetailProps> = ({
         const params: ConfirmStripePaymentParams = {
           paymentEntityId,
           paymentMethodId: paymentMethod.id,
-          shopId: shopAddress,
-          tokenAccount
+          shopId: shopAddress
         };
         onClickedPayCallback(params, stripe);
       })

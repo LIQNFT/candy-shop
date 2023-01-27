@@ -21,8 +21,6 @@ export interface BuyModalDetailProps {
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
   sellerUrl?: string;
-  setCountdownElement: React.Dispatch<React.SetStateAction<null | HTMLSpanElement>>;
-  paymentPrice?: number;
   creditCardPayAvailable: CreditCardPayAvailability;
   candyShopEnv: Blockchain;
   explorerLink: ExplorerLinkBase;
@@ -38,8 +36,6 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
   shopPriceDecimalsMin,
   shopPriceDecimals,
   sellerUrl,
-  setCountdownElement,
-  paymentPrice,
   creditCardPayAvailable,
   explorerLink,
   candyShopEnv,
@@ -84,19 +80,7 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
         <div className="candy-buy-modal-control">
           <div>
             <div className="candy-label">PRICE</div>
-            <div className="candy-price">
-              {orderPrice ? `${orderPrice} ${exchangeInfo.symbol}` : 'N/A'}
-              <span className="candy-price-timeout">
-                {paymentPrice ? (
-                  <>
-                    <span className="candy-price-usd">&nbsp; US${paymentPrice}</span>
-                    <span ref={setCountdownElement} id="stripe-timeout">
-                      (3s)
-                    </span>
-                  </>
-                ) : null}
-              </span>
-            </div>
+            <div className="candy-price">{orderPrice ? `${orderPrice} ${exchangeInfo.symbol}` : 'N/A'}</div>
           </div>
           {publicKey ? (
             <div>
@@ -107,7 +91,7 @@ export const BuyModalDetail: React.FC<BuyModalDetailProps> = ({
               {creditCardPayAvailable !== CreditCardPayAvailability.Unsupported && (
                 <button
                   className={`candy-button candy-pay-credit-button ${
-                    creditCardPayAvailable !== CreditCardPayAvailability.Disabled && paymentPrice ? '' : 'disabled'
+                    creditCardPayAvailable !== CreditCardPayAvailability.Disabled ? '' : 'disabled'
                   }`}
                   onClick={onBuyWithCreditCard}
                 >
