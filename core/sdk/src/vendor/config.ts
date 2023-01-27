@@ -44,3 +44,7 @@ export const configBaseUrl = (baseUrl: string): void => {
   );
   interceptorEvents.push(interceptorEvent);
 };
+
+export const isCandyShopProdUrl = (baseUrl: string): boolean => {
+  return baseUrl === BACKEND_PROD_URL;
+};

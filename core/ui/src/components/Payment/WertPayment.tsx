@@ -10,6 +10,12 @@ import { handleError } from 'utils/ErrorHandler';
 
 const Logger = 'CandyShopUI/WertPayment';
 
+// Refer to https://wert-io.notion.site/Getting-started-f4b5517c31364b7f8c7bdb6f94a51426#8a81ce141b4b453991fd0492a44f328c
+enum WertOrigin {
+  Sandbox = 'https://sandbox.wert.io',
+  Production = 'https://widget.wert.io/'
+}
+
 interface WertPaymentProps {
   shopAddress: string;
   walletAddress: string;
@@ -18,6 +24,7 @@ interface WertPaymentProps {
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
   orderPayload: OrderPayloadResponse;
+  isProd: boolean;
   onProcessingPay: (type: BuyModalState, error?: PaymentErrorDetails) => void;
 }
 
@@ -29,6 +36,7 @@ export const WertPayment: React.FC<WertPaymentProps> = ({
   shopPriceDecimals,
   shopPriceDecimalsMin,
   orderPayload,
+  isProd,
   onProcessingPay
 }) => {
   const [paymentStatus, setPaymentStatus] = useState<string>('init');
@@ -73,8 +81,8 @@ export const WertPayment: React.FC<WertPaymentProps> = ({
       const otherWidgetOptions = {
         partner_id: wertConfirmInfo.partnerId,
         container_id: 'wert-widget',
-        click_id: uuid, // unique id of purchase in your system
-        origin: 'https://sandbox.wert.io', // this option needed only in sandbox
+        click_id: uuid,
+        origin: isProd ? WertOrigin.Production : WertOrigin.Sandbox,
         width: 600,
         height: 400,
         commodity: wertConfirmInfo.commodity
@@ -98,7 +106,7 @@ export const WertPayment: React.FC<WertPaymentProps> = ({
       });
       wertWidget.mount();
     },
-    [order, handlePaymentStatusCallback]
+    [order, handlePaymentStatusCallback, isProd]
   );
 
   useEffect(() => {

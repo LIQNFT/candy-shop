@@ -1,5 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { CandyShopPay, ExplorerLinkBase, OrderPayloadResponse } from '@liqnft/candy-shop-sdk';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  CandyShopPay,
+  ExplorerLinkBase,
+  OrderPayloadResponse,
+  getBaseUrl,
+  isCandyShopProdUrl
+} from '@liqnft/candy-shop-sdk';
 import { Blockchain, Order as OrderSchema, PaymentErrorName } from '@liqnft/candy-shop-types';
 
 import { Modal } from 'components/Modal';
@@ -114,6 +120,11 @@ export const BuyModal: React.FC<BuyModalProps> = ({
     }
   }, [order, walletPublicKey, getEvmOrderPayloadCallback]);
 
+  const isProd = useMemo(() => {
+    const url = getBaseUrl(candyShopEnv);
+    return isCandyShopProdUrl(url);
+  }, [candyShopEnv]);
+
   useEffect(() => {
     // Only fetch when haven't retrieved the creditCardPayAvailability
     if (creditCardPayAvailable === undefined) {
@@ -210,6 +221,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             exchangeInfo={exchangeInfo}
             orderPayload={evmOrderPayload}
             onProcessingPay={onProcessingPay}
+            isProd={isProd}
           />
         )}
       </div>
