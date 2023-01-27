@@ -1,6 +1,6 @@
 export interface PaymentAvailabilityParams {
   shopId: string;
-  tokenAccount: string;
+  tokenMint: string;
 }
 
 export enum PaymentCurrencyType {
@@ -17,14 +17,24 @@ export interface CreatePaymentParams {
   shopCreatorAddress: string;
   buyerWalletAddress: string;
   tokenAccount: string;
+  tokenMint: string;
+}
+
+export interface CreateStripePaymentParams extends CreatePaymentParams {
   methodType: PaymentMethodType;
   currency: PaymentCurrencyType;
   currencyAmount: number;
 }
 
-export interface ConfirmStripePaymentParams {
+interface ConfirmPaymentParams {
   shopId: string;
-  tokenAccount: string;
   paymentEntityId: string;
+}
+
+export interface ConfirmStripePaymentParams extends ConfirmPaymentParams {
   paymentMethodId: string;
+}
+
+export interface ConfirmWertPaymentParams extends ConfirmPaymentParams {
+  paymentStatus: object;
 }

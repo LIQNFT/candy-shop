@@ -4,7 +4,8 @@
 
 import {
   ConfirmStripePaymentParams,
-  CreatePaymentParams,
+  ConfirmWertPaymentParams,
+  CreateStripePaymentParams,
   GetQuotePriceQuery,
   PaymentAvailabilityParams,
   PaymentInfo,
@@ -16,6 +17,7 @@ import {
   createPaymentIntents,
   fetchTokenFiatMoneyPrice
 } from './factory/backend/PaymentAPI';
+import { CreateWertPaymentParams } from './shop';
 import axiosInstance from './vendor/config';
 
 export abstract class CandyShopPay {
@@ -23,11 +25,13 @@ export abstract class CandyShopPay {
     return checkPaymentAvailability(axiosInstance, params);
   }
 
-  static createPayment(params: CreatePaymentParams): Promise<SingleBase<PaymentInfo>> {
+  static createPayment(params: CreateStripePaymentParams | CreateWertPaymentParams): Promise<SingleBase<PaymentInfo>> {
     return createPaymentIntents(axiosInstance, params);
   }
 
-  static confirmPayment(params: ConfirmStripePaymentParams): Promise<SingleBase<PaymentInfo>> {
+  static confirmPayment(
+    params: ConfirmStripePaymentParams | ConfirmWertPaymentParams
+  ): Promise<SingleBase<PaymentInfo>> {
     return confirmPaymentIntents(axiosInstance, params);
   }
 

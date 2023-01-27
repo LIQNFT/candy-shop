@@ -19,10 +19,17 @@ export enum PaymentErrorName {
 export interface PaymentInfo {
   paymentEntityId: string;
   stripeConfirmInfo?: StripeConfirmInfo;
+  wertConfirmInfo?: WertConfirmInfo;
 }
 
 interface StripeConfirmInfo {
   requiresAuth: boolean;
   paymentIntentClientSecret?: string;
   stripeSdkObj?: any;
+}
+
+export interface WertConfirmInfo {
+  partnerId: string;
+  commodity: string;
+  signedData: object;
 }
