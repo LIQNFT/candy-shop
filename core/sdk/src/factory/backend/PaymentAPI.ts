@@ -3,10 +3,12 @@ import {
   SingleBase,
   PaymentInfo,
   PaymentAvailabilityParams,
-  CreatePaymentParams,
   ConfirmStripePaymentParams,
+  ConfirmWertPaymentParams,
+  CreateStripePaymentParams,
   GetQuotePriceQuery
 } from '@liqnft/candy-shop-types';
+import { CreateWertPaymentParams } from '../../shop';
 
 /**
  * @note This backend Payment API should not be exposed in sdk entry.
@@ -18,14 +20,14 @@ export async function checkPaymentAvailability(
   axiosInstance: AxiosInstance,
   params: PaymentAvailabilityParams
 ): Promise<SingleBase<string>> {
-  const { shopId, tokenAccount } = params;
-  const url = `${PaymentRouter}/available/shop/${shopId}/token/${tokenAccount}`;
+  const { shopId, tokenMint } = params;
+  const url = `${PaymentRouter}/available/shop/${shopId}/token/${tokenMint}`;
   return axiosInstance.get(url).then((res) => res.data);
 }
 
 export async function createPaymentIntents(
   axiosInstance: AxiosInstance,
-  requestBody: CreatePaymentParams
+  requestBody: CreateStripePaymentParams | CreateWertPaymentParams
 ): Promise<SingleBase<PaymentInfo>> {
   const url = `${PaymentRouter}/create`;
   return axiosInstance.post(url, requestBody).then((res) => res.data);
@@ -33,7 +35,7 @@ export async function createPaymentIntents(
 
 export function confirmPaymentIntents(
   axiosInstance: AxiosInstance,
-  requestBody: ConfirmStripePaymentParams
+  requestBody: ConfirmStripePaymentParams | ConfirmWertPaymentParams
 ): Promise<SingleBase<PaymentInfo>> {
   const url = `${PaymentRouter}/confirm`;
   return axiosInstance.post(url, requestBody).then((res) => res.data);
@@ -44,10 +46,10 @@ export async function fetchTokenFiatMoneyPrice(
   params: PaymentAvailabilityParams,
   quotePriceQuery?: GetQuotePriceQuery
 ): Promise<SingleBase<string>> {
-  const { shopId, tokenAccount } = params;
+  const { shopId, tokenMint } = params;
   const { quoteCurrencyType } = quotePriceQuery || {};
 
-  const url = `${PaymentRouter}/price/shop/${shopId}/token/${tokenAccount}${
+  const url = `${PaymentRouter}/price/shop/${shopId}/token/${tokenMint}${
     quoteCurrencyType ? `?quoteCurrencyType=${quoteCurrencyType}` : ''
   }`;
   return axiosInstance.get(url).then((res) => res.data);
