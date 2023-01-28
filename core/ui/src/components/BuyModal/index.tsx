@@ -107,7 +107,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
     }
   };
 
-  const getEveOrderPayload = useCallback(() => {
+  const getEvmOrderPayload = useCallback(() => {
     if (getEvmOrderPayloadCallback && walletPublicKey?.toString()) {
       getEvmOrderPayloadCallback(walletPublicKey?.toString(), order)
         .then((evmPayload: OrderPayloadResponse | undefined) => {
@@ -128,7 +128,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   useEffect(() => {
     // Only fetch when haven't retrieved the creditCardPayAvailability
     if (creditCardPayAvailable === undefined) {
-      getEveOrderPayload();
+      getEvmOrderPayload();
       CandyShopPay.checkPaymentAvailability({
         shopId: shopAddress,
         tokenMint: order.tokenMint
@@ -137,7 +137,6 @@ export const BuyModal: React.FC<BuyModalProps> = ({
           setCreditCardPayAvailable(CreditCardPayAvailability.Supported);
         })
         .catch((error: Error) => {
-          handleError(error);
           console.log(
             `${Logger}: checkPaymentAvailability failed, token= ${order.name} ${order.tokenAccount}, reason=`,
             error.message
@@ -146,13 +145,15 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             PaymentErrorName.InsufficientPurchaseBalance === error.name ||
             PaymentErrorName.BelowMinPurchasePrice === error.name
           ) {
+            // Only show notification when certain PaymentError from checkPaymentAvailability
+            handleError(error);
             setCreditCardPayAvailable(CreditCardPayAvailability.Disabled);
             return;
           }
           setCreditCardPayAvailable(CreditCardPayAvailability.Unsupported);
         });
     }
-  }, [order.name, order.tokenAccount, order.tokenMint, shopAddress, creditCardPayAvailable, getEveOrderPayload]);
+  }, [order.name, order.tokenAccount, order.tokenMint, shopAddress, creditCardPayAvailable, getEvmOrderPayload]);
 
   const modalWidth = state === BuyModalState.DISPLAY || state === BuyModalState.PAYMENT ? 1000 : 600;
 
