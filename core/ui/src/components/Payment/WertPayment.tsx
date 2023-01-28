@@ -13,7 +13,7 @@ const Logger = 'CandyShopUI/WertPayment';
 // Refer to https://wert-io.notion.site/Getting-started-f4b5517c31364b7f8c7bdb6f94a51426#8a81ce141b4b453991fd0492a44f328c
 enum WertOrigin {
   Sandbox = 'https://sandbox.wert.io',
-  Production = 'https://widget.wert.io/'
+  Production = 'https://widget.wert.io'
 }
 
 interface WertPaymentProps {
