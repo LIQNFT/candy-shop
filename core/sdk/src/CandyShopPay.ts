@@ -6,17 +6,11 @@ import {
   ConfirmStripePaymentParams,
   ConfirmWertPaymentParams,
   CreateStripePaymentParams,
-  GetQuotePriceQuery,
   PaymentAvailabilityParams,
   PaymentInfo,
   SingleBase
 } from '@liqnft/candy-shop-types';
-import {
-  checkPaymentAvailability,
-  confirmPaymentIntents,
-  createPaymentIntents,
-  fetchTokenFiatMoneyPrice
-} from './factory/backend/PaymentAPI';
+import { checkPaymentAvailability, confirmPaymentIntents, createPaymentIntents } from './factory/backend/PaymentAPI';
 import { CreateWertPaymentParams } from './shop';
 import axiosInstance from './vendor/config';
 
@@ -33,12 +27,5 @@ export abstract class CandyShopPay {
     params: ConfirmStripePaymentParams | ConfirmWertPaymentParams
   ): Promise<SingleBase<PaymentInfo>> {
     return confirmPaymentIntents(axiosInstance, params);
-  }
-
-  static getTokenFiatMoneyPrice(
-    params: PaymentAvailabilityParams,
-    quotePriceQuery: GetQuotePriceQuery | undefined
-  ): Promise<SingleBase<string>> {
-    return fetchTokenFiatMoneyPrice(axiosInstance, params, quotePriceQuery);
   }
 }

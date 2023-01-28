@@ -1,8 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Order } from '@liqnft/candy-shop-types';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { CandyShop, getCandyShopSync } from '@liqnft/candy-shop-sdk';
-import { Order as OrderSchema } from '@liqnft/candy-shop-types';
+import { CandyShop, EthCandyShop, getCandyShopSync } from '@liqnft/candy-shop-sdk';
 import { web3 } from '@project-serum/anchor';
 import { getDefaultExchange, getExchangeInfo } from 'utils/getExchangeInfo';
 import { BuyModal } from 'components/BuyModal';
@@ -42,8 +41,16 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
     return store.buy(order);
   };
 
-  const [selectedOrder, setSelectedOrder] = useState<OrderSchema>();
-  const onSelectOrder = (order?: OrderSchema) => setSelectedOrder(order);
+  const getEvmOrderPayloadCallback = async (buyerAddress: string, order: Order) => {
+    if (candyShop instanceof EthCandyShop) {
+      const payload = await candyShop.getNftPurchasePayload({ buyerAddress, orderUuid: order.txHash });
+      return payload;
+    }
+    return undefined;
+  };
+
+  const [selectedOrder, setSelectedOrder] = useState<Order>();
+  const onSelectOrder = (order?: Order) => setSelectedOrder(order);
 
   const exchangeInfo =
     candyShop instanceof CandyShop ? getExchangeInfo(selectedOrder, candyShop) : getDefaultExchange(candyShop);
@@ -110,6 +117,7 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
           walletPublicKey={wallet?.publicKey?.toString()}
           onClose={() => onSelectOrder(undefined)}
           buyNft={buyNft}
+          getEvmOrderPayloadCallback={getEvmOrderPayloadCallback}
         />
       ) : null}
       {selectedOrder && isUserListing && wallet.publicKey ? (

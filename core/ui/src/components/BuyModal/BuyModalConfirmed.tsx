@@ -16,7 +16,6 @@ interface BuyModalConfirmedProps {
   exchangeInfo: ShopExchangeInfo;
   shopPriceDecimalsMin: number;
   shopPriceDecimals: number;
-  paymentPrice?: number;
   error?: PaymentErrorDetails;
   candyShopEnv: Blockchain;
   explorerLink: ExplorerLinkBase;
@@ -48,7 +47,6 @@ export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
   exchangeInfo,
   shopPriceDecimalsMin,
   shopPriceDecimals,
-  paymentPrice,
   error,
   candyShopEnv,
   explorerLink
@@ -77,11 +75,6 @@ export const BuyModalConfirmed: React.FC<BuyModalConfirmedProps> = ({
           </div>
           <div style={{ display: 'flex' }}>
             <div className="candy-buy-modal-price">{orderPrice ? `${orderPrice} ${exchangeInfo.symbol}` : 'N/A'}</div>
-            {paymentPrice && (
-              <span className="candy-payment-confirmed-price">
-                ~$US<span>{paymentPrice}</span>
-              </span>
-            )}
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe, Stripe } from '@stripe/stripe-js';
 import {
   ConfirmStripePaymentParams,
-  CreatePaymentParams,
+  CreateStripePaymentParams,
   Order,
   PaymentCurrencyType,
   PaymentInfo,
@@ -35,6 +35,9 @@ interface StripePaymentProps {
   onProcessingPay: (type: BuyModalState, error?: PaymentErrorDetails) => void;
 }
 
+/**
+ * Legacy element, no use and don't expose it for now.
+ */
 export const StripePayment: React.FC<StripePaymentProps> = ({
   stripePublicKey,
   shopAddress,
@@ -50,12 +53,13 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
   const [paymentEntityId, setPaymentEntityId] = useState<string>();
 
   useEffect(() => {
-    const params: CreatePaymentParams = {
+    const params: CreateStripePaymentParams = {
       shopProgramId: order.programId,
       shopId: shopAddress,
       shopCreatorAddress: order.candyShopCreatorAddress,
       buyerWalletAddress: walletAddress,
       tokenAccount: order.tokenAccount,
+      tokenMint: order.tokenMint,
       methodType: PaymentMethodType.CARD,
       currency: PaymentCurrencyType.USD,
       currencyAmount: paymentPrice
@@ -173,7 +177,6 @@ export const StripePayment: React.FC<StripePaymentProps> = ({
             <StripeCardDetail
               paymentEntityId={paymentEntityId}
               shopAddress={shopAddress}
-              tokenAccount={order.tokenAccount}
               onClickedPayCallback={onClickedPayCallback}
             />
           </Elements>
