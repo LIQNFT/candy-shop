@@ -1,4 +1,4 @@
-import { Blockchain } from '../query';
+import { Blockchain } from '../commonQuery';
 
 export interface CandyShop {
   candyShopAddress: string;
@@ -21,4 +21,23 @@ export interface CandyShop {
   blockchain: Omit<Blockchain, 'devnet' | 'mainnet-beta'>;
   connectionUrl: string;
   accessToken: string;
+}
+
+export interface ShopStatus {
+  timestamp: number;
+  type: ShopStatusType;
+}
+
+export enum ShopStatusType {
+  Order = 'ORDER',
+  Trade = 'TRADE',
+  UserNft = 'USER_NFT',
+  Auction = 'AUCTION'
+}
+
+export interface ShopStats {
+  floorPrice: string | null;
+  totalVolume: string;
+  averageSalesPrice: string | null;
+  totalListed: string;
 }
