@@ -1,2 +1,3 @@
 export * from './uri';
-export * from './nft';
+export * from './NftResponse';
+export * from './NftQuery';

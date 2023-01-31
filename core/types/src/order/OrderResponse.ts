@@ -1,5 +1,5 @@
 import { NftAttribute, NftCreator, NftProperties } from '../nft';
-import { Blockchain } from '../query';
+import { Blockchain } from '../commonQuery';
 
 export enum Side {
   BUY,
@@ -58,4 +58,21 @@ export interface Order {
   candyShopCreatorAddress: string;
   symbol: string;
   decimals: number;
+}
+
+export interface Trade {
+  ticker: string;
+  price: string;
+  amount: string;
+  edition: number | null;
+  tokenAccount: string;
+  tokenMint: string;
+  sellerAddress: string;
+  buyer: string;
+  buyerAddress: string;
+  txHashAtCreation: string;
+  nftName: string;
+  nftImageUrl: string;
+  shopSymbol: string;
+  createdAt: Date;
 }
