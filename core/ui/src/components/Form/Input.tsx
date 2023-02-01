@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 
 import './style.less';
 
-export const InputText = (props: {
+interface InputTextProps {
   label: string;
   labelTip?: string;
   name: string;
@@ -17,26 +17,29 @@ export const InputText = (props: {
   pattern?: string;
   showMaxLength?: boolean;
   title?: string;
+  hidden?: boolean;
+}
+
+export const InputText: React.FC<InputTextProps> = ({
+  label,
+  labelTip,
+  name,
+  placeholder,
+  maxLength,
+  showMaxLength,
+  disabled,
+  value,
+  onChangeInput,
+  required,
+  type,
+  pattern,
+  title,
+  hidden
 }) => {
-  const {
-    label,
-    labelTip,
-    name,
-    placeholder,
-    maxLength,
-    showMaxLength,
-    disabled,
-    value,
-    onChangeInput,
-    required,
-    type,
-    pattern,
-    title
-  } = props;
   const [count, setCount] = useState(0);
 
   return (
-    <div className="candy-form-input">
+    <div hidden={hidden} className="candy-form-input">
       <label htmlFor={name}>
         {label}
         {labelTip && (

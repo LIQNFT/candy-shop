@@ -696,7 +696,8 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
       salesPeriod,
       whitelistTime,
       hasRedemption,
-      inputSchema
+      inputSchema,
+      description
     } = params;
 
     if (this._version !== CandyShopVersion.V2) {
@@ -722,7 +723,8 @@ export class CandyShop extends BaseShop implements CandyShopAuctioneer, CandySho
       connection: this.connection,
       candyShopProgram: this.getStaticProgram(nftOwner),
       inputSchema,
-      shopId: this.candyShopAddress
+      shopId: this.candyShopAddress,
+      description
     });
 
     return txHash;

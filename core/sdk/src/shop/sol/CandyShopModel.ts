@@ -194,6 +194,7 @@ export interface CandyShopCommitNftParams extends CandyShopEditionDropParams {
   hasRedemption: boolean;
   whitelistTime?: BN;
   inputSchema: string | undefined;
+  description: string | undefined;
 }
 
 export interface CandyShopMintPrintParams extends CandyShopEditionDropParams {
@@ -247,4 +248,5 @@ export interface RegisterDropParams {
   shopId: string;
   redemptionType: number;
   userInputsSchema: string;
+  description: string | undefined;
 }
