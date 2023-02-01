@@ -314,17 +314,6 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
         />
       </div>
 
-      <InputText
-        name={FormKey.description}
-        placeholder="Enter Drop Description"
-        label="Drop Description"
-        labelTip="Display description for this NFT drop"
-        maxLength={200}
-        onChangeInput={onChangeInput}
-        value={form[FormKey.description]}
-        showMaxLength
-      />
-
       {/** Redemption view */}
       <Checkbox
         onClick={onCheckbox(FormKey.hasRedemption)}
@@ -338,6 +327,18 @@ export const CreateEditionForm: React.FC<CreateEditionFormProps> = ({
             </Tooltip>
           </label>
         }
+      />
+
+      <InputText
+        hidden={!form[FormKey.hasRedemption]}
+        name={FormKey.description}
+        placeholder="Enter Drop Description"
+        label="Drop Description"
+        labelTip="Display description for this NFT drop"
+        maxLength={200}
+        onChangeInput={onChangeInput}
+        value={form[FormKey.description]}
+        showMaxLength
       />
 
       <div className="candy-edition-redemption" hidden={!form[FormKey.hasRedemption]}>

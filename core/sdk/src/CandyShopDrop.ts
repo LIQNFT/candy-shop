@@ -83,7 +83,8 @@ export abstract class CandyShopDrop {
       whitelistTime,
       candyShopProgram,
       shopId,
-      inputSchema
+      inputSchema,
+      description
     } = params;
 
     checkTimeValidity(startTime, whitelistTime);
@@ -95,7 +96,8 @@ export abstract class CandyShopDrop {
         shopId,
         vaultAddress: vaultAccount.toString(),
         redemptionType: RedemptionType.Ticket,
-        userInputsSchema: inputSchema
+        userInputsSchema: inputSchema,
+        description
       };
       await registerDropWithRedemption(payload);
     }
