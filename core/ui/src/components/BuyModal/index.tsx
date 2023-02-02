@@ -1,15 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import {
-  CandyShopPay,
-  ExplorerLinkBase,
-  OrderPayloadResponse,
-  getBaseUrl,
-  isCandyShopProdUrl
-} from '@liqnft/candy-shop-sdk';
+import React, { useEffect, useState } from 'react';
+
+import { CandyShopPay, ExplorerLinkBase, OrderPayloadResponse } from '@liqnft/candy-shop-sdk';
 import { Blockchain, Order as OrderSchema, PaymentErrorName } from '@liqnft/candy-shop-types';
 
 import { Modal } from 'components/Modal';
-import { WertPayment } from 'components/Payment';
 import { PoweredByInBuyModal } from 'components/PoweredBy/PowerByInBuyModal';
 import { Processing } from 'components/Processing';
 import { ShopExchangeInfo, BuyModalState, PaymentErrorDetails, CreditCardPayAvailability } from 'model';
@@ -18,8 +12,9 @@ import { notification, NotificationType } from 'utils/rc-notification';
 import { BuyModalConfirmed } from './BuyModalConfirmed';
 import { BuyModalDetail } from './BuyModalDetail';
 
-import './style.less';
 import { useCallback } from 'react';
+import { useWertIo } from './useWertIo';
+import './style.less';
 
 enum ProcessingTextType {
   General = 'Processing purchase',
@@ -86,7 +81,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       });
   };
 
-  const onProcessingPay = (type: BuyModalState, error: any) => {
+  const onProcessingPay = (type: BuyModalState, error?: any) => {
     if (type === BuyModalState.PROCESSING) {
       setProcessingText(ProcessingTextType.CreditCard);
       setState(BuyModalState.PROCESSING);
@@ -102,58 +97,63 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       setPaymentError(error);
       return;
     }
-    if (type === BuyModalState.PAYMENT) {
-      setState(BuyModalState.PAYMENT);
-    }
   };
 
-  const getEvmOrderPayload = useCallback(() => {
-    if (getEvmOrderPayloadCallback && walletPublicKey?.toString()) {
-      getEvmOrderPayloadCallback(walletPublicKey?.toString(), order)
-        .then((evmPayload: OrderPayloadResponse | undefined) => {
-          console.log('debugger: orderPayload=', evmPayload);
-          setEvmOrderPayload(evmPayload);
-        })
-        .catch((error: Error) => {
-          console.log(`${Logger}: getEvmOrderPayloadCallback failed, error=`, error);
-        });
-    }
-  }, [order, walletPublicKey, getEvmOrderPayloadCallback]);
-
-  const isProd = useMemo(() => {
-    const url = getBaseUrl(candyShopEnv);
-    return isCandyShopProdUrl(url);
-  }, [candyShopEnv]);
+  const getEvmOrderPayload = useCallback(
+    (walletPublicKey: string) => {
+      if (getEvmOrderPayloadCallback) {
+        getEvmOrderPayloadCallback(walletPublicKey, order)
+          .then((evmPayload: OrderPayloadResponse | undefined) => {
+            console.log('debugger: orderPayload=', evmPayload);
+            setEvmOrderPayload(evmPayload);
+          })
+          .catch((error: Error) => {
+            console.log(`${Logger}: getEvmOrderPayloadCallback failed, error=`, error);
+          });
+      }
+    },
+    [getEvmOrderPayloadCallback, order]
+  );
 
   useEffect(() => {
-    // Only fetch when haven't retrieved the creditCardPayAvailability
-    if (creditCardPayAvailable === undefined) {
-      getEvmOrderPayload();
-      CandyShopPay.checkPaymentAvailability({
-        shopId: shopAddress,
-        tokenMint: order.tokenMint
+    CandyShopPay.checkPaymentAvailability({
+      shopId: shopAddress,
+      tokenMint: order.tokenMint
+    })
+      .then(() => {
+        setCreditCardPayAvailable(CreditCardPayAvailability.Supported);
       })
-        .then(() => {
-          setCreditCardPayAvailable(CreditCardPayAvailability.Supported);
-        })
-        .catch((error: Error) => {
-          console.log(
-            `${Logger}: checkPaymentAvailability failed, token= ${order.name} ${order.tokenAccount}, reason=`,
-            error.message
-          );
-          if (
-            PaymentErrorName.InsufficientPurchaseBalance === error.name ||
-            PaymentErrorName.BelowMinPurchasePrice === error.name
-          ) {
-            // Only show notification when certain PaymentError from checkPaymentAvailability
-            handleError(error);
-            setCreditCardPayAvailable(CreditCardPayAvailability.Disabled);
-            return;
-          }
-          setCreditCardPayAvailable(CreditCardPayAvailability.Unsupported);
-        });
-    }
-  }, [order.name, order.tokenAccount, order.tokenMint, shopAddress, creditCardPayAvailable, getEvmOrderPayload]);
+      .catch((error: Error) => {
+        console.log(
+          `${Logger}: checkPaymentAvailability failed, token= ${order.name} ${order.tokenAccount}, reason=`,
+          error.message
+        );
+        if (
+          PaymentErrorName.InsufficientPurchaseBalance === error.name ||
+          PaymentErrorName.BelowMinPurchasePrice === error.name
+        ) {
+          // Only show notification when certain PaymentError from checkPaymentAvailability
+          handleError(error);
+          setCreditCardPayAvailable(CreditCardPayAvailability.Disabled);
+          return;
+        }
+        setCreditCardPayAvailable(CreditCardPayAvailability.Unsupported);
+      });
+  }, [order.name, order.tokenAccount, order.tokenMint, shopAddress]);
+
+  useEffect(() => {
+    if (!walletPublicKey) return;
+    getEvmOrderPayload(walletPublicKey);
+  }, [getEvmOrderPayload, walletPublicKey]);
+
+  const { onPayWithWert, paymentInfo } = useWertIo({
+    walletPublicKey,
+    shopAddress,
+    evmOrderPayload,
+    order,
+    onProcessingPay,
+    candyShopEnv
+  });
 
   const modalWidth = state === BuyModalState.DISPLAY || state === BuyModalState.PAYMENT ? 1000 : 600;
 
@@ -167,10 +167,6 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       </Modal>
     );
   }
-
-  const onPaymentCallback = () => {
-    setState(BuyModalState.PAYMENT);
-  };
 
   return (
     <Modal
@@ -189,8 +185,8 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             shopPriceDecimalsMin={shopPriceDecimalsMin}
             shopPriceDecimals={shopPriceDecimals}
             sellerUrl={sellerUrl}
-            onPayment={onPaymentCallback}
-            creditCardPayAvailable={creditCardPayAvailable}
+            onPayment={onPayWithWert}
+            creditCardPayAvailable={evmOrderPayload ? creditCardPayAvailable : CreditCardPayAvailability.Disabled}
             candyShopEnv={candyShopEnv}
             explorerLink={explorerLink}
             publicKey={walletPublicKey}
@@ -209,20 +205,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             error={paymentError}
             candyShopEnv={candyShopEnv}
             explorerLink={explorerLink}
-          />
-        )}
-
-        {state === BuyModalState.PAYMENT && evmOrderPayload && walletPublicKey && order && (
-          <WertPayment
-            shopAddress={shopAddress}
-            walletAddress={walletPublicKey}
-            order={order}
-            shopPriceDecimals={shopPriceDecimals}
-            shopPriceDecimalsMin={shopPriceDecimalsMin}
-            exchangeInfo={exchangeInfo}
-            orderPayload={evmOrderPayload}
-            onProcessingPay={onProcessingPay}
-            isProd={isProd}
+            paymentInfo={paymentInfo}
           />
         )}
       </div>
