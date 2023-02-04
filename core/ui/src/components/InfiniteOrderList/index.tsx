@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Order } from '@liqnft/candy-shop-types';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { CandyShop, EthCandyShop, getCandyShopSync } from '@liqnft/candy-shop-sdk';
@@ -41,13 +41,16 @@ export const InfiniteOrderList: React.FC<InfiniteOrderListProps> = ({
     return store.buy(order);
   };
 
-  const getEvmOrderPayloadCallback = async (buyerAddress: string, order: Order) => {
-    if (candyShop instanceof EthCandyShop) {
-      const payload = await candyShop.getNftPurchasePayload({ buyerAddress, orderUuid: order.txHash });
-      return payload;
-    }
-    return undefined;
-  };
+  const getEvmOrderPayloadCallback = useCallback(
+    async (buyerAddress: string, order: Order) => {
+      if (candyShop instanceof EthCandyShop) {
+        const payload = await candyShop.getNftPurchasePayload({ buyerAddress, orderUuid: order.txHash });
+        return payload;
+      }
+      return undefined;
+    },
+    [candyShop]
+  );
 
   const [selectedOrder, setSelectedOrder] = useState<Order>();
   const onSelectOrder = (order?: Order) => setSelectedOrder(order);
