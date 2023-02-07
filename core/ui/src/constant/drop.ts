@@ -28,9 +28,9 @@ export interface DropUserInputSchema {
 
 export const DROP_USER_INPUT_SCHEMA: DropUserInputSchema[] = [
   { name: 'userName', type: 'string', label: 'Name', required: true },
-  { name: 'userEmail', type: 'email', label: 'Email', required: true },
-  { name: 'address', type: 'string', label: 'Address', required: false },
-  { name: 'tel', type: 'string', label: 'Telephone', required: false },
-  { name: 'twitter', type: 'string', label: 'Twitter', required: false },
-  { name: 'discord', type: 'string', label: 'Discord', required: false }
+  { name: 'userEmail', type: 'email', label: 'Email', required: true }
+  // { name: 'address', type: 'string', label: 'Address', required: false },
+  // { name: 'tel', type: 'string', label: 'Telephone', required: false },
+  // { name: 'twitter', type: 'string', label: 'Twitter', required: false },
+  // { name: 'discord', type: 'string', label: 'Discord', required: false }
 ];
