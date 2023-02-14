@@ -47,7 +47,7 @@ export async function fetchShopByIdentifier(
   blockchain: Blockchain
 ): Promise<SingleBase<CandyShop>> {
   const mappedBlockchain = mapToCompatibleBlockchain(blockchain);
-  const url = `/shop/owner/${ownerAddress}/mint/${mint}/programId/${programId}/blockchain/${mappedBlockchain}`;
+  const url = `/v2/shop/owner/${ownerAddress}/mint/${mint}/programId/${programId}/blockchain/${mappedBlockchain}`;
   return axiosInstance.get<SingleBase<CandyShop>>(url).then((response) => response.data);
 }
 
