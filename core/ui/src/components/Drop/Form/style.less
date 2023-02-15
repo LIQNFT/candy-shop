@@ -44,8 +44,8 @@
   }
 
   .candy-switch {
-    margin-bottom: 16px;
-    margin-top: -16px;
+    margin-bottom: 12px;
+    margin-top: 20px;
   }
 
   .candy-edition-form-title {
@@ -57,7 +57,7 @@
   }
 
   .candy-checkbox-container {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   .candy-edition-period {
@@ -110,11 +110,8 @@
       #edition-form-label();
     }
 
-    input {
+    .candy-form-input {
       width: 100%;
-      border: 2px solid @candy-shop-color-secondary-light;
-      padding: 8px 12px;
-      border-radius: 4px;
     }
 
     .candy-edition-form-sol {
@@ -126,7 +123,7 @@
 
   .candy-edition-sale-time {
     display: grid;
-    grid-template-columns: 1fr 110px 5px 110px 50px 50px;
+    grid-template-columns: 1fr 150px 5px 110px 50px 50px;
     column-gap: 10px;
     align-items: end;
     margin-bottom: 16px;
@@ -149,7 +146,18 @@
     }
 
     .candy-edition-sale-time-colon {
-      margin-bottom: 25px;
+      margin-bottom: 10px;
+    }
+
+    .candy-form-date-picker {
+      position: relative;
+
+      .candy-form-error {
+        position: absolute;
+        bottom: 0;
+        transform: translateY(100%);
+        white-space: nowrap;
+      }
     }
   }
 

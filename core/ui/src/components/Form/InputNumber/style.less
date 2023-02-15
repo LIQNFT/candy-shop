@@ -1,0 +1,24 @@
+@import '../../../variable.less';
+
+.candy-form-input-number {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+
+  input {
+    width: 100%;
+    border: 2px solid @candy-shop-color-secondary-light;
+    padding: 8px 12px;
+    border-radius: 4px;
+  }
+  .candy-form-input-number-invalid {
+    border-color: @lnft-red;
+  }
+
+  .candy-form-input-suffix {
+    position: absolute;
+    top: 37px;
+    right: 10px;
+  }
+}

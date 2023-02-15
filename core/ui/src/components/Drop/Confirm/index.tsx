@@ -1,7 +1,7 @@
 import React from 'react';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CandyShop, MasterEditionNft } from '@liqnft/candy-shop-sdk';
-import { FormType } from '../Form';
+import { FormType } from '../Form/Form.utils';
 import { convertTime12to24, getFormTime } from 'utils/timer';
 
 import dayjs from 'dayjs';

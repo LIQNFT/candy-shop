@@ -58,6 +58,7 @@
     "dayjs": "^1.11.1",
     "qs": "^6.10.3",
     "rc-notification": "^4.5.7",
+    "react-hook-form": "^7.43.1",
     "react-infinite-scroll-component": "^6.1.0",
     "web3modal": "^1.9.9"
   },

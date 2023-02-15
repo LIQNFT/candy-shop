@@ -1,5 +1,5 @@
 export * from './AuctionCard';
-export * from './AuctionForm';
+export * from './Form';
 export * from './AuctionModal';
 export * from './AuctionNftHeader';
-export * from './CreateAuctionConfirm';
+export * from './Confirm';

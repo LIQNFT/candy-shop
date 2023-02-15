@@ -1,11 +1,12 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { BN, web3 } from '@project-serum/anchor';
-import { SingleTokenInfo, CandyShopVersion } from '@liqnft/candy-shop-sdk';
+import { SingleTokenInfo, CandyShopVersion, CandyShopCreateAuctionParams } from '@liqnft/candy-shop-sdk';
 
 import { Empty } from 'components/Empty';
 import { Card } from 'components/Card';
 import { LoadingSkeleton } from 'components/LoadingSkeleton';
-import { AuctionForm, FormType, CreateAuctionConfirm } from 'components/Auction';
+import { AuctionForm, CreateAuctionConfirm } from 'components/Auction';
+import { FormType } from 'components/Auction/Form/Form.utils';
 import { IconTick } from 'assets/IconTick';
 import { LoadStatus } from 'constant';
 import { ShopProps } from '../../model';
@@ -14,10 +15,10 @@ import dayjs from 'dayjs';
 import './create-auction-style.less';
 
 import { notification, NotificationType } from 'utils/rc-notification';
-import { convertTime12to24 } from 'utils/timer';
 import useUserNfts from 'hooks/useUserNfts';
 import { SolStore, StoreProvider } from 'market';
 import { handleError } from 'utils/ErrorHandler';
+import { getBigNumberCurrency } from 'utils/getPrice';
 
 interface CreateAuctionProps extends ShopProps {
   walletConnectComponent: React.ReactElement;
@@ -97,26 +98,29 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
       return;
     }
 
-    const startingBid = new BN(Number(auctionForm.startingBid) * 10 ** candyShop.currencyDecimals);
-    const startTime = new BN(
-      //prettier-ignore
-      dayjs(auctionForm.startNow ? undefined : `${auctionForm.startDate} ${convertTime12to24(auctionForm.auctionHour, auctionForm.auctionMinute, auctionForm.clockFormat)}`).unix()
-    );
-    // measured in hours
-    const biddingPeriod = new BN(Number(auctionForm.biddingPeriod) * 3600);
-    const buyNowPrice = auctionForm.buyNow
-      ? new BN(Number(auctionForm.buyNowPrice) * 10 ** candyShop.currencyDecimals)
-      : null;
-    const tickSize = new BN(Number(auctionForm.tickSize) * 10 ** candyShop.currencyDecimals);
+    const startingBid = getBigNumberCurrency(auctionForm.startingBid, candyShop.currencyDecimals);
 
-    let params: any = {
+    const startTime = auctionForm.startNow
+      ? dayjs().unix()
+      : dayjs(auctionForm.startDate)
+          .add((Number(auctionForm.startHour) % 12) + (auctionForm.startClockFormat === 'PM' ? 12 : 0), 'hour')
+          .add(Number(auctionForm.startMinute), 'minute')
+          .unix();
+
+    const buyNowPrice = auctionForm.buyNow
+      ? getBigNumberCurrency(auctionForm.buyNowPrice, candyShop.currencyDecimals)
+      : null;
+
+    const tickSize = getBigNumberCurrency(auctionForm.tickSize, candyShop.currencyDecimals);
+
+    let params: CandyShopCreateAuctionParams = {
       startingBid,
-      startTime,
-      biddingPeriod,
+      startTime: new BN(startTime),
+      biddingPeriod: new BN(Number(auctionForm.biddingPeriod)),
       buyNowPrice,
       tokenAccount: new web3.PublicKey(selected.tokenAccountAddress),
       tokenMint: new web3.PublicKey(selected.tokenMintAddress),
-      wallet,
+      wallet: wallet as CandyShopCreateAuctionParams['wallet'],
       tickSize
     };
 
@@ -131,9 +135,8 @@ export const CreateAuction: React.FC<CreateAuctionProps> = ({
     store
       .createAuction(params)
       .then(() => {
-        notification('Auction created', NotificationType.Success);
-
         onCreatedAuctionSuccess && onCreatedAuctionSuccess(selected);
+        notification('Auction created', NotificationType.Success);
       })
       .catch((err: Error) => {
         console.log(`${Logger}: Create Auction failed=`, err);

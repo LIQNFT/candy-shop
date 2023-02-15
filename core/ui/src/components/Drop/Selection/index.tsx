@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CandyShop, MasterEditionNft, fetchUserMasterNFTs } from '@liqnft/candy-shop-sdk';
+import { CandyShop, fetchUserMasterNFTs, MasterEditionNft } from '@liqnft/candy-shop-sdk';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 
 import { Empty } from 'components/Empty';
@@ -9,6 +9,7 @@ import { IconTick } from 'assets/IconTick';
 
 import { LoadStatus } from 'constant';
 import { handleError } from 'utils/ErrorHandler';
+import { Show } from 'components/Show';
 
 interface DropSelectionProps {
   candyShop: CandyShop;
@@ -30,7 +31,7 @@ export const DropSelection: React.FC<DropSelectionProps> = ({
   walletConnectComponent
 }) => {
   const [dropNfts, setDropNfts] = useState<MasterEditionNft[]>([]);
-  const [loading, setLoading] = useState<LoadStatus>(LoadStatus.ToLoad);
+  const [loading, setLoading] = useState<LoadStatus>(LoadStatus.Loaded);
 
   useEffect(() => {
     if (!wallet?.publicKey) return;
@@ -60,49 +61,51 @@ export const DropSelection: React.FC<DropSelectionProps> = ({
         NFT with a Metaplex maximum supply attribute of greater than 1.
       </div>
 
-      {loading !== LoadStatus.ToLoad && (
-        <>
-          <div className="candy-edition-list candy-container-list">
-            {dropNfts.map((nft) => (
-              <Card
-                key={nft.tokenAccountAddress}
-                className={dropNft?.tokenAccountAddress === nft.tokenAccountAddress ? 'selected' : ''}
-                imgUrl={nft.nftImage}
-                onClick={onSelect(nft)}
-                label={
-                  dropNft?.tokenAccountAddress === nft.tokenAccountAddress ? (
-                    <span className="candy-edition-tick-label">
-                      <IconTick fill="#7522f5" />
-                    </span>
-                  ) : undefined
-                }
-                footer={
-                  <div className="candy-edition-footer-card">
-                    <div className="name-container">
-                      <div className="name candy-line-limit-1">{nft.name}</div>
-                      <div className="ticker">{nft.symbol}</div>
-                    </div>
-                    <div className="candy-line-limit-1 supply">
-                      {0}/{nft.maxSupply}
-                    </div>
+      <Show when={loading !== LoadStatus.ToLoad}>
+        <div className="candy-edition-list candy-container-list">
+          {dropNfts.map((nft) => (
+            <Card
+              key={nft.tokenAccountAddress}
+              className={dropNft?.tokenAccountAddress === nft.tokenAccountAddress ? 'selected' : ''}
+              imgUrl={nft.nftImage}
+              onClick={onSelect(nft)}
+              label={
+                <Show when={dropNft?.tokenAccountAddress === nft.tokenAccountAddress}>
+                  <span className="candy-edition-tick-label">
+                    <IconTick fill="#7522f5" />
+                  </span>
+                </Show>
+              }
+              footer={
+                <div className="candy-edition-footer-card">
+                  <div className="name-container">
+                    <div className="name candy-line-limit-1">{nft.name}</div>
+                    <div className="ticker">{nft.symbol}</div>
                   </div>
-                }
-              />
-            ))}
-          </div>
-          {loading === LoadStatus.Loading && <LoadingSkeleton />}
+                  <div className="candy-line-limit-1 supply">
+                    {0}/{nft.maxSupply}
+                  </div>
+                </div>
+              }
+            />
+          ))}
+        </div>
 
-          {emptyDrops ? null : (
-            <button
-              disabled={!dropNft}
-              className={`candy-button candy-edition-select-button ${dropNft ? '' : 'disabled'}`}
-              onClick={onNext}
-            >
-              Continue
-            </button>
-          )}
-        </>
-      )}
+        <Show when={loading === LoadStatus.Loading}>
+          <LoadingSkeleton />
+        </Show>
+
+        <Show when={!emptyDrops}>
+          <button
+            disabled={!dropNft}
+            className={`candy-button candy-edition-select-button ${dropNft ? '' : 'disabled'}`}
+            onClick={onNext}
+            type="button"
+          >
+            Continue
+          </button>
+        </Show>
+      </Show>
 
       {emptyDrops && (
         <Empty description="No available or eligible NFTs found. Please ensure you have NFTs that have a max supply >1 in the active wallet." />

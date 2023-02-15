@@ -3,7 +3,8 @@ import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { CandyShop, CANDY_SHOP_V2_PROGRAM_ID, MasterEditionNft } from '@liqnft/candy-shop-sdk';
 
 import { CreateEditionDropConfirm } from 'components/Drop/Confirm';
-import { CreateEditionForm, FormType } from 'components/Drop/Form';
+import { CreateEditionForm } from 'components/Drop/Form';
+import { FormType } from 'components/Drop/Form/Form.utils';
 import { DropSelection } from 'components/Drop/Selection';
 
 import './style.less';
@@ -61,6 +62,7 @@ export const CreateDrop: React.FC<CreateDropProps> = ({
           walletConnectComponent={walletConnectComponent}
         />
       )}
+
       {stage === DropStage.DETAIL && dropNft ? (
         <CreateEditionForm
           nft={dropNft}
@@ -114,9 +116,7 @@ export const CreateDrop: React.FC<CreateDropProps> = ({
         </div>
 
         <div className="candy-edition-content-detail">
-          {wallet && isShopWithProgramIdV2(candyShop.programId.toString())
-            ? ViewStages
-            : NotProgramIdV2ShopNotification}
+          {wallet && isShopWithProgramIdV2(candyShop.programId) ? ViewStages : NotProgramIdV2ShopNotification}
           {!wallet && walletConnectComponent}
         </div>
       </div>
