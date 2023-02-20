@@ -1,10 +1,11 @@
 import { Tooltip } from 'components/Tooltip';
-import React, { useState } from 'react';
+import React from 'react';
+import { RegisterOptions, useFormContext, useWatch } from 'react-hook-form';
 
 import './style.less';
 
 interface InputTextProps {
-  label: string;
+  label?: string;
   labelTip?: string;
   name: string;
   placeholder?: string;
@@ -14,10 +15,12 @@ interface InputTextProps {
   onChangeInput?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
   type?: HTMLInputElement['type'];
-  pattern?: string;
   showMaxLength?: boolean;
   title?: string;
   hidden?: boolean;
+  className?: string;
+  requiredMsg?: string;
+  pattern?: RegisterOptions['pattern'];
 }
 
 export const InputText: React.FC<InputTextProps> = ({
@@ -28,18 +31,22 @@ export const InputText: React.FC<InputTextProps> = ({
   maxLength,
   showMaxLength,
   disabled,
-  value,
-  onChangeInput,
   required,
   type,
-  pattern,
   title,
-  hidden
+  hidden,
+  className = '',
+  requiredMsg = 'This field is required',
+  pattern
 }) => {
-  const [count, setCount] = useState(0);
+  const {
+    register,
+    formState: { errors }
+  } = useFormContext();
+  const value = useWatch({ name });
 
   return (
-    <div hidden={hidden} className="candy-form-input">
+    <div hidden={hidden} className={`candy-form-input ${className}`}>
       <label htmlFor={name}>
         {label}
         {labelTip && (
@@ -51,24 +58,21 @@ export const InputText: React.FC<InputTextProps> = ({
       <input
         title={title}
         id={name}
-        name={name}
+        {...register(name, {
+          required: required && requiredMsg,
+          disabled,
+          maxLength,
+          pattern
+        })}
         placeholder={placeholder}
-        required={required}
-        value={value}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-          if (showMaxLength && maxLength) setCount(event.target.value.length);
-          return onChangeInput && onChangeInput(event);
-        }}
-        disabled={disabled}
-        maxLength={maxLength}
         type={type}
-        pattern={pattern}
       />
       {showMaxLength && maxLength && (
         <span className="candy-form-input-character-limit">
-          <span>{count}</span>/{maxLength}
+          <span>{value.length || 0}</span>/{maxLength}
         </span>
       )}
+      {errors[name]?.message && <span className="candy-form-error">{errors[name]?.message}</span>}
     </div>
   );
 };

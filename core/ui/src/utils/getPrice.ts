@@ -1,5 +1,6 @@
 import { ShopExchangeInfo } from 'model';
 import { notification, NotificationType } from './rc-notification';
+import { BN } from '@project-serum/anchor';
 
 export const getPrice = (
   shopPriceDecimalsMin: number,
@@ -47,4 +48,14 @@ export const validateSellPrice = (price: number, currencyDecimals: number): Sell
     return SellPriceValidationState.LessThanMinimum;
   }
   return SellPriceValidationState.Valid;
+};
+
+export const getBigNumberCurrency = (num: number | string, currency: number): BN => {
+  const splitNum = num.toString().split('.');
+  if (splitNum[1].length > 0) {
+    // handler decimal
+    return new BN(Number(num) * 10 ** splitNum[1].length).mul(new BN(10).pow(new BN(currency)));
+  }
+
+  return new BN(Number(num)).mul(new BN(10).pow(new BN(currency)));
 };
