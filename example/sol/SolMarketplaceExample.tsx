@@ -8,6 +8,7 @@ import { SortBy } from '../../core/types/.';
 import { Activity, OrderDetail, Orders, Sell, Stat } from '../../core/ui/.';
 
 import 'antd/dist/antd.min.css';
+
 interface SolMarketplaceExampleProps {
   candyShop: CandyShop;
 }
@@ -33,6 +34,7 @@ export const SolMarketplaceExample: React.FC<SolMarketplaceExampleProps> = ({ ca
         filters
         filterSearch
         search
+        filterType="dropdown"
       />
 
       <h1 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 30 }}>Order Detail</h1>

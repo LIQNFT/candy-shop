@@ -1,15 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { fetchOrdersByShopAddress } from '@liqnft/candy-shop-sdk';
-import { ListBase, NftCollection, Order, CandyShop as CandyShopResponse } from '@liqnft/candy-shop-types';
+import { ListBase, NftCollection, Order } from '@liqnft/candy-shop-types';
 import { Search } from 'components/Search';
 import { Dropdown } from 'components/Dropdown';
 
 import { InfiniteOrderList } from 'components/InfiniteOrderList';
 import { PoweredBy } from 'components/PoweredBy';
-import { CollectionFilter as CollectionFilterComponent } from 'components/CollectionFilter';
-import { ShopFilter as ShopFilterComponent } from 'components/ShopFilter';
+import { CollectionFilter as CollectionFilterComponent, FilterType } from 'components/CollectionFilter';
 
-import { CollectionFilter, ShopFilter, OrderDefaultFilter, ShopProps } from '../../model';
+import { CollectionFilter, OrderDefaultFilter, ShopProps } from '../../model';
 import { removeDuplicate, removeListeners } from 'utils/helperFunc';
 import { ORDER_FETCH_LIMIT, SORT_OPTIONS } from 'constant/Orders';
 import { useSocket } from 'public/Context/Socket';
@@ -23,12 +22,12 @@ interface OrdersProps extends ShopProps {
   identifiers?: number[];
   filters?: CollectionFilter[] | boolean | 'auto';
   defaultFilter?: { [key in OrderDefaultFilter]: string };
-  shopFilters?: ShopFilter[] | boolean;
   style?: { [key: string]: string | number };
   sellerAddress?: string;
   sellerUrl?: string;
   search?: boolean;
   filterSearch?: boolean;
+  filterType?: FilterType;
 }
 
 // TODO: Remove hardcode option, filters, defaultFilter and shopFilters should merge into one config interface
@@ -47,13 +46,13 @@ export const Orders: React.FC<OrdersProps> = ({
   filters,
   style,
   sellerAddress,
-  shopFilters,
   defaultFilter,
   sellerUrl,
   search,
   filterSearch,
   candyShop,
-  wallet
+  wallet,
+  filterType = 'list'
 }) => {
   const [sortedByOption, setSortedByOption] = useState(SORT_OPTIONS[0]);
   const [orders, setOrders] = useState<any[]>([]);
@@ -67,15 +66,6 @@ export const Orders: React.FC<OrdersProps> = ({
   });
   // auto collection filter
   const [selectedCollection, setSelectedCollection] = useState<NftCollection>();
-
-  // manual shop filter
-  const [shopFilter, setShopFilter] = useState<ShopFilter | undefined>(() => {
-    if (Array.isArray(shopFilters) && defaultFilter?.[OrderDefaultFilter.SHOP]) {
-      return shopFilters?.find((shop) => shop.shopId === defaultFilter.shop);
-    }
-  });
-  // auction shop filter
-  const [selectedShop, setSelectedShop] = useState<CandyShopResponse>();
   const [nftKeyword, setNftKeyword] = useState<string>();
   const { onSocketEvent } = useSocket();
 
@@ -83,7 +73,7 @@ export const Orders: React.FC<OrdersProps> = ({
     setNftKeyword(nftName);
   }, []);
 
-  const candyShopAddress = candyShop.candyShopAddress?.toString();
+  const candyShopAddress = candyShop.candyShopAddress;
 
   const fetchOrders = useCallback(
     (offset: number) => {
@@ -97,7 +87,6 @@ export const Orders: React.FC<OrdersProps> = ({
         identifiers: getUniqueIdentifiers(identifiers, collectionFilter?.identifier),
         attribute: collectionFilter?.attribute,
         collectionId: selectedCollection?.id,
-        candyShopAddress: selectedShop?.candyShopAddress || shopFilter?.shopId,
         nftName: nftKeyword,
         blockchain: candyShop.env
       })
@@ -118,17 +107,15 @@ export const Orders: React.FC<OrdersProps> = ({
         });
     },
     [
+      candyShop.env,
       candyShopAddress,
-      sortedByOption.value,
-      sellerAddress,
-      identifiers,
-      collectionFilter?.identifier,
       collectionFilter?.attribute,
-      selectedCollection?.id,
-      selectedShop?.candyShopAddress,
-      shopFilter?.shopId,
+      collectionFilter?.identifier,
+      identifiers,
       nftKeyword,
-      candyShop.env
+      selectedCollection?.id,
+      sellerAddress,
+      sortedByOption.value
     ]
   );
 
@@ -142,33 +129,12 @@ export const Orders: React.FC<OrdersProps> = ({
     setHasNextPage(true);
   };
 
-  const onResetCollectionFilter = () => {
-    setSelectedCollection(undefined);
-    setCollectionFilter(undefined);
-  };
-
-  const onResetShopFilter = () => {
-    setSelectedShop(undefined);
-    setShopFilter(undefined);
-  };
-
   const onChangeCollection = (item: NftCollection | CollectionFilter | undefined, type: 'auto' | 'manual') => () => {
     onResetLoadingOrders();
-    onResetShopFilter();
     if (type === 'auto') {
       setSelectedCollection(item as NftCollection);
     } else {
       setCollectionFilter(item as CollectionFilter);
-    }
-  };
-
-  const onChangeShop = (item: ShopFilter | CandyShopResponse | undefined, type: 'auto' | 'manual') => () => {
-    onResetLoadingOrders();
-    onResetCollectionFilter();
-    if (type === 'auto') {
-      setSelectedShop(item as CandyShopResponse);
-    } else {
-      setShopFilter(item as ShopFilter);
     }
   };
 
@@ -220,21 +186,7 @@ export const Orders: React.FC<OrdersProps> = ({
     />
   );
 
-  if (filters || shopFilters) {
-    const onClickAll = () => {
-      setSelectedCollection(undefined);
-      setCollectionFilter(undefined);
-
-      setSelectedShop(undefined);
-      setShopFilter(undefined);
-    };
-    const showAll = Boolean(filters && shopFilters);
-    const selectAll = showAll && !selectedCollection && !selectedShop && !shopFilter && !collectionFilter;
-    const getStoreId = () => {
-      if (filters === true) return candyShopAddress;
-      return selectedShop?.candyShopAddress || shopFilter?.shopId;
-    };
-
+  if (filters) {
     return (
       <div className="candy-orders-container" style={style}>
         <div className="candy-container">
@@ -254,37 +206,16 @@ export const Orders: React.FC<OrdersProps> = ({
           <div className="candy-orders-filter">
             <div className="candy-filter">
               <div className="candy-filter-title">Filters</div>
-              {showAll && (
-                <div
-                  onClick={onClickAll}
-                  className={selectAll ? 'candy-filter-all candy-filter-all-active' : 'candy-filter-all'}
-                >
-                  All
-                </div>
-              )}
-              {Boolean(filters) && (
-                <CollectionFilterComponent
-                  onChange={onChangeCollection}
-                  selected={selectedCollection}
-                  filters={filters}
-                  selectedManual={collectionFilter}
-                  shopId={getStoreId()}
-                  showAllFilters={showAll}
-                  search={filterSearch}
-                  candyShopAddress={candyShopAddress}
-                />
-              )}
-              {Boolean(shopFilters) && (
-                <ShopFilterComponent
-                  onChange={onChangeShop}
-                  selected={selectedShop}
-                  filters={shopFilters}
-                  selectedManual={shopFilter}
-                  showAllFilters={showAll}
-                  search={filterSearch}
-                  candyShopAddress={candyShopAddress}
-                />
-              )}
+
+              <CollectionFilterComponent
+                onChange={onChangeCollection}
+                selected={selectedCollection}
+                filters={filters}
+                selectedManual={collectionFilter}
+                search={filterSearch}
+                candyShopAddress={candyShopAddress}
+                filterType={filterType}
+              />
             </div>
             <div className="candy-orders-content">
               {InfiniteOrderListView}

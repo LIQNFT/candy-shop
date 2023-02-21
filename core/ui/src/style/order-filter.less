@@ -56,3 +56,57 @@
     margin: 20px;
   }
 }
+
+.candy-filter-collection-trigger {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 12px;
+
+  svg {
+    color: @candy-shop-icon-color-primary;
+    margin-right: 4px;
+  }
+}
+
+.candy-filter-collection-content {
+  box-shadow: 5px 8px 24px 5px rgba(208, 216, 243, 0.6);
+  border-radius: 8px;
+  padding: 8px;
+
+  .candy-filter-options {
+    max-height: 200px;
+    overflow-y: auto;
+
+    > button {
+      display: contents;
+    }
+    li {
+      text-align: left;
+      cursor: pointer;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 1; /* number of lines to show */
+      line-clamp: 1;
+      -webkit-box-orient: vertical;
+
+      &:hover,
+      &.selected {
+        background-color: @candy-shop-color-primary-lightest;
+      }
+    }
+  }
+
+  .candy-filter-load {
+    border: none;
+    background: none;
+    color: @candy-shop-color-primary;
+    margin-top: 4px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .candy-processing {
+    margin: 8px auto 0;
+  }
+}
