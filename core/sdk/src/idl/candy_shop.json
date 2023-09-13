@@ -223,10 +223,7 @@
         {
           "name": "splits",
           "type": {
-            "array": [
-              "u8",
-              4
-            ]
+            "array": ["u8", 4]
           }
         },
         {
@@ -1192,9 +1189,7 @@
           "name": "auctionBidWallet",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "System account for perfoming transfers on behalf of an auction bid account"
-          ]
+          "docs": ["System account for perfoming transfers on behalf of an auction bid account"]
         },
         {
           "name": "nftMint",
@@ -1205,17 +1200,13 @@
           "name": "bidPaymentAccount",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "Account that will be used to pay into `escrow_payment_account` on behalf of user"
-          ]
+          "docs": ["Account that will be used to pay into `escrow_payment_account` on behalf of user"]
         },
         {
           "name": "userTreasuryAta",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "User account for paying bid when auction treasury is SPL token"
-          ]
+          "docs": ["User account for paying bid when auction treasury is SPL token"]
         },
         {
           "name": "treasuryMint",
@@ -1334,25 +1325,19 @@
           "name": "auctionBidWallet",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "System account for perfoming transfers on behalf of an auction bid account"
-          ]
+          "docs": ["System account for perfoming transfers on behalf of an auction bid account"]
         },
         {
           "name": "userTreasuryAta",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "User account for receiving withdrawal when auction treasury is SPL token"
-          ]
+          "docs": ["User account for receiving withdrawal when auction treasury is SPL token"]
         },
         {
           "name": "bidReceiptAccount",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "Account that will receive withdrawal from `escrow_payment_account` on behalf of user"
-          ]
+          "docs": ["Account that will receive withdrawal from `escrow_payment_account` on behalf of user"]
         },
         {
           "name": "nftMint",
@@ -1458,9 +1443,7 @@
           "name": "sellerPaymentReceiptAccount",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "Seller SOL or SPL account to receive payment at."
-          ]
+          "docs": ["Seller SOL or SPL account to receive payment at."]
         },
         {
           "name": "auction",
@@ -1511,17 +1494,13 @@
           "name": "auctionPaymentReceiptAccount",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "Account that will receive SPL or SOL payment on behalf of seller"
-          ]
+          "docs": ["Account that will receive SPL or SOL payment on behalf of seller"]
         },
         {
           "name": "buyerReceiptTokenAccount",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "Buyer SPL token account to receive purchased item at."
-          ]
+          "docs": ["Buyer SPL token account to receive purchased item at."]
         },
         {
           "name": "authority",
@@ -1653,17 +1632,13 @@
           "name": "auctionBidWallet",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "System account for perfoming transfers on behalf of an auction bid account"
-          ]
+          "docs": ["System account for perfoming transfers on behalf of an auction bid account"]
         },
         {
           "name": "bidReceiptTokenAccount",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "Account that will receive purchased SPL token on behalf of buyer."
-          ]
+          "docs": ["Account that will receive purchased SPL token on behalf of buyer."]
         },
         {
           "name": "nftMint",
@@ -1694,9 +1669,7 @@
           "name": "auctionPaymentReceiptAccount",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "Account that will receive SPL or SOL payment on behalf of seller"
-          ]
+          "docs": ["Account that will receive SPL or SOL payment on behalf of seller"]
         },
         {
           "name": "authority",
@@ -1818,17 +1791,13 @@
           "name": "buyerReceiptTokenAccount",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "Buyer SPL token account to receive purchased item at."
-          ]
+          "docs": ["Buyer SPL token account to receive purchased item at."]
         },
         {
           "name": "sellerPaymentReceiptAccount",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "Seller SOL or SPL account to receive payment at."
-          ]
+          "docs": ["Seller SOL or SPL account to receive payment at."]
         },
         {
           "name": "auction",
@@ -1849,17 +1818,13 @@
           "name": "auctionBidWallet",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "System account for perfoming transfers on behalf of an auction bid account"
-          ]
+          "docs": ["System account for perfoming transfers on behalf of an auction bid account"]
         },
         {
           "name": "bidReceiptTokenAccount",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "Account that will receive purchased SPL token on behalf of buyer."
-          ]
+          "docs": ["Account that will receive purchased SPL token on behalf of buyer."]
         },
         {
           "name": "nftMint",
@@ -1875,9 +1840,7 @@
           "name": "auctionPaymentReceiptAccount",
           "isMut": true,
           "isSigner": false,
-          "docs": [
-            "Account that will receive SPL or SOL payment on behalf of seller"
-          ]
+          "docs": ["Account that will receive SPL or SOL payment on behalf of seller"]
         },
         {
           "name": "tokenProgram",
@@ -1932,10 +1895,7 @@
           {
             "name": "name",
             "type": {
-              "array": [
-                "u8",
-                32
-              ]
+              "array": ["u8", 32]
             }
           },
           {
@@ -1967,10 +1927,7 @@
           {
             "name": "name",
             "type": {
-              "array": [
-                "u8",
-                32
-              ]
+              "array": ["u8", 32]
             }
           },
           {
@@ -1984,19 +1941,13 @@
           {
             "name": "coOwners",
             "type": {
-              "array": [
-                "publicKey",
-                4
-              ]
+              "array": ["publicKey", 4]
             }
           },
           {
             "name": "splits",
             "type": {
-              "array": [
-                "u8",
-                4
-              ]
+              "array": ["u8", 4]
             }
           }
         ]
