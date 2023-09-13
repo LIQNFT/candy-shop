@@ -844,7 +844,7 @@
         },
         {
           "name": "candyShopCreator",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -2246,8 +2246,5 @@
       "name": "InvalidBiddingPeriod",
       "msg": "Invalid bidding period"
     }
-  ],
-  "metadata": {
-    "address": "csbMUULiQfGjT8ezT16EoEBaiarS6VWRevTw1JMydrS"
-  }
+  ]
 }
